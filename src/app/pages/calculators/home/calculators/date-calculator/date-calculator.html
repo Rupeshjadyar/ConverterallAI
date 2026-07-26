@@ -1,0 +1,50 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">📅 Date Calculator</h2>
+  <p class="calculator-subtitle">Calculate days, weeks, months between two dates</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="startdate-input">Start Date</label>
+      <input
+        id="startdate-input"
+        type="date"
+        class="input-field"
+        [(ngModel)]="startDate"
+        (ngModelChange)="calculateDifference()"
+      />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label" for="enddate-input">End Date</label>
+      <input
+        id="enddate-input"
+        type="date"
+        class="input-field"
+        [(ngModel)]="endDate"
+        (ngModelChange)="calculateDifference()"
+      />
+    </div>
+  </div>
+
+  <div class="results-container" *ngIf="daysDiff !== null">
+    <div class="primary-result">
+      <div class="result-value">{{ daysDiff | number }} Days</div>
+      <div class="result-label">Total difference duration</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">In Weeks</span>
+        <span class="detail-value">{{ weeksDiff | number }} Weeks</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">In Months</span>
+        <span class="detail-value">{{ monthsDiff | number }} Months</span>
+      </div>
+      <div class="detail-card-full">
+        <span class="detail-label">In Years</span>
+        <span class="detail-value-large">{{ yearsDiff | number }} Years</span>
+      </div>
+    </div>
+  </div>
+</div>

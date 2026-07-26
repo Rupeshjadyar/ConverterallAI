@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://converterallai.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://converterallai.com/home</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+
+  <!-- PDF Tools -->
+  <url><loc>https://converterallai.com/pdf-processing</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/merge-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/split-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/compress-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/rotate-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/add-watermark</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/pdf-to-jpg</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/jpg-to-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/pdf-to-text</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/text-to-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/pdf-to-word</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/pdf-to-excel</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/pdf-to-ppt</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/word-to-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/excel-to-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/ppt-to-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/add-password</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/remove-password</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/edit-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/sign-pdf</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/add-page-numbers</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/organize-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/crop-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/html-to-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/repair-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/ocr-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/compare-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/redact-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/ai-summarizer</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/translate-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/pdf-processing/scan-to-pdf</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Image Tools -->
+  <url><loc>https://converterallai.com/image-processing</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/compressor</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/format-converter</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/cropper</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/bg-remover</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/editor</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/image-processing/image-to-pdf</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Audio Tools -->
+  <url><loc>https://converterallai.com/audio-processing/text-to-mp3</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Calculators -->
+  <url><loc>https://converterallai.com/calculators</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/basic</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/bmi</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/emi</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/percentage</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/gst</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/sip</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/loan</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/age</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/cgpa</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/discount</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://converterallai.com/calculators/date</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+</urlset>

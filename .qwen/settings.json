@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(c:/Users/**)",
+      "Bash(npm run *)"
+    ]
+  },
+  "$version": 4
+}

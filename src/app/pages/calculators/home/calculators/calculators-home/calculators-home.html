@@ -1,0 +1,62 @@
+<div class="calculators-home">
+  <div class="container">
+    <!-- Header -->
+    <div class="page-header">
+      <h1>🧮 Smart Calculators Hub</h1>
+      <p>All-in-one calculator suite for every need - Financial, Health, Academic & More</p>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="search-section">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="filterCalculators()"
+        placeholder="🔍 Search calculators..." 
+        class="search-input"
+      />
+      <div class="category-filters">
+        <button 
+          *ngFor="let cat of categories" 
+          [class.active]="selectedCategory === cat.id"
+          (click)="filterByCategory(cat.id)"
+          class="filter-chip">
+          {{ cat.icon }} {{ cat.name }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="calculators-grid">
+      <div class="calculator-card glass" *ngFor="let calc of filteredCalculators" (click)="openCalculator(calc)">
+        <div class="card-icon" [style.background]="calc.gradient">
+          <span class="icon">{{ calc.icon }}</span>
+        </div>
+        <h3>{{ calc.name }}</h3>
+        <p>{{ calc.description }}</p>
+        <div class="card-footer">
+          <span class="category-badge">{{ calc.categoryIcon }} {{ calc.category }}</span>
+          <button class="btn-calc" (click)="openCalculator(calc); $event.stopPropagation()">
+            Calculate <span>→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-banner glass">
+      <div class="stat-item">
+        <div class="stat-number">{{ totalCalculations | number }}</div>
+        <div class="stat-label">Calculations Done</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ activeUsers }}+</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ calculatorsCount }}</div>
+        <div class="stat-label">Calculators</div>
+      </div>
+    </div>
+  </div>
+</div>

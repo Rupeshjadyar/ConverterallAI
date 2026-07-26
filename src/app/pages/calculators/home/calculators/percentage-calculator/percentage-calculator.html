@@ -1,0 +1,317 @@
+<div class="percentage-calculator">
+
+  <!-- Header -->
+  <div class="calculator-header">
+    <h1 class="calc-title">Percentage Calculator</h1>
+
+    <p class="calc-subtitle">
+      Calculate percentages, percentage increase, percentage decrease,
+      and percentage changes instantly with our free online percentage calculator.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="calc-tabs">
+    <button
+      type="button"
+      [class.active]="activeTab === 'find'"
+      (click)="switchTab('find')">
+      % of Number
+    </button>
+
+    <button
+      type="button"
+      [class.active]="activeTab === 'what'"
+      (click)="switchTab('what')">
+      What %
+    </button>
+
+    <button
+      type="button"
+      [class.active]="activeTab === 'change'"
+      (click)="switchTab('change')">
+      Change %
+    </button>
+  </div>
+
+  <!-- TAB 1 -->
+  <section class="calc-card" *ngIf="activeTab === 'find'">
+
+    <h2 class="sr-only">
+      Calculate Percentage of a Number
+    </h2>
+
+    <p class="section-desc">
+      Find the value of a percentage from a given number.
+    </p>
+
+    <div class="input-grid">
+
+      <div class="field-box">
+        <label for="percentVal">
+          Percentage (%)
+        </label>
+
+        <div class="input-wrapper">
+          <input
+            id="percentVal"
+            type="number"
+            class="calc-input"
+            placeholder="20"
+            [(ngModel)]="percentValue"
+            (input)="calculatePercentOf()">
+
+          <span class="input-addon">%</span>
+        </div>
+      </div>
+
+      <div class="field-box">
+        <label for="numberVal">
+          Number
+        </label>
+
+        <input
+          id="numberVal"
+          type="number"
+          class="calc-input"
+          placeholder="500"
+          [(ngModel)]="numberValue"
+          (input)="calculatePercentOf()">
+      </div>
+
+    </div>
+
+    <div class="result-display">
+      <span class="result-label">
+        Result
+      </span>
+
+      <div class="result-badge primary">
+        {{
+          result1 !== null
+            ? (result1 | number:'1.1-2')
+            : '---'
+        }}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- TAB 2 -->
+  <section class="calc-card" *ngIf="activeTab === 'what'">
+
+    <h2 class="sr-only">
+      What Percentage Is X Of Y
+    </h2>
+
+    <p class="section-desc">
+      Determine what percentage one value represents of another.
+    </p>
+
+    <div class="input-grid">
+
+      <div class="field-box">
+        <label for="partVal">
+          Part Value
+        </label>
+
+        <input
+          id="partVal"
+          type="number"
+          class="calc-input"
+          placeholder="75"
+          [(ngModel)]="partValue"
+          (input)="calculateWhatPercent()">
+      </div>
+
+      <div class="field-box">
+        <label for="wholeVal">
+          Total Value
+        </label>
+
+        <input
+          id="wholeVal"
+          type="number"
+          class="calc-input"
+          placeholder="300"
+          [(ngModel)]="wholeValue"
+          (input)="calculateWhatPercent()">
+      </div>
+
+    </div>
+
+    <div class="result-display">
+      <span class="result-label">
+        Percentage
+      </span>
+
+      <div class="result-badge success">
+        {{
+          result2 !== null
+            ? (result2 | number:'1.1-2') + '%'
+            : '---'
+        }}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- TAB 3 -->
+  <section class="calc-card" *ngIf="activeTab === 'change'">
+
+    <h2 class="sr-only">
+      Percentage Change Calculator
+    </h2>
+
+    <p class="section-desc">
+      Calculate percentage increase or decrease between two values.
+    </p>
+
+    <div class="input-grid">
+
+      <div class="field-box">
+        <label for="oldVal">
+          Old Value
+        </label>
+
+        <input
+          id="oldVal"
+          type="number"
+          class="calc-input"
+          placeholder="100"
+          [(ngModel)]="oldValue"
+          (input)="calculatePercentChange()">
+      </div>
+
+      <div class="field-box">
+        <label for="newVal">
+          New Value
+        </label>
+
+        <input
+          id="newVal"
+          type="number"
+          class="calc-input"
+          placeholder="120"
+          [(ngModel)]="newValue"
+          (input)="calculatePercentChange()">
+      </div>
+
+    </div>
+
+    <div class="result-display">
+
+      <span class="result-label">
+        Change
+      </span>
+
+      <div
+        class="result-badge"
+        [class.positive]="result3 !== null && result3 > 0"
+        [class.negative]="result3 !== null && result3 < 0"
+        [class.neutral]="result3 === 0 || result3 === null">
+
+        <ng-container *ngIf="result3 !== null">
+
+          {{ result3 > 0 ? '📈 +' : '' }}
+          {{ result3 < 0 ? '📉 ' : '' }}
+
+          {{ result3 | number:'1.1-2' }}%
+
+        </ng-container>
+
+        <ng-container *ngIf="result3 === null">
+          ---
+        </ng-container>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SEO SECTION -->
+
+  <section class="seo-content-block">
+
+    <h2>About Percentage Calculator</h2>
+
+    <p>
+      A percentage calculator helps you calculate percentages,
+      percentage increases, percentage decreases,
+      discounts, profit margins, taxes, and growth rates quickly.
+    </p>
+
+    <p>
+      Whether you're a student, business owner,
+      accountant, investor, or online shopper,
+      percentage calculations are used daily.
+    </p>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>Percentage Formula</h2>
+
+    <ul>
+      <li>Percentage = (Part ÷ Whole) × 100</li>
+      <li>X% of Y = (X × Y) ÷ 100</li>
+      <li>Percentage Change = ((New − Old) ÷ Old) × 100</li>
+      <li>Percentage Increase = ((New − Old) ÷ Old) × 100</li>
+      <li>Percentage Decrease = ((Old − New) ÷ Old) × 100</li>
+    </ul>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>Examples</h2>
+
+    <ul>
+      <li>20% of 500 = 100</li>
+      <li>25% of 400 = 100</li>
+      <li>75 is what percent of 300 = 25%</li>
+      <li>150 is what percent of 600 = 25%</li>
+      <li>100 → 120 = 20% increase</li>
+      <li>200 → 150 = 25% decrease</li>
+    </ul>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>Frequently Asked Questions</h2>
+
+    <h3>How do you calculate percentage?</h3>
+
+    <p>
+      Divide the part value by the whole value
+      and multiply the result by 100.
+    </p>
+
+    <h3>What is 20% of 500?</h3>
+
+    <p>
+      20% of 500 equals 100.
+    </p>
+
+    <h3>How do I calculate percentage increase?</h3>
+
+    <p>
+      Subtract the old value from the new value,
+      divide by the old value,
+      then multiply by 100.
+    </p>
+
+    <h3>How do I calculate percentage decrease?</h3>
+
+    <p>
+      Subtract the new value from the old value,
+      divide by the old value,
+      then multiply by 100.
+    </p>
+
+  </section>
+
+</div>

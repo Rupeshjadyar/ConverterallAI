@@ -1,0 +1,62 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">🏷️ Discount Calculator</h2>
+  <p class="calculator-subtitle">Calculate final price and savings after discount</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="original-price-input">Original Price (₹)</label>
+      <input
+        id="original-price-input"
+        type="number"
+        class="input-field"
+        [(ngModel)]="originalPrice"
+        (ngModelChange)="calculateDiscount()"
+        placeholder="e.g. 500"
+      />
+    </div>
+
+    <div class="input-grid-inner">
+      <div class="input-group">
+        <label class="input-label" for="discount-input">Discount (%)</label>
+        <input
+          id="discount-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="discountPercent"
+          (ngModelChange)="calculateDiscount()"
+          placeholder="e.g. 15"
+        />
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="tax-input">Tax (%)</label>
+        <input
+          id="tax-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="additionalTaxPercent"
+          (ngModelChange)="calculateDiscount()"
+          placeholder="e.g. 5"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="results-container" *ngIf="finalPrice !== null">
+    <div class="primary-result">
+      <div class="result-value">₹{{ finalPrice | number:'1.2-2' }}</div>
+      <div class="result-label">Final Price</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">You Save</span>
+        <span class="detail-value" style="color: #48bb78;">₹{{ savingAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Original Price</span>
+        <span class="detail-value">₹{{ originalPrice | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

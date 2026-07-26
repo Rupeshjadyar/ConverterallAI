@@ -1,0 +1,62 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">📈 SIP Calculator</h2>
+  <p class="calculator-subtitle">Calculate returns of your Systemic Investment Plan</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="monthly-invest-input">Monthly Investment (₹)</label>
+      <input
+        id="monthly-invest-input"
+        type="number"
+        class="input-field"
+        [(ngModel)]="monthlyInvestment"
+        (ngModelChange)="calculateSip()"
+        placeholder="e.g. 5000"
+      />
+    </div>
+
+    <div class="input-grid-inner">
+      <div class="input-group">
+        <label class="input-label" for="return-rate-input">Expected Return Rate (% p.a.)</label>
+        <input
+          id="return-rate-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="expectedReturnRate"
+          (ngModelChange)="calculateSip()"
+          placeholder="e.g. 12"
+        />
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="period-input">Time Period (Years)</label>
+        <input
+          id="period-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="timePeriod"
+          (ngModelChange)="calculateSip()"
+          placeholder="e.g. 10"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="results-container" *ngIf="totalValue !== null">
+    <div class="primary-result">
+      <div class="result-value">₹{{ totalValue | number }}</div>
+      <div class="result-label">Expected Amount</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">Invested Amount</span>
+        <span class="detail-value">₹{{ investedAmount | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Est. Returns</span>
+        <span class="detail-value" style="color: #48bb78;">₹{{ estReturns | number }}</span>
+      </div>
+    </div>
+  </div>
+</div>

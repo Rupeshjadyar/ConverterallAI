@@ -1,0 +1,76 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">💰 GST Calculator</h2>
+  <p class="calculator-subtitle">Calculate GST Inclusive / Exclusive amounts</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="amount-input">Amount (₹)</label>
+      <input
+        id="amount-input"
+        type="number"
+        class="input-field"
+        [(ngModel)]="amount"
+        (ngModelChange)="calculateGst()"
+        placeholder="Enter amount"
+      />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label" for="gst-rate-select">GST Rate (%)</label>
+      <select
+        id="gst-rate-select"
+        class="input-field"
+        [(ngModel)]="gstRate"
+        (ngModelChange)="calculateGst()"
+      >
+        <option [value]="5">5%</option>
+        <option [value]="12">12%</option>
+        <option [value]="18">18%</option>
+        <option [value]="28">28%</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="toggle-container">
+    <button
+      class="toggle-btn"
+      [class.active]="gstType === 'exclusive'"
+      (click)="gstType = 'exclusive'; calculateGst()"
+    >
+      GST Exclusive
+    </button>
+    <button
+      class="toggle-btn"
+      [class.active]="gstType === 'inclusive'"
+      (click)="gstType = 'inclusive'; calculateGst()"
+    >
+      GST Inclusive
+    </button>
+  </div>
+
+  <div class="results-container" *ngIf="totalAmount !== null">
+    <div class="primary-result">
+      <div class="result-value">₹{{ totalAmount | number:'1.2-2' }}</div>
+      <div class="result-label">Total Amount (Gross)</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">Net Amount (Tax Excl.)</span>
+        <span class="detail-value">₹{{ netAmount | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total GST Tax</span>
+        <span class="detail-value" style="color: #f6ad55;">₹{{ totalGst | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">CGST (Central Tax)</span>
+        <span class="detail-value">₹{{ cgst | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">SGST (State Tax)</span>
+        <span class="detail-value">₹{{ sgst | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

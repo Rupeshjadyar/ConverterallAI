@@ -1,0 +1,306 @@
+<div class="emi-calculator">
+
+  <!-- Header -->
+  <div class="calculator-header">
+
+    <h1 class="calc-title">
+      EMI Calculator
+    </h1>
+
+    <p class="calc-subtitle">
+      Calculate monthly EMI, total interest payable, and total repayment amount
+      for home loans, car loans, personal loans, education loans, and more.
+    </p>
+
+  </div>
+
+  <!-- Calculator Card -->
+  <section class="calc-card">
+
+    <p class="section-desc">
+      Enter your loan details below to calculate your Equated Monthly Installment (EMI).
+    </p>
+
+    <div class="input-grid">
+
+      <!-- Loan Amount -->
+      <div class="field-box">
+        <label for="loanAmount">
+          Loan Amount (₹)
+        </label>
+
+        <div class="input-wrapper">
+          <input
+            id="loanAmount"
+            type="number"
+            class="calc-input"
+            placeholder="500000"
+            [(ngModel)]="loanAmount"
+            (input)="calculateEMI()">
+
+          <span class="input-addon">₹</span>
+        </div>
+      </div>
+
+      <!-- Interest -->
+      <div class="field-box">
+        <label for="interestRate">
+          Interest Rate (% per year)
+        </label>
+
+        <div class="input-wrapper">
+          <input
+            id="interestRate"
+            type="number"
+            class="calc-input"
+            placeholder="8.5"
+            [(ngModel)]="interestRate"
+            (input)="calculateEMI()">
+
+          <span class="input-addon">%</span>
+        </div>
+      </div>
+
+      <!-- Tenure -->
+      <div class="field-box">
+        <label for="loanTenure">
+          Loan Tenure (Years)
+        </label>
+
+        <input
+          id="loanTenure"
+          type="number"
+          class="calc-input"
+          placeholder="5"
+          [(ngModel)]="loanTenure"
+          (input)="calculateEMI()">
+      </div>
+
+    </div>
+
+    <!-- Results -->
+
+    <div class="result-grid">
+
+      <div class="result-card">
+        <span class="result-label">
+          Monthly EMI
+        </span>
+
+        <div class="result-badge primary">
+          {{
+            monthlyEMI !== null
+              ? ('₹' + (monthlyEMI | number:'1.0-2'))
+              : '---'
+          }}
+        </div>
+      </div>
+
+      <div class="result-card">
+        <span class="result-label">
+          Total Interest
+        </span>
+
+        <div class="result-badge success">
+          {{
+            totalInterest !== null
+              ? ('₹' + (totalInterest | number:'1.0-2'))
+              : '---'
+          }}
+        </div>
+      </div>
+
+      <div class="result-card">
+        <span class="result-label">
+          Total Payment
+        </span>
+
+        <div class="result-badge warning">
+          {{
+            totalPayment !== null
+              ? ('₹' + (totalPayment | number:'1.0-2'))
+              : '---'
+          }}
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Loan Summary -->
+
+  <section
+    class="calc-card"
+    *ngIf="
+      monthlyEMI !== null &&
+      totalInterest !== null &&
+      totalPayment !== null
+    ">
+
+    <h2>
+      Loan Summary
+    </h2>
+
+    <ul class="summary-list">
+      <li>
+        Loan Amount:
+        <strong>
+          ₹{{ loanAmount | number:'1.0-0' }}
+        </strong>
+      </li>
+
+      <li>
+        Interest Rate:
+        <strong>
+          {{ interestRate }}%
+        </strong>
+      </li>
+
+      <li>
+        Loan Tenure:
+        <strong>
+          {{ loanTenure }} Years
+        </strong>
+      </li>
+
+      <li>
+        Monthly EMI:
+        <strong>
+          ₹{{ monthlyEMI | number:'1.0-2' }}
+        </strong>
+      </li>
+
+      <li>
+        Total Interest:
+        <strong>
+          ₹{{ totalInterest | number:'1.0-2' }}
+        </strong>
+      </li>
+
+      <li>
+        Total Repayment:
+        <strong>
+          ₹{{ totalPayment | number:'1.0-2' }}
+        </strong>
+      </li>
+    </ul>
+
+  </section>
+
+  <!-- SEO CONTENT -->
+
+  <section class="seo-content-block">
+
+    <h2>
+      What is EMI?
+    </h2>
+
+    <p>
+      EMI (Equated Monthly Installment) is the fixed amount that a borrower pays
+      to a lender every month until the loan is completely repaid. An EMI
+      consists of both principal and interest components.
+    </p>
+
+    <p>
+      EMI calculators help borrowers estimate monthly repayments before applying
+      for a loan, making financial planning easier and more accurate.
+    </p>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>
+      EMI Formula
+    </h2>
+
+    <p>
+      The EMI calculation is based on the loan amount, annual interest rate,
+      and repayment tenure.
+    </p>
+
+    <p>
+      Monthly EMI is calculated using a standard loan amortization formula.
+    </p>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>
+      Benefits of Using an EMI Calculator
+    </h2>
+
+    <ul>
+      <li>Instant EMI calculation</li>
+      <li>Accurate loan repayment estimates</li>
+      <li>Better financial planning</li>
+      <li>Compare multiple loan offers</li>
+      <li>Calculate home, car, and personal loans</li>
+      <li>Estimate total interest payable</li>
+    </ul>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>
+      Types of Loans
+    </h2>
+
+    <ul>
+      <li>Home Loan EMI Calculator</li>
+      <li>Car Loan EMI Calculator</li>
+      <li>Personal Loan EMI Calculator</li>
+      <li>Education Loan EMI Calculator</li>
+      <li>Business Loan EMI Calculator</li>
+      <li>Gold Loan EMI Calculator</li>
+    </ul>
+
+  </section>
+
+  <section class="seo-content-block">
+
+    <h2>
+      Frequently Asked Questions
+    </h2>
+
+    <h3>
+      What is EMI?
+    </h3>
+
+    <p>
+      EMI stands for Equated Monthly Installment, which is a fixed monthly
+      payment made towards loan repayment.
+    </p>
+
+    <h3>
+      How is EMI calculated?
+    </h3>
+
+    <p>
+      EMI is calculated using the loan amount, interest rate, and loan tenure.
+    </p>
+
+    <h3>
+      Does a longer tenure reduce EMI?
+    </h3>
+
+    <p>
+      Yes. A longer loan tenure reduces monthly EMI but increases total interest
+      paid over the life of the loan.
+    </p>
+
+    <h3>
+      Can I use this calculator for home loans?
+    </h3>
+
+    <p>
+      Yes. This EMI calculator can be used for home loans, personal loans, car
+      loans, education loans, and most installment-based loans.
+    </p>
+
+  </section>
+
+</div>

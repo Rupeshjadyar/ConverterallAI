@@ -1,0 +1,133 @@
+<div class="container py-5">
+  <!-- Top Breadcrumb & Navigation -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <a routerLink="/home" class="btn btn-outline-primary d-inline-flex align-items-center gap-2">
+      <i class="bi bi-arrow-left"></i> Back to Hub
+    </a>
+    <span class="badge bg-primary px-3 py-2 fs-6">
+      <i class="bi bi-mic-fill me-1"></i> AI Speech Engine
+    </span>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold mb-2">Text to Audio &amp; Speech Studio</h1>
+    <p class="text-secondary lead max-w-700 mx-auto">
+      Convert any text, article, or script into natural studio voice narration. Adjust speech rate, pitch, voice actor, and listen instantly in your browser.
+    </p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Input Studio -->
+    <div class="col-lg-7">
+      <div class="card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">
+            <i class="bi bi-file-earmark-text me-2 text-primary"></i>Enter Script / Text
+          </h5>
+          <span class="badge bg-secondary">{{ textInput.length }} chars</span>
+        </div>
+
+        <!-- Quick Preset Samples -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Namaste and welcome to ConverterallAI! All your document, image, and speech tools are now 100% free and super fast.')">
+            ✨ Sample Greeting
+          </button>
+          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Artificial Intelligence is transforming how we work with digital files, making complex editing tasks simple and instantaneous.')">
+            🎙️ Tech Narration
+          </button>
+          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Important notification: Your document processing has completed successfully. Please check your download folder.')">
+            🔔 Notification Voice
+          </button>
+        </div>
+
+        <textarea
+          [(ngModel)]="textInput"
+          rows="9"
+          class="form-control mb-3 fs-6"
+          placeholder="Type or paste text to convert to audio..."
+        ></textarea>
+
+        <!-- Waveform / Status Indicator -->
+        <div class="audio-visualizer-bar p-3 rounded mb-3 d-flex align-items-center justify-content-between" [class.active-glow]="isPlaying">
+          <div class="d-flex align-items-center gap-2">
+            <div class="wave-dots d-flex gap-1" *ngIf="isPlaying">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+            <i class="bi bi-volume-up-fill text-primary fs-4" *ngIf="!isPlaying"></i>
+            <span class="fw-semibold">
+              {{ isPlaying ? 'Speaking Now...' : isPaused ? 'Paused' : 'Ready to Narrate' }}
+            </span>
+          </div>
+          <span class="badge" [class.bg-success]="isPlaying" [class.bg-warning]="isPaused" [class.bg-secondary]="!isPlaying && !isPaused">
+            {{ isPlaying ? 'LIVE' : isPaused ? 'PAUSED' : 'IDLE' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Voice & Speech Controls -->
+    <div class="col-lg-5">
+      <div class="card p-4 h-100">
+        <h5 class="fw-bold mb-4">
+          <i class="bi bi-sliders me-2 text-primary"></i>Voice &amp; Studio Controls
+        </h5>
+
+        <!-- Voice Selector -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Select Voice / Accent</label>
+          <select [(ngModel)]="selectedVoiceIndex" class="form-select">
+            <option *ngFor="let voice of voices; let i = index" [value]="i">
+              {{ voice.name }} ({{ voice.lang }})
+            </option>
+          </select>
+          <small class="text-secondary mt-1 d-block">
+            Found {{ voices.length }} native voices on your device.
+          </small>
+        </div>
+
+        <!-- Speed / Rate Slider -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between">
+            <label class="form-label fw-semibold">Speaking Rate (Speed)</label>
+            <span class="badge bg-primary">{{ rate }}x</span>
+          </div>
+          <input type="range" class="form-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="rate" />
+        </div>
+
+        <!-- Pitch Slider -->
+        <div class="mb-4">
+          <div class="d-flex justify-content-between">
+            <label class="form-label fw-semibold">Voice Pitch</label>
+            <span class="badge bg-primary">{{ pitch }}</span>
+          </div>
+          <input type="range" class="form-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="pitch" />
+        </div>
+
+        <!-- Playback Buttons -->
+        <div class="d-grid gap-2 mb-3">
+          <button class="btn btn-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2" (click)="speak()">
+            <i class="bi" [class.bi-play-fill]="!isPlaying" [class.bi-arrow-repeat]="isPlaying"></i>
+            {{ isPlaying ? 'Restart Speech' : isPaused ? 'Resume Speech' : 'Play Narration' }}
+          </button>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary flex-grow-1 py-2" (click)="pause()" [disabled]="!isPlaying">
+              <i class="bi bi-pause-fill me-1"></i> Pause
+            </button>
+            <button class="btn btn-outline-primary flex-grow-1 py-2" (click)="stop()">
+              <i class="bi bi-stop-fill me-1"></i> Stop
+            </button>
+          </div>
+        </div>
+
+        <hr class="border-secondary my-3" />
+
+        <!-- Export Action -->
+        <button class="btn btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2" (click)="downloadSpeechAsAudio()">
+          <i class="bi bi-download"></i> Export Script &amp; Trigger Audio
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

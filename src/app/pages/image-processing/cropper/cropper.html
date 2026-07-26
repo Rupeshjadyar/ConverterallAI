@@ -1,0 +1,45 @@
+<div class="tool-container">
+  <h2 class="tool-title">✂️ Image Cropper & Rotator</h2>
+  <p class="tool-subtitle">Crop and rotate your photos. Perfect for passports, profile pictures, and more!</p>
+
+  <div class="upload-section" *ngIf="!imageChangedEvent">
+    <label class="upload-label">
+      <input type="file" (change)="fileChangeEvent($event)" accept="image/*" class="hidden-input"/>
+      <div class="upload-content">
+        <span class="upload-icon">📁</span>
+        <span class="upload-text">Select Image to Crop</span>
+      </div>
+    </label>
+  </div>
+
+  <div class="processing-section" *ngIf="imageChangedEvent">
+    <div class="cropper-wrapper">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        [maintainAspectRatio]="true"
+        [aspectRatio]="aspectRatio"
+        format="png"
+        (imageCropped)="imageCropped($event)"
+        (imageLoaded)="imageLoaded()"
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()"
+      ></image-cropper>
+    </div>
+
+    <div class="controls-section">
+      <h3>Aspect Ratio:</h3>
+      <div class="ratio-buttons">
+        <button class="ratio-btn" [class.active]="aspectRatio === 1/1" (click)="setRatio(1/1)">1:1 (Square)</button>
+        <button class="ratio-btn" [class.active]="aspectRatio === 4/3" (click)="setRatio(4/3)">4:3</button>
+        <button class="ratio-btn" [class.active]="aspectRatio === 16/9" (click)="setRatio(16/9)">16:9</button>
+        <button class="ratio-btn" [class.active]="aspectRatio === 3/4" (click)="setRatio(3/4)">3:4</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-section" *ngIf="croppedImage">
+    <h3>Preview</h3>
+    <img [src]="croppedImage" class="cropped-preview" />
+    <button class="action-btn" (click)="downloadImage()">Download Cropped Image</button>
+  </div>
+</div>

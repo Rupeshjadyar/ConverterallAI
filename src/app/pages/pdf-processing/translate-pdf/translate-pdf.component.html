@@ -1,0 +1,103 @@
+<div class="tool-container">
+  <a routerLink="/pdf-processing" class="back-link">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to Dashboard
+  </a>
+
+  <div class="tool-header animate-fade-in">
+    <div class="badge">
+      <span class="badge-dot" [class.local]="false"></span>
+      Cloud API Processing
+    </div>
+    <h1>🗣️ Translate PDF</h1>
+    <p class="tool-desc">Translate your PDF documents into other languages using AI.</p>
+  </div>
+
+  <div class="main-card glass animate-fade-in-up">
+    <!-- 1. Dropzone (Initial state) -->
+    <div 
+      *ngIf="selectedFiles.length === 0 && !isConverting && !convertedUrl"
+      class="dropzone"
+      [class.dragging]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+    >
+      <div class="dropzone-content">
+        <div class="upload-icon">🗣️</div>
+        <div class="upload-title">Drag and drop your PDF here, or click to browse</div>
+        <div class="upload-sub">Supports files up to 100MB</div>
+        <button class="btn-action" style="max-width: 200px; margin-top: 1rem;">Choose Files</button>
+      </div>
+      <input 
+        #fileInput
+        type="file" 
+        class="file-input" 
+        [accept]="'application/pdf'"
+        
+        (change)="onFileSelected($event)"
+      />
+    </div>
+
+    <!-- 2. Selected Files List -->
+    <div *ngIf="selectedFiles.length > 0 && !isConverting && !convertedUrl">
+      <div class="file-list">
+        <div class="file-item" *ngFor="let file of selectedFiles; let i = index">
+          <div class="file-info">
+            <span class="file-icon">📄</span>
+            <div class="file-details">
+              <span class="file-name">{{ file.name }}</span>
+              <span class="file-size">{{ formatBytes(file.size) }}</span>
+            </div>
+          </div>
+          <button class="remove-btn" (click)="removeFile(i)">&times;</button>
+        </div>
+      </div>
+
+      <!-- Settings placeholder (Custom options depending on the tool) -->
+      
+
+      <div class="action-area">
+        <button class="btn-action" (click)="processFiles()">
+          <span>Process files</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. Processing State -->
+    <div *ngIf="isConverting" class="action-area">
+      <div class="progress-container">
+        <div class="progress-header">
+          <span>Processing Document...</span>
+          <span>{{ progress }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar" [style.width.%]="progress"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Success State -->
+    <div *ngIf="convertedUrl" class="success-card">
+      <div class="success-icon">✓</div>
+      <h3 class="success-title">Process Completed successfully!</h3>
+      <p style="color: var(--text-secondary);">Your file is ready for download. Processing completed securely.</p>
+      
+      <button class="btn-action btn-download" (click)="download()">
+        <span>Download File</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
+        </svg>
+      </button>
+
+      <button class="reset-link" (click)="resetState(true)">Convert another file</button>
+    </div>
+  </div>
+</div>

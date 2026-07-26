@@ -1,0 +1,205 @@
+<div class="documents-home">
+  <!-- Animated background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="badge animate-fade-in">
+        <span class="badge-dot"></span>
+        30+ PDF & AI Utilities
+      </div>
+      <h1 class="animate-fade-in-up">
+        📄 Advanced PDF <span class="gradient-text">Toolkit</span>
+      </h1>
+      <p class="header-subtitle animate-fade-in-up delay-1">
+        Professional PDF and document processing tools. Merge, split, rotate, watermark, protect, and convert documents. Fast, secure, and completely free.
+      </p>
+    </header>
+
+    <!-- Stats Section -->
+    <div class="stats-row animate-fade-in-up delay-2">
+      <div class="stat-card glass">
+        <div class="stat-icon">📄</div>
+        <div class="stat-number">30+</div>
+        <div class="stat-label">Power Tools</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-number">100%</div>
+        <div class="stat-label">In-Browser Core</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">🛡️</div>
+        <div class="stat-number">Secure</div>
+        <div class="stat-label">Client-Side First</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">🔒</div>
+        <div class="stat-number">Private</div>
+        <div class="stat-label">No Files Stored</div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section animate-fade-in-up delay-3">
+      <div class="search-box glass">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="filterTools()"
+          placeholder="Search PDF tools (e.g. merge, compress, protect)..."
+          class="search-input"
+        />
+      </div>
+      <div class="category-filters">
+        <button
+          *ngFor="let cat of categories"
+          [class.active]="selectedCategory === cat.id"
+          (click)="filterByCategory(cat.id)"
+          class="filter-chip"
+        >
+          <span class="chip-icon">{{ cat.icon }}</span>
+          <span class="chip-text">{{ cat.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Popular Tools -->
+    <section class="section" *ngIf="searchTerm === '' && selectedCategory === 'all'">
+      <div class="section-header">
+        <h2>⭐ Most Popular Tools</h2>
+        <p>Used by millions of creators worldwide</p>
+      </div>
+      <div class="tools-grid popular-grid">
+        <div
+          class="tool-card glass"
+          *ngFor="let tool of popularTools; trackBy: trackByToolId"
+          (click)="openTool(tool)"
+        >
+          <div class="tool-card-glow" [style.background]="tool.color"></div>
+          <div class="tool-icon-wrap">
+            <div class="tool-icon" [style.background]="tool.color">
+              <span>{{ tool.icon }}</span>
+            </div>
+          </div>
+          <div class="tool-info">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <h3>{{ tool.name }}</h3>
+              <span class="tech-badge" [class.local]="tool.local">
+                {{ tool.local ? 'Local' : 'Cloud' }}
+              </span>
+            </div>
+            <p>{{ tool.description }}</p>
+            <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+              Try Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Tools -->
+    <section class="section">
+      <div class="section-header">
+        <h2>🔧 All Document Tools</h2>
+        <p>Everything you need to edit and convert your documents</p>
+      </div>
+      <div class="tools-grid all-grid">
+        <div
+          class="tool-card glass"
+          *ngFor="let tool of filteredTools; trackBy: trackByToolId"
+          (click)="openTool(tool)"
+        >
+          <div class="tool-card-glow" [style.background]="tool.color"></div>
+          <div class="tool-icon-wrap">
+            <div class="tool-icon" [style.background]="tool.color">
+              <span>{{ tool.icon }}</span>
+            </div>
+          </div>
+          <div class="tool-info">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+              <h3>{{ tool.name }}</h3>
+              <span class="tech-badge" [class.local]="tool.local">
+                {{ tool.local ? 'Local' : 'Cloud' }}
+              </span>
+            </div>
+            <p>{{ tool.description }}</p>
+            <div class="tool-footer">
+              <span class="popular-badge" *ngIf="tool.popular">
+                <span class="fire-icon">🔥</span> Popular
+              </span>
+              <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+                Try Now
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state glass" *ngIf="filteredTools.length === 0">
+        <span class="empty-icon">🔍</span>
+        <h3>No tools found</h3>
+        <p>Try searching with different keywords</p>
+        <button
+          class="btn-primary"
+          (click)="searchTerm = ''; selectedCategory = 'all'; filterTools()"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="section-header">
+        <h2>✨ Why Choose ConverterallAI Documents?</h2>
+        <p>Secure, client-side, layout-preserving conversions</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap"><div class="feature-icon">🛡️</div></div>
+          <h4>Layout Preservation</h4>
+          <p>Converting to PPT or Word preserves exact font sizes and alignment</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap"><div class="feature-icon">🔒</div></div>
+          <h4>End-to-End Privacy</h4>
+          <p>Conversions run entirely in-browser or delete automatically within 1 hour</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap"><div class="feature-icon">📁</div></div>
+          <h4>Large Files Supported</h4>
+          <p>Upload files up to 100MB with clean optimization options</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap"><div class="feature-icon">⚡</div></div>
+          <h4>Local Processing</h4>
+          <p>Instant processing without loading queues or server lag</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Box -->
+    <div class="cta-box">
+      <div class="cta-glow"></div>
+      <div class="cta-content">
+        <h2>Need quick conversions?</h2>
+        <p>Try PDF to Word or JPG to PDF conversion in one click.</p>
+        <button class="btn-white" (click)="openTool(documentTools[0])">
+          🚀 Get Started
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">🏠 Loan Calculator</h2>
+  <p class="calculator-subtitle">Calculate Home, Auto, or Personal Loan details</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="loan-amount-input">Loan Amount (₹)</label>
+      <input
+        id="loan-amount-input"
+        type="number"
+        class="input-field"
+        [(ngModel)]="loanAmount"
+        (ngModelChange)="calculateLoan()"
+        placeholder="e.g. 1000000"
+      />
+    </div>
+
+    <div class="input-grid-inner">
+      <div class="input-group">
+        <label class="input-label" for="loan-rate-input">Interest Rate (% p.a.)</label>
+        <input
+          id="loan-rate-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="interestRate"
+          (ngModelChange)="calculateLoan()"
+          placeholder="e.g. 8.5"
+        />
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="loan-tenure-input">Tenure (Years)</label>
+        <input
+          id="loan-tenure-input"
+          type="number"
+          class="input-field"
+          [(ngModel)]="loanTenure"
+          (ngModelChange)="calculateLoan()"
+          placeholder="e.g. 15"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="results-container" *ngIf="totalPayment !== null">
+    <div class="primary-result">
+      <div class="result-value">₹{{ monthlyEmi | number }}</div>
+      <div class="result-label">Monthly Repayment (EMI)</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">Principal Amount</span>
+        <span class="detail-value">₹{{ loanAmount | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Interest</span>
+        <span class="detail-value" style="color: #fc8181;">₹{{ totalInterest | number }}</span>
+      </div>
+      <div class="detail-card-full">
+        <span class="detail-label">Total Amount Payable</span>
+        <span class="detail-value-large">₹{{ totalPayment | number }}</span>
+      </div>
+    </div>
+  </div>
+</div>

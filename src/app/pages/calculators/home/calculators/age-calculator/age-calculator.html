@@ -1,0 +1,62 @@
+<div class="calculator-container">
+  <h2 class="calculator-title">🎂 Age Calculator</h2>
+  <p class="calculator-subtitle">Calculate exact age in years, months, and days</p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label class="input-label" for="birthdate-input">Date of Birth</label>
+      <input
+        id="birthdate-input"
+        type="date"
+        class="input-field"
+        [(ngModel)]="birthDate"
+        (ngModelChange)="calculateAge()"
+      />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label" for="refdate-input">Age at the Date of</label>
+      <input
+        id="refdate-input"
+        type="date"
+        class="input-field"
+        [(ngModel)]="referenceDate"
+        (ngModelChange)="calculateAge()"
+      />
+    </div>
+  </div>
+
+  <div class="results-container" *ngIf="years !== null">
+    <div class="primary-result">
+      <div class="result-value">{{ years }} Years, {{ months }} Months, {{ days }} Days</div>
+      <div class="result-label">Your exact age</div>
+    </div>
+
+    <div class="details-grid">
+      <div class="detail-card">
+        <span class="detail-label">Next Birthday in</span>
+        <span class="detail-value">{{ nextBirthdayMonths }} Months, {{ nextBirthdayDays }} Days</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Months</span>
+        <span class="detail-value">{{ totalMonths | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Weeks</span>
+        <span class="detail-value">{{ totalWeeks | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Days</span>
+        <span class="detail-value">{{ totalDays | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Hours</span>
+        <span class="detail-value">{{ totalHours | number }}</span>
+      </div>
+      <div class="detail-card">
+        <span class="detail-label">Total Minutes</span>
+        <span class="detail-value">{{ totalMinutes | number }}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,374 @@
+<div class="bg-app-container">
+  <!-- TOP NAVBAR -->
+  <header class="bg-app-header">
+    <div class="brand-group">
+      <div class="brand-logo-icon">✨</div>
+      <span class="brand-title">ConverterAll AI <strong class="brand-sub">BgRemover 2026</strong></span>
+      <span class="version-pill">v3.1 • AI</span>
+    </div>
+
+    <div class="header-right-actions">
+      <button class="icon-btn" title="Notifications">🔔</button>
+      <button class="icon-btn" title="Settings">⚙️</button>
+      <div class="user-avatar-badge">JS</div>
+      <div class="plan-status">
+        <strong>Pro Plan</strong> • <span>Unlimited Credits / Local</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-COLUMN STUDIO GRID -->
+  <div class="bg-studio-grid">
+    
+    <!-- LEFT SIDEBAR: MENU -->
+    <aside class="bg-sidebar">
+      <div class="menu-label">MENU</div>
+      <nav class="sidebar-nav">
+        <button class="nav-item" [class.active]="activeMenu === 'remover'" (click)="selectMenu('remover')">
+          <span class="nav-icon">✨</span> <span class="nav-text">Background Remover</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'dashboard'" (click)="selectMenu('dashboard')">
+          <span class="nav-icon">📊</span> <span class="nav-text">Dashboard</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'bulk'" (click)="selectMenu('bulk')">
+          <span class="nav-icon">⚡</span> <span class="nav-text">Bulk Remove</span>
+          <span class="count-badge">12</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'replace'" (click)="selectMenu('replace')">
+          <span class="nav-icon">🖼️</span> <span class="nav-text">AI Background Replace</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'brush'" (click)="selectMenu('brush')">
+          <span class="nav-icon">🪄</span> <span class="nav-text">Magic Brush</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'projects'" (click)="selectMenu('projects')">
+          <span class="nav-icon">📁</span> <span class="nav-text">My Projects</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'api'" (click)="selectMenu('api')">
+          <span class="nav-icon">🔗</span> <span class="nav-text">API Access</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'analytics'" (click)="selectMenu('analytics')">
+          <span class="nav-icon">📈</span> <span class="nav-text">Analytics</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'templates'" (click)="selectMenu('templates')">
+          <span class="nav-icon">📐</span> <span class="nav-text">Templates</span>
+        </button>
+        <button class="nav-item" [class.active]="activeMenu === 'settings'" (click)="selectMenu('settings')">
+          <span class="nav-icon">⚙️</span> <span class="nav-text">Settings</span>
+        </button>
+      </nav>
+
+      <!-- TRENDING 2026 CARD -->
+      <div class="trending-card">
+        <div class="trending-title">🔥 TRENDING 2026</div>
+        <div class="trending-list">
+          <div class="trending-item">📈 Cyberpunk City <small>2.1k uses</small></div>
+          <div class="trending-item">📸 Studio Portrait <small>1.8k uses</small></div>
+          <div class="trending-item">📦 Product Mockup <small>1.5k uses</small></div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="footer-link">❓ Help & Support</button>
+        <button class="footer-link">💬 Give Feedback</button>
+      </div>
+    </aside>
+
+    <!-- CENTER MAIN WORKSPACE -->
+    <main class="bg-main-workspace" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <!-- Main Header Area -->
+      <div class="workspace-header-row">
+        <div class="workspace-titles">
+          <h1 class="main-title">Background Remover</h1>
+          <p class="main-subtitle">Remove backgrounds instantly with AI • 4K Export • Bulk processing</p>
+        </div>
+        <div class="top-action-buttons">
+          <label class="btn-secondary upload-btn">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input"/>
+            <span>↑ Upload Files</span>
+          </label>
+          <button class="btn-secondary" (click)="removeBackground()">⚡ Bulk Remove</button>
+          <button class="btn-primary export-hd-btn" (click)="downloadImage()">↓ Export 4K HD</button>
+        </div>
+      </div>
+
+      <!-- PREVIEW CARD WITH TOOLBAR & COMPARISON -->
+      <div class="bg-preview-card">
+        <div class="preview-toolbar">
+          <div class="toolbar-left">
+            <span class="toolbar-label">Preview • Before / After</span>
+          </div>
+          <div class="toolbar-center">
+            <span class="toggle-text">Slider View</span>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="isSliderView" />
+              <span class="slider-round"></span>
+            </label>
+            <span class="toggle-status">{{ isSliderView ? 'ON' : 'OFF' }}</span>
+            <button class="side-by-side-btn" [class.active]="!isSliderView" (click)="isSliderView = !isSliderView">Side by Side</button>
+          </div>
+          <div class="toolbar-right">
+            <span class="zoom-text">Zoom: {{ zoomLevel }}% ▾</span>
+          </div>
+        </div>
+
+        <!-- MAIN VIEWPORT COMPARISON -->
+        <div class="viewport-stage" [class.slider-mode]="isSliderView" [class.side-mode]="!isSliderView">
+          
+          <!-- Processing Overlay if busy -->
+          <div class="ai-processing-overlay" *ngIf="isProcessing">
+            <div class="cyber-spinner"></div>
+            <p class="process-text">{{ progressMessage }}</p>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" [style.width.%]="processingProgress"></div>
+            </div>
+          </div>
+
+          <!-- SLIDER VIEW COMPARISON MODE -->
+          <div class="slider-comparison-container" *ngIf="isSliderView">
+            <!-- AFTER (Underneath / Background layer with custom BG) -->
+            <div class="layer-after" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
+              <span class="corner-badge after-badge">AFTER</span>
+              <img [src]="resultUrl || originalUrl" class="compared-img" />
+            </div>
+
+            <!-- BEFORE (Top clipped layer) -->
+            <div class="layer-before" [style.clip-path]="'polygon(0 0, ' + sliderPosition + '% 0, ' + sliderPosition + '% 100%, 0 100%)'">
+              <span class="corner-badge before-badge">BEFORE</span>
+              <img [src]="originalUrl" class="compared-img" />
+            </div>
+
+            <!-- SLIDER HANDLE & DIVIDER -->
+            <div class="slider-divider-line" [style.left.%]="sliderPosition">
+              <div class="slider-circle-handle">
+                <span>◀ ▶</span>
+              </div>
+            </div>
+            <input type="range" min="0" max="100" [value]="sliderPosition" (input)="onSliderChange($event)" class="invisible-range-input"/>
+          </div>
+
+          <!-- SIDE BY SIDE COMPARISON MODE -->
+          <div class="side-by-side-grid" *ngIf="!isSliderView">
+            <div class="side-box before-side">
+              <span class="corner-badge before-badge">BEFORE</span>
+              <img [src]="originalUrl" class="side-img" />
+            </div>
+            <div class="side-box after-side" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
+              <span class="corner-badge after-badge">AFTER</span>
+              <img [src]="resultUrl || originalUrl" class="side-img" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DRAG & DROP MULTI FILES ZONE -->
+      <label class="bg-drop-zone">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" multiple class="hidden-input"/>
+        <div class="drop-inner">
+          <div class="drop-cloud-icon">☁️</div>
+          <div class="drop-texts">
+            <strong class="drop-title">Drag & Drop multi files here</strong>
+            <span class="drop-info">Supports PNG, JPG, WEBP • Up to 20 files at once • 4K resolution</span>
+          </div>
+        </div>
+      </label>
+
+      <!-- BATCH FILE QUEUE CARDS -->
+      <div class="bg-batch-list">
+        <div *ngFor="let item of batchFiles" class="batch-card" [class.active-card]="activeBatchId === item.id" (click)="selectBatchItem(item)">
+          <div class="thumb-wrap" [class.transparent-check]="item.resultUrl">
+            <img [src]="item.resultUrl || item.originalUrl" class="thumb-img" />
+            <span class="status-badge" *ngIf="item.status === 'done'">✔</span>
+          </div>
+          <div class="batch-details">
+            <div class="batch-name-row">
+              <span class="status-text">{{ item.status === 'done' ? 'Done' : 'Processing' }}</span>
+              <span class="file-name">{{ item.name }}</span>
+            </div>
+            <div class="batch-meta-row">
+              <span>{{ item.size }}</span>
+              <span *ngIf="item.status === 'processing'">• {{ item.progress }}%</span>
+              <span *ngIf="item.status === 'done'" class="green-check">✔</span>
+            </div>
+            <div class="mini-progress-bar" *ngIf="item.status === 'processing'">
+              <div class="mini-fill" [style.width.%]="item.progress"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: OPTIONS -->
+    <aside class="bg-options-sidebar">
+      <div class="panel-head-title">✨ Background Options</div>
+
+      <div class="options-section">
+        <label class="opt-label">Background Type</label>
+        <div class="bg-type-tabs">
+          <button class="type-btn" [class.active]="bgType === 'transparent'" (click)="setBgType('transparent')">
+            <span class="type-icon">🏁</span> Transparent
+          </button>
+          <button class="type-btn" [class.active]="bgType === 'solid'" (click)="setBgType('solid')">
+            <span class="type-icon">⚪</span> Solid Color
+          </button>
+          <button class="type-btn" [class.active]="bgType === 'gradient'" (click)="setBgType('gradient')">
+            <span class="type-icon">🌈</span> Gradient
+          </button>
+          <button class="type-btn" [class.active]="bgType === 'image'" (click)="setBgType('image')">
+            <span class="type-icon">🖼️</span> Image
+          </button>
+        </div>
+
+        <div class="solid-picker-row" *ngIf="bgType === 'solid'">
+          <label>Pick Solid Color:</label>
+          <input type="color" [(ngModel)]="solidColor" class="wide-color-input"/>
+        </div>
+
+        <div class="image-picker-row" *ngIf="bgType === 'image'" style="margin-top: 15px;">
+          <label style="display:block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: var(--text-color);">Upload Custom Background:</label>
+          <input type="file" (change)="onCustomBgSelected($event)" accept="image/*" class="pw-input" style="width: 100%;" />
+        </div>
+
+        <div class="gradient-presets-wrap" *ngIf="bgType === 'gradient'">
+          <label class="opt-label">Gradient Presets</label>
+          <div class="gradient-grid">
+            <div *ngFor="let g of gradientPresets" class="gradient-swatch" [style.background]="g" [class.selected]="selectedGradient === g" (click)="selectGradient(g)">
+              <span class="check-mark" *ngIf="selectedGradient === g">✔</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI BACKGROUND REPLACE -->
+      <div class="options-section ai-replace-section">
+        <div class="section-top-row">
+          <span class="section-title">✨ AI Background Replace</span>
+          <span class="new-pill">NEW 2026</span>
+        </div>
+        <textarea [(ngModel)]="aiPrompt" rows="2" class="ai-prompt-box" placeholder="Describe the background... e.g. 'neon cyberpunk city rooftop, rainy night, moody'"></textarea>
+        <button class="btn-ai-generate" (click)="generateAiBackground()" [disabled]="isGeneratingAiBg">
+          {{ isGeneratingAiBg ? '⚡ Synthesizing AI Scene...' : 'Generate Background →' }}
+        </button>
+      </div>
+
+      <!-- ENHANCEMENTS -->
+      <div class="options-section">
+        <span class="section-title">Enhancements</span>
+        
+        <div class="toggle-row-item">
+          <div class="toggle-label-wrap">
+            <strong>Auto Shadow</strong>
+            <span>Add realistic natural shadow under subject</span>
+          </div>
+          <div class="toggle-group">
+            <span class="toggle-status-lbl">{{ autoShadow ? 'ON' : 'OFF' }}</span>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="autoShadow" />
+              <span class="slider-round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="toggle-row-item">
+          <div class="toggle-label-wrap">
+            <strong>Relight Subject</strong>
+            <span>Match subject lighting to new background</span>
+          </div>
+          <div class="toggle-group">
+            <span class="toggle-status-lbl">{{ relightSubject ? 'ON' : 'OFF' }}</span>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="relightSubject" />
+              <span class="slider-round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="toggle-row-item">
+          <div class="toggle-label-wrap">
+            <strong>Edge Refinement</strong>
+            <span>Refine hair & fine details</span>
+          </div>
+          <div class="toggle-group">
+            <span class="toggle-status-lbl">{{ edgeRefinement ? 'ON' : 'OFF' }}</span>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="edgeRefinement" />
+              <span class="slider-round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAGIC BRUSH -->
+      <div class="options-section">
+        <div class="magic-brush-row">
+          <div class="brush-modes">
+            <button class="brush-btn" [class.active]="magicBrushMode === 'restore'" (click)="magicBrushMode = 'restore'">✏️ Restore</button>
+            <button class="brush-btn" [class.active]="magicBrushMode === 'erase'" (click)="magicBrushMode = 'erase'">🧼 Erase</button>
+          </div>
+          <div class="brush-meta">
+            <span>Magic Brush</span> <small>size: {{ brushSize }}px | Feather: 5px</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT SETTINGS -->
+      <div class="options-section export-settings-box">
+        <div class="setting-row">
+          <label>Resolution:</label>
+          <select [(ngModel)]="exportResolution" class="pw-select">
+            <option value="4K (3840×2160)">4K (3840×2160)</option>
+            <option value="1080P Full HD">1080P Full HD</option>
+            <option value="Original Size">Original Size</option>
+          </select>
+        </div>
+
+        <div class="setting-row">
+          <label>Format:</label>
+          <select [(ngModel)]="exportFormat" class="pw-select">
+            <option value="PNG • Transparent">PNG • Transparent</option>
+            <option value="JPG • High Quality">JPG • High Quality</option>
+            <option value="WEBP • Compressed">WEBP • Compressed</option>
+          </select>
+        </div>
+
+        <div class="setting-row quality-row">
+          <div class="quality-head">
+            <label>Quality:</label>
+            <span>{{ exportQuality }}% HD</span>
+          </div>
+          <input type="range" min="10" max="100" [(ngModel)]="exportQuality" class="quality-slider"/>
+        </div>
+
+        <button class="btn-export-all" (click)="downloadAllBatch()">
+          Export All {{ batchFiles.length }} Files in 4K →
+        </button>
+      </div>
+
+      <!-- API ACCESS FOOTER BOX -->
+      <div class="api-access-box">
+        <div class="api-info">
+          <span class="api-title">🔗 API Access</span>
+          <span class="api-url">https://api.converterall.ai/v3/remove</span>
+        </div>
+        <button class="btn-copy-api" (click)="copyApiKey()">📋 Copy API Key</button>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- BOTTOM STATUS FOOTER -->
+  <footer class="bg-app-footer">
+    <div class="footer-left">
+      <span>Bulk Remove: {{ batchFiles.length }}/{{ batchFiles.length }} completed</span>
+      <span class="separator">•</span>
+      <span>Processing time: 3.2s avg</span>
+      <span class="separator">•</span>
+      <span>Powered by AI Model v3.1-turbo</span>
+    </div>
+    <div class="footer-right">
+      <span>Local processing enabled</span>
+      <span class="separator">•</span>
+      <span>Privacy Mode: On 🛡️</span>
+    </div>
+  </footer>
+</div>

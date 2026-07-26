@@ -1,0 +1,58 @@
+<div class="master-ui-container">
+  <div class="ambient-mesh blur-magenta"></div>
+  <div class="ambient-mesh blur-cyan"></div>
+
+  <div class="premium-calc-shell">
+    <div class="shell-header">
+      <div class="identity-badge">
+        <span class="pro-tag">ULTRA</span>
+        <span class="app-name">NEURAL CALC</span>
+      </div>
+      <div class="pulsing-heartbeat">
+        <span class="core-wave"></span>
+        <span class="core-point"></span>
+      </div>
+    </div>
+
+    <div class="glass-display-panel">
+      <div class="history-row">
+        <span *ngIf="operation">
+          {{ previousValue }}
+          <span class="operator-glow-text">
+            {{ operation === '*' ? '×' : operation === '/' ? '÷' : operation }}
+          </span>
+        </span>
+      </div>
+      <div class="main-output-row" [class.auto-scale-font]="displayValue.length > 12">
+        {{ displayValue }}
+      </div>
+    </div>
+    
+    <div class="button-deck">
+      <button class="key-control key-ac" (click)="clear()" title="Shortcut: Esc">AC</button>
+      <button class="key-control key-backspace" (click)="backspace()" title="Shortcut: Backspace">⌫</button>
+      <button class="key-control" (click)="toggleSign()" title="Toggle ±">±</button>
+      <button class="key-operator color-cyan" (click)="performOperation('/')">÷</button>
+      
+      <button class="key-digit" (click)="inputDigit('7')">7</button>
+      <button class="key-digit" (click)="inputDigit('8')">8</button>
+      <button class="key-digit" (click)="inputDigit('9')">9</button>
+      <button class="key-operator color-pink" (click)="performOperation('*')">×</button>
+      
+      <button class="key-digit" (click)="inputDigit('4')">4</button>
+      <button class="key-digit core-focus" (click)="inputDigit('5')">5</button>
+      <button class="key-digit" (click)="inputDigit('6')">6</button>
+      <button class="key-operator color-blue" (click)="performOperation('-')">−</button>
+      
+      <button class="key-digit" (click)="inputDigit('1')">1</button>
+      <button class="key-digit" (click)="inputDigit('2')">2</button>
+      <button class="key-digit" (click)="inputDigit('3')">3</button>
+      <button class="key-operator color-purple" (click)="performOperation('+')">+</button>
+      
+      <button class="key-digit span-two" (click)="inputDigit('0')">0</button>
+      <button class="key-digit" (click)="inputDecimal()">.</button>
+      <button class="key-control" (click)="getPercentage()">%</button>
+      <button class="key-submit-equals" (click)="calculateResult()">=</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+.tool-container {
+  padding: 2rem;
+  color: var(--text-color);
+  font-family: inherit;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.tool-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.tool-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+.upload-section {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--surface-color);
+}
+.upload-section:hover {
+  border-color: #43e97b;
+  background: rgba(67, 233, 123, 0.05);
+}
+.hidden-input {
+  display: none;
+}
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.upload-icon {
+  font-size: 3rem;
+}
+.upload-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+.processing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.cropper-wrapper {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  max-height: 500px;
+}
+.controls-section {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+.controls-section h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+.ratio-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ratio-btn {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ratio-btn:hover {
+  background: var(--border-color);
+}
+.ratio-btn.active {
+  background: rgba(67, 233, 123, 0.2);
+  border-color: #43e97b;
+  color: #43e97b;
+}
+.result-section {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 2rem;
+  background: var(--surface-color);
+  border-radius: 8px;
+  border: 1px solid var(--surface-color);
+}
+.result-section h3 {
+  margin-bottom: 1rem;
+}
+.cropped-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.action-btn {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: #000;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.action-btn:hover {
+  opacity: 0.9;
+}

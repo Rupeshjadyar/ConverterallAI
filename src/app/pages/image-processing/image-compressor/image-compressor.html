@@ -1,0 +1,293 @@
+<div class="compressor-page">
+  <!-- Interactive Floating Background Lights -->
+  <div class="glow-light light-blue"></div>
+  <div class="glow-light light-purple"></div>
+  <!-- Toast Notification -->
+  <div class="toast" [class.show]="toastVisible">
+    <div class="toast-content">
+      <span class="toast-icon">✨</span>
+      <span class="toast-text">{{ toastMsg }}</span>
+    </div>
+  </div>
+  <div class="main-container">
+    <!-- Back Link & Header -->
+    <header class="header">
+      <a class="btn-back" href="/image-processing">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        All Tools
+      </a>
+      <h1 class="title">🗜️ Image <span class="gradient-text">Compressor</span></h1>
+      <p class="subtitle">Reduce image file size instantly. 100% private, secure and runs entirely in your browser.</p>
+    </header>
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <!-- Upload Drop Zone -->
+      <div 
+        class="drop-zone" 
+        [class.dragging]="isDragging"
+        [class.has-files]="images.length > 0"
+        (dragenter)="dragEnter($event)"
+        (dragleave)="dragLeave($event)"
+        (dragover)="$event.preventDefault()"
+        (drop)="drop($event)"
+        (click)="fileInput.click()"
+        tabindex="0"
+        aria-label="Upload Images"
+      >
+        <input 
+          #fileInput 
+          type="file" 
+          multiple 
+          accept="image/jpeg,image/png,image/webp,image/bmp,image/gif"
+          (change)="pickFiles($event)"
+          hidden
+        />
+        
+        <div class="drop-zone-content" *ngIf="images.length === 0">
+          <div class="drop-illustration">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <h3>Select or Drop Images Here</h3>
+          <p>Supports JPG, PNG, WEBP, GIF, BMP — Up to 50MB per file</p>
+          <button class="btn-select" (click)="$event.stopPropagation(); fileInput.click()">
+            Choose Images
+          </button>
+        </div>
+        <div class="drop-zone-mini" *ngIf="images.length > 0">
+          <span class="plus-icon">+</span> Add More Images
+        </div>
+      </div>
+      <!-- Action Toolbar -->
+      <div class="toolbar" *ngIf="images.length > 0">
+        <button class="btn-tool-outline" (click)="settingsOpen = !settingsOpen" [class.active]="settingsOpen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </button>
+        <div class="toolbar-right">
+          <button class="btn-clear" (click)="clearAll()">Clear List</button>
+          <button class="btn-primary" (click)="downloadAll()" [disabled]="doneImages.length === 0">
+            Download All ({{ doneImages.length }})
+          </button>
+        </div>
+      </div>
+      <!-- Settings Panel -->
+      <div class="settings-card card-glow" *ngIf="settingsOpen && images.length > 0">
+        <div class="settings-grid">
+          <!-- Quality Slider -->
+          <div class="setting-col">
+            <div class="setting-header-inline">
+              <span class="setting-label">Quality Level</span>
+              <span class="setting-val-badge">{{ quality }}%</span>
+            </div>
+            <input 
+              type="range" 
+              min="10" 
+              max="100" 
+              step="5" 
+              [(ngModel)]="quality" 
+              class="slider"
+            />
+            <div class="slider-ticks">
+              <span>High Size</span>
+              <span>Balanced</span>
+              <span>Best Compression</span>
+            </div>
+          </div>
+          <!-- Format Choice -->
+          <div class="setting-col">
+            <span class="setting-label">Output Format</span>
+            <div class="btn-group-formats">
+              <button [class.selected]="format === 'auto'" (click)="format = 'auto'">Original</button>
+              <button [class.selected]="format === 'jpeg'" (click)="format = 'jpeg'">JPEG</button>
+              <button [class.selected]="format === 'png'" (click)="format = 'png'">PNG</button>
+              <button [class.selected]="format === 'webp'" (click)="format = 'webp'">WEBP</button>
+            </div>
+          </div>
+          <!-- Dimensions Limit -->
+          <div class="setting-col dimensions-col">
+            <span class="setting-label">Resize Constraints</span>
+            <div class="dimensions-inputs">
+              <div class="dim-field">
+                <input type="number" [(ngModel)]="maxWidth" placeholder="Max Width" />
+                <span class="dim-unit">Width (px)</span>
+              </div>
+              <div class="dim-field">
+                <input type="number" [(ngModel)]="maxHeight" placeholder="Max Height" />
+                <span class="dim-unit">Height (px)</span>
+              </div>
+            </div>
+            <label class="checkbox-label">
+              <input type="checkbox" [checked]="keepRatio" (change)="keepRatio = !keepRatio" />
+              Maintain original aspect ratio
+            </label>
+          </div>
+        </div>
+        <button class="btn-apply-settings" (click)="recompress()" [disabled]="busy">
+          <span *ngIf="!busy">Apply & Compress Again</span>
+          <span *ngIf="busy">Processing...</span>
+        </button>
+      </div>
+      <!-- Batch Stats Bar -->
+      <div class="summary-stats-bar" *ngIf="doneImages.length > 0">
+        <div class="stat-box">
+          <span class="stat-desc">Total Saved</span>
+          <span class="stat-number-accent">{{ fmt(totalSaved) }}</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-desc">Files Optimized</span>
+          <span class="stat-number">{{ doneImages.length }} / {{ images.length }}</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-desc">Avg Compression</span>
+          <span class="stat-number-green">-{{ overallReduction }}%</span>
+        </div>
+      </div>
+      <!-- Global Progress Bar -->
+      <div class="global-progress" *ngIf="busy">
+        <div class="global-progress-track">
+          <div class="global-progress-fill" [style.width.%]="progress"></div>
+        </div>
+        <div class="progress-details">
+          <span>Optimizing images...</span>
+          <span>{{ progress }}%</span>
+        </div>
+      </div>
+      <!-- Uploaded Image Cards List -->
+      <div class="image-cards-list" *ngIf="images.length > 0">
+        <div 
+          class="image-card" 
+          *ngFor="let img of images; trackBy: trackById"
+          [class.card-done]="img.status === 'done'"
+          [class.card-processing]="img.status === 'compressing'"
+          [class.card-error]="img.status === 'error'"
+        >
+          <!-- Left side: image thumbnail + basic info -->
+          <div class="card-left" (click)="img.status === 'done' ? preview(img) : null">
+            <div class="card-thumb">
+              <img [src]="img.compressedUrl || img.originalUrl" alt="Thumbnail" />
+              <div class="preview-overlay-icon" *ngIf="img.status === 'done'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </div>
+            </div>
+            
+            <div class="card-details">
+              <h4 class="file-name" [title]="img.file.name">{{ img.file.name }}</h4>
+              
+              <!-- File Sizes display -->
+              <div class="file-sizes-block">
+                <span class="original-size">{{ fmt(img.originalSize) }}</span>
+                <span class="arrow-indicator" *ngIf="img.status === 'done'">→</span>
+                <span class="compressed-size" *ngIf="img.status === 'done'">{{ fmt(img.compressedSize) }}</span>
+                <span class="badge-status-processing" *ngIf="img.status === 'compressing'">Optimizing...</span>
+                <span class="badge-status-queued" *ngIf="img.status === 'queued'">Queued</span>
+                <span class="badge-status-error" *ngIf="img.status === 'error'">Failed</span>
+              </div>
+              <!-- Visual Compression Bar -->
+              <div class="bar-container" *ngIf="img.status === 'done'">
+                <div class="size-bar">
+                  <div class="size-bar-fill" [style.width.%]="sizeBarWidth(img)"></div>
+                </div>
+                <span class="saved-percentage-label" *ngIf="img.reduction > 0">-{{ img.reduction }}%</span>
+              </div>
+              <p class="error-msg-text" *ngIf="img.status === 'error'">{{ img.errorMsg }}</p>
+            </div>
+          </div>
+          <!-- Right side: card actions -->
+          <div class="card-actions">
+            <button class="btn-action-download" (click)="download(img)" *ngIf="img.status === 'done'" title="Download Image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
+            <button class="btn-action-delete" (click)="remove(img.id)" title="Remove Image">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Modal Preview Room -->
+    <div class="modal-backdrop" *ngIf="previewImg" (click)="closePreview()">
+      <div class="modal-view" (click)="$event.stopPropagation()">
+        <!-- Close -->
+        <button class="modal-close-btn" (click)="closePreview()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="modal-body">
+          <div class="modal-image-panel">
+            <img [src]="previewImg.compressedUrl || previewImg.originalUrl" alt="Compressed Preview" />
+          </div>
+          <div class="modal-details-panel">
+            <h3 class="modal-image-title">{{ previewImg.file.name }}</h3>
+            
+            <div class="modal-comparison-grid">
+              <div class="comp-box">
+                <span class="comp-label">Before</span>
+                <span class="comp-val">{{ fmt(previewImg.originalSize) }}</span>
+                <span class="comp-sub" *ngIf="previewImg.origW">{{ previewImg.origW }} x {{ previewImg.origH }}px</span>
+              </div>
+              <div class="comp-box-arrow">
+                <span>→</span>
+              </div>
+              <div class="comp-box highlight">
+                <span class="comp-label">After</span>
+                <span class="comp-val-green">{{ fmt(previewImg.compressedSize) }}</span>
+                <span class="comp-sub" *ngIf="previewImg.newW">{{ previewImg.newW }} x {{ previewImg.newH }}px</span>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-modal-download" (click)="download(previewImg)">
+                Download Optimized File
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- FAQ & Information Accordion (SEO Section) -->
+    <section class="info-section" *ngIf="images.length === 0">
+      <h2 class="section-title">Common Questions & Help</h2>
+      <div class="faq-accordion">
+        <details class="faq-card">
+          <summary>How safe are my files here?</summary>
+          <div class="faq-answer">
+            <p>Your privacy is our priority. Since all compression runs directly inside your browser on your machine, your photos are never sent or stored on any server. Nobody else can access them.</p>
+          </div>
+        </details>
+        <details class="faq-card">
+          <summary>Which image formats can I compress?</summary>
+          <div class="faq-answer">
+            <p>You can upload and compress JPG, JPEG, PNG, WEBP, GIF, and BMP formats. You can also output your files as WEBP or PNG if you want to convert them on the fly.</p>
+          </div>
+        </details>
+        <details class="faq-card">
+          <summary>How much can this tool reduce size?</summary>
+          <div class="faq-answer">
+            <p>Typically, size is reduced by 50% to 90% without any visible degradation in quality. Standard quality (80%) is ideal for most websites, emails, and social media uploads.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+</div>

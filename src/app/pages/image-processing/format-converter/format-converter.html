@@ -1,0 +1,36 @@
+<div class="tool-container">
+  <h2 class="tool-title">🔄 Image Format Converter</h2>
+  <p class="tool-subtitle">Convert PNG to JPG, WEBP to JPG, and more. Free and secure right in your browser!</p>
+
+  <div class="upload-section" *ngIf="!previewUrl">
+    <label class="upload-label">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input"/>
+      <div class="upload-content">
+        <span class="upload-icon">📁</span>
+        <span class="upload-text">Click to Upload Image</span>
+      </div>
+    </label>
+  </div>
+
+  <div class="processing-section" *ngIf="previewUrl">
+    <div class="image-preview">
+      <img [src]="previewUrl" alt="Original Image" />
+    </div>
+
+    <div class="controls-section">
+      <div class="control-group">
+        <label>Select Target Format</label>
+        <select [(ngModel)]="targetFormat" class="format-select">
+          <option *ngFor="let fmt of formats" [value]="fmt.value">{{ fmt.label }}</option>
+        </select>
+      </div>
+
+      <button class="action-btn" (click)="convertImage()">Convert Now</button>
+    </div>
+  </div>
+
+  <div class="result-section" *ngIf="convertedUrl">
+    <h3>Conversion Successful! 🎉</h3>
+    <button class="download-btn" (click)="downloadImage()">Download Converted Image</button>
+  </div>
+</div>

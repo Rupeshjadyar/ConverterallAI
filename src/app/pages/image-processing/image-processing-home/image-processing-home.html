@@ -1,0 +1,218 @@
+<div class="image-processing-home">
+  <!-- Animated background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <div class="badge animate-fade-in">
+        <span class="badge-dot"></span>
+        10+ Image Processing Tools
+      </div>
+      <h1 class="animate-fade-in-up">
+        🖼️ Complete Image <span class="gradient-text">Toolkit</span>
+      </h1>
+      <p class="header-subtitle animate-fade-in-up delay-1">
+        Professional image editing tools — Compress, Resize, Convert, Crop,
+        Filter &amp; More. All free, all in one place.
+      </p>
+    </header>
+    <!-- Stats Section -->
+    <div class="stats-row animate-fade-in-up delay-2">
+      <div class="stat-card glass">
+        <div class="stat-icon">📸</div>
+        <div class="stat-number counter">1M+</div>
+        <div class="stat-label">Images Processed</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-number counter">99.9%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-number counter">10+</div>
+        <div class="stat-label">Free Tools</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-icon">🔒</div>
+        <div class="stat-number counter">100%</div>
+        <div class="stat-label">Secure &amp; Private</div>
+      </div>
+    </div>
+    <!-- Search Section -->
+    <div class="search-section animate-fade-in-up delay-3">
+      <div class="search-box glass">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="filterTools()"
+          placeholder="Search image tools..."
+          class="search-input"
+        />
+        <kbd class="search-kbd" *ngIf="!searchTerm">Ctrl K</kbd>
+      </div>
+      <div class="category-filters">
+        <button
+          *ngFor="let cat of categories"
+          [class.active]="selectedCategory === cat.id"
+          (click)="filterByCategory(cat.id)"
+          class="filter-chip"
+        >
+          <span class="chip-icon">{{ cat.icon }}</span>
+          <span class="chip-text">{{ cat.name }}</span>
+        </button>
+      </div>
+    </div>
+    <!-- Popular Tools -->
+    <section
+      class="section"
+      *ngIf="searchTerm === '' && selectedCategory === 'all'"
+    >
+      <div class="section-header">
+        <h2>⭐ Most Popular Tools</h2>
+        <p>Used by millions of creators worldwide</p>
+      </div>
+      <div class="tools-grid popular-grid">
+        <div
+          class="tool-card glass"
+          *ngFor="let tool of popularTools; trackBy: trackByToolId"
+          (click)="openTool(tool)"
+        >
+          <div class="tool-card-glow" [style.background]="tool.color"></div>
+          <div class="tool-icon-wrap">
+            <div class="tool-icon" [style.background]="tool.color">
+              <span>{{ tool.icon }}</span>
+            </div>
+          </div>
+          <div class="tool-info">
+            <h3>{{ tool.name }}</h3>
+            <p>{{ tool.description }}</p>
+            <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+              Try Now
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- All Tools -->
+    <section class="section">
+      <div class="section-header">
+        <h2>🔧 All Image Tools</h2>
+        <p>Everything you need to edit and optimize images</p>
+      </div>
+      <div class="tools-grid all-grid">
+        <div
+          class="tool-card glass"
+          *ngFor="let tool of filteredTools; trackBy: trackByToolId"
+          (click)="openTool(tool)"
+        >
+          <div class="tool-card-glow" [style.background]="tool.color"></div>
+          <div class="tool-icon-wrap">
+            <div class="tool-icon" [style.background]="tool.color">
+              <span>{{ tool.icon }}</span>
+            </div>
+          </div>
+          <div class="tool-info">
+            <h3>{{ tool.name }}</h3>
+            <p>{{ tool.description }}</p>
+            <div class="tool-footer">
+              <span class="popular-badge" *ngIf="tool.popular">
+                <span class="fire-icon">🔥</span> Popular
+              </span>
+              <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+                Try Now
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Empty State -->
+      <div class="empty-state glass" *ngIf="filteredTools.length === 0">
+        <span class="empty-icon">🔍</span>
+        <h3>No tools found</h3>
+        <p>Try searching with different keywords</p>
+        <button
+          class="btn-primary"
+          (click)="searchTerm = ''; selectedCategory = 'all'; filterTools()"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </section>
+    <!-- Features -->
+    <section class="features-section">
+      <div class="section-header">
+        <h2>✨ Why Choose Our Image Tools?</h2>
+        <p>Built for speed, privacy and simplicity</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">🚀</div>
+          </div>
+          <h4>Lightning Fast</h4>
+          <p>Process images in seconds with our optimized engine</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">🔒</div>
+          </div>
+          <h4>100% Private</h4>
+          <p>Images auto-delete after 1 hour. No storage, no tracking</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">📱</div>
+          </div>
+          <h4>Mobile Friendly</h4>
+          <p>Works perfectly on all devices — phone, tablet, desktop</p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">🆓</div>
+          </div>
+          <h4>Completely Free</h4>
+          <p>No signup, no watermark, no hidden charges</p>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <div class="cta-box">
+      <div class="cta-glow"></div>
+      <div class="cta-content">
+        <h2>Ready to transform your images?</h2>
+        <p>Start editing now — No registration required</p>
+        <button class="btn-white" (click)="openTool(imageTools[0])">
+          🚀 Start Processing
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

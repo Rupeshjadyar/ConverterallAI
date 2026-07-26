@@ -1,0 +1,52 @@
+<div class="bmi-calculator">
+  <h2 class="calc-title">BMI Calculator</h2>
+
+  <div class="unit-toggle">
+    <button [class.active]="unit === 'metric'" (click)="setUnit('metric')">Metric (kg/cm)</button>
+    <button [class.active]="unit === 'imperial'" (click)="setUnit('imperial')">Imperial (lbs/in)</button>
+  </div>
+
+  <div class="input-card">
+    <div class="input-field">
+      <div class="input-header">
+        <label>Weight</label>
+        <span class="unit-label">{{ unit === 'metric' ? 'kg' : 'lbs' }}</span>
+      </div>
+      <input type="number" [(ngModel)]="weight" (input)="calculate()" class="calc-input">
+      <input type="range" [min]="unit === 'metric' ? 20 : 44" [max]="unit === 'metric' ? 200 : 440" [(ngModel)]="weight" (input)="calculate()" class="custom-slider">
+    </div>
+
+    <div class="input-field">
+      <div class="input-header">
+        <label>Height</label>
+        <span class="unit-label">{{ unit === 'metric' ? 'cm' : 'inches' }}</span>
+      </div>
+      <input type="number" [(ngModel)]="height" (input)="calculate()" class="calc-input">
+      <input type="range" [min]="unit === 'metric' ? 100 : 39" [max]="unit === 'metric' ? 250 : 98" [(ngModel)]="height" (input)="calculate()" class="custom-slider">
+    </div>
+  </div>
+
+  <div class="bmi-result" *ngIf="bmi">
+    <span class="result-title">Your Score</span>
+    <div class="bmi-value">{{ bmi }}</div>
+    <div class="bmi-category" [ngClass]="categoryClass">{{ category }}</div>
+    <div class="bmi-info">{{ getAdvice() }}</div>
+  </div>
+
+  <div class="bmi-scale">
+    <div class="scale-bar">
+      <div class="segment bg-underweight"></div>
+      <div class="segment bg-normal"></div>
+      <div class="segment bg-overweight"></div>
+      <div class="segment bg-obese"></div>
+    </div>
+    <div class="scale-marker" [style.left]="markerPosition"></div>
+    
+    <div class="scale-labels">
+      <span class="label text-underweight">&lt; 18.5</span>
+      <span class="label text-normal">18.5 - 24.9</span>
+      <span class="label text-overweight">25 - 29.9</span>
+      <span class="label text-obese">30+</span>
+    </div>
+  </div>
+</div>

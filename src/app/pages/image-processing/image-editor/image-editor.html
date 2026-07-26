@@ -1,0 +1,864 @@
+<div class="pixelworks-app">
+  <!-- Top Navbar Bar (ConverterAll Studio Pro Style) -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="logo-circle">
+        <svg viewBox="0 0 24 24" class="logo-svg" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+      </div>
+      <span class="brand-title">CONVERTERALL AI <small class="brand-sub">STUDIO PRO</small></span>
+    </div>
+
+    <!-- Center Navigation Tabs (Synchronized 1:1 with Left Tool Inspector) -->
+    <nav class="center-nav">
+      <button class="nav-item" [class.active]="activeTool === 'adjust'" (click)="selectTool('adjust')">File</button>
+      <button class="nav-item active" (click)="selectTool('crop')">Edit</button>
+      <button class="nav-item" [class.active]="activeTool === 'filters'" (click)="selectTool('filters')">View</button>
+      <button class="nav-item" [class.active]="activeTool === 'ai'" (click)="selectTool('ai')">AI</button>
+      <button class="nav-item" [class.active]="activeTool === 'paint'" (click)="selectTool('paint')">Library</button>
+      <button class="nav-item" [class.active]="activeTool === 'overlay'" (click)="selectTool('overlay')">Share</button>
+    </nav>
+
+    <!-- Right Header Actions -->
+    <div class="header-actions">
+      <button class="icon-btn" (click)="rotate(-90)" title="Rotate Left 90°">↺</button>
+      <button class="icon-btn" (click)="rotate(90)" title="Rotate Right 90°">↻</button>
+      
+      <div class="zoom-pill">
+        <button class="zoom-mini" (click)="zoom(-15)">-</button>
+        <span class="zoom-val">{{ zoomLevel }}%</span>
+        <button class="zoom-mini" (click)="zoom(15)">+</button>
+      </div>
+
+      <button class="reset-btn" (click)="resetAll()">↺ Reset</button>
+      <button class="export-btn" *ngIf="selectedFile" (click)="downloadImage()">
+        <span>Export</span>
+      </button>
+      <div class="user-avatar">JN</div>
+    </div>
+  </header>
+
+  <!-- Upload Launcher (When No Photo Selected) -->
+  <div class="upload-container" *ngIf="!selectedFile">
+    <label class="upload-card">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input"/>
+      <div class="upload-inner">
+        <div class="upload-icon-box">
+          <span class="upload-symbol">📸</span>
+        </div>
+        <h2 class="upload-title">Drop or Select Photo for ConverterAll AI Studio</h2>
+        <p class="upload-desc">Pro RAW, PNG, JPG & WEBP Color Grading Engine • 16-Bit Processing • Zero Server Upload</p>
+        <span class="launch-btn">Launch Workspace</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- 3-Column Studio Workspace -->
+  <main class="studio-grid" *ngIf="selectedFile">
+    
+    <!-- LEFT PANEL: TOOLS LIST & ACTIVE INSPECTOR -->
+    <aside class="left-panel">
+      
+      <!-- TOOLS CARD (Reference UI Style) -->
+      <div class="tools-sidebar-card">
+        <div class="panel-section-head">TOOLS</div>
+        <div class="tools-vertical-list">
+          <button class="tool-v-btn" [class.active]="activeTool === 'crop'" (click)="selectTool('crop')">
+            <span class="t-icon">🔲</span><span class="t-name">Crop</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'adjust'" (click)="selectTool('adjust')">
+            <span class="t-icon">🎛️</span><span class="t-name">Adjust</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'filters'" (click)="selectTool('filters')">
+            <span class="t-icon">✨</span><span class="t-name">Filters</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'ai'" (click)="selectTool('ai')">
+            <span class="t-icon">🤖</span><span class="t-name">AI Enhance</span><span class="new-pill">NEW</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'paint'" (click)="selectTool('paint')">
+            <span class="t-icon">🖌️</span><span class="t-name">Masking</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'healing'" (click)="selectTool('healing')">
+            <span class="t-icon">🩹</span><span class="t-name">Healing</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'text'" (click)="selectTool('text')">
+            <span class="t-icon">🔤</span><span class="t-name">Text</span>
+          </button>
+          <button class="tool-v-btn" [class.active]="activeTool === 'overlay'" (click)="selectTool('overlay')">
+            <span class="t-icon">🖼️</span><span class="t-name">Add Photo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. CROP & ROTATE INSPECTOR -->
+      <div class="tool-inspector" *ngIf="activeTool === 'crop'">
+        <div class="panel-section-head">CROP OPTIONS</div>
+        <div class="inspector-body">
+          <div class="opt-row">
+            <label>Aspect Ratio</label>
+            <select [(ngModel)]="aspectRatio" class="pw-select">
+              <option value="Freeform">Freeform</option>
+              <option value="16:9">16:9 Landscape</option>
+              <option value="4:3">4:3 Standard</option>
+              <option value="1:1">1:1 Square</option>
+              <option value="9:16">9:16 Portrait / Story</option>
+            </select>
+          </div>
+          <div class="opt-row toggle-row">
+            <label>Rule of Thirds Overlay</label>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="ruleOfThirds" (change)="applyChanges()"/>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+          <div class="opt-buttons-row">
+            <button class="pw-sub-btn" (click)="rotate(90)">↺ Rotate 90°</button>
+            <button class="pw-sub-btn" (click)="toggleFlipH()">↔ Flip Horizontal</button>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head">
+              <label>Horizon Angle</label>
+              <span>{{ fineRotation }}°</span>
+            </div>
+            <input type="range" min="-45" max="45" [(ngModel)]="fineRotation" (input)="applyChanges()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. EDIT & COLOR GUIDANCE INSPECTOR -->
+      <div class="tool-inspector" *ngIf="activeTool === 'adjust'">
+        <div class="panel-section-head">ADJUST OPTIONS</div>
+        <div class="inspector-body">
+          <p class="guide-text">Use the comprehensive 16-bit Adjustments inspector on the right sidebar to fine-tune Exposure, Highlights, Shadows, Vibrance, and Temperature in real time.</p>
+          <div class="opt-buttons-row" style="margin-top: 1rem;">
+            <button class="pw-sub-btn" (click)="selectTool('ai')">⚡ Auto AI Grade</button>
+            <button class="pw-sub-btn" (click)="resetAll()">↺ Reset All Sliders</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 1-CLICK FILTERS & PRESETS INSPECTOR -->
+      <div class="tool-inspector" *ngIf="activeTool === 'filters'">
+        <div class="panel-section-head">FILTER PRESETS</div>
+        <div class="inspector-body">
+          <label class="sub-label">Select Color Atmosphere</label>
+          <div class="preset-grid">
+            <button class="pw-preset" [class.active]="activePreset === 'normal'" (click)="applyPreset('normal')">🌟 Normal / Raw</button>
+            <button class="pw-preset" [class.active]="activePreset === 'vivid'" (click)="applyPreset('vivid')">🔥 Vivid HDR</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cinema'" (click)="applyPreset('cinema')">🎞️ Cinematic</button>
+            <button class="pw-preset" [class.active]="activePreset === 'vintage'" (click)="applyPreset('vintage')">📜 Vintage</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cyberpunk'" (click)="applyPreset('cyberpunk')">🌆 Cyberpunk</button>
+            <button class="pw-preset" [class.active]="activePreset === 'bw'" (click)="applyPreset('bw')">🖤 Noir B&W</button>
+            <button class="pw-preset" [class.active]="activePreset === 'warm'" (click)="applyPreset('warm')">🌅 Warm Sunset</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cool'" (click)="applyPreset('cool')">❄️ Cool Crisp</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. AI ENHANCE INSPECTOR -->
+      <div class="tool-inspector" *ngIf="activeTool === 'ai'">
+        <div class="panel-section-head">AI ENHANCE OPTIONS</div>
+        <div class="inspector-body">
+          <div class="ai-status-card" [class.active-ai-card]="aiEnhanceActive">
+            <span class="ai-icon">✨</span>
+            <div class="ai-info">
+              <strong>{{ aiEnhanceActive ? 'AI Enhancement Active' : 'AI Neural Engine Ready' }}</strong>
+              <p>{{ aiEnhanceActive ? 'Automated contrast balancing, dynamic highlight recovery, and clarity boost applied.' : 'Click below to instantly optimize highlights, shadows, and color vibrancy.' }}</p>
+            </div>
+          </div>
+          <button class="pw-export-full-btn" style="margin-top: 1rem;" (click)="applyAIEnhance()">
+            {{ aiEnhanceActive ? '✓ AI Enhance Applied (Turn Off)' : '⚡ Apply AI Neural Enhance' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. MASKING & PAINT STUDIO -->
+      <div class="tool-inspector" *ngIf="activeTool === 'paint'">
+        <div class="panel-section-head">MASKING OPTIONS</div>
+        <div class="inspector-body">
+          <div class="opt-row toggle-row">
+            <label>Enable Canvas Drawing</label>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="isDrawMode" />
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+          <!-- Professional Mode Switcher: Paint vs Erase vs Blur -->
+          <div class="mode-switcher-pills" *ngIf="isDrawMode">
+            <button class="mode-pill" [class.active-mode]="brushMode === 'paint'" (click)="brushMode = 'paint'">
+              🖌️ Paint Brush
+            </button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'erase'" (click)="brushMode = 'erase'">
+              🧹 Eraser Tool
+            </button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'blur'" (click)="brushMode = 'blur'">
+              🩹 Censor / Blur
+            </button>
+          </div>
+
+          <!-- Mode Guidance Description -->
+          <div class="brush-guide-banner" *ngIf="isDrawMode">
+            <span *ngIf="brushMode === 'paint'">🖌️ <strong>Paint Mode:</strong> Draw vector strokes, highlights, and custom freehand lines.</span>
+            <span *ngIf="brushMode === 'erase'">🧹 <strong>Eraser Mode:</strong> Erase and wipe away your drawn brush strokes cleanly like Photoshop.</span>
+            <span *ngIf="brushMode === 'blur'">🩹 <strong>Censor Mode:</strong> Paint over faces, license plates, or blemishes to apply an instant privacy blur.</span>
+          </div>
+
+          <div class="swatches-wrap" *ngIf="isDrawMode">
+            <label class="sub-label" *ngIf="brushMode === 'paint'">Color Swatch & Picker</label>
+            <div class="swatches-flex" *ngIf="brushMode === 'paint'">
+              <button *ngFor="let c of colorSwatches" class="pw-swatch" [style.background]="c" [class.active-c]="brushColor === c" (click)="brushColor = c"></button>
+              <input type="color" [(ngModel)]="brushColor" class="color-mini" title="Pick Custom Color" />
+            </div>
+
+            <!-- Brush Size Slider -->
+            <div class="slider-opt-item">
+              <div class="slider-head">
+                <label>{{ brushMode === 'erase' ? 'Eraser Size' : (brushMode === 'blur' ? 'Blur Brush Size' : 'Brush Size') }}</label>
+                <span>{{ brushWidth }}px</span>
+              </div>
+              <input type="range" min="1" max="100" [(ngModel)]="brushWidth" />
+            </div>
+
+            <!-- Brush Opacity / Flow Slider -->
+            <div class="slider-opt-item">
+              <div class="slider-head">
+                <label>{{ brushMode === 'erase' ? 'Eraser Strength' : 'Brush Opacity' }}</label>
+                <span>{{ brushOpacity }}%</span>
+              </div>
+              <input type="range" min="10" max="100" [(ngModel)]="brushOpacity" />
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="opt-buttons-row" style="margin-top: 1rem;">
+              <button class="pw-sub-btn" (click)="undoStroke()">↩️ Undo Stroke</button>
+              <button class="pw-clear-btn" (click)="clearPaint()">🧹 Clear All Paint</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. HEALING OPTIONS -->
+      <div class="tool-inspector" *ngIf="activeTool === 'healing'">
+        <div class="panel-section-head">HEALING OPTIONS</div>
+        <div class="inspector-body">
+          <p class="guide-text">Use the Healing & Eraser tools to remove spots, blemishes, or cleanly rub out brush strokes directly on the canvas.</p>
+          <div class="mode-switcher-pills" style="margin-top: 0.5rem;">
+            <button class="mode-pill" [class.active-mode]="brushMode === 'erase'" (click)="brushMode = 'erase'">
+              🧹 Eraser Brush
+            </button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'blur'" (click)="brushMode = 'blur'">
+              🩹 Spot / Blur
+            </button>
+          </div>
+          <div class="slider-opt-item" style="margin-top: 0.75rem;">
+            <div class="slider-head"><label>Healing Brush Size</label><span>{{ brushWidth }}px</span></div>
+            <input type="range" min="5" max="150" [(ngModel)]="brushWidth"/>
+          </div>
+          <div class="opt-buttons-row" style="margin-top: 0.75rem;">
+            <button class="pw-sub-btn" (click)="undoStroke()">↩️ Undo Stroke</button>
+            <button class="pw-clear-btn" (click)="clearPaint()">🧹 Clear All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. TYPOGRAPHY & LAYERS STUDIO -->
+      <div class="tool-inspector" *ngIf="activeTool === 'text'">
+        <div class="panel-section-head">TEXT OPTIONS</div>
+        <div class="inspector-body">
+          <label class="sub-label">Quick Studio Presets</label>
+          <div class="preset-grid">
+            <button class="pw-preset" (click)="addPresetText('heading')">💥 Bold Headline</button>
+            <button class="pw-preset" (click)="addPresetText('badge')">★ Cyan Badge</button>
+            <button class="pw-preset" (click)="addPresetText('watermark')">© Watermark</button>
+          </div>
+
+          <label class="sub-label" style="margin-top: 1rem;">Custom Text Entry</label>
+          <div class="opt-row">
+            <input type="text" [(ngModel)]="newText" placeholder="Add custom text..." class="pw-input" (keyup.enter)="addTextOverlay()"/>
+          </div>
+          <div class="opt-buttons-row" style="margin-top: 0.5rem;">
+            <select [(ngModel)]="newTextFont" class="pw-select" style="flex:1;">
+              <option value="Arial">Arial</option>
+              <option value="Impact">Impact</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Courier New">Courier</option>
+            </select>
+            <input type="color" [(ngModel)]="newTextColor" class="color-mini" style="width:44px; height:38px;" title="Text Color"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Font Size</label><span>{{ newTextSize }}px</span></div>
+            <input type="range" min="12" max="120" [(ngModel)]="newTextSize"/>
+          </div>
+          <button class="pw-add-btn" style="margin-top: 0.5rem;" (click)="addTextOverlay()">+ Add Text Layer</button>
+
+          <!-- Active Text Layers List -->
+          <div class="active-layers-list" *ngIf="textOverlays.length > 0">
+            <label class="sub-label">Active Text Layers (Click to position)</label>
+            <div class="text-layer-item" *ngFor="let item of textOverlays">
+              <span class="t-thumb" [style.color]="item.color">Aa</span>
+              <span class="t-label">{{ item.text }}</span>
+              <button class="t-del-btn" (click)="deleteTextOverlay(item.id)" title="Delete Text Layer">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. PHOTO OVERLAY / LOGO STUDIO -->
+      <div class="tool-inspector" *ngIf="activeTool === 'overlay'">
+        <div class="panel-section-head">PHOTO OVERLAY OPTIONS</div>
+        <div class="inspector-body">
+          <label class="pw-export-full-btn" style="text-align: center; cursor: pointer; display: block;">
+            + Add Photo / Logo Overlay
+            <input type="file" (change)="onOverlaySelected($event)" accept="image/*" style="display: none;"/>
+          </label>
+          <p class="guide-text" style="margin-top: 0.4rem;">Upload any PNG logo, sticker, or watermark photo to layer over your main image. Click canvas to position.</p>
+
+          <!-- Active Photo Overlays List -->
+          <div class="active-layers-list" *ngIf="imageOverlays.length > 0">
+            <label class="sub-label">Active Photo Layers</label>
+            <div class="overlay-item-card" *ngFor="let item of imageOverlays" style="background: var(--studio-input-bg); border: 1px solid var(--studio-border-subtle); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="font-size: 0.8rem; color: var(--studio-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">{{ item.name }}</strong>
+                <button class="t-del-btn" (click)="deleteImageOverlay(item.id)" title="Remove Photo Layer">🗑️</button>
+              </div>
+              <div class="slider-opt-item">
+                <div class="slider-head"><label>Scale / Size</label><span>{{ item.scale }}%</span></div>
+                <input type="range" min="10" max="200" [(ngModel)]="item.scale" (input)="applyChanges()"/>
+              </div>
+              <div class="slider-opt-item" style="margin-top: 0.4rem;">
+                <div class="slider-head"><label>Opacity</label><span>{{ item.opacity }}%</span></div>
+                <input type="range" min="0" max="100" [(ngModel)]="item.opacity" (input)="applyChanges()"/>
+              </div>
+              <div class="opt-row" style="margin-top: 0.4rem;">
+                <label>Blend Mode</label>
+                <select [(ngModel)]="item.blendMode" (change)="applyChanges()" class="pw-select">
+                  <option value="source-over">Normal</option>
+                  <option value="multiply">Multiply (Darken)</option>
+                  <option value="screen">Screen (Brighten)</option>
+                  <option value="overlay">Overlay</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. BORDER & FRAME STUDIO -->
+      <div class="tool-inspector" *ngIf="activeTool === 'border'">
+        <div class="panel-section-head">FRAME & WATERMARK STUDIO</div>
+        <div class="inspector-body">
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Border Width</label><span>{{ borderWidth }}px</span></div>
+            <input type="range" min="0" max="60" [(ngModel)]="borderWidth" (input)="applyChanges()"/>
+          </div>
+          <div class="opt-row">
+            <label>Border Color</label>
+            <input type="color" [(ngModel)]="borderColor" (change)="applyChanges()" class="color-wide"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Round Corners</label><span>{{ roundCorners }}%</span></div>
+            <input type="range" min="0" max="100" [(ngModel)]="roundCorners" (input)="applyChanges()"/>
+          </div>
+          <div class="opt-row">
+            <label>Copyright Watermark</label>
+            <input type="text" [(ngModel)]="watermarkText" (input)="applyChanges()" placeholder="© Brand Studio" class="pw-input"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Bottom Canvas Metadata -->
+      <div class="left-canvas-meta">
+        <div class="panel-section-head">CANVAS</div>
+        <p class="meta-line">Dimensions: <strong>{{ image.width || 3840 }} x {{ image.height || 2160 }} px</strong></p>
+        <p class="meta-line">Resolution: <strong>300 DPI</strong></p>
+      </div>
+    </aside>
+
+    <!-- DRAGGABLE FLOATING STUDIO POPUP (Exact Reference Mockup UI) -->
+    <div class="tool-floating-popup" *ngIf="showFloatingPopup" [style.left.px]="popupX" [style.top.px]="popupY">
+      <!-- Drag Header Bar -->
+      <div class="popup-drag-header" (mousedown)="startDragPopup($event)">
+        <div class="header-title-flex">
+          <span class="p-icon" *ngIf="activeTool === 'adjust'">🎛️</span>
+          <span class="p-icon" *ngIf="activeTool === 'filters'">✨</span>
+          <span class="p-icon" *ngIf="activeTool === 'crop'">🔲</span>
+          <span class="p-icon" *ngIf="activeTool === 'ai'">🤖</span>
+          <span class="p-icon" *ngIf="activeTool === 'paint'">🖌️</span>
+          <span class="p-icon" *ngIf="activeTool === 'healing'">🩹</span>
+          <span class="p-icon" *ngIf="activeTool === 'text'">🔤</span>
+          <span class="p-icon" *ngIf="activeTool === 'overlay'">🖼️</span>
+          <span class="p-icon" *ngIf="activeTool === 'border'">🖼️</span>
+          <span class="p-title">{{ activeTool.toUpperCase() }} • {{ activeTool === 'adjust' ? 'ADJUSTMENTS' : (activeTool === 'filters' ? '1-CLICK PRESETS' : (activeTool === 'crop' ? 'ASPECT & ROTATION' : (activeTool === 'paint' ? 'BRUSH & ERASER' : (activeTool === 'overlay' ? 'PHOTO & LOGO' : 'OPTIONS')))) }}</span>
+        </div>
+        <button class="popup-close-btn" (click)="closeFloatingPopup()" title="Close Popup">✕</button>
+      </div>
+
+      <!-- Popup Body Content -->
+      <div class="popup-scroll-body">
+        
+        <!-- 1. ADJUSTMENTS POPUP BODY (Exact Mockup Layout!) -->
+        <div *ngIf="activeTool === 'adjust'" class="popup-tool-section">
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Exposure</label><span>{{ (brightness - 100) > 0 ? '+' : '' }}{{ ((brightness - 100) * 0.02) | number:'1.2-2' }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="brightness" (input)="applyChanges()"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Contrast</label><span>{{ (contrast - 100) > 0 ? '+' : '' }}{{ contrast - 100 }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="contrast" (input)="applyChanges()"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Highlights</label><span>{{ highlights > 0 ? '+' : '' }}{{ highlights }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="highlights" (input)="applyChanges()"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Shadows</label><span>{{ shadows > 0 ? '+' : '' }}{{ shadows }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="shadows" (input)="applyChanges()"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Saturation</label><span>{{ (saturation - 100) > 0 ? '+' : '' }}{{ saturation - 100 }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="saturation" (input)="applyChanges()"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Temperature</label><span>{{ 5600 + (temperature * 20) }}K</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="temperature" (input)="applyChanges()" class="temp-slider"/>
+          </div>
+
+          <!-- Popup Bottom Action Buttons & AI Guidance -->
+          <div class="popup-actions-row" style="margin-top: 0.8rem;">
+            <button class="popup-btn-auto" (click)="applyAIEnhance()">✨ Auto Adjust</button>
+            <button class="popup-btn-reset" (click)="resetAll()">Reset</button>
+          </div>
+          <div class="popup-ai-hint" (click)="applyAIEnhance()">
+            <span>✨ AI suggestions available +</span>
+          </div>
+        </div>
+
+        <!-- 2. FILTERS & PRESETS POPUP BODY -->
+        <div *ngIf="activeTool === 'filters'" class="popup-tool-section">
+          <label class="sub-label">Color Atmosphere & Mood</label>
+          <div class="preset-grid" style="margin-top: 0.4rem;">
+            <button class="pw-preset" [class.active]="activePreset === 'normal'" (click)="applyPreset('normal')">🌟 Raw / Normal</button>
+            <button class="pw-preset" [class.active]="activePreset === 'vivid'" (click)="applyPreset('vivid')">🔥 Vivid HDR</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cinema'" (click)="applyPreset('cinema')">🎞️ Cinematic</button>
+            <button class="pw-preset" [class.active]="activePreset === 'vintage'" (click)="applyPreset('vintage')">📜 Vintage</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cyberpunk'" (click)="applyPreset('cyberpunk')">🌆 Cyberpunk</button>
+            <button class="pw-preset" [class.active]="activePreset === 'bw'" (click)="applyPreset('bw')">🖤 Noir B&W</button>
+            <button class="pw-preset" [class.active]="activePreset === 'warm'" (click)="applyPreset('warm')">🌅 Warm Sunset</button>
+            <button class="pw-preset" [class.active]="activePreset === 'cool'" (click)="applyPreset('cool')">❄️ Cool Crisp</button>
+          </div>
+          <div class="popup-actions-row" style="margin-top: 0.8rem;">
+            <button class="popup-btn-auto" (click)="selectTool('ai')">⚡ Auto Filter AI</button>
+            <button class="popup-btn-reset" (click)="applyPreset('normal')">Reset</button>
+          </div>
+          <div class="popup-ai-hint" (click)="selectTool('ai')">
+            <span>✨ AI color grading available +</span>
+          </div>
+        </div>
+
+        <!-- 3. CROP & ROTATE POPUP BODY -->
+        <div *ngIf="activeTool === 'crop'" class="popup-tool-section">
+          <div class="opt-row">
+            <label>Aspect Ratio</label>
+            <select [(ngModel)]="aspectRatio" class="pw-select">
+              <option value="Freeform">Freeform</option>
+              <option value="16:9">16:9 Landscape</option>
+              <option value="4:3">4:3 Standard</option>
+              <option value="1:1">1:1 Square</option>
+              <option value="9:16">9:16 Portrait / Story</option>
+            </select>
+          </div>
+          <div class="opt-row toggle-row" style="margin-top:0.4rem;">
+            <label>Rule of Thirds Overlay</label>
+            <label class="pw-switch">
+              <input type="checkbox" [(ngModel)]="ruleOfThirds" (change)="applyChanges()"/>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+          <div class="opt-buttons-row" style="margin-top:0.4rem;">
+            <button class="pw-sub-btn" (click)="rotate(90)">↺ Rotate 90°</button>
+            <button class="pw-sub-btn" (click)="toggleFlipH()">↔ Flip Horizontal</button>
+          </div>
+          <div class="slider-opt-item" style="margin-top:0.5rem;">
+            <div class="slider-head"><label>Horizon Angle</label><span>{{ fineRotation }}°</span></div>
+            <input type="range" min="-45" max="45" [(ngModel)]="fineRotation" (input)="applyChanges()"/>
+          </div>
+          <div class="popup-actions-row" style="margin-top: 0.8rem;">
+            <button class="popup-btn-auto" (click)="rotate(90)">↻ Auto Straighten</button>
+            <button class="popup-btn-reset" (click)="fineRotation = 0; applyChanges()">Reset</button>
+          </div>
+        </div>
+
+        <!-- 4. AI ENHANCE POPUP BODY -->
+        <div *ngIf="activeTool === 'ai'" class="popup-tool-section">
+          <div class="ai-status-card" [class.active-ai-card]="aiEnhanceActive">
+            <span class="ai-icon">✨</span>
+            <div class="ai-info">
+              <strong>{{ aiEnhanceActive ? 'AI Neural Engine Active' : 'AI Neural Engine Ready' }}</strong>
+              <p>{{ aiEnhanceActive ? 'Automated contrast balancing, dynamic highlight recovery, and clarity boost applied.' : 'Click below to instantly optimize highlights, shadows, and color vibrancy.' }}</p>
+            </div>
+          </div>
+          <button class="pw-export-full-btn" style="margin-top: 0.8rem;" (click)="applyAIEnhance()">
+            {{ aiEnhanceActive ? '✓ AI Enhance Applied (Turn Off)' : '⚡ Apply AI Neural Enhance' }}
+          </button>
+          <div class="popup-ai-hint" style="margin-top:0.6rem;">
+            <span>✨ 16-bit Neural Color Matrix +</span>
+          </div>
+        </div>
+
+        <!-- 5. MASKING & PAINT POPUP BODY -->
+        <div *ngIf="activeTool === 'paint'" class="popup-tool-section">
+          <div class="opt-row toggle-row">
+            <label>Enable Canvas Drawing</label>
+            <label class="pw-switch"><input type="checkbox" [(ngModel)]="isDrawMode"/><span class="slider-round"></span></label>
+          </div>
+          <div class="mode-switcher-pills" style="margin-top:0.5rem;" *ngIf="isDrawMode">
+            <button class="mode-pill" [class.active-mode]="brushMode === 'paint'" (click)="brushMode = 'paint'">🖌️ Paint</button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'erase'" (click)="brushMode = 'erase'">🧹 Erase</button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'blur'" (click)="brushMode = 'blur'">🩹 Blur</button>
+          </div>
+          <div class="swatches-flex" style="margin-top:0.6rem;" *ngIf="isDrawMode && brushMode === 'paint'">
+            <button *ngFor="let c of colorSwatches" class="pw-swatch" [style.background]="c" [class.active-c]="brushColor === c" (click)="brushColor = c"></button>
+            <input type="color" [(ngModel)]="brushColor" class="color-mini" title="Pick Custom Color"/>
+          </div>
+          <div class="slider-opt-item" style="margin-top:0.5rem;" *ngIf="isDrawMode">
+            <div class="slider-head"><label>{{ brushMode === 'erase' ? 'Eraser Size' : 'Brush Size' }}</label><span>{{ brushWidth }}px</span></div>
+            <input type="range" min="1" max="100" [(ngModel)]="brushWidth"/>
+          </div>
+          <div class="slider-opt-item" style="margin-top:0.4rem;" *ngIf="isDrawMode">
+            <div class="slider-head"><label>Opacity</label><span>{{ brushOpacity }}%</span></div>
+            <input type="range" min="10" max="100" [(ngModel)]="brushOpacity"/>
+          </div>
+          <div class="popup-actions-row" style="margin-top: 0.8rem;" *ngIf="isDrawMode">
+            <button class="popup-btn-auto" (click)="undoStroke()">↩️ Undo Stroke</button>
+            <button class="popup-btn-reset" (click)="clearPaint()">Clear</button>
+          </div>
+        </div>
+
+        <!-- 6. HEALING POPUP BODY -->
+        <div *ngIf="activeTool === 'healing'" class="popup-tool-section">
+          <p class="guide-text">Remove spots, blemishes, or cleanly rub out brush strokes directly on the canvas.</p>
+          <div class="mode-switcher-pills" style="margin-top: 0.5rem;">
+            <button class="mode-pill" [class.active-mode]="brushMode === 'erase'" (click)="brushMode = 'erase'">🧹 Eraser Brush</button>
+            <button class="mode-pill" [class.active-mode]="brushMode === 'blur'" (click)="brushMode = 'blur'">🩹 Spot / Blur</button>
+          </div>
+          <div class="slider-opt-item" style="margin-top: 0.75rem;">
+            <div class="slider-head"><label>Healing Brush Size</label><span>{{ brushWidth }}px</span></div>
+            <input type="range" min="5" max="150" [(ngModel)]="brushWidth"/>
+          </div>
+          <div class="popup-actions-row" style="margin-top: 0.8rem;">
+            <button class="popup-btn-auto" (click)="undoStroke()">↩️ Undo Stroke</button>
+            <button class="popup-btn-reset" (click)="clearPaint()">Clear</button>
+          </div>
+        </div>
+
+        <!-- 7. TEXT & TYPOGRAPHY POPUP BODY -->
+        <div *ngIf="activeTool === 'text'" class="popup-tool-section">
+          <label class="sub-label">Presets</label>
+          <div class="preset-grid" style="margin-top:0.4rem;">
+            <button class="pw-preset" (click)="addPresetText('heading')">💥 Bold Headline</button>
+            <button class="pw-preset" (click)="addPresetText('badge')">★ Cyan Badge</button>
+            <button class="pw-preset" (click)="addPresetText('watermark')">© Watermark</button>
+          </div>
+          <div class="opt-row" style="margin-top:0.6rem;">
+            <input type="text" [(ngModel)]="newText" placeholder="Add custom text..." class="pw-input" (keyup.enter)="addTextOverlay()"/>
+          </div>
+          <div class="opt-buttons-row" style="margin-top:0.4rem;">
+            <select [(ngModel)]="newTextFont" class="pw-select" style="flex:1;">
+              <option value="Arial">Arial</option>
+              <option value="Impact">Impact</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Courier New">Courier</option>
+            </select>
+            <input type="color" [(ngModel)]="newTextColor" class="color-mini" style="width:44px; height:38px;"/>
+          </div>
+          <div class="slider-opt-item" style="margin-top:0.4rem;">
+            <div class="slider-head"><label>Font Size</label><span>{{ newTextSize }}px</span></div>
+            <input type="range" min="12" max="120" [(ngModel)]="newTextSize"/>
+          </div>
+          <button class="pw-add-btn" style="margin-top: 0.5rem;" (click)="addTextOverlay()">+ Add Text Layer</button>
+          <div class="active-layers-list" *ngIf="textOverlays.length > 0" style="margin-top:0.6rem;">
+            <div class="text-layer-item" *ngFor="let item of textOverlays">
+              <span class="t-thumb" [style.color]="item.color">Aa</span>
+              <span class="t-label">{{ item.text }}</span>
+              <button class="t-del-btn" (click)="deleteTextOverlay(item.id)">🗑️</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. PHOTO OVERLAY POPUP BODY -->
+        <div *ngIf="activeTool === 'overlay'" class="popup-tool-section">
+          <label class="pw-export-full-btn" style="text-align: center; cursor: pointer; display: block;">
+            + Add Photo / Logo Overlay
+            <input type="file" (change)="onOverlaySelected($event)" accept="image/*" style="display: none;"/>
+          </label>
+          <div class="active-layers-list" *ngIf="imageOverlays.length > 0" style="margin-top:0.6rem;">
+            <div class="overlay-item-card" *ngFor="let item of imageOverlays" style="background: var(--studio-input-bg); border: 1px solid var(--studio-border-subtle); padding: 0.6rem; border-radius: 8px; margin-bottom: 0.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <strong style="font-size: 0.8rem; color: var(--studio-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">{{ item.name }}</strong>
+                <button class="t-del-btn" (click)="deleteImageOverlay(item.id)">🗑️</button>
+              </div>
+              <div class="slider-opt-item">
+                <div class="slider-head"><label>Scale / Size</label><span>{{ item.scale }}%</span></div>
+                <input type="range" min="10" max="200" [(ngModel)]="item.scale" (input)="applyChanges()"/>
+              </div>
+              <div class="slider-opt-item" style="margin-top: 0.3rem;">
+                <div class="slider-head"><label>Opacity</label><span>{{ item.opacity }}%</span></div>
+                <input type="range" min="0" max="100" [(ngModel)]="item.opacity" (input)="applyChanges()"/>
+              </div>
+              <div class="opt-row" style="margin-top: 0.3rem;">
+                <label>Blend Mode</label>
+                <select [(ngModel)]="item.blendMode" (change)="applyChanges()" class="pw-select">
+                  <option value="source-over">Normal</option>
+                  <option value="multiply">Multiply (Darken)</option>
+                  <option value="screen">Screen (Brighten)</option>
+                  <option value="overlay">Overlay</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. BORDER & FRAME POPUP BODY -->
+        <div *ngIf="activeTool === 'border'" class="popup-tool-section">
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Border Width</label><span>{{ borderWidth }}px</span></div>
+            <input type="range" min="0" max="60" [(ngModel)]="borderWidth" (input)="applyChanges()"/>
+          </div>
+          <div class="opt-row">
+            <label>Border Color</label>
+            <input type="color" [(ngModel)]="borderColor" (change)="applyChanges()" class="color-wide"/>
+          </div>
+          <div class="slider-opt-item">
+            <div class="slider-head"><label>Round Corners</label><span>{{ roundCorners }}%</span></div>
+            <input type="range" min="0" max="100" [(ngModel)]="roundCorners" (input)="applyChanges()"/>
+          </div>
+          <div class="opt-row">
+            <label>Copyright Watermark</label>
+            <input type="text" [(ngModel)]="watermarkText" (input)="applyChanges()" placeholder="© Brand Studio" class="pw-input"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN: STUDIO CANVAS STAGE -->
+    <section class="center-stage">
+      
+      <!-- Top Floating AI Badge -->
+      <div class="stage-top-bar">
+        <div class="ai-active-badge" *ngIf="aiEnhanceActive">
+          <span class="badge-icon">✨</span> AI Enhance Active • +Warmth +Contrast +Clarity
+        </div>
+        <div class="ai-active-badge brush-active-badge" *ngIf="isDrawMode">
+          <span class="badge-icon">{{ brushMode === 'paint' ? '🖌️' : (brushMode === 'erase' ? '🧹' : '🩹') }}</span>
+          Brush Mode: {{ brushMode.toUpperCase() }} • Size: {{ brushWidth }}px • Opacity: {{ brushOpacity }}%
+        </div>
+      </div>
+
+      <!-- Image Canvas Viewport -->
+      <div class="canvas-viewport">
+        <div class="canvas-scale-wrap" [style.transform]="'scale(' + (zoomLevel / 100) + ')'">
+          <canvas #canvas
+            (mousedown)="startDrawing($event)"
+            (mousemove)="draw($event)"
+            (mouseup)="stopDrawing()"
+            (mouseleave)="stopDrawing()"
+            (click)="onCanvasClick($event)"
+            [style.cursor]="isDrawMode ? 'crosshair' : 'default'">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Bottom Canvas Toolbar (Zoom, Compare Slider, Status) -->
+      <div class="stage-bottom-bar">
+        <div class="stage-controls-row">
+          <div class="bottom-zoom-group">
+            <button (click)="zoom(-15)" title="Zoom Out">-</button>
+            <span>{{ zoomLevel }}%</span>
+            <button (click)="zoom(15)" title="Zoom In">+</button>
+          </div>
+
+          <!-- Compare Original vs Edited Slider / Button -->
+          <div class="compare-slider-group">
+            <span class="comp-label">Original</span>
+            <input type="range" min="0" max="100" [(ngModel)]="comparePosition" (input)="applyChanges()" class="compare-range"/>
+            <span class="comp-label">Edited</span>
+            <button class="hold-compare-btn" 
+              (mousedown)="isComparing = true; applyChanges()"
+              (mouseup)="isComparing = false; applyChanges()"
+              (mouseleave)="isComparing = false; applyChanges()">
+              👁️ Hold Compare
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Line -->
+        <div class="status-footer-line">
+          <span class="status-file">{{ fileName || 'landscape' }}.{{ exportFormat.split('/')[1] }} • {{ image.width || 3840 }}x{{ image.height || 2160 }} • 16-bit RGB • Saved just now</span>
+          <span class="status-ready"><span class="dot-green"></span> Ready • Changes unsaved •</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: ADJUSTMENTS / INSPECTOR PANEL -->
+    <aside class="right-panel">
+      <div class="right-head-row">
+        <span class="panel-title">ADJUSTMENTS</span>
+        <button class="more-btn" (click)="resetAll()" title="Reset Sliders">•••</button>
+      </div>
+
+      <div class="adjustments-scroll">
+        
+        <!-- SECTION 1: LIGHT -->
+        <div class="adj-category">
+          <div class="cat-head">LIGHT <span class="cat-line"></span></div>
+          
+          <div class="slider-row">
+            <div class="s-info"><label>Exposure</label><span class="s-val">{{ (brightness - 100) > 0 ? '+' : '' }}{{ ((brightness - 100) * 0.02) | number:'1.2-2' }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="brightness" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Contrast</label><span class="s-val">{{ (contrast - 100) > 0 ? '+' : '' }}{{ contrast - 100 }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="contrast" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Highlights</label><span class="s-val">{{ highlights > 0 ? '+' : '' }}{{ highlights }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="highlights" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Shadows</label><span class="s-val">{{ shadows > 0 ? '+' : '' }}{{ shadows }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="shadows" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Whites</label><span class="s-val">{{ whites > 0 ? '+' : '' }}{{ whites }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="whites" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Blacks</label><span class="s-val">{{ blacks > 0 ? '+' : '' }}{{ blacks }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="blacks" (input)="applyChanges()"/>
+          </div>
+        </div>
+
+        <!-- SECTION 2: COLOR -->
+        <div class="adj-category">
+          <div class="cat-head">COLOR <span class="cat-line"></span></div>
+          
+          <div class="slider-row">
+            <div class="s-info"><label>Saturation</label><span class="s-val">{{ (saturation - 100) > 0 ? '+' : '' }}{{ saturation - 100 }}</span></div>
+            <input type="range" min="0" max="200" [(ngModel)]="saturation" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Vibrance</label><span class="s-val">{{ vibrance > 0 ? '+' : '' }}{{ vibrance }}</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="vibrance" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Temperature</label><span class="s-val">{{ 5600 + (temperature * 20) }}K</span></div>
+            <input type="range" min="-100" max="100" [(ngModel)]="temperature" (input)="applyChanges()" class="temp-slider"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Tint</label><span class="s-val">{{ hue > 0 ? '+' : '' }}{{ hue }}</span></div>
+            <input type="range" min="0" max="360" [(ngModel)]="hue" (input)="applyChanges()"/>
+          </div>
+        </div>
+
+        <!-- SECTION 3: DETAIL -->
+        <div class="adj-category">
+          <div class="cat-head">DETAIL <span class="cat-line"></span></div>
+          
+          <div class="slider-row">
+            <div class="s-info"><label>Sharpness</label><span class="s-val">{{ sharpness > 0 ? '+' : '' }}{{ sharpness }}</span></div>
+            <input type="range" min="0" max="100" [(ngModel)]="sharpness" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Clarity</label><span class="s-val">{{ clarity > 0 ? '+' : '' }}{{ clarity }}</span></div>
+            <input type="range" min="-50" max="100" [(ngModel)]="clarity" (input)="applyChanges()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="s-info"><label>Bokeh Blur</label><span class="s-val">{{ blur }}px</span></div>
+            <input type="range" min="0" max="20" [(ngModel)]="blur" (input)="applyChanges()"/>
+          </div>
+        </div>
+
+        <!-- SECTION 4: LAYERS -->
+        <div class="adj-category">
+          <div class="cat-head">LAYERS <span class="cat-line"></span></div>
+          
+          <div class="layers-box">
+            <div class="layer-item">
+              <span class="l-thumb" [style.background]="'#06b6d4'"></span>
+              <div class="l-desc">
+                <strong>Color Grade Adjustment</strong>
+                <span>Blend: Normal 100%</span>
+              </div>
+              <span class="l-eye">👁️</span>
+            </div>
+            
+            <div class="layer-item" *ngIf="sharpness > 0 || clarity > 0">
+              <span class="l-thumb" [style.background]="'#3b82f6'"></span>
+              <div class="l-desc">
+                <strong>Detail & Vignette Overlay</strong>
+                <span>Multiply 35%</span>
+              </div>
+              <span class="l-eye">👁️</span>
+            </div>
+
+            <div class="layer-item" *ngFor="let ov of imageOverlays">
+              <span class="l-thumb" [style.background]="'#10b981'"></span>
+              <div class="l-desc">
+                <strong>{{ ov.name }}</strong>
+                <span>{{ ov.blendMode }} • {{ ov.opacity }}%</span>
+              </div>
+              <button class="t-del-btn" (click)="deleteImageOverlay(ov.id)" title="Remove Layer">🗑️</button>
+            </div>
+
+            <div class="layer-item">
+              <span class="l-thumb" [style.background]="'#1f2937'"></span>
+              <div class="l-desc">
+                <strong>Background</strong>
+                <span>{{ fileName || 'landscape' }}.jpg 100%</span>
+              </div>
+              <span class="l-eye">🔒</span>
+            </div>
+
+            <label class="add-layer-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: transparent; border: 1px dashed var(--studio-border); color: var(--studio-accent); padding: 0.6rem; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; margin-top: 0.5rem; transition: all 0.2s;">
+              + Add New Layer
+              <input type="file" (change)="onOverlaySelected($event)" accept="image/*" style="display: none;"/>
+            </label>
+          </div>
+
+          <div class="export-conf-box" style="margin-top: 1.25rem;">
+            <div class="opt-row">
+              <label>Export Format</label>
+              <select [(ngModel)]="exportFormat" class="pw-select">
+                <option value="image/jpeg">JPG (Web Optimized)</option>
+                <option value="image/png">PNG (Lossless 16-bit)</option>
+                <option value="image/webp">WEBP (Next-Gen Ultra)</option>
+              </select>
+            </div>
+            <div class="slider-row" *ngIf="exportFormat !== 'image/png'" style="margin-top:0.75rem;">
+              <div class="s-info"><label>Export Quality</label><span class="s-val">{{ exportQuality }}%</span></div>
+              <input type="range" min="30" max="100" [(ngModel)]="exportQuality"/>
+            </div>
+            <button class="pw-export-full-btn" (click)="downloadImage()">
+              ↓ Export High-Res Studio File
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+</div>

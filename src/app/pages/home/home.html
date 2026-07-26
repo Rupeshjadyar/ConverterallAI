@@ -1,0 +1,265 @@
+<!-- HERO SECTION -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-container text-center">
+      <div class="hero-badge-pill mx-auto mb-3">
+        <span class="badge-dot"></span>
+        <span>Enterprise SaaS Architecture • Scalable to 500+ Tools</span>
+      </div>
+
+      <h1 class="hero-title mb-3">
+        The Next-Generation <br />
+        <span class="gradient-text">Category-Based Platform.</span>
+      </h1>
+      <p class="hero-desc mx-auto mb-4">
+        100% Client-side privacy. Engineered with dynamic data registries for PDF suites, AI Image processing, Voice Speech Narration, and Smart Financial Calculators.
+      </p>
+
+      <!-- Global Search -->
+      <div class="hero-search-wrapper mx-auto mb-4">
+        <div class="hero-search-box glass">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search all tools instantly (e.g., Merge PDF, Background Remover, Text to MP3, Loan EMI...)"
+            class="hero-search-input"
+          />
+          <button *ngIf="searchQuery" (click)="searchQuery = ''" class="search-clear-btn" aria-label="Clear search">
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE INSTANT SEARCH RESULTS -->
+<section *ngIf="searchQuery" class="search-results-section py-4">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <h2 class="section-title">Search Results for "{{ searchQuery }}" ({{ searchResults.length }})</h2>
+      <button (click)="searchQuery = ''" class="btn-clear">Clear Search ✕</button>
+    </div>
+
+    <div *ngIf="searchResults.length === 0" class="empty-notice glass">
+      <div class="empty-icon">🔍</div>
+      <h3>No tools found matching "{{ searchQuery }}"</h3>
+      <p>Try searching by category such as "PDF", "Image", "Audio", or "Calculator"</p>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of searchResults" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Open Tool →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY OVERVIEW CARDS -->
+<section *ngIf="!searchQuery" class="categories-overview py-5">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-tag">ORGANIZED ARCHITECTURE</span>
+      <h2 class="section-title">Explore by Categories</h2>
+      <p class="section-subtitle">Dedicated landing suites built for professional workflows</p>
+    </div>
+
+    <div class="categories-grid">
+      <a *ngFor="let cat of categories" [routerLink]="cat.slug" class="category-card glass">
+        <div class="cat-card-header">
+          <span class="cat-icon">{{ cat.icon }}</span>
+          <span class="cat-badge">{{ cat.toolCount }} Tools</span>
+        </div>
+        <h3 class="cat-name">{{ cat.name }}</h3>
+        <p class="cat-desc">{{ cat.description }}</p>
+        <div class="cat-footer">
+          <span>Explore {{ cat.name }} →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR TOOLS -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag">POPULAR NOW</span>
+        <h2 class="section-title">Most Used Tools</h2>
+      </div>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of popularTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Launch Tool →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- AI POWERED STUDIO TOOLS -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag">NEURAL ENGINE</span>
+        <h2 class="section-title">AI Powered Tools</h2>
+      </div>
+      <a routerLink="/audio-processing/text-to-mp3" class="view-all-link">View AI Studio →</a>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of aiTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span class="tool-badge ai-badge">NEURAL AI</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Open Studio →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PDF SUITE SECTION -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag">DOCUMENT TOOLKIT</span>
+        <h2 class="section-title">PDF Tools</h2>
+      </div>
+      <a routerLink="/pdf-processing" class="view-all-link">View All 30+ PDF Tools →</a>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of pdfTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Launch Tool →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE SUITE SECTION -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag">VISUAL AI STUDIO</span>
+        <h2 class="section-title">Image Tools</h2>
+      </div>
+      <a routerLink="/image-processing" class="view-all-link">View All Image Tools →</a>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of imageTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Launch Tool →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATORS SECTION -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag">FINANCE & HEALTH</span>
+        <h2 class="section-title">Smart Calculators</h2>
+      </div>
+      <a routerLink="/calculators" class="view-all-link">View All 12 Calculators →</a>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of calcTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch">Calculate Now →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM STATISTICS -->
+<section *ngIf="!searchQuery" class="stats-section py-5">
+  <div class="container">
+    <div class="stats-grid">
+      <div *ngFor="let stat of stats" class="stat-card glass text-center">
+        <div class="stat-value gradient-text">{{ stat.value }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section *ngIf="!searchQuery" class="features-section py-5">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <span class="section-tag">ENGINEERING STANDARDS</span>
+      <h2 class="section-title">Why Professionals Prefer ConverterallAI</h2>
+      <p class="section-subtitle">Scalable Angular Standalone platform designed for speed & privacy</p>
+    </div>
+
+    <div class="features-grid">
+      <div *ngFor="let feat of features" class="feature-card glass">
+        <div class="feat-icon">{{ feat.icon }}</div>
+        <h3 class="feat-title">{{ feat.title }}</h3>
+        <p class="feat-desc">{{ feat.desc }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section *ngIf="!searchQuery" class="faq-section py-5">
+  <div class="container max-w-900">
+    <div class="section-header text-center mb-5">
+      <span class="section-tag">FAQ</span>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="faq-list">
+      <div *ngFor="let faq of faqs" class="faq-card glass" (click)="faq.open = !faq.open">
+        <div class="faq-question">
+          <span>{{ faq.q }}</span>
+          <span>{{ faq.open ? '▲' : '▼' }}</span>
+        </div>
+        <div *ngIf="faq.open" class="faq-answer">
+          <p>{{ faq.a }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

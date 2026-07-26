@@ -1,0 +1,7 @@
+/* Position theme switcher globally as a floating glass widget in the bottom-right corner */
+.global-theme-switcher {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+}

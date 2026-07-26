@@ -1,0 +1,221 @@
+<div class="pdf-studio-wrapper" [class.light-theme]="themeService.resolvedTheme() === 'light'">
+  
+  <!-- Top Title & Page Orientation Header -->
+  <header class="pdf-studio-header">
+    <div class="header-titles">
+      <h1 class="main-title">Create Ultra Premium PDF</h1>
+      <p class="main-subtitle">Transform images into professional PDF documents — fast, secure, and elegant</p>
+    </div>
+    
+    <div class="header-top-controls">
+      <!-- Orientation Switcher -->
+      <div class="orientation-control">
+        <span class="orient-label">PAGE ORIENTATION</span>
+        <div class="orient-pills">
+          <button class="orient-pill" [class.active-orient]="pageOrientation === 'portrait'" (click)="pageOrientation = 'portrait'">
+            <span class="check-icon" *ngIf="pageOrientation === 'portrait'">✓</span>
+            <span class="check-icon placeholder" *ngIf="pageOrientation !== 'portrait'">📄</span>
+            A4 Portrait
+          </button>
+          <button class="orient-pill" [class.active-orient]="pageOrientation === 'landscape'" (click)="pageOrientation = 'landscape'">
+            <span class="check-icon" *ngIf="pageOrientation === 'landscape'">✓</span>
+            <span class="check-icon placeholder" *ngIf="pageOrientation !== 'landscape'">📄</span>
+            A4 Landscape
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-COLUMN ULTRA PREMIUM STUDIO GRID -->
+  <div class="pdf-studio-grid">
+    
+    <!-- LEFT COLUMN: APP NAVIGATION SIDEBAR (`All Image Tools`) -->
+    <aside class="left-nav-sidebar">
+      <button *ngFor="let t of navTools" 
+              class="nav-item-btn" 
+              [class.active-nav]="activeNavTab === t.id" 
+              (click)="navigateTo(t.route, t.id)">
+        <span class="n-icon">{{ t.icon }}</span> {{ t.name }}
+      </button>
+    </aside>
+
+    <!-- CENTER COLUMN: MAIN UPLOAD & PAGES WORKFLOW -->
+    <main class="center-workflow">
+      
+      <!-- 1. Upload Card -->
+      <section class="studio-card upload-card">
+        <div class="card-top-header">
+          <span class="badge-title">Upload Images</span>
+          <span class="badge-status">{{ selectedImages.length }} files added • {{ isProcessing ? progressVal : 100 }}% processing</span>
+        </div>
+
+        <!-- Hidden Input & Drop Box -->
+        <input type="file" id="pdf-image-upload" multiple (change)="onFilesSelected($event)" accept="image/*" class="hidden-input"/>
+        <label for="pdf-image-upload" class="drop-zone-box">
+          <div class="drop-icon-stack">
+            <div class="layer-glow"></div>
+            <span class="stack-emoji">📁✨</span>
+          </div>
+          <h3 class="drop-main-text">Drag & drop images here</h3>
+          <p class="drop-sub-text">Or click to browse • PNG, JPG, HEIC • up to 25MB per file</p>
+        </label>
+
+        <!-- Progress Bar Section -->
+        <div class="progress-box" *ngIf="isProcessing">
+          <div class="progress-header">
+            <span class="p-label">Processing...</span>
+            <span class="p-percent">{{ progressVal }}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="progressVal"></div>
+          </div>
+          <div class="progress-footer">
+            <span>{{ selectedImages.length }} of {{ selectedImages.length }} files processed — optimizing & compressing</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="page-options-toolbar">
+        <div class="toolbar-left">
+          <span class="toolbar-label">⚙️ Options:</span>
+          <label for="pdf-image-upload" class="tb-btn btn-add">+ Add</label>
+          <button class="tb-btn btn-del" (click)="deleteActivePage()" [disabled]="selectedImages.length === 0">🗑️ Del</button>
+          <button class="tb-btn btn-dup" (click)="duplicateActivePage()" [disabled]="selectedImages.length === 0">📑 Dup</button>
+          <button class="tb-btn" (click)="moveImageUp(activePageIndex)" [disabled]="selectedImages.length === 0 || activePageIndex === 0">⬅️ Left</button>
+          <button class="tb-btn" (click)="moveImageDown(activePageIndex)" [disabled]="selectedImages.length === 0 || activePageIndex >= selectedImages.length - 1">➡️ Right</button>
+          <span class="tb-info" style="margin-left:auto;">↕ Drag to reorder</span>
+        </div>
+        <div class="toolbar-right" *ngIf="selectedImages.length > 0">
+          <label class="goto-label">Go to page:</label>
+          <select [(ngModel)]="activePageIndex" class="goto-select">
+            <option *ngFor="let img of selectedImages; let i = index" [ngValue]="i">{{ i + 1 }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 3. Image Preview & Pages Card -->
+      <section class="studio-card preview-card">
+        <div class="card-top-header">
+          <span class="badge-title">Image Preview & Pages</span>
+          <span class="pages-ready-badge">{{ selectedImages.length }} Pages Ready</span>
+        </div>
+
+        <div class="pages-grid" *ngIf="selectedImages.length > 0">
+          <div class="page-thumb-card" *ngFor="let img of selectedImages; let i = index"
+               [class.active-page]="activePageIndex === i"
+               (click)="activePageIndex = i"
+               draggable="true"
+               (dragstart)="onDragStart(i)"
+               (dragover)="onDragOver($event)"
+               (drop)="onDrop($event, i)">
+            <div class="thumb-check-badge">✓</div>
+            <div class="thumb-img-wrapper">
+              <img [src]="img.previewUrl" [alt]="img.file.name" />
+            </div>
+            <div class="thumb-footer-pill">
+              <span>Page {{ i + 1 | number:'2.0' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State inside Preview Card if no files -->
+        <div class="empty-preview-state" *ngIf="selectedImages.length === 0">
+          <span class="empty-icon">📭</span>
+          <p>No pages uploaded yet. Upload images above to view page previews and reorder.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: EXPORT SETTINGS SIDEBAR (`Export Settings ✨`) -->
+    <aside class="right-export-sidebar">
+      <section class="studio-card export-card">
+        <div class="card-top-header" style="border-bottom: none; margin-bottom: 0.2rem;">
+          <h2 class="export-title">Export Settings ✨</h2>
+        </div>
+
+        <!-- Page Size Option -->
+        <div class="setting-item" style="margin-bottom: 15px;">
+          <div class="setting-head">
+            <label class="setting-name">Page Size</label>
+          </div>
+          <select [(ngModel)]="pageSize" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-color); margin-top: 5px;">
+            <option value="a4">A4 (Standard)</option>
+            <option value="letter">Letter</option>
+            <option value="auto">Auto (Fit to Image)</option>
+          </select>
+        </div>
+
+        <!-- Margins Slider -->
+        <div class="setting-item">
+          <div class="setting-head">
+            <label class="setting-name">Margins</label>
+          </div>
+          <div class="setting-subhead">Margins: {{ marginMm }} mm</div>
+          <input type="range" min="0" max="25" [(ngModel)]="marginMm" class="purple-range" />
+          <div class="range-extremes">
+            <span>0mm</span>
+            <span>25mm</span>
+          </div>
+        </div>
+
+        <!-- Quality Slider -->
+        <div class="setting-item">
+          <div class="setting-head">
+            <label class="setting-name">Quality</label>
+          </div>
+          <div class="setting-subhead">Quality: {{ qualityPercent }}% • {{ qualityPercent > 80 ? 'High' : (qualityPercent > 50 ? 'Medium' : 'Low') }}</div>
+          <input type="range" min="30" max="100" [(ngModel)]="qualityPercent" class="purple-range" />
+          <div class="range-extremes">
+            <span>Low</span>
+            <span>High</span>
+          </div>
+        </div>
+
+        <!-- Compression Toggle -->
+        <div class="setting-item toggle-row">
+          <div class="setting-head">
+            <label class="setting-name">Compression</label>
+          </div>
+          <div class="toggle-flex">
+            <span class="toggle-label">Optimize for Web</span>
+            <label class="purple-switch">
+              <input type="checkbox" [(ngModel)]="optimizeForWeb" />
+              <span class="slider-round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Estimated Output Dark Sub-Card -->
+        <div class="estimated-output-box">
+          <h3 class="est-title">Estimated Output</h3>
+          <div class="est-line">
+            <span class="est-icon">📄</span>
+            <span>Pages: <strong>{{ selectedImages.length }} pages</strong></span>
+          </div>
+          <div class="est-line">
+            <span class="est-icon">📦</span>
+            <span>Estimated Size: <strong>{{ estimatedSizeMb }} MB</strong></span>
+          </div>
+          <div class="est-line">
+            <span class="est-icon">📊</span>
+            <span>Format: <strong>PDF 1.7</strong></span>
+          </div>
+        </div>
+
+        <!-- Convert to PDF Button -->
+        <button class="convert-pdf-btn" (click)="generatePdf()" [disabled]="selectedImages.length === 0 || isProcessing">
+          <span>{{ isProcessing ? 'Converting...' : 'Convert to PDF' }}</span>
+          <span class="dl-icon">⬇</span>
+        </button>
+
+        <div class="security-footer">
+          <span>Secure • Files auto-delete after 24 hours</span>
+        </div>
+      </section>
+    </aside>
+
+  </div>
+
+</div>
