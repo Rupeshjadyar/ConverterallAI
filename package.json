@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:cf": "ng build && cp dist/converterallai/browser/index.csr.html dist/converterallai/browser/index.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:converterallai": "node dist/converterallai/server/server.mjs"
