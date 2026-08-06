@@ -38,6 +38,17 @@ export class PdfProcessingHomeComponent implements OnInit {
 
   documentTools: DocumentTool[] = [
     {
+      id: 'resume-builder',
+      name: 'Resume Builder',
+      description: 'Build stunning resumes with 21 free templates and export as PDF.',
+      icon: '📝',
+      color: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+      route: '/resume-builder',
+      popular: true,
+      category: 'edit',
+      local: true
+    },
+    {
       id: 'merge-pdf',
       name: 'Merge PDF',
       description: 'Combine multiple PDF files into one document in your preferred order.',

@@ -10,50 +10,176 @@
   <div class="tool-header animate-fade-in">
     <div class="badge">
       <span class="badge-dot local"></span>
-      100% Secure In-Browser Processing
+      100% Secure In-Browser Studio
     </div>
-    <h1>📄 Text to PDF</h1>
-    <p class="tool-desc">Convert plain text into a professionally formatted PDF document.</p>
+    <h1>📝 Text to PDF Studio</h1>
+    <p class="tool-desc">Type, format, and convert plain text into a professional PDF document with Word-style controls.</p>
   </div>
 
   <div class="main-card glass animate-fade-in-up">
-    <!-- Text Input Area (always visible when no result) -->
+    <!-- Editor & Options Area (visible when not converted/converting) -->
     <div *ngIf="!isConverting && !convertedUrl">
-      <div style="margin-bottom: 1.5rem;">
-        <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Type or paste your text below:</label>
-        <textarea 
-          [(ngModel)]="textInput"
-          placeholder="Enter your text here... You can also drag & drop a .txt file."
-          style="width: 100%; min-height: 280px; padding: 1rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border-color 0.2s;"
-          (dragover)="onDragOver($event)"
-          (dragleave)="onDragLeave($event)"
-          (drop)="onDrop($event)"
-        ></textarea>
-      </div>
+      <!-- DOCUMENT TITLE BAR -->
+      <div class="doc-header-row mb-3">
+        <div class="doc-title-input-wrapper">
+          <span class="doc-icon">📄</span>
+          <input
+            type="text"
+            [(ngModel)]="docTitle"
+            placeholder="Document Title (e.g. Project Proposal, Notes, Resume...)"
+            class="doc-title-input"
+          />
+        </div>
 
-      <!-- Or upload txt file -->
-      <div style="text-align: center; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-        Or <button style="background:none; border:none; color: var(--primary-color); cursor: pointer; font-weight: 600; text-decoration: underline;" (click)="txtInput.click()">upload a .txt file</button>
-        <input #txtInput type="file" style="display:none;" accept=".txt,text/plain" (change)="onFileSelected($event)" />
-      </div>
-
-      <!-- Font Size -->
-      <div class="tool-settings" style="margin-bottom: 1.5rem;">
-        <div class="settings-title">⚙️ Options</div>
-        <div class="form-group">
-          <label class="form-label">Font Size (pt)</label>
-          <select class="form-input" [(ngModel)]="fontSize">
-            <option [value]="10">10pt - Small</option>
-            <option [value]="12">12pt - Normal</option>
-            <option [value]="14">14pt - Large</option>
-            <option [value]="16">16pt - Extra Large</option>
-          </select>
+        <div class="upload-txt-btn-wrapper">
+          <button class="btn-secondary-sm" (click)="txtInput.click()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"></path>
+            </svg>
+            Import .TXT File
+          </button>
+          <input #txtInput type="file" style="display:none;" accept=".txt,text/plain" (change)="onFileSelected($event)" />
         </div>
       </div>
 
-      <div class="action-area">
+      <!-- WORD-STYLE FORMATTING TOOLBAR -->
+      <div class="word-toolbar">
+        <div class="toolbar-group">
+          <label class="tb-label">Font Family</label>
+          <select [(ngModel)]="fontFamily" class="tb-select">
+            <option value="Helvetica">Helvetica (Standard Sans)</option>
+            <option value="TimesRoman">Times New Roman (Serif)</option>
+            <option value="Courier">Courier (Monospace)</option>
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Size</label>
+          <select [(ngModel)]="fontSize" class="tb-select size-select">
+            <option [ngValue]="10">10 pt</option>
+            <option [ngValue]="12">12 pt</option>
+            <option [ngValue]="14">14 pt</option>
+            <option [ngValue]="16">16 pt</option>
+            <option [ngValue]="18">18 pt</option>
+            <option [ngValue]="24">24 pt</option>
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Alignment</label>
+          <div class="btn-group">
+            <button class="tb-btn" [class.active]="alignment === 'left'" (click)="alignment = 'left'" title="Align Left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="17" y1="18" x2="3" y2="18"></line>
+              </svg>
+            </button>
+            <button class="tb-btn" [class.active]="alignment === 'center'" (click)="alignment = 'center'" title="Center">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="10" x2="6" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="18" y1="18" x2="6" y2="18"></line>
+              </svg>
+            </button>
+            <button class="tb-btn" [class.active]="alignment === 'right'" (click)="alignment = 'right'" title="Align Right">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="21" y1="10" x2="7" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="21" y1="18" x2="7" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Line Spacing</label>
+          <select [(ngModel)]="lineSpacing" class="tb-select">
+            <option [ngValue]="1.2">Single (1.2x)</option>
+            <option [ngValue]="1.5">1.5 Lines</option>
+            <option [ngValue]="2.0">Double (2.0x)</option>
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Margins</label>
+          <select [(ngModel)]="margin" class="tb-select">
+            <option [ngValue]="36">Narrow (0.5 in)</option>
+            <option [ngValue]="54">Normal (0.75 in)</option>
+            <option [ngValue]="72">Wide (1.0 in)</option>
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Text Color</label>
+          <div class="color-picker-wrapper">
+            <input type="color" [(ngModel)]="textColor" class="color-input" title="Choose Text Color" />
+            <span class="color-preview" [style.background]="textColor"></span>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="tb-label">Orientation</label>
+          <div class="btn-group">
+            <button class="tb-btn" [class.active]="orientation === 'portrait'" (click)="orientation = 'portrait'">
+              Portrait
+            </button>
+            <button class="tb-btn" [class.active]="orientation === 'landscape'" (click)="orientation = 'landscape'">
+              Landscape
+            </button>
+          </div>
+        </div>
+
+        <div class="toolbar-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="addPageNumbers" />
+            <span>Footer Page Numbers</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- WORD PAPER SHEET CONTAINER -->
+      <div class="paper-container">
+        <div class="paper-sheet" [class.landscape]="orientation === 'landscape'">
+          <div *ngIf="docTitle" class="sheet-title-preview" [style.font-family]="fontFamily">
+            {{ docTitle }}
+          </div>
+          <textarea
+            [(ngModel)]="textInput"
+            placeholder="Type or paste your text here..."
+            class="paper-textarea"
+            [style.font-family]="fontFamily === 'Helvetica' ? 'Inter, sans-serif' : (fontFamily === 'TimesRoman' ? 'Georgia, serif' : 'Courier New, monospace')"
+            [style.font-size.pt]="fontSize"
+            [style.text-align]="alignment"
+            [style.line-height]="lineSpacing"
+            [style.color]="textColor"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- WORD STATUS BAR -->
+      <div class="word-status-bar">
+        <div class="status-metrics">
+          <span><strong>{{ wordCount }}</strong> Words</span>
+          <span class="dot-separator">•</span>
+          <span><strong>{{ charCount }}</strong> Characters</span>
+        </div>
+
+        <div class="status-right">
+          <span>Format: <strong>A4 {{ orientation | titlecase }}</strong></span>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTON -->
+      <div class="action-area mt-4">
         <button class="btn-action" (click)="processFiles()" [disabled]="!textInput.trim()">
-          <span>Generate PDF</span>
+          <span>Generate PDF Document</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M12 5l7 7-7 7"></path>
           </svg>
@@ -61,11 +187,11 @@
       </div>
     </div>
 
-    <!-- Processing -->
-    <div *ngIf="isConverting" class="action-area">
+    <!-- Processing State -->
+    <div *ngIf="isConverting" class="action-area py-5">
       <div class="progress-container">
         <div class="progress-header">
-          <span>Generating PDF...</span>
+          <span>Compiling PDF Document...</span>
           <span>{{ progress }}%</span>
         </div>
         <div class="progress-track">
@@ -74,12 +200,12 @@
       </div>
     </div>
 
-    <!-- Success -->
+    <!-- Success Result Card -->
     <div *ngIf="convertedUrl" class="success-card">
       <div class="success-icon">✓</div>
-      <h3 class="success-title">PDF Generated Successfully!</h3>
-      <p style="color: var(--text-secondary);">Your text has been converted to a professionally formatted PDF document.</p>
-      
+      <h3 class="success-title">PDF Document Created!</h3>
+      <p style="color: var(--text-secondary);">Your formatted document has been converted to a high-quality PDF.</p>
+
       <button class="btn-action btn-download" (click)="download()">
         <span>Download PDF</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -87,7 +213,7 @@
         </svg>
       </button>
 
-      <button class="reset-link" (click)="resetState(true)">Convert another text</button>
+      <button class="reset-link" (click)="resetState(false)">Edit & Re-generate</button>
     </div>
   </div>
 </div>

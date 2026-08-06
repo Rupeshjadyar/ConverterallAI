@@ -1,0 +1,330 @@
+<div class="resume-builder-layout">
+  <!-- Top Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <a routerLink="/home" class="back-link">← Back</a>
+      <span class="badge">100% Free • No Signup • Local Storage Save</span>
+    </div>
+    <div class="header-center">
+      <h1>📝 Professional Resume Builder</h1>
+      <p class="subtitle">Create and export your resume instantly</p>
+    </div>
+    <div class="header-right">
+      <div class="autosave-status" [ngClass]="autoSaveStatus">
+        <span *ngIf="autoSaveStatus === 'idle'">All changes saved</span>
+        <span *ngIf="autoSaveStatus === 'saving'">Saving...</span>
+        <span *ngIf="autoSaveStatus === 'saved'">Saved!</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Tab Switcher -->
+  <div class="mobile-tabs">
+    <button [class.active]="activeTab === 'templates'" (click)="activeTab = 'templates'">Templates</button>
+    <button [class.active]="activeTab === 'editor'" (click)="activeTab = 'editor'">Editor</button>
+    <button [class.active]="activeTab === 'preview'" (click)="activeTab = 'preview'">Preview</button>
+  </div>
+
+  <div class="main-panels">
+    <!-- Left Panel: Template Chooser -->
+    <div class="panel panel-templates" [class.mobile-active]="activeTab === 'templates'">
+      <div class="panel-header">
+        <h2>Templates</h2>
+      </div>
+      <div class="template-grid">
+        <div class="template-card" 
+             *ngFor="let tpl of templates"
+             [class.selected]="selectedTemplateId === tpl.id"
+             (click)="selectTemplate(tpl.id)">
+          <div class="color-swatch" [style.background]="tpl.colorPrimary"></div>
+          <div class="template-info">
+            <h4>{{ tpl.name }}</h4>
+            <span>{{ tpl.category }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="saved-resumes">
+        <h3>Saved Resumes</h3>
+        <button class="btn btn-outline" (click)="createNewResume()">+ New Resume</button>
+        <div class="resume-list">
+          <div class="resume-item" *ngFor="let res of savedResumes" [class.active]="currentResumeId === res.id">
+            <div class="resume-meta" (click)="loadResume(res.id)">
+              <span class="resume-name">{{ res.name }}</span>
+              <span class="resume-date">{{ formatDate(res.updatedAt) }}</span>
+            </div>
+            <div class="resume-actions">
+              <button class="icon-btn" (click)="duplicateResume(res.id)" title="Duplicate">📋</button>
+              <button class="icon-btn text-danger" (click)="deleteResume(res.id)" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel: Form Editor -->
+    <div class="panel panel-editor" [class.mobile-active]="activeTab === 'editor'">
+      
+      <!-- Personal Info -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'personal'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'personal' ? '' : 'personal'">
+          <span>👤 Personal Information</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="form-input" [(ngModel)]="resumeData.fullName" (ngModelChange)="autoSave()" placeholder="John Doe">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-input" [(ngModel)]="resumeData.email" (ngModelChange)="autoSave()" placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="text" class="form-input" [(ngModel)]="resumeData.phone" (ngModelChange)="autoSave()" placeholder="+1 234 567 890">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" class="form-input" [(ngModel)]="resumeData.location" (ngModelChange)="autoSave()" placeholder="New York, NY">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>LinkedIn</label>
+              <input type="text" class="form-input" [(ngModel)]="resumeData.linkedin" (ngModelChange)="autoSave()" placeholder="linkedin.com/in/johndoe">
+            </div>
+            <div class="form-group">
+              <label>Portfolio</label>
+              <input type="text" class="form-input" [(ngModel)]="resumeData.portfolio" (ngModelChange)="autoSave()" placeholder="johndoe.com">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Summary -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'summary'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'summary' ? '' : 'summary'">
+          <span>📝 Professional Summary</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <textarea class="form-input" rows="4" [(ngModel)]="resumeData.summary" (ngModelChange)="autoSave()" placeholder="A brief summary of your professional background..."></textarea>
+        </div>
+      </div>
+
+      <!-- Work Experience -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'experience'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'experience' ? '' : 'experience'">
+          <span>💼 Work Experience</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="repeatable-card" *ngFor="let exp of resumeData.experience; let i = index">
+            <div class="card-header">
+              <h4>Experience {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeExperience(exp.id)">✕</button>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Company</label>
+                <input type="text" class="form-input" [(ngModel)]="exp.company" (ngModelChange)="autoSave()">
+              </div>
+              <div class="form-group">
+                <label>Role</label>
+                <input type="text" class="form-input" [(ngModel)]="exp.role" (ngModelChange)="autoSave()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="text" class="form-input" [(ngModel)]="exp.startDate" (ngModelChange)="autoSave()" placeholder="Jan 2020">
+              </div>
+              <div class="form-group">
+                <label>End Date</label>
+                <input type="text" class="form-input" [(ngModel)]="exp.endDate" (ngModelChange)="autoSave()" [disabled]="exp.current" placeholder="Present">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="exp.current" (ngModelChange)="autoSave()"> Current
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-input" rows="3" [(ngModel)]="exp.description" (ngModelChange)="autoSave()"></textarea>
+            </div>
+          </div>
+          <button class="btn btn-add" (click)="addExperience()">+ Add Experience</button>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'education'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'education' ? '' : 'education'">
+          <span>🎓 Education</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="repeatable-card" *ngFor="let edu of resumeData.education; let i = index">
+            <div class="card-header">
+              <h4>Education {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeEducation(edu.id)">✕</button>
+            </div>
+            <div class="form-group">
+              <label>Institute</label>
+              <input type="text" class="form-input" [(ngModel)]="edu.institute" (ngModelChange)="autoSave()">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Degree</label>
+                <input type="text" class="form-input" [(ngModel)]="edu.degree" (ngModelChange)="autoSave()">
+              </div>
+              <div class="form-group">
+                <label>Field of Study</label>
+                <input type="text" class="form-input" [(ngModel)]="edu.field" (ngModelChange)="autoSave()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Year</label>
+                <input type="text" class="form-input" [(ngModel)]="edu.year" (ngModelChange)="autoSave()">
+              </div>
+              <div class="form-group">
+                <label>Grade (Optional)</label>
+                <input type="text" class="form-input" [(ngModel)]="edu.grade" (ngModelChange)="autoSave()">
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-add" (click)="addEducation()">+ Add Education</button>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'skills'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'skills' ? '' : 'skills'">
+          <span>🛠️ Skills</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="skills-container">
+            <div class="skill-chip" *ngFor="let skill of resumeData.skills; let i = index">
+              {{ skill }} <span class="remove" (click)="removeSkill(i)">✕</span>
+            </div>
+            <input type="text" class="skill-input" placeholder="Type skill & press Enter..." 
+                   [(ngModel)]="skillInput" (keydown)="onSkillKeydown($event)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'projects'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'projects' ? '' : 'projects'">
+          <span>🚀 Projects</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="repeatable-card" *ngFor="let proj of resumeData.projects; let i = index">
+            <div class="card-header">
+              <h4>Project {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeProject(proj.id)">✕</button>
+            </div>
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-input" [(ngModel)]="proj.title" (ngModelChange)="autoSave()">
+            </div>
+            <div class="form-group">
+              <label>Tech Stack</label>
+              <input type="text" class="form-input" [(ngModel)]="proj.techStack" (ngModelChange)="autoSave()">
+            </div>
+            <div class="form-group">
+              <label>Link (Optional)</label>
+              <input type="text" class="form-input" [(ngModel)]="proj.link" (ngModelChange)="autoSave()">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-input" rows="2" [(ngModel)]="proj.description" (ngModelChange)="autoSave()"></textarea>
+            </div>
+          </div>
+          <button class="btn btn-add" (click)="addProject()">+ Add Project</button>
+        </div>
+      </div>
+
+      <!-- Certifications -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'certifications'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'certifications' ? '' : 'certifications'">
+          <span>📜 Certifications</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="repeatable-card" *ngFor="let cert of resumeData.certifications; let i = index">
+            <div class="card-header">
+              <h4>Certification {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeCertification(cert.id)">✕</button>
+            </div>
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" class="form-input" [(ngModel)]="cert.name" (ngModelChange)="autoSave()">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Issuer</label>
+                <input type="text" class="form-input" [(ngModel)]="cert.issuer" (ngModelChange)="autoSave()">
+              </div>
+              <div class="form-group">
+                <label>Year</label>
+                <input type="text" class="form-input" [(ngModel)]="cert.year" (ngModelChange)="autoSave()">
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-add" (click)="addCertification()">+ Add Certification</button>
+        </div>
+      </div>
+
+      <!-- Languages -->
+      <div class="accordion-section" [class.expanded]="activeSection === 'languages'">
+        <div class="accordion-header" (click)="activeSection = activeSection === 'languages' ? '' : 'languages'">
+          <span>🌐 Languages</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="accordion-content">
+          <div class="repeatable-card" *ngFor="let lang of resumeData.languages; let i = index">
+            <div class="card-header">
+              <h4>Language {{ i + 1 }}</h4>
+              <button class="btn-remove" (click)="removeLanguage(lang.id)">✕</button>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Language</label>
+                <input type="text" class="form-input" [(ngModel)]="lang.language" (ngModelChange)="autoSave()">
+              </div>
+              <div class="form-group">
+                <label>Proficiency</label>
+                <select class="form-input" [(ngModel)]="lang.proficiency" (ngModelChange)="autoSave()">
+                  <option value="Native">Native</option>
+                  <option value="Fluent">Fluent</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Basic">Basic</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-add" (click)="addLanguage()">+ Add Language</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Panel: Live Preview -->
+    <div class="panel panel-preview" [class.mobile-active]="activeTab === 'preview'">
+      <div class="preview-toolbar">
+        <span>Preview: {{ getSelectedTemplate().name }}</span>
+        <button class="btn-export" (click)="exportAsPdf()" [disabled]="isExporting">
+          {{ isExporting ? 'Exporting...' : 'Export PDF' }}
+        </button>
+      </div>
+      <div class="preview-wrapper">
+        <div class="resume-preview-content" [innerHTML]="getRenderedHtml()"></div>
+      </div>
+    </div>
+  </div>
+</div>

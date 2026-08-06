@@ -4,7 +4,7 @@ export interface CategoryItem {
   name: string;
   icon: string;
   description: string;
-  color: 'violet' | 'cyan' | 'amber' | 'emerald' | 'blue' | 'fuchsia';
+  color: 'violet' | 'cyan' | 'amber' | 'emerald' | 'blue' | 'fuchsia' | 'rose';
   toolCount: number;
 }
 
@@ -63,4 +63,13 @@ export const CATEGORIES_DATA: CategoryItem[] = [
     color: 'fuchsia',
     toolCount: 14,
   },
+  {
+    id: 'resume-tools',
+    slug: '/resume-builder',
+    name: 'Resume Tools',
+    icon: '📝',
+    description: 'Build stunning professional resumes with 21 free templates, save locally, and export as PDF.',
+    color: 'rose',
+    toolCount: 1,
+  }
 ];

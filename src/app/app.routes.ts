@@ -252,6 +252,10 @@ export const routes: Routes = [
     {
         path: 'pdf-processing/text-to-pdf',
         loadComponent: () => import('./pages/pdf-processing/text-to-pdf/text-to-pdf.component').then(m => m.TextToPdfComponent)
+    },
+    {
+        path: 'resume-builder',
+        loadComponent: () => import('./pages/resume-builder/resume-builder.component').then(m => m.ResumeBuilderComponent)
     }
 ];
 

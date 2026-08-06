@@ -2,7 +2,7 @@ export interface ToolItem {
   id: string;
   name: string;
   slug: string; // Route path
-  categoryId: 'pdf-tools' | 'image-tools' | 'audio-tools' | 'calculators' | 'converters' | 'developer-tools';
+  categoryId: 'pdf-tools' | 'image-tools' | 'audio-tools' | 'calculators' | 'converters' | 'developer-tools' | 'resume-tools';
   shortDesc: string;
   fullDesc: string;
   icon: string;
@@ -26,6 +26,18 @@ export const TOOLS_DATA: ToolItem[] = [
     isPopular: true,
     isLatest: true,
     isAI: true
+  },
+  {
+    id: 'resume-builder',
+    name: 'Professional Resume Builder',
+    slug: '/resume-builder',
+    categoryId: 'resume-tools',
+    shortDesc: 'Build stunning resumes with 21 free templates. Edit, save locally, and export as PDF.',
+    fullDesc: 'Full-featured resume builder with 21 professional templates, structured form editor, live preview, localStorage auto-save, and one-click PDF export.',
+    icon: '📝',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true
   },
 
   // ==================== PDF TOOLS ====================
