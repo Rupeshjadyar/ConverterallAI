@@ -1,0 +1,48 @@
+<div class="editor-panel" [formGroup]="resumeForm">
+  <h2>Personal Details</h2>
+  <div class="form-section" formGroupName="personalDetails">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" formControlName="fullName">
+    </div>
+    <div class="form-group">
+      <label>Job Title</label>
+      <input type="text" formControlName="jobTitle">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" formControlName="email">
+    </div>
+    <div class="form-group">
+      <label>Phone</label>
+      <input type="text" formControlName="phone">
+    </div>
+  </div>
+
+  <h2>Work Experience</h2>
+  <div class="form-section" formArrayName="experience">
+    <div *ngFor="let exp of experienceControls; let i = index" [formGroupName]="i" class="array-item">
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" formControlName="jobTitle">
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" formControlName="company">
+      </div>
+      <div class="form-group">
+        <label>Responsibilities</label>
+        <div class="textarea-wrapper">
+          <textarea formControlName="description" rows="4"></textarea>
+          <button class="ai-btn" (click)="openAiAssistant(i)">✨ AI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-ai-assistant *ngIf="showAiPopup" 
+  [currentText]="resumeForm.get(['experience', activeControlIndex, 'description'])?.value || ''"
+  (onApply)="applyAiSuggestion($event)"
+  (onClose)="closeAiAssistant()">
+</app-ai-assistant>

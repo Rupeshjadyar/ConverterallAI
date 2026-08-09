@@ -1,133 +1,192 @@
-<div class="container py-5">
-  <!-- Top Breadcrumb & Navigation -->
-  <div class="d-flex align-items-center justify-content-between mb-4">
-    <a routerLink="/home" class="btn btn-outline-primary d-inline-flex align-items-center gap-2">
-      <i class="bi bi-arrow-left"></i> Back to Hub
-    </a>
-    <span class="badge bg-primary px-3 py-2 fs-6">
-      <i class="bi bi-mic-fill me-1"></i> AI Speech Engine
-    </span>
-  </div>
-
-  <!-- Hero Header -->
-  <div class="text-center mb-5">
-    <h1 class="display-5 fw-bold mb-2">Text to Audio &amp; Speech Studio</h1>
-    <p class="text-secondary lead max-w-700 mx-auto">
-      Convert any text, article, or script into natural studio voice narration. Adjust speech rate, pitch, voice actor, and listen instantly in your browser.
-    </p>
-  </div>
-
-  <div class="row g-4">
-    <!-- Left Column: Input Studio -->
-    <div class="col-lg-7">
-      <div class="card p-4 h-100">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold mb-0">
-            <i class="bi bi-file-earmark-text me-2 text-primary"></i>Enter Script / Text
-          </h5>
-          <span class="badge bg-secondary">{{ textInput.length }} chars</span>
-        </div>
-
-        <!-- Quick Preset Samples -->
-        <div class="d-flex flex-wrap gap-2 mb-3">
-          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Namaste and welcome to ConverterallAI! All your document, image, and speech tools are now 100% free and super fast.')">
-            ✨ Sample Greeting
-          </button>
-          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Artificial Intelligence is transforming how we work with digital files, making complex editing tasks simple and instantaneous.')">
-            🎙️ Tech Narration
-          </button>
-          <button class="btn btn-sm btn-outline-primary" (click)="loadPreset('Important notification: Your document processing has completed successfully. Please check your download folder.')">
-            🔔 Notification Voice
-          </button>
-        </div>
-
-        <textarea
-          [(ngModel)]="textInput"
-          rows="9"
-          class="form-control mb-3 fs-6"
-          placeholder="Type or paste text to convert to audio..."
-        ></textarea>
-
-        <!-- Waveform / Status Indicator -->
-        <div class="audio-visualizer-bar p-3 rounded mb-3 d-flex align-items-center justify-content-between" [class.active-glow]="isPlaying">
-          <div class="d-flex align-items-center gap-2">
-            <div class="wave-dots d-flex gap-1" *ngIf="isPlaying">
-              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
-            </div>
-            <i class="bi bi-volume-up-fill text-primary fs-4" *ngIf="!isPlaying"></i>
-            <span class="fw-semibold">
-              {{ isPlaying ? 'Speaking Now...' : isPaused ? 'Paused' : 'Ready to Narrate' }}
-            </span>
-          </div>
-          <span class="badge" [class.bg-success]="isPlaying" [class.bg-warning]="isPaused" [class.bg-secondary]="!isPlaying && !isPaused">
-            {{ isPlaying ? 'LIVE' : isPaused ? 'PAUSED' : 'IDLE' }}
-          </span>
-        </div>
+<div class="voice-studio-viewport">
+  <div class="studio-card">
+    
+    <!-- TOP HEADER -->
+    <div class="studio-header">
+      <div class="title-with-icon">
+        <span class="header-icon">🎛️</span>
+        <h2>Advanced Voice Generator</h2>
       </div>
     </div>
 
-    <!-- Right Column: Voice & Speech Controls -->
-    <div class="col-lg-5">
-      <div class="card p-4 h-100">
-        <h5 class="fw-bold mb-4">
-          <i class="bi bi-sliders me-2 text-primary"></i>Voice &amp; Studio Controls
-        </h5>
+    <!-- MODE SELECTOR PILLS -->
+    <div class="mode-pill-bar">
+      <button class="mode-pill" [class.active]="activeMode === 'single'" (click)="activeMode = 'single'">
+        Single Voice
+      </button>
+      <button class="mode-pill" [class.active]="activeMode === 'dialogue'" (click)="activeMode = 'dialogue'">
+        Multi-Voice Dialogue
+      </button>
+    </div>
 
-        <!-- Voice Selector -->
-        <div class="mb-4">
-          <label class="form-label fw-semibold">Select Voice / Accent</label>
-          <select [(ngModel)]="selectedVoiceIndex" class="form-select">
-            <option *ngFor="let voice of voices; let i = index" [value]="i">
-              {{ voice.name }} ({{ voice.lang }})
-            </option>
+    <!-- MODE 1: SINGLE VOICE SCRIPT INPUT -->
+    <div class="studio-section" *ngIf="activeMode === 'single'">
+      <div class="section-label">
+        <span>📜 YOUR TEXT ({{ selectedLangObj.nativeName }})</span>
+      </div>
+      <div class="textarea-wrapper">
+        <textarea [(ngModel)]="textInput" maxlength="5000" rows="6" 
+                  placeholder="Type or paste your text here... (max 5000 characters)"></textarea>
+      </div>
+      <div class="textarea-footer">
+        <span class="char-count">⌨️ {{ textInput.length }} / 5000</span>
+        <span class="duration-est">⏱️ ~{{ estimatedDurationSec }} sec</span>
+      </div>
+    </div>
+
+    <!-- MODE 2: MULTI-VOICE DIALOGUE SCRIPT INPUT -->
+    <div class="studio-section" *ngIf="activeMode === 'dialogue'">
+      <div class="section-label d-flex justify-content-between align-items-center mb-2">
+        <span>🗣️ MULTI-VOICE DIALOGUE LINES</span>
+        <button class="btn-add-line" (click)="addDialogueLine()">+ Add Speaker Line</button>
+      </div>
+
+      <div class="dialogue-line-card" *ngFor="let line of dialogueLines; let i = index">
+        <div class="line-header">
+          <input type="text" class="speaker-name-input" [(ngModel)]="line.speaker" placeholder="Speaker Name">
+          <select class="voice-select-sm" [(ngModel)]="line.voiceId">
+            <option *ngFor="let vc of voiceCharacters" [value]="vc.id">{{ vc.avatar }} {{ vc.name }}</option>
           </select>
-          <small class="text-secondary mt-1 d-block">
-            Found {{ voices.length }} native voices on your device.
-          </small>
+          <button class="btn-remove-line" (click)="removeDialogueLine(i)">🗑️</button>
         </div>
-
-        <!-- Speed / Rate Slider -->
-        <div class="mb-3">
-          <div class="d-flex justify-content-between">
-            <label class="form-label fw-semibold">Speaking Rate (Speed)</label>
-            <span class="badge bg-primary">{{ rate }}x</span>
-          </div>
-          <input type="range" class="form-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="rate" />
-        </div>
-
-        <!-- Pitch Slider -->
-        <div class="mb-4">
-          <div class="d-flex justify-content-between">
-            <label class="form-label fw-semibold">Voice Pitch</label>
-            <span class="badge bg-primary">{{ pitch }}</span>
-          </div>
-          <input type="range" class="form-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="pitch" />
-        </div>
-
-        <!-- Playback Buttons -->
-        <div class="d-grid gap-2 mb-3">
-          <button class="btn btn-primary py-3 fs-5 d-flex align-items-center justify-content-center gap-2" (click)="speak()">
-            <i class="bi" [class.bi-play-fill]="!isPlaying" [class.bi-arrow-repeat]="isPlaying"></i>
-            {{ isPlaying ? 'Restart Speech' : isPaused ? 'Resume Speech' : 'Play Narration' }}
-          </button>
-
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary flex-grow-1 py-2" (click)="pause()" [disabled]="!isPlaying">
-              <i class="bi bi-pause-fill me-1"></i> Pause
-            </button>
-            <button class="btn btn-outline-primary flex-grow-1 py-2" (click)="stop()">
-              <i class="bi bi-stop-fill me-1"></i> Stop
-            </button>
-          </div>
-        </div>
-
-        <hr class="border-secondary my-3" />
-
-        <!-- Export Action -->
-        <button class="btn btn-outline-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2" (click)="downloadSpeechAsAudio()">
-          <i class="bi bi-download"></i> Export Script &amp; Trigger Audio
-        </button>
+        <textarea class="line-textarea" [(ngModel)]="line.text" rows="2" placeholder="Dialogue line..."></textarea>
       </div>
     </div>
+
+    <!-- LANGUAGE & VOICE CHARACTER SELECTORS -->
+    <div class="controls-row-2col">
+      <div class="field-box">
+        <label class="field-label">🌐 LANGUAGE (100+ REAL MULTI-LINGUAL)</label>
+        <select class="studio-select" [(ngModel)]="selectedLangCode" (change)="onLanguageChange()">
+          <option *ngFor="let lang of languages" [value]="lang.code">
+            {{ lang.flag }} {{ lang.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field-box">
+        <label class="field-label">🤖 VOICE CHARACTER</label>
+        <select class="studio-select" [(ngModel)]="selectedVoiceId">
+          <option *ngFor="let vc of voiceCharacters" [value]="vc.id">
+            {{ vc.avatar }} {{ vc.name }} — {{ vc.description }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SPEED, PITCH & VOLUME SLIDERS GRID -->
+    <div class="sliders-grid">
+      <!-- Speed Slider Card -->
+      <div class="slider-card">
+        <div class="slider-header">
+          <span class="slider-title">🏎️ Speed</span>
+          <span class="slider-val-badge">{{ speed }}x</span>
+        </div>
+        <input type="range" class="studio-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="speed">
+        <div class="slider-footer">
+          <span>🐢 Slow</span>
+          <span>⚡ Fast</span>
+        </div>
+      </div>
+
+      <!-- Pitch Slider Card -->
+      <div class="slider-card">
+        <div class="slider-header">
+          <span class="slider-title">🎵 Pitch</span>
+          <span class="slider-val-badge">{{ pitch > 0 ? '+' + pitch : pitch }}</span>
+        </div>
+        <input type="range" class="studio-range" min="-5" max="5" step="1" [(ngModel)]="pitch">
+        <div class="slider-footer">
+          <span>🔽 Low</span>
+          <span>🔼 High</span>
+        </div>
+      </div>
+
+      <!-- Volume Slider Card -->
+      <div class="slider-card">
+        <div class="slider-header">
+          <span class="slider-title">🔊 Volume</span>
+          <span class="slider-val-badge">{{ volume }}%</span>
+        </div>
+        <input type="range" class="studio-range" min="0" max="100" step="5" [(ngModel)]="volume">
+        <div class="slider-footer">
+          <span>🔇 Mute</span>
+          <span>🔊 Max</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPEAKING STYLE & FORMAT SELECTORS -->
+    <div class="controls-row-2col">
+      <div class="field-box">
+        <label class="field-label">🎭 SPEAKING STYLE</label>
+        <select class="studio-select" [(ngModel)]="speakingStyle">
+          <option *ngFor="let style of speakingStyles" [value]="style">🎭 {{ style }}</option>
+        </select>
+      </div>
+
+      <div class="field-box">
+        <label class="field-label">💾 FORMAT</label>
+        <select class="studio-select" [(ngModel)]="audioFormat">
+          <option value="mp3">🎵 MP3 (Recommended)</option>
+          <option value="wav">🎼 WAV (Uncompressed HD)</option>
+          <option value="aac">🎧 AAC Audio</option>
+          <option value="ogg">🎛️ OGG Vorbis</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- NATURAL VOICE MODE TOGGLE -->
+    <div class="toggle-banner-box">
+      <div class="toggle-info">
+        <div class="toggle-title">
+          <span class="sparkle-icon">✨</span> Natural Voice Mode
+        </div>
+        <div class="toggle-sub">
+          Smart prosody — questions rise ↑, exclamations get energy ⚡, natural pauses at commas &amp; full stops
+        </div>
+      </div>
+      <label class="switch-toggle">
+        <input type="checkbox" [(ngModel)]="naturalProsody">
+        <span class="switch-slider"></span>
+      </label>
+    </div>
+
+    <!-- GENERATE & PLAYBACK ACTION BUTTONS -->
+    <div class="action-bar">
+      <button class="btn-generate-voice" (click)="generateAndPlayVoice()" [disabled]="isPlaying">
+        <span *ngIf="!isPlaying">🚀 Generate &amp; Listen (Native Accent)</span>
+        <span *ngIf="isPlaying">🔊 Speaking Native Speech...</span>
+      </button>
+
+      <div class="secondary-actions-row" *ngIf="isPlaying || isPaused">
+        <button class="btn-sec-action" (click)="pauseSpeech()">⏸️ Pause</button>
+        <button class="btn-sec-action" (click)="stopPlayback()">⏹️ Stop</button>
+      </div>
+
+      <button class="btn-download-audio" (click)="generateAndSaveAudio()" [disabled]="isGeneratingAudio">
+        <span *ngIf="!isGeneratingAudio">💾 Generate, Save &amp; Download Audio (.{{ audioFormat }})</span>
+        <span *ngIf="isGeneratingAudio">⏳ Processing Audio...</span>
+      </button>
+    </div>
+
+    <!-- SAVED AUDIO LIBRARY (PERSISTENT STORAGE) -->
+    <div class="saved-library-section" *ngIf="savedAudioLibrary.length > 0">
+      <h3 class="library-title">📁 Studio Saved Audio Library</h3>
+      <div class="library-grid">
+        <div class="library-item-card" *ngFor="let item of savedAudioLibrary; let i = index">
+          <div class="item-info">
+            <strong>{{ item.title }}</strong>
+            <small>{{ item.langName }} • {{ item.voiceName }} • {{ item.timestamp }}</small>
+          </div>
+          <div class="item-actions">
+            <button class="btn-lib-play" (click)="playLibraryItem(item)">▶ Play</button>
+            <a [href]="item.audioUrl" [download]="'audio-' + item.id + '.' + item.format" class="btn-lib-download">📥 Download</a>
+            <button class="btn-lib-del" (click)="deleteLibraryItem(i)">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

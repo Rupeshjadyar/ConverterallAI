@@ -1,0 +1,131 @@
+.preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.download-btn {
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.download-btn:hover {
+  background-color: #303f9f;
+}
+
+.resume-paper {
+  background-color: white;
+  color: #333;
+  width: 210mm; /* A4 width */
+  min-height: 297mm; /* A4 height */
+  padding: 40px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+.resume-header {
+  border-bottom: 2px solid #2c3e50;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.resume-header h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.resume-header h2 {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin: 0 0 10px 0;
+  font-weight: normal;
+}
+
+.contact-info {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.resume-body {
+  display: flex;
+  gap: 30px;
+}
+
+.main-content {
+  flex: 2;
+}
+
+.sidebar {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.experience-item, .education-item {
+  margin-bottom: 20px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+}
+
+.item-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.dates {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.company, .school {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+  margin: 0;
+}
+
+.skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skills-list li {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  color: #444;
+}

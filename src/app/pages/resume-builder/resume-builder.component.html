@@ -1,329 +1,808 @@
-<div class="resume-builder-layout">
-  <!-- Top Header -->
-  <header class="app-header">
-    <div class="header-left">
-      <a routerLink="/home" class="back-link">← Back</a>
-      <span class="badge">100% Free • No Signup • Local Storage Save</span>
-    </div>
-    <div class="header-center">
-      <h1>📝 Professional Resume Builder</h1>
-      <p class="subtitle">Create and export your resume instantly</p>
-    </div>
-    <div class="header-right">
-      <div class="autosave-status" [ngClass]="autoSaveStatus">
-        <span *ngIf="autoSaveStatus === 'idle'">All changes saved</span>
-        <span *ngIf="autoSaveStatus === 'saving'">Saving...</span>
-        <span *ngIf="autoSaveStatus === 'saved'">Saved!</span>
+<div class="resume-app-container">
+  <!-- TOP TOOLBAR HEADER -->
+  <header class="top-header">
+    <div class="brand">
+      <div class="logo-icon">📄✨</div>
+      <div class="brand-text">
+        <h1>AI Resume Builder</h1>
+        <span class="badge">PRO AI v2.0</span>
       </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-secondary" (click)="exportJsonData()">
+        <span class="icon">💾</span> Backup JSON
+      </button>
+      <label class="btn-secondary file-label">
+        <span class="icon">📂</span> Load JSON
+        <input type="file" (change)="importJsonData($event)" accept=".json" style="display:none;">
+      </label>
+      <button class="btn-ai-global" (click)="openAiForSummary()">
+        <span class="icon">✨</span> AI Summary
+      </button>
+      <button class="btn-download" (click)="exportToPDF()">
+        <span class="icon">📥</span> Download PDF
+      </button>
     </div>
   </header>
 
-  <!-- Mobile Tab Switcher -->
-  <div class="mobile-tabs">
-    <button [class.active]="activeTab === 'templates'" (click)="activeTab = 'templates'">Templates</button>
-    <button [class.active]="activeTab === 'editor'" (click)="activeTab = 'editor'">Editor</button>
-    <button [class.active]="activeTab === 'preview'" (click)="activeTab = 'preview'">Preview</button>
-  </div>
-
-  <div class="main-panels">
-    <!-- Left Panel: Template Chooser -->
-    <div class="panel panel-templates" [class.mobile-active]="activeTab === 'templates'">
-      <div class="panel-header">
-        <h2>Templates</h2>
-      </div>
-      <div class="template-grid">
-        <div class="template-card" 
-             *ngFor="let tpl of templates"
-             [class.selected]="selectedTemplateId === tpl.id"
-             (click)="selectTemplate(tpl.id)">
-          <div class="color-swatch" [style.background]="tpl.colorPrimary"></div>
-          <div class="template-info">
-            <h4>{{ tpl.name }}</h4>
-            <span>{{ tpl.category }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="saved-resumes">
-        <h3>Saved Resumes</h3>
-        <button class="btn btn-outline" (click)="createNewResume()">+ New Resume</button>
-        <div class="resume-list">
-          <div class="resume-item" *ngFor="let res of savedResumes" [class.active]="currentResumeId === res.id">
-            <div class="resume-meta" (click)="loadResume(res.id)">
-              <span class="resume-name">{{ res.name }}</span>
-              <span class="resume-date">{{ formatDate(res.updatedAt) }}</span>
-            </div>
-            <div class="resume-actions">
-              <button class="icon-btn" (click)="duplicateResume(res.id)" title="Duplicate">📋</button>
-              <button class="icon-btn text-danger" (click)="deleteResume(res.id)" title="Delete">🗑️</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Center Panel: Form Editor -->
-    <div class="panel panel-editor" [class.mobile-active]="activeTab === 'editor'">
-      
-      <!-- Personal Info -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'personal'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'personal' ? '' : 'personal'">
-          <span>👤 Personal Information</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" class="form-input" [(ngModel)]="resumeData.fullName" (ngModelChange)="autoSave()" placeholder="John Doe">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" class="form-input" [(ngModel)]="resumeData.email" (ngModelChange)="autoSave()" placeholder="john@example.com">
-            </div>
-            <div class="form-group">
-              <label>Phone</label>
-              <input type="text" class="form-input" [(ngModel)]="resumeData.phone" (ngModelChange)="autoSave()" placeholder="+1 234 567 890">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Location</label>
-            <input type="text" class="form-input" [(ngModel)]="resumeData.location" (ngModelChange)="autoSave()" placeholder="New York, NY">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>LinkedIn</label>
-              <input type="text" class="form-input" [(ngModel)]="resumeData.linkedin" (ngModelChange)="autoSave()" placeholder="linkedin.com/in/johndoe">
-            </div>
-            <div class="form-group">
-              <label>Portfolio</label>
-              <input type="text" class="form-input" [(ngModel)]="resumeData.portfolio" (ngModelChange)="autoSave()" placeholder="johndoe.com">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Professional Summary -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'summary'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'summary' ? '' : 'summary'">
-          <span>📝 Professional Summary</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <textarea class="form-input" rows="4" [(ngModel)]="resumeData.summary" (ngModelChange)="autoSave()" placeholder="A brief summary of your professional background..."></textarea>
-        </div>
-      </div>
-
-      <!-- Work Experience -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'experience'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'experience' ? '' : 'experience'">
-          <span>💼 Work Experience</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="repeatable-card" *ngFor="let exp of resumeData.experience; let i = index">
-            <div class="card-header">
-              <h4>Experience {{ i + 1 }}</h4>
-              <button class="btn-remove" (click)="removeExperience(exp.id)">✕</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Company</label>
-                <input type="text" class="form-input" [(ngModel)]="exp.company" (ngModelChange)="autoSave()">
-              </div>
-              <div class="form-group">
-                <label>Role</label>
-                <input type="text" class="form-input" [(ngModel)]="exp.role" (ngModelChange)="autoSave()">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Start Date</label>
-                <input type="text" class="form-input" [(ngModel)]="exp.startDate" (ngModelChange)="autoSave()" placeholder="Jan 2020">
-              </div>
-              <div class="form-group">
-                <label>End Date</label>
-                <input type="text" class="form-input" [(ngModel)]="exp.endDate" (ngModelChange)="autoSave()" [disabled]="exp.current" placeholder="Present">
-                <label class="checkbox-label">
-                  <input type="checkbox" [(ngModel)]="exp.current" (ngModelChange)="autoSave()"> Current
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-input" rows="3" [(ngModel)]="exp.description" (ngModelChange)="autoSave()"></textarea>
-            </div>
-          </div>
-          <button class="btn btn-add" (click)="addExperience()">+ Add Experience</button>
-        </div>
-      </div>
-
-      <!-- Education -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'education'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'education' ? '' : 'education'">
-          <span>🎓 Education</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="repeatable-card" *ngFor="let edu of resumeData.education; let i = index">
-            <div class="card-header">
-              <h4>Education {{ i + 1 }}</h4>
-              <button class="btn-remove" (click)="removeEducation(edu.id)">✕</button>
-            </div>
-            <div class="form-group">
-              <label>Institute</label>
-              <input type="text" class="form-input" [(ngModel)]="edu.institute" (ngModelChange)="autoSave()">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Degree</label>
-                <input type="text" class="form-input" [(ngModel)]="edu.degree" (ngModelChange)="autoSave()">
-              </div>
-              <div class="form-group">
-                <label>Field of Study</label>
-                <input type="text" class="form-input" [(ngModel)]="edu.field" (ngModelChange)="autoSave()">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Year</label>
-                <input type="text" class="form-input" [(ngModel)]="edu.year" (ngModelChange)="autoSave()">
-              </div>
-              <div class="form-group">
-                <label>Grade (Optional)</label>
-                <input type="text" class="form-input" [(ngModel)]="edu.grade" (ngModelChange)="autoSave()">
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-add" (click)="addEducation()">+ Add Education</button>
-        </div>
-      </div>
-
-      <!-- Skills -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'skills'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'skills' ? '' : 'skills'">
-          <span>🛠️ Skills</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="skills-container">
-            <div class="skill-chip" *ngFor="let skill of resumeData.skills; let i = index">
-              {{ skill }} <span class="remove" (click)="removeSkill(i)">✕</span>
-            </div>
-            <input type="text" class="skill-input" placeholder="Type skill & press Enter..." 
-                   [(ngModel)]="skillInput" (keydown)="onSkillKeydown($event)">
-          </div>
-        </div>
-      </div>
-
-      <!-- Projects -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'projects'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'projects' ? '' : 'projects'">
-          <span>🚀 Projects</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="repeatable-card" *ngFor="let proj of resumeData.projects; let i = index">
-            <div class="card-header">
-              <h4>Project {{ i + 1 }}</h4>
-              <button class="btn-remove" (click)="removeProject(proj.id)">✕</button>
-            </div>
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-input" [(ngModel)]="proj.title" (ngModelChange)="autoSave()">
-            </div>
-            <div class="form-group">
-              <label>Tech Stack</label>
-              <input type="text" class="form-input" [(ngModel)]="proj.techStack" (ngModelChange)="autoSave()">
-            </div>
-            <div class="form-group">
-              <label>Link (Optional)</label>
-              <input type="text" class="form-input" [(ngModel)]="proj.link" (ngModelChange)="autoSave()">
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-input" rows="2" [(ngModel)]="proj.description" (ngModelChange)="autoSave()"></textarea>
-            </div>
-          </div>
-          <button class="btn btn-add" (click)="addProject()">+ Add Project</button>
-        </div>
-      </div>
-
-      <!-- Certifications -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'certifications'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'certifications' ? '' : 'certifications'">
-          <span>📜 Certifications</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="repeatable-card" *ngFor="let cert of resumeData.certifications; let i = index">
-            <div class="card-header">
-              <h4>Certification {{ i + 1 }}</h4>
-              <button class="btn-remove" (click)="removeCertification(cert.id)">✕</button>
-            </div>
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" class="form-input" [(ngModel)]="cert.name" (ngModelChange)="autoSave()">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Issuer</label>
-                <input type="text" class="form-input" [(ngModel)]="cert.issuer" (ngModelChange)="autoSave()">
-              </div>
-              <div class="form-group">
-                <label>Year</label>
-                <input type="text" class="form-input" [(ngModel)]="cert.year" (ngModelChange)="autoSave()">
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-add" (click)="addCertification()">+ Add Certification</button>
-        </div>
-      </div>
-
-      <!-- Languages -->
-      <div class="accordion-section" [class.expanded]="activeSection === 'languages'">
-        <div class="accordion-header" (click)="activeSection = activeSection === 'languages' ? '' : 'languages'">
-          <span>🌐 Languages</span>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="accordion-content">
-          <div class="repeatable-card" *ngFor="let lang of resumeData.languages; let i = index">
-            <div class="card-header">
-              <h4>Language {{ i + 1 }}</h4>
-              <button class="btn-remove" (click)="removeLanguage(lang.id)">✕</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Language</label>
-                <input type="text" class="form-input" [(ngModel)]="lang.language" (ngModelChange)="autoSave()">
-              </div>
-              <div class="form-group">
-                <label>Proficiency</label>
-                <select class="form-input" [(ngModel)]="lang.proficiency" (ngModelChange)="autoSave()">
-                  <option value="Native">Native</option>
-                  <option value="Fluent">Fluent</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Basic">Basic</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-add" (click)="addLanguage()">+ Add Language</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Right Panel: Live Preview -->
-    <div class="panel panel-preview" [class.mobile-active]="activeTab === 'preview'">
-      <div class="preview-toolbar">
-        <span>Preview: {{ getSelectedTemplate().name }}</span>
-        <button class="btn-export" (click)="exportAsPdf()" [disabled]="isExporting">
-          {{ isExporting ? 'Exporting...' : 'Export PDF' }}
+  <!-- MAIN WORKSPACE -->
+  <div class="workspace">
+    <!-- LEFT SIDEBAR CONTROL PANEL -->
+    <aside class="sidebar-panel">
+      <!-- MAIN NAVIGATION TABS -->
+      <div class="tab-nav">
+        <button class="tab-btn" [class.active]="activeTab === 'editor'" (click)="activeTab = 'editor'">
+          <span class="tab-icon">✏️</span> Content
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'templates'" (click)="activeTab = 'templates'">
+          <span class="tab-icon">🎨</span> Templates ({{ templates.length }})
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'customize'" (click)="activeTab = 'customize'">
+          <span class="tab-icon">🎛️</span> Style / Custom
         </button>
       </div>
-      <div class="preview-wrapper">
-        <div class="resume-preview-content" [innerHTML]="getRenderedHtml()"></div>
+
+      <!-- TAB 1: CONTENT EDITOR -->
+      <div class="tab-content" *ngIf="activeTab === 'editor'">
+        <!-- SECTION SELECTOR PILLS -->
+        <div class="section-pills">
+          <button class="pill-btn" [class.active]="activeEditorSection === 'personal'" (click)="activeEditorSection = 'personal'">👤 Info</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'experience'" (click)="activeEditorSection = 'experience'">💼 Experience</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'education'" (click)="activeEditorSection = 'education'">🎓 Education</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'skills'" (click)="activeEditorSection = 'skills'">⚡ Skills</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'projects'" (click)="activeEditorSection = 'projects'">🚀 Projects</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'certifications'" (click)="activeEditorSection = 'certifications'">📜 Extra</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'customSections'" (click)="activeEditorSection = 'customSections'">➕ Custom</button>
+        </div>
+
+        <div class="editor-forms-container">
+          <!-- 1. PERSONAL DETAILS -->
+          <div class="form-card" *ngIf="activeEditorSection === 'personal'">
+            <h3 class="card-title">Personal Details</h3>
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" [(ngModel)]="resume.fullName" placeholder="e.g. Rupesh Jadyar">
+            </div>
+            <div class="form-group">
+              <label>Job Title</label>
+              <input type="text" [(ngModel)]="resume.jobTitle" placeholder="e.g. Senior Software Engineer">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" [(ngModel)]="resume.email" placeholder="rupesh@example.com">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="text" [(ngModel)]="resume.phone" placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" [(ngModel)]="resume.location" placeholder="Mumbai, India">
+              </div>
+              <div class="form-group">
+                <label>LinkedIn</label>
+                <input type="text" [(ngModel)]="resume.linkedin" placeholder="linkedin.com/in/username">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="label-with-ai">
+                <label>Professional Summary</label>
+                <button class="btn-inline-ai" (click)="openAiForSummary()">✨ AI Summary</button>
+              </div>
+              <textarea [(ngModel)]="resume.summary" rows="4" placeholder="Write a summary..."></textarea>
+            </div>
+          </div>
+
+          <!-- 2. WORK EXPERIENCE -->
+          <div class="form-card" *ngIf="activeEditorSection === 'experience'">
+            <div class="card-header-flex">
+              <h3 class="card-title">Work Experience</h3>
+              <button class="btn-add" (click)="addExperience()">+ Add Experience</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let exp of resume.experience; let i = index">
+              <div class="accordion-header">
+                <strong>{{ exp.role || 'Job Role' }} at {{ exp.company || 'Company' }}</strong>
+                <button class="btn-remove" (click)="removeExperience(i)">🗑️</button>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Company Name</label>
+                  <input type="text" [(ngModel)]="exp.company">
+                </div>
+                <div class="form-group">
+                  <label>Role / Position</label>
+                  <input type="text" [(ngModel)]="exp.role">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Start Date</label>
+                  <input type="text" [(ngModel)]="exp.startDate" placeholder="Jan 2022">
+                </div>
+                <div class="form-group">
+                  <label>End Date</label>
+                  <input type="text" [(ngModel)]="exp.endDate" placeholder="Present">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="label-with-ai">
+                  <label>Responsibilities & Accomplishments</label>
+                  <button class="btn-inline-ai" (click)="openAiForExperience(i)">✨ Improve with AI</button>
+                </div>
+                <textarea [(ngModel)]="exp.description" rows="4" placeholder="• Accomplishment points..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. EDUCATION -->
+          <div class="form-card" *ngIf="activeEditorSection === 'education'">
+            <div class="card-header-flex">
+              <h3 class="card-title">Education</h3>
+              <button class="btn-add" (click)="addEducation()">+ Add Education</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let edu of resume.education; let i = index">
+              <div class="accordion-header">
+                <strong>{{ edu.degree }} - {{ edu.institute }}</strong>
+                <button class="btn-remove" (click)="removeEducation(i)">🗑️</button>
+              </div>
+              <div class="form-group">
+                <label>Institution / University</label>
+                <input type="text" [(ngModel)]="edu.institute">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Degree</label>
+                  <input type="text" [(ngModel)]="edu.degree">
+                </div>
+                <div class="form-group">
+                  <label>Field of Study</label>
+                  <input type="text" [(ngModel)]="edu.field">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Graduation Year</label>
+                  <input type="text" [(ngModel)]="edu.year">
+                </div>
+                <div class="form-group">
+                  <label>Grade / CGPA</label>
+                  <input type="text" [(ngModel)]="edu.grade">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. SKILLS -->
+          <div class="form-card" *ngIf="activeEditorSection === 'skills'">
+            <h3 class="card-title">Skills & Keywords</h3>
+            <div class="form-group">
+              <label>Add Skill Tag</label>
+              <div class="input-with-button">
+                <input type="text" [(ngModel)]="newSkillInput" (keyup.enter)="addSkill()" placeholder="e.g. React, Docker, Python">
+                <button class="btn-add" (click)="addSkill()">Add</button>
+              </div>
+            </div>
+
+            <div class="skills-tag-grid">
+              <span class="skill-tag" *ngFor="let skill of resume.skills; let i = index">
+                {{ skill }}
+                <span class="tag-close" (click)="removeSkill(i)">&times;</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 5. PROJECTS -->
+          <div class="form-card" *ngIf="activeEditorSection === 'projects'">
+            <div class="card-header-flex">
+              <h3 class="card-title">Projects</h3>
+              <button class="btn-add" (click)="addProject()">+ Add Project</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let proj of resume.projects; let i = index">
+              <div class="accordion-header">
+                <strong>{{ proj.title }}</strong>
+                <button class="btn-remove" (click)="removeProject(i)">🗑️</button>
+              </div>
+              <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" [(ngModel)]="proj.title">
+              </div>
+              <div class="form-group">
+                <label>Technologies Used</label>
+                <input type="text" [(ngModel)]="proj.techStack" placeholder="e.g. Angular, Node.js, AWS">
+              </div>
+              <div class="form-group">
+                <label>Project Link</label>
+                <input type="text" [(ngModel)]="proj.link" placeholder="github.com/project">
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea [(ngModel)]="proj.description" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. CERTIFICATIONS -->
+          <div class="form-card" *ngIf="activeEditorSection === 'certifications'">
+            <div class="card-header-flex">
+              <h3 class="card-title">Certifications & Licenses</h3>
+              <button class="btn-add" (click)="addCertification()">+ Add Cert</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let cert of resume.certifications; let i = index">
+              <div class="accordion-header">
+                <strong>{{ cert.name }}</strong>
+                <button class="btn-remove" (click)="removeCertification(i)">🗑️</button>
+              </div>
+              <div class="form-group">
+                <label>Certification Name</label>
+                <input type="text" [(ngModel)]="cert.name">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Issuer / Body</label>
+                  <input type="text" [(ngModel)]="cert.issuer">
+                </div>
+                <div class="form-group">
+                  <label>Year</label>
+                  <input type="text" [(ngModel)]="cert.year">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. CUSTOM USER SECTIONS -->
+          <div class="form-card" *ngIf="activeEditorSection === 'customSections'">
+            <div class="card-header-flex">
+              <h3 class="card-title">User Custom Sections</h3>
+              <button class="btn-add" (click)="addCustomSection()">+ Add Section</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let cs of resume.customSections; let i = index">
+              <div class="accordion-header">
+                <strong>{{ cs.title || 'Custom Section' }}</strong>
+                <button class="btn-remove" (click)="removeCustomSection(i)">🗑️</button>
+              </div>
+              <div class="form-group">
+                <label>Section Heading Title</label>
+                <input type="text" [(ngModel)]="cs.title" placeholder="e.g. Honors & Awards, Volunteering">
+              </div>
+              <div class="form-group">
+                <label>Section Content / Bullet Points</label>
+                <textarea [(ngModel)]="cs.content" rows="4" placeholder="• Bullet points or description..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: TEMPLATES GALLERY & CUSTOM TEMPLATE CARD -->
+      <div class="tab-content" *ngIf="activeTab === 'templates'">
+        <div class="category-pills">
+          <button class="cat-pill" *ngFor="let cat of categories" 
+                  [class.active]="activeCategory === cat" 
+                  (click)="activeCategory = cat">{{ cat }}</button>
+        </div>
+
+        <div class="templates-grid">
+          <div class="template-card" 
+               *ngFor="let tpl of filteredTemplates" 
+               [class.selected]="selectedTemplate.id === tpl.id"
+               [class.custom-card]="tpl.isCustom"
+               (click)="selectTemplate(tpl)">
+            
+            <!-- ACCURATE MINI TEMPLATE GRAPHICAL PREVIEWS -->
+            <div class="tpl-preview-box" [style.border-top-color]="tpl.colorPrimary">
+              <!-- MINI CUSTOM DESIGN THUMBNAIL -->
+              <div class="mini-tpl-structure mini-custom" *ngIf="tpl.isCustom">
+                <div class="mini-custom-badge">✨ Custom</div>
+              </div>
+
+              <!-- MINI 2COL LEFT SIDEBAR -->
+              <div class="mini-tpl-structure mini-left-sidebar" *ngIf="tpl.layout === '2col-left-main'">
+                <div class="mini-bar" [style.background]="tpl.colorPrimary"></div>
+                <div class="mini-content">
+                  <div class="mini-line title" [style.background]="tpl.colorPrimary"></div>
+                  <div class="mini-line body"></div>
+                  <div class="mini-line body short"></div>
+                </div>
+              </div>
+
+              <!-- MINI TOP BANNER -->
+              <div class="mini-tpl-structure mini-top-banner" *ngIf="tpl.layout === '2col-top-banner'">
+                <div class="mini-top-bar" [style.background]="tpl.colorPrimary"></div>
+                <div class="mini-split-body">
+                  <div class="mini-content"><div class="mini-line body"></div></div>
+                  <div class="mini-content"><div class="mini-line body short"></div></div>
+                </div>
+              </div>
+
+              <!-- MINI 2COL RIGHT SIDEBAR -->
+              <div class="mini-tpl-structure mini-right-sidebar" *ngIf="tpl.layout === '2col-right-sidebar'">
+                <div class="mini-content">
+                  <div class="mini-line title" [style.background]="tpl.colorPrimary"></div>
+                  <div class="mini-line body"></div>
+                </div>
+                <div class="mini-bar" [style.background]="tpl.colorPrimary"></div>
+              </div>
+
+              <!-- MINI TERMINAL -->
+              <div class="mini-tpl-structure mini-terminal" *ngIf="tpl.layout === '1col-terminal'">
+                <div class="mini-term-box" [style.background]="tpl.colorPrimary">
+                  <div class="mini-term-line" [style.background]="tpl.colorAccent"></div>
+                  <div class="mini-term-line"></div>
+                </div>
+              </div>
+
+              <!-- MINI MINIMALIST 1COL -->
+              <div class="mini-tpl-structure mini-minimalist" *ngIf="tpl.layout === '1col-minimal'">
+                <div class="mini-content center">
+                  <div class="mini-line title center-line" [style.background]="tpl.colorPrimary"></div>
+                  <div class="mini-line body"></div>
+                  <div class="mini-line body short"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tpl-info">
+              <h4>{{ tpl.name }}</h4>
+              <span class="tpl-category" [style.color]="tpl.colorPrimary">{{ tpl.category }}</span>
+              <p>{{ tpl.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: CUSTOMIZE / STYLE & LAYOUT BUILDER -->
+      <div class="tab-content" *ngIf="activeTab === 'customize'">
+        <div class="form-card">
+          <h3 class="card-title">📐 Layout Builder</h3>
+          <div class="layout-selector-grid">
+            <button class="layout-opt-btn" [class.active]="customLayout === '2col-left-main'" (click)="customLayout = '2col-left-main'">
+              <span class="icon">🖼️</span> Left Sidebar
+            </button>
+            <button class="layout-opt-btn" [class.active]="customLayout === '2col-top-banner'" (click)="customLayout = '2col-top-banner'">
+              <span class="icon">🎨</span> Top Banner
+            </button>
+            <button class="layout-opt-btn" [class.active]="customLayout === '2col-right-sidebar'" (click)="customLayout = '2col-right-sidebar'">
+              <span class="icon">📋</span> Right Sidebar
+            </button>
+            <button class="layout-opt-btn" [class.active]="customLayout === '1col-minimal'" (click)="customLayout = '1col-minimal'">
+              <span class="icon">📄</span> Single Column
+            </button>
+            <button class="layout-opt-btn" [class.active]="customLayout === '1col-terminal'" (click)="customLayout = '1col-terminal'">
+              <span class="icon">💻</span> Tech Terminal
+            </button>
+          </div>
+
+          <h3 class="card-title" style="margin-top: 20px;">🎨 Theme Palette</h3>
+          <div class="form-group">
+            <label>Primary Theme Color</label>
+            <div class="color-picker-row">
+              <input type="color" [(ngModel)]="customPrimaryColor">
+              <span class="color-val">{{ customPrimaryColor }}</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Accent Color</label>
+            <div class="color-picker-row">
+              <input type="color" [(ngModel)]="customAccentColor">
+              <span class="color-val">{{ customAccentColor }}</span>
+            </div>
+          </div>
+
+          <h3 class="card-title" style="margin-top: 20px;">🔤 Typography Font</h3>
+          <div class="font-options">
+            <button class="font-btn" [class.active]="customFont === 'sans'" (click)="customFont = 'sans'">
+              <strong>Sans-Serif</strong>
+              <small>Modern & Clean (Inter / Segoe)</small>
+            </button>
+            <button class="font-btn" [class.active]="customFont === 'serif'" (click)="customFont = 'serif'">
+              <strong>Serif</strong>
+              <small>Classic & Executive (Georgia)</small>
+            </button>
+            <button class="font-btn" [class.active]="customFont === 'mono'" (click)="customFont = 'mono'">
+              <strong>Monospace</strong>
+              <small>Tech & Developer Code</small>
+            </button>
+          </div>
+
+          <h3 class="card-title" style="margin-top: 20px;">👁️ Section Visibility Toggles</h3>
+          <div class="visibility-toggles-grid">
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.summary"> Summary
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.experience"> Experience
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.education"> Education
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.skills"> Skills
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.projects"> Projects
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.certifications"> Certifications
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.customSections"> Custom Sections
+            </label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT MAIN PREVIEW PANEL -->
+    <main class="preview-panel">
+      <!-- PREVIEW TOOLBAR -->
+      <div class="preview-toolbar">
+        <div class="active-tpl-badge">
+          Template: <strong>{{ selectedTemplate.name }}</strong> • <span class="edit-hint">Click text anywhere on document to edit inline!</span>
+        </div>
+        <div class="zoom-controls">
+          <button (click)="zoomLevel = zoomLevel - 10" [disabled]="zoomLevel <= 60">-</button>
+          <span>{{ zoomLevel }}%</span>
+          <button (click)="zoomLevel = zoomLevel + 10" [disabled]="zoomLevel >= 130">+</button>
+        </div>
+      </div>
+
+      <!-- LIVE DOCUMENT CONTAINER WITH DUAL INLINE & FORM EDITING -->
+      <div class="document-viewport">
+        <div class="a4-sheet" #pdfTarget [style.transform]="'scale(' + (zoomLevel / 100) + ')'"
+             [style.font-family]="customFont === 'serif' ? 'Georgia, serif' : (customFont === 'mono' ? '\'Courier New\', monospace' : '\'Inter\', \'Segoe UI\', sans-serif')">
+          
+          <!-- ============================================================
+               TEMPLATE LAYOUT 1: MODERN EXECUTIVE (LEFT DARK SIDEBAR)
+               ============================================================ -->
+          <div class="tpl-render-container tpl-modern-executive" *ngIf="activeEffectiveLayout === '2col-left-main'">
+            <!-- LEFT DARK SIDEBAR -->
+            <div class="sidebar-col" [style.background]="customPrimaryColor">
+              <div class="sidebar-section">
+                <h3 class="side-sec-title">CONTACT</h3>
+                <div class="side-contact-item" contenteditable="true" (blur)="onInlineEdit('email', $event)">✉ {{ resume.email }}</div>
+                <div class="side-contact-item" contenteditable="true" (blur)="onInlineEdit('phone', $event)">📞 {{ resume.phone }}</div>
+                <div class="side-contact-item" contenteditable="true" (blur)="onInlineEdit('location', $event)">📍 {{ resume.location }}</div>
+                <div class="side-contact-item" *ngIf="resume.linkedin">🔗 {{ resume.linkedin }}</div>
+                <div class="side-contact-item" *ngIf="resume.portfolio">🌐 {{ resume.portfolio }}</div>
+              </div>
+
+              <div class="sidebar-section" *ngIf="sectionVisibility.skills && resume.skills.length > 0">
+                <h3 class="side-sec-title">SKILLS</h3>
+                <div class="side-skills-list">
+                  <span class="side-skill-chip" *ngFor="let skill of resume.skills">{{ skill }}</span>
+                </div>
+              </div>
+
+              <div class="sidebar-section" *ngIf="sectionVisibility.education && resume.education.length > 0">
+                <h3 class="side-sec-title">EDUCATION</h3>
+                <div class="side-edu-item" *ngFor="let edu of resume.education">
+                  <div class="side-edu-degree">{{ edu.degree }}</div>
+                  <div class="side-edu-field">{{ edu.field }}</div>
+                  <div class="side-edu-inst">{{ edu.institute }}</div>
+                  <div class="side-edu-year">{{ edu.year }} | CGPA: {{ edu.grade }}</div>
+                </div>
+              </div>
+
+              <div class="sidebar-section" *ngIf="sectionVisibility.certifications && resume.certifications.length > 0">
+                <h3 class="side-sec-title">CERTIFICATIONS</h3>
+                <div class="side-cert-item" *ngFor="let cert of resume.certifications">
+                  <div class="side-cert-name">{{ cert.name }}</div>
+                  <div class="side-cert-issuer">{{ cert.issuer }} ({{ cert.year }})</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT MAIN CONTENT -->
+            <div class="main-col">
+              <div class="main-header">
+                <h1 class="header-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
+                <div class="header-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)" [style.color]="customAccentColor">{{ resume.jobTitle }}</div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.summary && resume.summary">
+                <h2 class="main-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">PROFESSIONAL SUMMARY</h2>
+                <p class="summary-p" contenteditable="true" (blur)="onInlineEdit('summary', $event)">{{ resume.summary }}</p>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.experience && resume.experience.length > 0">
+                <h2 class="main-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">WORK EXPERIENCE</h2>
+                <div class="exp-card" *ngFor="let exp of resume.experience; let i = index">
+                  <div class="exp-top-row">
+                    <span class="exp-role" contenteditable="true" (blur)="onExpInlineEdit(i, 'role', $event)">{{ exp.role }}</span>
+                    <span class="exp-date">{{ exp.startDate }} - {{ exp.endDate }}</span>
+                  </div>
+                  <div class="exp-company-sub" contenteditable="true" (blur)="onExpInlineEdit(i, 'company', $event)">{{ exp.company }}</div>
+                  <p class="exp-desc-text" contenteditable="true" (blur)="onExpInlineEdit(i, 'description', $event)">{{ exp.description }}</p>
+                </div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.projects && resume.projects.length > 0">
+                <h2 class="main-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">KEY PROJECTS</h2>
+                <div class="proj-card" *ngFor="let proj of resume.projects">
+                  <div class="proj-top-row">
+                    <span class="proj-name">{{ proj.title }}</span>
+                    <span class="proj-tech-tag" *ngIf="proj.techStack">({{ proj.techStack }})</span>
+                  </div>
+                  <p class="proj-desc-text">{{ proj.description }}</p>
+                  <div class="proj-url" *ngIf="proj.link">{{ proj.link }}</div>
+                </div>
+              </div>
+
+              <!-- USER CUSTOM SECTIONS -->
+              <div class="main-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
+                <div *ngFor="let cs of resume.customSections">
+                  <h2 class="main-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">{{ cs.title | uppercase }}</h2>
+                  <p class="summary-p">{{ cs.content }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               TEMPLATE LAYOUT 2: CREATIVE DESIGNER (TOP BANNER)
+               ============================================================ -->
+          <div class="tpl-render-container tpl-creative-designer" *ngIf="activeEffectiveLayout === '2col-top-banner'">
+            <div class="top-banner" [style.background]="'linear-gradient(135deg, ' + customPrimaryColor + ', ' + customAccentColor + ')'">
+              <h1 class="banner-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)">{{ resume.fullName }}</h1>
+              <div class="banner-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)">{{ resume.jobTitle }}</div>
+              <div class="banner-contact">
+                <span>✉ {{ resume.email }}</span> • 
+                <span>📞 {{ resume.phone }}</span> • 
+                <span>📍 {{ resume.location }}</span>
+              </div>
+            </div>
+
+            <div class="creative-body">
+              <div class="creative-main">
+                <div class="main-sec" *ngIf="sectionVisibility.summary && resume.summary">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">ABOUT ME</h2>
+                  <p class="summary-p" contenteditable="true" (blur)="onInlineEdit('summary', $event)">{{ resume.summary }}</p>
+                </div>
+
+                <div class="main-sec" *ngIf="sectionVisibility.experience && resume.experience.length > 0">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">EXPERIENCE</h2>
+                  <div class="exp-card" *ngFor="let exp of resume.experience; let i = index">
+                    <div class="exp-top-row">
+                      <span class="exp-role" contenteditable="true" (blur)="onExpInlineEdit(i, 'role', $event)">{{ exp.role }}</span>
+                      <span class="exp-date" [style.color]="customAccentColor">{{ exp.startDate }} - {{ exp.endDate }}</span>
+                    </div>
+                    <div class="exp-company-sub" contenteditable="true" (blur)="onExpInlineEdit(i, 'company', $event)">{{ exp.company }}</div>
+                    <p class="exp-desc-text" contenteditable="true" (blur)="onExpInlineEdit(i, 'description', $event)">{{ exp.description }}</p>
+                  </div>
+                </div>
+
+                <div class="main-sec" *ngIf="sectionVisibility.projects && resume.projects.length > 0">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">PROJECTS</h2>
+                  <div class="proj-card" *ngFor="let proj of resume.projects">
+                    <div class="proj-top-row">
+                      <span class="proj-name">{{ proj.title }}</span>
+                      <span class="proj-tech-tag">({{ proj.techStack }})</span>
+                    </div>
+                    <p class="proj-desc-text">{{ proj.description }}</p>
+                  </div>
+                </div>
+
+                <div class="main-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
+                  <div *ngFor="let cs of resume.customSections">
+                    <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">{{ cs.title | uppercase }}</h2>
+                    <p class="summary-p">{{ cs.content }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="creative-side">
+                <div class="main-sec" *ngIf="sectionVisibility.skills && resume.skills.length > 0">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">SKILLS</h2>
+                  <div class="creative-skills-list">
+                    <span class="creative-skill-pill" *ngFor="let skill of resume.skills" 
+                          [style.background]="customPrimaryColor">{{ skill }}</span>
+                  </div>
+                </div>
+
+                <div class="main-sec" *ngIf="sectionVisibility.education && resume.education.length > 0">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">EDUCATION</h2>
+                  <div class="edu-card" *ngFor="let edu of resume.education">
+                    <strong>{{ edu.degree }}</strong>
+                    <div>{{ edu.field }}</div>
+                    <small>{{ edu.institute }} ({{ edu.year }})</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               TEMPLATE LAYOUT 3: MINIMALIST ELEGANT / RIGHT SIDEBAR / SIMPLE
+               ============================================================ -->
+          <div class="tpl-render-container tpl-minimalist" *ngIf="activeEffectiveLayout === '1col-minimal' || activeEffectiveLayout === '2col-right-sidebar'">
+            <div class="minimal-header">
+              <h1 class="min-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
+              <div class="min-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)" [style.color]="customAccentColor">{{ resume.jobTitle }}</div>
+              <div class="min-contact">
+                <span>✉ {{ resume.email }}</span>
+                <span>📞 {{ resume.phone }}</span>
+                <span>📍 {{ resume.location }}</span>
+                <span *ngIf="resume.linkedin">🔗 {{ resume.linkedin }}</span>
+              </div>
+            </div>
+
+            <div class="min-body">
+              <div class="main-sec" *ngIf="sectionVisibility.summary && resume.summary">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">SUMMARY</h2>
+                <p class="summary-p" contenteditable="true" (blur)="onInlineEdit('summary', $event)">{{ resume.summary }}</p>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.experience && resume.experience.length > 0">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">EXPERIENCE</h2>
+                <div class="exp-card" *ngFor="let exp of resume.experience; let i = index">
+                  <div class="exp-top-row">
+                    <span class="exp-role" contenteditable="true" (blur)="onExpInlineEdit(i, 'role', $event)">{{ exp.role }}</span>
+                    <span class="exp-date">{{ exp.startDate }} - {{ exp.endDate }}</span>
+                  </div>
+                  <div class="exp-company-sub" contenteditable="true" (blur)="onExpInlineEdit(i, 'company', $event)">{{ exp.company }}</div>
+                  <p class="exp-desc-text" contenteditable="true" (blur)="onExpInlineEdit(i, 'description', $event)">{{ exp.description }}</p>
+                </div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.education && resume.education.length > 0">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">EDUCATION</h2>
+                <div class="exp-card" *ngFor="let edu of resume.education">
+                  <div class="exp-top-row">
+                    <span class="exp-role">{{ edu.degree }} in {{ edu.field }}</span>
+                    <span class="exp-date">{{ edu.year }}</span>
+                  </div>
+                  <div class="exp-company-sub">{{ edu.institute }} | CGPA: {{ edu.grade }}</div>
+                </div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.skills && resume.skills.length > 0">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">TECHNICAL SKILLS</h2>
+                <div class="min-skills-wrap">
+                  <span class="min-skill-badge" *ngFor="let skill of resume.skills" 
+                        [style.background]="customPrimaryColor" [style.color]="'#ffffff'">{{ skill }}</span>
+                </div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.projects && resume.projects.length > 0">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">PROJECTS</h2>
+                <div class="proj-card" *ngFor="let proj of resume.projects">
+                  <div class="proj-top-row">
+                    <span class="proj-name">{{ proj.title }}</span>
+                    <span class="proj-tech-tag" *ngIf="proj.techStack">({{ proj.techStack }})</span>
+                  </div>
+                  <p class="proj-desc-text">{{ proj.description }}</p>
+                </div>
+              </div>
+
+              <div class="main-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
+                <div *ngFor="let cs of resume.customSections">
+                  <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">{{ cs.title | uppercase }}</h2>
+                  <p class="summary-p">{{ cs.content }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================================
+               TEMPLATE LAYOUT 4: TECH DEVELOPER (TERMINAL GREEN MODE)
+               ============================================================ -->
+          <div class="tpl-render-container tpl-tech-developer" *ngIf="activeEffectiveLayout === '1col-terminal'">
+            <div class="terminal-bar" [style.background]="customPrimaryColor">
+              <div class="terminal-dots"><span></span><span></span><span></span></div>
+              <div class="terminal-title">bash - {{ resume.fullName.toLowerCase().replace(' ', '_') }}.sh</div>
+            </div>
+
+            <div class="terminal-body" [style.border-color]="customPrimaryColor">
+              <div class="term-header">
+                <h1 class="term-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customAccentColor">&gt; {{ resume.fullName }}</h1>
+                <div class="term-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)">// {{ resume.jobTitle }}</div>
+                <div class="term-contact">
+                  <span>email: "{{ resume.email }}"</span> | 
+                  <span>phone: "{{ resume.phone }}"</span> | 
+                  <span>loc: "{{ resume.location }}"</span>
+                </div>
+              </div>
+
+              <div class="term-sec" *ngIf="sectionVisibility.summary && resume.summary">
+                <div class="term-prompt">$ cat summary.txt</div>
+                <p class="term-p" contenteditable="true" (blur)="onInlineEdit('summary', $event)">{{ resume.summary }}</p>
+              </div>
+
+              <div class="term-sec" *ngIf="sectionVisibility.experience && resume.experience.length > 0">
+                <div class="term-prompt">$ git log --experience</div>
+                <div class="term-exp-block" *ngFor="let exp of resume.experience; let i = index">
+                  <div class="term-commit-header">
+                    <span class="term-role" contenteditable="true" (blur)="onExpInlineEdit(i, 'role', $event)" [style.color]="customAccentColor">commit {{ exp.role }}</span>
+                    <span class="term-date">({{ exp.startDate }} - {{ exp.endDate }})</span>
+                  </div>
+                  <div class="term-company" contenteditable="true" (blur)="onExpInlineEdit(i, 'company', $event)">Author: {{ exp.company }}</div>
+                  <p class="term-desc" contenteditable="true" (blur)="onExpInlineEdit(i, 'description', $event)">{{ exp.description }}</p>
+                </div>
+              </div>
+
+              <div class="term-sec" *ngIf="sectionVisibility.skills && resume.skills.length > 0">
+                <div class="term-prompt">$ npm list --skills</div>
+                <div class="term-skills-box">
+                  <span class="term-tag" *ngFor="let skill of resume.skills" [style.border-color]="customAccentColor" [style.color]="customAccentColor">
+                    {{ skill }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="term-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
+                <div *ngFor="let cs of resume.customSections">
+                  <div class="term-prompt">$ cat {{ cs.title.toLowerCase().replace(' ', '_') }}.txt</div>
+                  <p class="term-p">{{ cs.content }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- AI ASSISTANT MODAL POPUP -->
+  <div class="ai-modal-backdrop" *ngIf="showAiModal" (click)="closeAiModal()">
+    <div class="ai-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="sparkle">✨</span>
+          <h3>AI Resume Optimizer</h3>
+        </div>
+        <button class="modal-close" (click)="closeAiModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-desc" *ngIf="aiPromptType === 'summary'">
+          Generate a high-converting executive summary based on your career details.
+        </p>
+
+        <div class="ai-options" *ngIf="aiPromptType === 'experience'">
+          <label class="option-card" [class.selected]="aiSelectedOption === 'action_verbs'">
+            <input type="radio" name="aiOpt" value="action_verbs" [(ngModel)]="aiSelectedOption">
+            <div class="opt-text">
+              <strong>🚀 Stronger Action Verbs</strong>
+              <small>Rewrite points with power verbs (Architected, Spearheaded, Engineered)</small>
+            </div>
+          </label>
+
+          <label class="option-card" [class.selected]="aiSelectedOption === 'quantify'">
+            <input type="radio" name="aiOpt" value="quantify" [(ngModel)]="aiSelectedOption">
+            <div class="opt-text">
+              <strong>📊 Add Metrics & Quantification</strong>
+              <small>Highlight percentage gains, revenue impact, and scale</small>
+            </div>
+          </label>
+        </div>
+
+        <button class="btn-generate-ai" (click)="generateAiSuggestions()" [disabled]="aiLoading">
+          <span *ngIf="!aiLoading">✨ Generate AI Suggestions</span>
+          <span *ngIf="aiLoading" class="ai-spinner">AI is thinking...</span>
+        </button>
+
+        <div class="ai-result-box" *ngIf="aiGeneratedResult">
+          <div class="result-label">AI Generated Content:</div>
+          <div class="result-content">{{ aiGeneratedResult }}</div>
+        </div>
+      </div>
+
+      <div class="modal-footer" *ngIf="aiGeneratedResult">
+        <button class="btn-cancel" (click)="closeAiModal()">Cancel</button>
+        <button class="btn-apply" (click)="applyAiResult()">✓ Apply to Resume</button>
       </div>
     </div>
   </div>

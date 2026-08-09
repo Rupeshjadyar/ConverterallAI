@@ -1,0 +1,56 @@
+<div class="preview-actions">
+  <button class="download-btn" (click)="downloadPDF()">
+    <span>📥</span> Download PDF
+  </button>
+</div>
+
+<div class="resume-paper" #resumeTemplate>
+  <div class="resume-header">
+    <h1>{{ resumeData.personalDetails.fullName || 'Your Name' }}</h1>
+    <h2>{{ resumeData.personalDetails.jobTitle || 'Job Title' }}</h2>
+    <div class="contact-info">
+      <span *ngIf="resumeData.personalDetails.email">{{ resumeData.personalDetails.email }}</span>
+      <span *ngIf="resumeData.personalDetails.phone"> • {{ resumeData.personalDetails.phone }}</span>
+      <span *ngIf="resumeData.personalDetails.website"> • {{ resumeData.personalDetails.website }}</span>
+    </div>
+  </div>
+
+  <div class="resume-body">
+    <div class="main-content">
+      <!-- WORK EXPERIENCE -->
+      <div class="resume-section" *ngIf="resumeData.experience && resumeData.experience.length > 0">
+        <h3 class="section-title">WORK EXPERIENCE</h3>
+        <div class="experience-item" *ngFor="let exp of resumeData.experience">
+          <div class="item-header">
+            <h4>{{ exp.jobTitle }}</h4>
+            <span class="dates">{{ exp.startDate }} - {{ exp.endDate }}</span>
+          </div>
+          <div class="company">{{ exp.company }}</div>
+          <p class="description">{{ exp.description }}</p>
+        </div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="resume-section" *ngIf="resumeData.education && resumeData.education.length > 0">
+        <h3 class="section-title">EDUCATION</h3>
+        <div class="education-item" *ngFor="let edu of resumeData.education">
+          <div class="item-header">
+            <h4>{{ edu.degree }}</h4>
+            <span class="dates">{{ edu.startDate }} - {{ edu.endDate }}</span>
+          </div>
+          <div class="school">{{ edu.school }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar">
+      <!-- SKILLS -->
+      <div class="resume-section" *ngIf="resumeData.skills && resumeData.skills.length > 0">
+        <h3 class="section-title">SKILLS</h3>
+        <ul class="skills-list">
+          <li *ngFor="let skill of resumeData.skills">{{ skill }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
