@@ -11,25 +11,35 @@
 
     <div class="header-actions">
       <button class="btn-secondary" (click)="exportJsonData()">
-        <span class="icon">💾</span> Backup JSON
+        <span class="icon">💾</span> Backup
       </button>
       <label class="btn-secondary file-label">
-        <span class="icon">📂</span> Load JSON
+        <span class="icon">📂</span> Load
         <input type="file" (change)="importJsonData($event)" accept=".json" style="display:none;">
       </label>
       <button class="btn-ai-global" (click)="openAiForSummary()">
-        <span class="icon">✨</span> AI Summary
+        <span class="icon">✨</span> AI
       </button>
       <button class="btn-download" (click)="exportToPDF()">
-        <span class="icon">📥</span> Download PDF
+        <span class="icon">📥</span> PDF
       </button>
     </div>
   </header>
 
+  <!-- MOBILE MODE SWITCHER PILLS (ONLY VISIBLE ON MOBILE SCREENS) -->
+  <div class="mobile-mode-bar">
+    <button class="mobile-mode-btn" [class.active]="activeTab !== 'preview'" (click)="activeTab = 'editor'">
+      ✏️ Edit &amp; Templates
+    </button>
+    <button class="mobile-mode-btn" [class.active]="activeTab === 'preview'" (click)="activeTab = 'preview'">
+      👁️ View Live Resume
+    </button>
+  </div>
+
   <!-- MAIN WORKSPACE -->
   <div class="workspace">
     <!-- LEFT SIDEBAR CONTROL PANEL -->
-    <aside class="sidebar-panel">
+    <aside class="sidebar-panel" *ngIf="activeTab !== 'preview'">
       <!-- MAIN NAVIGATION TABS -->
       <div class="tab-nav">
         <button class="tab-btn" [class.active]="activeTab === 'editor'" (click)="activeTab = 'editor'">
@@ -39,7 +49,7 @@
           <span class="tab-icon">🎨</span> Templates ({{ templates.length }})
         </button>
         <button class="tab-btn" [class.active]="activeTab === 'customize'" (click)="activeTab = 'customize'">
-          <span class="tab-icon">🎛️</span> Style / Custom
+          <span class="tab-icon">🎛️</span> Custom
         </button>
       </div>
 
@@ -302,12 +312,10 @@
             
             <!-- ACCURATE MINI TEMPLATE GRAPHICAL PREVIEWS -->
             <div class="tpl-preview-box" [style.border-top-color]="tpl.colorPrimary">
-              <!-- MINI CUSTOM DESIGN THUMBNAIL -->
               <div class="mini-tpl-structure mini-custom" *ngIf="tpl.isCustom">
                 <div class="mini-custom-badge">✨ Custom</div>
               </div>
 
-              <!-- MINI 2COL LEFT SIDEBAR -->
               <div class="mini-tpl-structure mini-left-sidebar" *ngIf="tpl.layout === '2col-left-main'">
                 <div class="mini-bar" [style.background]="tpl.colorPrimary"></div>
                 <div class="mini-content">
@@ -317,7 +325,6 @@
                 </div>
               </div>
 
-              <!-- MINI TOP BANNER -->
               <div class="mini-tpl-structure mini-top-banner" *ngIf="tpl.layout === '2col-top-banner'">
                 <div class="mini-top-bar" [style.background]="tpl.colorPrimary"></div>
                 <div class="mini-split-body">
@@ -326,7 +333,6 @@
                 </div>
               </div>
 
-              <!-- MINI 2COL RIGHT SIDEBAR -->
               <div class="mini-tpl-structure mini-right-sidebar" *ngIf="tpl.layout === '2col-right-sidebar'">
                 <div class="mini-content">
                   <div class="mini-line title" [style.background]="tpl.colorPrimary"></div>
@@ -335,7 +341,6 @@
                 <div class="mini-bar" [style.background]="tpl.colorPrimary"></div>
               </div>
 
-              <!-- MINI TERMINAL -->
               <div class="mini-tpl-structure mini-terminal" *ngIf="tpl.layout === '1col-terminal'">
                 <div class="mini-term-box" [style.background]="tpl.colorPrimary">
                   <div class="mini-term-line" [style.background]="tpl.colorAccent"></div>
@@ -343,7 +348,6 @@
                 </div>
               </div>
 
-              <!-- MINI MINIMALIST 1COL -->
               <div class="mini-tpl-structure mini-minimalist" *ngIf="tpl.layout === '1col-minimal'">
                 <div class="mini-content center">
                   <div class="mini-line title center-line" [style.background]="tpl.colorPrimary"></div>
@@ -445,14 +449,14 @@
     </aside>
 
     <!-- RIGHT MAIN PREVIEW PANEL -->
-    <main class="preview-panel">
+    <main class="preview-panel" *ngIf="activeTab === 'preview' || isDesktopView">
       <!-- PREVIEW TOOLBAR -->
       <div class="preview-toolbar">
         <div class="active-tpl-badge">
           Template: <strong>{{ selectedTemplate.name }}</strong> • <span class="edit-hint">Click text anywhere on document to edit inline!</span>
         </div>
         <div class="zoom-controls">
-          <button (click)="zoomLevel = zoomLevel - 10" [disabled]="zoomLevel <= 60">-</button>
+          <button (click)="zoomLevel = zoomLevel - 10" [disabled]="zoomLevel <= 40">-</button>
           <span>{{ zoomLevel }}%</span>
           <button (click)="zoomLevel = zoomLevel + 10" [disabled]="zoomLevel >= 130">+</button>
         </div>
@@ -463,11 +467,8 @@
         <div class="a4-sheet" #pdfTarget [style.transform]="'scale(' + (zoomLevel / 100) + ')'"
              [style.font-family]="customFont === 'serif' ? 'Georgia, serif' : (customFont === 'mono' ? '\'Courier New\', monospace' : '\'Inter\', \'Segoe UI\', sans-serif')">
           
-          <!-- ============================================================
-               TEMPLATE LAYOUT 1: MODERN EXECUTIVE (LEFT DARK SIDEBAR)
-               ============================================================ -->
+          <!-- TEMPLATE LAYOUT 1: MODERN EXECUTIVE -->
           <div class="tpl-render-container tpl-modern-executive" *ngIf="activeEffectiveLayout === '2col-left-main'">
-            <!-- LEFT DARK SIDEBAR -->
             <div class="sidebar-col" [style.background]="customPrimaryColor">
               <div class="sidebar-section">
                 <h3 class="side-sec-title">CONTACT</h3>
@@ -504,7 +505,6 @@
               </div>
             </div>
 
-            <!-- RIGHT MAIN CONTENT -->
             <div class="main-col">
               <div class="main-header">
                 <h1 class="header-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
@@ -540,7 +540,6 @@
                 </div>
               </div>
 
-              <!-- USER CUSTOM SECTIONS -->
               <div class="main-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
                 <div *ngFor="let cs of resume.customSections">
                   <h2 class="main-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">{{ cs.title | uppercase }}</h2>
@@ -550,9 +549,7 @@
             </div>
           </div>
 
-          <!-- ============================================================
-               TEMPLATE LAYOUT 2: CREATIVE DESIGNER (TOP BANNER)
-               ============================================================ -->
+          <!-- TEMPLATE LAYOUT 2: CREATIVE DESIGNER -->
           <div class="tpl-render-container tpl-creative-designer" *ngIf="activeEffectiveLayout === '2col-top-banner'">
             <div class="top-banner" [style.background]="'linear-gradient(135deg, ' + customPrimaryColor + ', ' + customAccentColor + ')'">
               <h1 class="banner-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)">{{ resume.fullName }}</h1>
@@ -623,9 +620,7 @@
             </div>
           </div>
 
-          <!-- ============================================================
-               TEMPLATE LAYOUT 3: MINIMALIST ELEGANT / RIGHT SIDEBAR / SIMPLE
-               ============================================================ -->
+          <!-- TEMPLATE LAYOUT 3: MINIMALIST ELEGANT -->
           <div class="tpl-render-container tpl-minimalist" *ngIf="activeEffectiveLayout === '1col-minimal' || activeEffectiveLayout === '2col-right-sidebar'">
             <div class="minimal-header">
               <h1 class="min-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
@@ -695,9 +690,7 @@
             </div>
           </div>
 
-          <!-- ============================================================
-               TEMPLATE LAYOUT 4: TECH DEVELOPER (TERMINAL GREEN MODE)
-               ============================================================ -->
+          <!-- TEMPLATE LAYOUT 4: TECH DEVELOPER -->
           <div class="tpl-render-container tpl-tech-developer" *ngIf="activeEffectiveLayout === '1col-terminal'">
             <div class="terminal-bar" [style.background]="customPrimaryColor">
               <div class="terminal-dots"><span></span><span></span><span></span></div>

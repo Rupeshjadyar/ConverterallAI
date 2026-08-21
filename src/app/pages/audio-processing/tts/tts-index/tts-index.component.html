@@ -1,0 +1,137 @@
+<div class="tts-index-container" [attr.data-theme]="currentTheme">
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="marquee-bar">
+    <div class="marquee-content">
+      <span class="badge-pill-alert"><i class="fa-solid fa-bullhorn"></i> FREE MULTI-LINGUAL VOICE STUDIO</span>
+      <marquee behavior="scroll" direction="left" scrollamount="7" onmouseover="this.stop();" onmouseout="this.start();">
+        🚀 100+ Regional & Global Languages Supported &nbsp;•&nbsp; 📣 Free AI Text to Speech &nbsp;•&nbsp; 💬 Instant MP3/WAV Audio Download &nbsp;•&nbsp; ⭐ Zero Login Ever Required!
+      </marquee>
+    </div>
+  </div>
+
+  <!-- SUB NAVIGATION BAR -->
+  <nav class="tts-subnav">
+    <div class="subnav-inner">
+      <a routerLink="/home" class="subnav-link"><i class="fa-solid fa-house"></i> Home</a>
+      <span class="subnav-sep">|</span>
+      <span class="subnav-current"><i class="fa-solid fa-globe"></i> All Languages (104)</span>
+      <span class="subnav-sep">|</span>
+      <a routerLink="/audio-processing/text-to-mp3" class="subnav-link"><i class="fa-solid fa-file-audio"></i> Text to MP3</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="top-bar-row">
+      <div class="badge-pill">✦ 100+ LANGUAGES ✦</div>
+      <button (click)="toggleTheme()" class="theme-toggle-btn" aria-label="Toggle theme">
+        <i [class]="currentTheme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'"></i>
+        <span>{{ currentTheme === 'light' ? 'Dark Mode' : 'Light Mode' }}</span>
+      </button>
+    </div>
+
+    <h1>Free Text to Speech in <span class="gradient-text">Every Language</span></h1>
+    <p class="hero-subtitle">
+      Neural AI voices for 100+ languages and countries. Instant MP3 & WAV audio download, no login, 100% free.
+      Click your language below to start converting text to speech.
+    </p>
+
+    <!-- SEARCH & REGION FILTERS -->
+    <div class="search-wrapper">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (ngModelChange)="onSearchChange()" 
+          placeholder="Search language, country, or code (e.g. Hindi, India, hi-IN)..."
+        />
+        <button *ngIf="searchQuery" (click)="searchQuery=''; onSearchChange()" class="clear-btn">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- REGION CHIPS -->
+    <div class="region-chips">
+      <button 
+        *ngFor="let region of regions" 
+        [class.active]="selectedRegion === region"
+        (click)="selectRegion(region)"
+        class="chip-btn"
+      >
+        {{ region }}
+      </button>
+    </div>
+
+    <div class="count-indicator">
+      Showing {{ filteredLanguages.length }} of {{ allLanguages.length }} supported languages
+    </div>
+  </section>
+
+  <!-- LANGUAGE GRID -->
+  <section class="grid-section">
+    <div class="languages-grid" *ngIf="filteredLanguages.length > 0">
+      <a 
+        *ngFor="let lang of filteredLanguages" 
+        [routerLink]="['/tts', lang.slug]" 
+        class="lang-card"
+      >
+        <div class="card-top">
+          <span class="flag-emoji">{{ lang.flag }}</span>
+          <span class="code-badge">{{ lang.code }}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="lang-title">{{ lang.lang }}</h3>
+          <p class="country-name">{{ lang.country }}</p>
+          <p class="native-name">{{ lang.nativeName }}</p>
+        </div>
+        <div class="card-footer">
+          <span><i class="fa-solid fa-microphone-lines"></i> Generate Voice</span>
+          <i class="fa-solid fa-arrow-right arrow-icon"></i>
+        </div>
+      </a>
+    </div>
+
+    <div class="no-results" *ngIf="filteredLanguages.length === 0">
+      <div class="no-results-icon">🔍</div>
+      <h3>No languages matched your search</h3>
+      <p>Try searching for another language, country name, or reset the filters.</p>
+      <button (click)="searchQuery=''; selectRegion('All')" class="btn-reset">Reset Search Filters</button>
+    </div>
+  </section>
+
+  <!-- WHY CHOOSE SECTION -->
+  <section class="features-section">
+    <div class="section-title">
+      <h2>Why Use ConverterallAI for <span class="gradient-text">Any Language</span>?</h2>
+      <p>Powerful features built for content creators, students, podcasters, and global businesses.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Native Neural Voices</h3>
+        <p>Each language uses native speaker voice models for true localized pronunciation and intonation.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <h3>100% Free & Unlimited</h3>
+        <p>No daily usage caps, no registration, no hidden costs. Generate audio whenever you need it.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <h3>Instant MP3 & WAV Download</h3>
+        <p>Download studio-quality audio files ready for YouTube, podcasts, presentation slides, and apps.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎙️</div>
+        <h3>Multi-Voice Dialogue Studio</h3>
+        <p>Combine multiple characters and voices into single conversation audio files seamlessly.</p>
+      </div>
+    </div>
+  </section>
+</div>

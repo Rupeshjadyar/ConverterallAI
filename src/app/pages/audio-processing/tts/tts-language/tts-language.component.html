@@ -1,0 +1,284 @@
+<div class="tts-lang-page" [attr.data-theme]="currentTheme">
+  <!-- ANNOUNCEMENT MARQUEE BAR -->
+  <div class="marquee-bar">
+    <div class="marquee-content">
+      <span class="badge-pill-alert"><i class="fa-solid fa-bullhorn"></i> {{ lang.lang.toUpperCase() }} TTS STUDIO 2026</span>
+      <marquee behavior="scroll" direction="left" scrollamount="7" onmouseover="this.stop();" onmouseout="this.start();">
+        🚀 FREE {{ lang.lang.toUpperCase() }} TEXT TO SPEECH &nbsp;•&nbsp; {{ lang.country }} &nbsp;•&nbsp; Instant MP3 & WAV Download &nbsp;•&nbsp; Multi-Voice Dialogue Generator &nbsp;•&nbsp; Zero Login Required &nbsp;•&nbsp; 100+ Languages Supported
+      </marquee>
+    </div>
+  </div>
+
+  <!-- SUB NAVIGATION BAR -->
+  <nav class="tts-subnav">
+    <div class="subnav-inner">
+      <a routerLink="/home" class="subnav-link"><i class="fa-solid fa-house"></i> Home</a>
+      <span class="subnav-sep">|</span>
+      <a routerLink="/tts" class="subnav-link active-link"><i class="fa-solid fa-globe"></i> All Languages (104)</a>
+      <span class="subnav-sep">|</span>
+      <span class="subnav-current"><i class="fa-solid fa-microphone"></i> {{ lang.flag }} {{ lang.lang }} — {{ lang.country }}</span>
+      <span class="subnav-sep">|</span>
+      <a routerLink="/audio-processing/text-to-mp3" class="subnav-link"><i class="fa-solid fa-file-audio"></i> Text to MP3</a>
+    </div>
+  </nav>
+
+  <!-- BREADCRUMBS & HERO -->
+  <section class="hero-section">
+    <div class="hero-top-row">
+      <nav class="breadcrumb">
+        <a routerLink="/home">Home</a>
+        <span>›</span>
+        <a routerLink="/tts">All Languages</a>
+        <span>›</span>
+        <span class="current">{{ lang.lang }} ({{ lang.country }})</span>
+      </nav>
+      <button (click)="toggleTheme()" class="theme-toggle-btn" aria-label="Toggle theme">
+        <i [class]="currentTheme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'"></i>
+        <span>{{ currentTheme === 'light' ? 'Dark Mode' : 'Light Mode' }}</span>
+      </button>
+    </div>
+
+    <div class="badge-pill">✦ FREE {{ lang.lang.toUpperCase() }} TEXT TO SPEECH STUDIO ✦</div>
+    <h1><span class="gradient-text">{{ lang.lang }} Text to Speech</span></h1>
+    <p class="hero-sub font-medium">
+      {{ lang.flag }} {{ lang.country }} &nbsp;•&nbsp; {{ lang.nativeName }} &nbsp;•&nbsp; Neural AI Voice Generator &nbsp;•&nbsp; No Login Required
+    </p>
+
+    <div class="pill-tags">
+      <span class="tag tag-green"><i class="fa-solid fa-check"></i> 100% Free</span>
+      <span class="tag tag-blue"><i class="fa-solid fa-bolt"></i> Instant MP3 & WAV</span>
+      <span class="tag tag-purple"><i class="fa-solid fa-robot"></i> Native Voices</span>
+      <span class="tag tag-pink"><i class="fa-solid fa-user-slash"></i> No Login</span>
+    </div>
+  </section>
+
+  <!-- REGIONAL SEO CARD -->
+  <section class="regional-seo-card">
+    <div class="seo-card-inner">
+      <h3>
+        <i class="fa-solid fa-earth-asia"></i>
+        Optimized for {{ lang.lang }} Speakers in {{ lang.country }}
+      </h3>
+      <p>{{ lang.regionalSeoText }} Experience authentic pronunciation and natural intonation tailored for {{ lang.lang }} as spoken natively in {{ lang.country }}. Perfect for localized marketing, regional content creation, and professional e-learning modules.</p>
+    </div>
+  </section>
+
+  <!-- ADVANCED STUDIO WIDGET -->
+  <section class="studio-section">
+    <div class="glass-panel">
+      <div class="studio-header">
+        <h2>
+          <i class="fa-solid fa-sliders"></i>
+          {{ lang.lang }} Voice Generator — Advanced Studio
+        </h2>
+        <button class="btn-share" (click)="copyLink()"><i class="fa-solid fa-link"></i> Share Page</button>
+      </div>
+
+      <!-- MODE SWITCHER -->
+      <div class="mode-tabs">
+        <button class="tab-btn" [class.active]="activeMode === 'single'" (click)="switchTab('single')">
+          <i class="fa-solid fa-microphone"></i> Single Voice Mode
+        </button>
+        <button class="tab-btn" [class.active]="activeMode === 'dialogue'" (click)="switchTab('dialogue')">
+          <i class="fa-solid fa-users"></i> Multi-Voice Dialogue Mode
+        </button>
+      </div>
+
+      <!-- SINGLE VOICE PANEL -->
+      <div *ngIf="activeMode === 'single'" class="panel-body">
+        <div class="sample-bar">
+          <button (click)="loadSampleText()" class="btn-sample">
+            <i class="fa-solid fa-magic-wand-sparkles"></i> Load Sample {{ lang.lang }} Text
+          </button>
+          <span class="sample-hint">or type your own below in {{ lang.lang }}</span>
+        </div>
+
+        <div class="textarea-group">
+          <label><i class="fa-solid fa-align-left"></i> Your {{ lang.lang }} Text</label>
+          <textarea 
+            [(ngModel)]="textInput" 
+            rows="5" 
+            placeholder="Type or paste {{ lang.lang }} text here..."
+            maxlength="5000"
+          ></textarea>
+          <div class="text-meta">
+            <span>{{ charCount }} / 5000 characters</span>
+            <span>~{{ estimatedDurationSec }} sec audio</span>
+          </div>
+        </div>
+
+        <!-- CONTROLS GRID -->
+        <div class="controls-grid">
+          <div class="control-item">
+            <label><i class="fa-solid fa-language"></i> Language</label>
+            <select [value]="lang.code" (change)="onLangSelectChange($event)">
+              <option *ngFor="let l of allLanguages" [value]="l.code">{{ l.lang }} ({{ l.country }})</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <label><i class="fa-solid fa-robot"></i> Voice Character</label>
+            <select [(ngModel)]="selectedVoiceId">
+              <option *ngFor="let v of voiceCharacters" [value]="v.id">{{ v.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sliders-grid">
+          <div class="slider-box">
+            <div class="slider-header">
+              <span><i class="fa-solid fa-gauge-high"></i> Speed</span>
+              <span class="badge-val">{{ speed.toFixed(1) }}x</span>
+            </div>
+            <input type="range" [(ngModel)]="speed" min="0.5" max="2.0" step="0.1">
+            <div class="slider-labels"><span>Slow</span><span>Fast</span></div>
+          </div>
+
+          <div class="slider-box">
+            <div class="slider-header">
+              <span><i class="fa-solid fa-music"></i> Pitch</span>
+              <span class="badge-val">{{ pitch >= 0 ? '+' : '' }}{{ pitch }}</span>
+            </div>
+            <input type="range" [(ngModel)]="pitch" min="-10" max="10" step="1">
+            <div class="slider-labels"><span>Low</span><span>High</span></div>
+          </div>
+
+          <div class="slider-box">
+            <div class="slider-header">
+              <span><i class="fa-solid fa-volume-high"></i> Volume</span>
+              <span class="badge-val">{{ volume }}%</span>
+            </div>
+            <input type="range" [(ngModel)]="volume" min="0" max="100" step="5">
+            <div class="slider-labels"><span>Mute</span><span>Max</span></div>
+          </div>
+        </div>
+
+        <div class="options-grid">
+          <div class="control-item">
+            <label><i class="fa-solid fa-palette"></i> Speaking Style</label>
+            <select [(ngModel)]="speakingStyle">
+              <option *ngFor="let s of speakingStyles" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <label><i class="fa-solid fa-file-audio"></i> Output Format</label>
+            <select [(ngModel)]="audioFormat">
+              <option value="mp3">MP3 Audio</option>
+              <option value="wav">WAV (Studio Lossless)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- MULTI-VOICE DIALOGUE PANEL -->
+      <div *ngIf="activeMode === 'dialogue'" class="panel-body">
+        <div class="dialogue-list">
+          <div *ngFor="let line of dialogueLines; let i = index" class="dialogue-card">
+            <div class="dialogue-header">
+              <input type="text" [(ngModel)]="line.speaker" class="speaker-input" placeholder="Speaker Name">
+              <select [(ngModel)]="line.voiceId" class="dialogue-voice-select">
+                <option *ngFor="let v of voiceCharacters" [value]="v.id">{{ v.name }}</option>
+              </select>
+              <button (click)="removeDialogueLine(i)" class="btn-remove" title="Remove Line"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <textarea [(ngModel)]="line.text" rows="2" placeholder="Dialogue text for {{ line.speaker }}..."></textarea>
+          </div>
+        </div>
+        <button (click)="addDialogueLine()" class="btn-add-line"><i class="fa-solid fa-plus"></i> Add Dialogue Line</button>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="actions-row">
+        <button *ngIf="!isPlaying" (click)="doGenerateAndPlay()" class="btn-primary">
+          <i class="fa-solid fa-play"></i> Generate & Play {{ lang.lang }} Voice
+        </button>
+        <button *ngIf="isPlaying" (click)="doStop()" class="btn-stop">
+          <i class="fa-solid fa-square"></i> Stop Playback
+        </button>
+
+        <button (click)="doDownload('mp3')" [disabled]="isGenerating" class="btn-secondary">
+          <i class="fa-solid fa-download"></i> Download MP3
+        </button>
+        <button (click)="doDownload('wav')" [disabled]="isGenerating" class="btn-secondary">
+          <i class="fa-solid fa-file-wave"></i> Download WAV
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 500+ WORD ENCYCLOPEDIA SEO SECTION FOR THIS LANGUAGE -->
+  <section class="seo-encyclopedia-section">
+    <div class="encyclopedia-card">
+      <h2><i class="fa-solid fa-book-open"></i> Complete {{ lang.lang }} Language & Voice Guide</h2>
+
+      <div class="facts-grid">
+        <div class="fact-box">
+          <span class="fact-label">Writing Script</span>
+          <span class="fact-val">{{ fact.script }} ({{ fact.scriptType }})</span>
+        </div>
+        <div class="fact-box">
+          <span class="fact-label">Native Speakers</span>
+          <span class="fact-val">{{ fact.speakers }}</span>
+        </div>
+        <div class="fact-box">
+          <span class="fact-label">Language Family</span>
+          <span class="fact-val">{{ fact.family }}</span>
+        </div>
+        <div class="fact-box">
+          <span class="fact-label">Official Status</span>
+          <span class="fact-val">{{ fact.official }}</span>
+        </div>
+      </div>
+
+      <div class="article-content">
+        <h3>1. The {{ lang.lang }} Language — History & Origin</h3>
+        <p>{{ fact.origin }} {{ lang.lang }} ({{ lang.nativeName }}) has a rich linguistic evolution that shapes how native speakers articulate sentences today.</p>
+
+        <h3>2. Cultural Significance & Vocal Characteristics</h3>
+        <p>{{ fact.cultural }} Our neural AI voice generator captures these unique vocal cadences, emotional inflections, and phonetic subtleties for {{ lang.country }}.</p>
+
+        <h3>3. Neural {{ lang.lang }} Text to Speech Technology</h3>
+        <p>ConverterallAI uses deep neural networks trained on authentic {{ lang.lang }} speakers. The AI understands complex punctuation, natural pause rhythms, questions, and exclamations to deliver studio-quality voice synthesis.</p>
+
+        <h3>4. {{ lang.lang }} Digital Media & Content Creation</h3>
+        <p>Key use cases for {{ lang.lang }} speech synthesis include: <strong>{{ fact.digital }}</strong>. Whether you are producing YouTube voiceovers, e-learning courses, social media videos, or corporate presentations, ConverterallAI provides instant, high-quality audio.</p>
+
+        <h3>5. Why Choose ConverterallAI for {{ lang.lang }} TTS?</h3>
+        <p><strong>100% Free Forever:</strong> No daily limits, no subscriptions, and no credit card required. <strong>Instant Downloads:</strong> Download in MP3 or uncompressed WAV audio formats. <strong>Complete Privacy:</strong> Your text is converted in real time without storing your personal data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQS SECTION -->
+  <section class="faqs-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-accordion">
+      <div *ngFor="let faq of faqs; let i = index" class="faq-item" [class.open]="faq.isOpen">
+        <div class="faq-question" (click)="toggleFaq(i)">
+          <span>{{ faq.question }}</span>
+          <i class="fa-solid fa-chevron-down faq-chevron"></i>
+        </div>
+        <div class="faq-answer" *ngIf="faq.isOpen">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OTHER LANGUAGES CROSS LINKING -->
+  <section class="cross-link-section">
+    <h2>Explore All 104 Language Voice Generators</h2>
+    <div class="cross-chips">
+      <a *ngFor="let l of allLanguages" [routerLink]="['/tts', l.slug]" class="cross-chip">
+        {{ l.flag }} {{ l.lang }} ({{ l.country }})
+      </a>
+    </div>
+  </section>
+
+  <!-- TOAST NOTIFICATION -->
+  <div *ngIf="toastMessage" class="toast" [class.toast-err]="toastType === 'err'">
+    <i [class]="toastType === 'ok' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation'"></i>
+    <span>{{ toastMessage }}</span>
+  </div>
+</div>

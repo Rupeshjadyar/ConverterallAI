@@ -136,6 +136,33 @@
   transform: translateY(-1px);
 }
 
+/* Mobile Mode Bar (Hidden on desktop) */
+.mobile-mode-bar {
+  display: none;
+  background: #0f172a;
+  padding: 6px 12px;
+  gap: 8px;
+  border-bottom: 1px solid #334155;
+}
+
+.mobile-mode-btn {
+  flex: 1;
+  padding: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mobile-mode-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
 /* --------------------------------------------------------------------------
    2. MAIN WORKSPACE & SIDEBAR
    -------------------------------------------------------------------------- */
@@ -1321,4 +1348,78 @@ input:focus, textarea:focus {
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   7. COMPREHENSIVE RESPONSIVE MOBILE STYLES (< 992px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .top-header {
+    height: auto;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 0.95rem;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .btn-secondary, .btn-ai-global, .btn-download {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+
+  .mobile-mode-bar {
+    display: flex;
+  }
+
+  .workspace {
+    flex-direction: column;
+    overflow-y: auto;
+    height: auto;
+  }
+
+  .sidebar-panel {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto;
+    border-right: none;
+  }
+
+  .preview-panel {
+    width: 100% !important;
+    min-height: 650px;
+  }
+
+  .document-viewport {
+    padding: 12px 6px;
+    overflow-x: auto;
+  }
+
+  .a4-sheet {
+    transform-origin: top center !important;
+    max-width: 100%;
+  }
+
+  .templates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .template-card.custom-card {
+    grid-column: span 1;
+  }
+
+  .layout-selector-grid, .visibility-toggles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
 }

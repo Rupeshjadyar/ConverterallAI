@@ -1,8 +1,6 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ElementRef, ViewChild, HostListener, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 export interface ExperienceItem {
   id: string;
@@ -90,7 +88,7 @@ export interface ResumeTemplate {
 export class ResumeBuilderComponent implements OnInit {
   @ViewChild('pdfTarget', { static: false }) pdfTarget!: ElementRef;
 
-  activeTab: 'templates' | 'editor' | 'customize' = 'editor';
+  activeTab: 'templates' | 'editor' | 'customize' | 'preview' = 'editor';
   activeEditorSection: 'personal' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications' | 'customSections' = 'personal';
   activeCategory: string = 'All';
 
@@ -102,6 +100,8 @@ export class ResumeBuilderComponent implements OnInit {
   fontSizeScale: 'small' | 'medium' | 'large' = 'medium';
   sectionSpacing: 'compact' | 'normal' | 'spacious' = 'normal';
   zoomLevel: number = 100;
+  isDesktopView: boolean = true;
+  private isBrowser: boolean = false;
 
   // Section Visibility Flags
   sectionVisibility = {
@@ -241,9 +241,29 @@ export class ResumeBuilderComponent implements OnInit {
 
   newSkillInput: string = '';
 
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
   ngOnInit() {
     this.customPrimaryColor = this.selectedTemplate.colorPrimary;
     this.customAccentColor = this.selectedTemplate.colorAccent;
+    this.checkViewport();
+  }
+
+  @HostListener('window:resize', [])
+  onResize() {
+    this.checkViewport();
+  }
+
+  private checkViewport() {
+    if (this.isBrowser && typeof window !== 'undefined') {
+      this.isDesktopView = window.innerWidth > 992;
+      if (!this.isDesktopView && this.activeTab === 'editor') {
+        // Adjust zoom scale automatically on mobile screens
+        this.zoomLevel = Math.max(45, Math.floor((window.innerWidth / 794) * 90));
+      }
+    }
   }
 
   get filteredTemplates(): ResumeTemplate[] {
@@ -374,6 +394,7 @@ export class ResumeBuilderComponent implements OnInit {
 
   // --- JSON EXPORT / IMPORT ---
   exportJsonData() {
+    if (!this.isBrowser) return;
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.resume, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
@@ -384,6 +405,7 @@ export class ResumeBuilderComponent implements OnInit {
   }
 
   importJsonData(event: Event) {
+    if (!this.isBrowser) return;
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const reader = new FileReader();
@@ -452,9 +474,12 @@ export class ResumeBuilderComponent implements OnInit {
   }
 
   // --- Export PDF ---
-  exportToPDF() {
-    if (!this.pdfTarget) return;
+  async exportToPDF() {
+    if (!this.isBrowser || !this.pdfTarget) return;
     const element = this.pdfTarget.nativeElement;
+
+    const html2canvas = (await import('html2canvas')).default;
+    const jsPDF = (await import('jspdf')).default;
 
     const opt = {
       scale: 2,

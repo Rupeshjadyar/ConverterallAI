@@ -113,9 +113,25 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/image-processing/image-editor/image-editor').then(m => m.ImageEditorComponent)
     },
     {
+        path: 'tts',
+        loadComponent: () => import('./pages/audio-processing/tts/tts-index/tts-index.component').then(m => m.TtsIndexComponent)
+    },
+    {
+        path: 'tts/:slug',
+        loadComponent: () => import('./pages/audio-processing/tts/tts-language/tts-language.component').then(m => m.TtsLanguageComponent)
+    },
+    {
         path: 'audio-processing',
-        redirectTo: 'audio-processing/text-to-mp3',
+        redirectTo: 'tts',
         pathMatch: 'full'
+    },
+    {
+        path: 'audio-processing/tts',
+        loadComponent: () => import('./pages/audio-processing/tts/tts-index/tts-index.component').then(m => m.TtsIndexComponent)
+    },
+    {
+        path: 'audio-processing/tts/:slug',
+        loadComponent: () => import('./pages/audio-processing/tts/tts-language/tts-language.component').then(m => m.TtsLanguageComponent)
     },
     {
         path: 'audio-processing/text-to-mp3',

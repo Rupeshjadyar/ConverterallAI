@@ -1,250 +1,264 @@
-<div class="tool-container merge-tool-container">
+<!-- ═══════════════════════════════════════════════════════════════
+     MERGE PDF — Production Template
+     States: idle | loading | ready | merging | done
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="mp-wrap">
 
-  <!-- Top Stepper Header -->
-  <header class="stepper-header animate-fade-in">
-    <div class="brand-title">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="brand-icon">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+  <!-- ─── Top Navigation Bar ──────────────────────────────────── -->
+  <header class="mp-nav">
+    <a routerLink="/home" class="mp-nav__back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M19 12H5m7-7-7 7 7 7"/>
+      </svg>
+      Home
+    </a>
+
+    <span class="mp-nav__title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="8" height="11" rx="1"/>
+        <rect x="13" y="3" width="8" height="11" rx="1"/>
+        <path d="M3 18h18M8 21h8"/>
       </svg>
       PDF Merge
-    </div>
+    </span>
 
-    <div class="steps-container">
-      <div class="step" [class.active]="activeStep >= 1" [class.completed]="activeStep > 1">
-        <span class="circle"><span *ngIf="activeStep > 1">✓</span><span *ngIf="activeStep <= 1">1</span></span> Upload
-      </div>
-      <div class="step-line" [class.active]="activeStep >= 2"></div>
-
-      <div class="step" [class.active]="activeStep >= 2" [class.completed]="activeStep > 2">
-        <span class="circle"><span *ngIf="activeStep > 2">✓</span><span *ngIf="activeStep <= 2">2</span></span> Arrange
-      </div>
-      <div class="step-line" [class.active]="activeStep >= 3"></div>
-
-      <div class="step" [class.active]="activeStep >= 3" [class.completed]="activeStep > 3">
-        <span class="circle"><span *ngIf="activeStep > 3">✓</span><span *ngIf="activeStep <= 3">3</span></span> Configure
-      </div>
-      <div class="step-line" [class.active]="activeStep >= 4"></div>
-
-      <div class="step" [class.active]="activeStep >= 4" [class.completed]="activeStep > 4">
-        <span class="circle"><span *ngIf="activeStep > 4">✓</span><span *ngIf="activeStep <= 4">4</span></span> Export
-      </div>
-    </div>
-
-    <div class="header-actions">
-      <a routerLink="/pdf-processing" class="exit-link">← Exit</a>
+    <div class="mp-nav__actions">
+      <span class="mp-nav__count" *ngIf="state === 'ready'">
+        {{ pages.length }} page{{ pages.length !== 1 ? 's' : '' }} remaining
+      </span>
+      <button class="mp-nav__reset" *ngIf="state !== 'idle'" (click)="reset()">
+        Start Over
+      </button>
     </div>
   </header>
 
-  <!-- Error Bar -->
-  <div class="error-bar" *ngIf="errorMsg">
-    ⚠️ {{errorMsg}}
-    <button (click)="errorMsg = null">✕</button>
+  <!-- ─── Error Banner ─────────────────────────────────────────── -->
+  <div class="mp-error" *ngIf="errorMessage" role="alert">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+    </svg>
+    {{ errorMessage }}
+    <button class="mp-error__close" (click)="errorMessage = ''" aria-label="Dismiss">✕</button>
   </div>
 
-  <!-- 3-Column Main Workspace -->
-  <div class="merge-workspace-grid animate-fade-in-up">
 
-    <!-- LEFT COLUMN: Files -->
-    <div class="col-left glass-panel">
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE: IDLE — File Upload
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="mp-idle" *ngIf="state === 'idle'">
 
-      <!-- Drop Zone -->
-      <div class="drag-drop-zone"
-           [class.dragging]="isDragging"
-           (dragover)="onDragOver($event)"
-           (dragleave)="onDragLeave($event)"
-           (drop)="onDrop($event)"
-           (click)="fileInput.click()">
-        <div class="cloud-icon">☁️</div>
-        <div class="drop-title">Drop PDFs here</div>
-        <div class="drop-sub">or click to browse • Max 100MB per file</div>
-        <input #fileInput type="file" accept="application/pdf" multiple
-               (change)="onFileSelected($event)" style="display:none"/>
+    <div class="upload-zone"
+         [class.upload-zone--over]="isDragging"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave()"
+         (drop)="onDrop($event)"
+         (click)="fileInput.click()"
+         role="button"
+         tabindex="0"
+         (keydown.enter)="fileInput.click()"
+         aria-label="Upload PDF files">
+
+      <input #fileInput
+             id="pdf-file-input"
+             type="file"
+             multiple
+             hidden
+             (change)="onFileInputChange($event)"/>
+
+
+      <!-- Upload illustration -->
+      <div class="upload-zone__icon" aria-hidden="true">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <rect x="6" y="10" width="30" height="40" rx="4" fill="#0f2744" stroke="#1e4080" stroke-width="1.5"/>
+          <rect x="28" y="14" width="30" height="40" rx="4" fill="#0f2744" stroke="#1e4080" stroke-width="1.5"/>
+          <path d="M22 30l8 8 8-8M30 38V22" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
 
-      <!-- Add More Files -->
-      <button class="btn-add-more" *ngIf="files.length > 0" (click)="fileInput2.click()">
-        + Add More Files
-      </button>
-      <input #fileInput2 type="file" accept="application/pdf" multiple
-             (change)="onFileSelected($event)" style="display:none"/>
+      <h1 class="upload-zone__heading">Drop PDF files here</h1>
+      <p  class="upload-zone__sub">or click to browse your computer</p>
 
-      <!-- File List -->
-      <div class="added-files-header" *ngIf="files.length > 0">
-        <h3>Added Files</h3>
-        <div class="stats-badge">
-          <span class="text-primary">{{files.length}} PDF{{files.length > 1 ? 's' : ''}}</span> • {{pages.length}} Pages
-        </div>
-      </div>
-
-      <div class="file-list-container" *ngIf="files.length > 0">
-        <div class="file-list-item" *ngFor="let f of files">
-          <div class="file-icon-box">📄</div>
-          <div class="file-info">
-            <div class="file-name" [title]="f.name">{{f.name}}</div>
-            <div class="file-meta">{{f.pages}} pages • {{formatBytes(f.size)}}</div>
-          </div>
-          <button class="remove-btn" (click)="removeFile(f.id)" title="Remove">✕</button>
-        </div>
-      </div>
-
-      <button class="btn-clear-all" *ngIf="files.length > 0" (click)="clearAllFiles()">
-        🗑️ Clear all files
+      <button class="upload-zone__btn"
+              type="button"
+              (click)="$event.stopPropagation(); fileInput.click()">
+        Choose Files
       </button>
 
+      <p class="upload-zone__note">
+        Supports one or more PDF files &nbsp;·&nbsp; Processing happens entirely in your browser
+      </p>
     </div>
 
-    <!-- CENTER COLUMN: Page Thumbnails -->
-    <div class="col-center glass-panel">
+  </section>
 
-      <div class="center-header">
-        <h2>Page Thumbnails</h2>
-        <div class="center-actions" *ngIf="pages.length > 0 && !convertedUrl">
-          <button class="action-chip" (click)="selectAll()">Select All</button>
-          <button class="action-chip" (click)="deselectAll()">Deselect All</button>
-          <span class="center-stats">{{selectedPagesCount}}/{{pages.length}} selected</span>
-        </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE: LOADING — Rendering thumbnails
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="mp-loading" *ngIf="state === 'loading'" aria-live="polite">
+    <div class="mp-progress-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h2 class="mp-progress-card__title">Rendering page previews…</h2>
+      <p  class="mp-progress-card__msg">{{ loadingMessage }}</p>
+      <div class="progress-bar" role="progressbar"
+           [attr.aria-valuenow]="loadingPercent" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" [style.width.%]="loadingPercent"></div>
+      </div>
+      <span class="progress-bar__label">{{ loadingPercent }}%</span>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE: READY — Page Grid + Merge Action
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="mp-ready" *ngIf="state === 'ready'">
+
+    <!-- Sticky action bar -->
+    <div class="mp-action-bar">
+      <div class="mp-action-bar__info">
+        <strong>{{ pages.length }}</strong>
+        page{{ pages.length !== 1 ? 's' : '' }} ready to merge
       </div>
 
-      <!-- Processing Overlay -->
-      <div class="processing-overlay" *ngIf="isProcessing">
-        <div class="spinner"></div>
-        <p class="processing-msg">{{processingMsg}}</p>
-        <div class="progress-track" *ngIf="progress > 0">
-          <div class="progress-bar" [style.width.%]="progress"></div>
-        </div>
-        <p class="progress-pct" *ngIf="progress > 0">{{progress}}%</p>
-      </div>
+      <div class="mp-action-bar__right">
+        <!-- Output filename input -->
+        <input class="mp-action-bar__name"
+               type="text"
+               [(ngModel)]="downloadName"
+               placeholder="merged.pdf"
+               aria-label="Output filename"/>
 
-      <!-- Success View -->
-      <div class="success-result-view" *ngIf="convertedUrl && !isProcessing">
-        <div class="success-icon-large">✅</div>
-        <h2>Merge Complete!</h2>
-        <p>Your document <strong>"{{outputFilename}}"</strong> is ready.</p>
-        <button class="btn-download-large" (click)="download()">
-          ⬇️ Download Merged PDF
+        <button class="mp-action-bar__merge"
+                [disabled]="!canMerge"
+                (click)="mergePdf()"
+                id="merge-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M12 3v18M3 12h18"/>
+          </svg>
+          Merge &amp; Download
         </button>
-        <button class="btn-secondary-action" (click)="clearAllFiles()">Start New Merge</button>
       </div>
-
-      <!-- Thumbnail Grid -->
-      <div class="thumbnail-grid" *ngIf="pages.length > 0 && !convertedUrl && !isProcessing">
-        <div class="thumb-card"
-             *ngFor="let p of pages; let i = index"
-             [class.selected]="p.selected"
-             draggable="true"
-             (dragstart)="onPageDragStart(i)"
-             (dragover)="onPageDragOver($event)"
-             (drop)="onPageDrop($event, i)"
-             (click)="togglePageSelection(p)">
-
-          <div class="check-badge" *ngIf="p.selected">✓</div>
-
-          <div class="thumb-img-box">
-            <img [src]="p.thumbnailUrl" alt="Page {{p.pageIndex + 1}}" loading="lazy"/>
-          </div>
-
-          <div class="thumb-footer">
-            <span class="page-num">P{{p.pageIndex + 1}}</span>
-            <span class="file-short" [title]="p.fileName">{{p.fileName | slice:0:12}}…</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="center-footer" *ngIf="pages.length > 0 && !convertedUrl && !isProcessing">
-        💡 Click to select/deselect • Drag to reorder
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state-center" *ngIf="pages.length === 0 && !isProcessing && !convertedUrl">
-        <div class="empty-icon">📂</div>
-        <p>Upload PDF files to view and arrange pages here.</p>
-      </div>
-
     </div>
 
-    <!-- RIGHT COLUMN: Settings & Export -->
-    <div class="col-right glass-panel">
+    <!-- Instruction row -->
+    <p class="mp-instruction">
+      Review pages below. Click <strong>✕</strong> on any page to remove it before merging.
+      Drag thumbnails to reorder.
+    </p>
 
-      <!-- Live Preview -->
-      <div class="right-section">
-        <h3>Live Preview</h3>
-        <div class="live-preview-box">
-          <div class="preview-placeholder" *ngIf="selectedPagesCount === 0">
-            No pages selected
-          </div>
-          <img *ngIf="selectedPages.length > 0"
-               [src]="selectedPages[0]?.thumbnailUrl"
-               class="live-preview-img"
-               alt="Preview" />
-        </div>
-      </div>
+    <!-- Page grid -->
+    <div class="page-grid" role="list">
+      <div class="page-card"
+           *ngFor="let page of pages; let i = index"
+           role="listitem"
+           draggable="true"
+           (dragstart)="draggedIdx = i"
+           (dragover)="$event.preventDefault()"
+           (drop)="onDrop2($event, i)">
 
-      <!-- Merge Settings -->
-      <div class="right-section">
-        <h3>Merge Settings</h3>
-
-        <div class="setting-row">
-          <span>Combine in order</span>
-          <label class="pw-switch">
-            <input type="checkbox" [(ngModel)]="combineInOrder"/>
-            <span class="slider-round"></span>
-          </label>
-        </div>
-
-        <div class="setting-row">
-          <span>Remove blank pages</span>
-          <label class="pw-switch">
-            <input type="checkbox" [(ngModel)]="removeBlankPages"/>
-            <span class="slider-round"></span>
-          </label>
-        </div>
-
-        <div class="setting-row">
-          <span>Orientation</span>
-          <select class="pw-select" [(ngModel)]="pageOrientation">
-            <option>Auto</option>
-            <option>Portrait</option>
-            <option>Landscape</option>
-          </select>
-        </div>
-
-        <div class="setting-row">
-          <span>Compression</span>
-          <select class="pw-select" [(ngModel)]="compression">
-            <option>High (Recommended)</option>
-            <option>Medium</option>
-            <option>Low</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Output -->
-      <div class="right-section">
-        <h3>Output</h3>
-        <label class="field-label">Filename</label>
-        <input type="text" class="pw-input" [(ngModel)]="outputFilename" placeholder="merged_document.pdf"/>
-
-        <div class="est-info-box" *ngIf="files.length > 0">
-          📄 ~{{formatBytes(estimatedTotalSize)}} • {{selectedPagesCount}} pages selected
-        </div>
-
-        <button class="btn-merge-action"
-                [disabled]="selectedPagesCount === 0 || isProcessing || files.length < 2"
-                (click)="mergeFiles()">
-          <span *ngIf="!isProcessing">🔗 Merge {{selectedPagesCount}} Pages →</span>
-          <span *ngIf="isProcessing">⏳ {{processingMsg || 'Processing...'}}</span>
+        <!-- Delete button — always visible on hover, prominent -->
+        <button class="page-card__delete"
+                (click)="deletePage(page)"
+                [attr.aria-label]="'Remove page ' + (page.pageIndex + 1)"
+                title="Remove this page">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="3" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
         </button>
 
-        <div class="merge-hint" *ngIf="files.length < 2 && !isProcessing">
-          ℹ️ Add at least 2 PDF files to merge
+        <!-- Thumbnail -->
+        <div class="page-card__thumb" (click)="openPreview(page)">
+          <img [src]="page.thumbnail"
+               [alt]="'Page ' + (page.pageIndex + 1)"
+               loading="lazy"/>
         </div>
 
-        <div class="security-text">
-          🛡️ 100% local • No upload • Secure
+        <!-- Page label -->
+        <div class="page-card__label">
+          <span class="page-card__num">{{ page.pageIndex + 1 }}</span>
         </div>
+
       </div>
-
     </div>
 
+    <!-- Empty state after all pages deleted -->
+    <div class="mp-empty" *ngIf="pages.length === 0">
+      <p>All pages removed. <button class="mp-empty__reset" (click)="reset()">Start over</button></p>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE: MERGING
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="mp-loading" *ngIf="state === 'merging'" aria-live="polite">
+    <div class="mp-progress-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h2 class="mp-progress-card__title">Merging PDF…</h2>
+      <p  class="mp-progress-card__msg">{{ mergingMessage }}</p>
+      <div class="progress-bar" role="progressbar"
+           [attr.aria-valuenow]="mergingPercent" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" [style.width.%]="mergingPercent"></div>
+      </div>
+      <span class="progress-bar__label">{{ mergingPercent }}%</span>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATE: DONE — Download
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="mp-done" *ngIf="state === 'done'">
+    <div class="done-card">
+      <div class="done-card__icon" aria-hidden="true">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2 class="done-card__title">PDF Ready!</h2>
+      <p  class="done-card__sub">
+        {{ pages.length }} pages merged successfully.
+      </p>
+
+      <button class="done-card__download" (click)="triggerDownload()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download {{ downloadName }}
+      </button>
+
+      <div class="done-card__secondary">
+        <button class="done-card__link" (click)="state = 'ready'">← Go back &amp; edit</button>
+        <button class="done-card__link" (click)="reset()">Start new merge</button>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /mp-wrap -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE PREVIEW MODAL
+     ═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="previewPage" (click)="closePreview()" role="dialog" aria-modal="true">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <button class="modal-box__close" (click)="closePreview()" aria-label="Close preview">✕</button>
+    <img class="modal-box__img"
+         [src]="previewPage.thumbnail"
+         [alt]="'Page ' + (previewPage.pageIndex + 1) + ' preview'"/>
+    <p class="modal-box__label">Page {{ previewPage.pageIndex + 1 }}</p>
+    <button class="modal-box__delete" (click)="deletePage(previewPage)">
+      Remove This Page
+    </button>
   </div>
 </div>

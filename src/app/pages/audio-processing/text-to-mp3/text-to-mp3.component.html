@@ -189,4 +189,30 @@
     </div>
 
   </div>
+
+  <!-- QUICK ACCESS TO 100+ LANGUAGE PAGES -->
+  <div class="lang-nav-section mt-4">
+    <div class="lang-nav-header">
+      <h3>🌍 Explore 100+ Dedicated Language Studios</h3>
+      <p>Discover localized text-to-speech generators optimized for native pronunciation and accents.</p>
+    </div>
+    
+    <div class="lang-pill-grid">
+      <a *ngFor="let lang of displayedLanguages" [routerLink]="['/tts', lang.slug]" class="lang-pill-link">
+        <span class="lang-pill-flag">{{ lang.flag }}</span>
+        <span class="lang-pill-name">{{ lang.lang }}</span>
+        <span class="lang-pill-country">{{ lang.country }}</span>
+      </a>
+    </div>
+
+    <div class="view-all-action mt-3 text-center">
+      <button class="btn-view-all-langs" *ngIf="!showAllLangs" (click)="showAllLangs = true">
+        ⬇️ Show All 104 Languages
+      </button>
+      <a routerLink="/tts" class="btn-view-all-langs outline mt-2" *ngIf="showAllLangs">
+        📂 Go to Languages Directory
+      </a>
+    </div>
+  </div>
+
 </div>

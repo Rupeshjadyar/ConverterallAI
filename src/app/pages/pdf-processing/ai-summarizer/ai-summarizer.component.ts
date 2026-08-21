@@ -11,7 +11,7 @@ export class AiSummarizerComponent implements OnInit {
   resetState(clearFiles = true) { this.convertedUrl = null; this.convertedBlob = null; this.progress = 0; this.isConverting = false; this.summaryText = ''; if (clearFiles) this.selectedFiles = []; }
   async processFiles() { if (!this.selectedFiles.length) return; this.isConverting = true; this.progress = 0;
     try {
-      const pdfjsLib = await import('pdfjs-dist'); (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+      const pdfjsLib = await import('pdfjs-dist'); (pdfjsLib as any).GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs';
       this.progress = 15; const bytes = await this.selectedFiles[0].arrayBuffer(); const pdfDoc = await pdfjsLib.getDocument({ data: bytes }).promise; this.progress = 30;
       let fullText = ''; for (let i = 1; i <= Math.min(pdfDoc.numPages, 10); i++) { const page = await pdfDoc.getPage(i); const tc = await page.getTextContent(); fullText += tc.items.map((item: any) => item.str).join(' ') + ' '; this.progress = 30 + Math.round((40 / Math.min(pdfDoc.numPages, 10)) * i); }
       this.progress = 75;

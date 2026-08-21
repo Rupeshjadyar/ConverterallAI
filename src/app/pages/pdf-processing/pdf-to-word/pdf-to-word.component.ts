@@ -28,7 +28,7 @@ export class PdfToWordComponent implements OnInit {
     // Extract text from PDF and create a simple DOCX-like file
     try {
       const pdfjsLib = await import('pdfjs-dist');
-      (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+      (pdfjsLib as any).GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs';
       this.progress = 15;
       const bytes = await this.selectedFiles[0].arrayBuffer();
       const pdfDoc = await pdfjsLib.getDocument({ data: bytes }).promise;

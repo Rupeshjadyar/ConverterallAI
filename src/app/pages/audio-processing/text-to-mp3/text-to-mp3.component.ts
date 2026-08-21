@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TTS_LANGUAGES, TtsLanguage } from '../../../data/tts-languages.data';
 
 export interface LanguageOption {
   code: string;
@@ -42,6 +43,13 @@ export interface SavedAudioItem {
 export class TextToMp3Component implements OnInit, OnDestroy {
   activeMode: 'single' | 'dialogue' = 'single';
   textInput: string = 'Welcome to ConverterallAI! Multi-lingual voice generation is now active for over 100 languages.';
+
+  // TTS Language Pages for quick-access buttons
+  ttsLanguages: TtsLanguage[] = TTS_LANGUAGES;
+  showAllLangs: boolean = false;
+  get displayedLanguages(): TtsLanguage[] {
+    return this.showAllLangs ? this.ttsLanguages : this.ttsLanguages.slice(0, 20);
+  }
   
   selectedLangCode: string = 'hi-IN';
   selectedVoiceId: string = 'v-aria';
