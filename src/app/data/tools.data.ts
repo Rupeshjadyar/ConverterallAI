@@ -115,6 +115,60 @@ export const TOOLS_DATA: ToolItem[] = [
     fullDesc: 'Add user and owner passwords to protect sensitive financial or legal documents.',
     icon: '🔒'
   },
+  {
+    id: 'remove-password',
+    name: 'Unlock PDF',
+    slug: '/pdf-processing/remove-password',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Remove password protection from your PDF files.',
+    fullDesc: 'Remove PDF passwords and restrictions instantly.',
+    icon: '🔓'
+  },
+  {
+    id: 'rotate-pdf',
+    name: 'Rotate PDF Pages',
+    slug: '/pdf-processing/rotate-pdf',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Rotate PDF pages to left, right, or upside down.',
+    fullDesc: 'Fix upside down scans and rotate specific pages easily.',
+    icon: '🔃'
+  },
+  {
+    id: 'sign-pdf',
+    name: 'eSign PDF',
+    slug: '/pdf-processing/sign-pdf',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Sign PDF documents electronically with ease.',
+    fullDesc: 'Draw, type, or upload your signature to digitally sign documents.',
+    icon: '🖋️'
+  },
+  {
+    id: 'add-watermark',
+    name: 'Add Watermark',
+    slug: '/pdf-processing/add-watermark',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Stamp an image or text over your PDF.',
+    fullDesc: 'Add copyright text or logo watermarks to your PDF pages.',
+    icon: '©️'
+  },
+  {
+    id: 'pdf-to-jpg',
+    name: 'PDF to JPG',
+    slug: '/pdf-processing/pdf-to-jpg',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Extract pages from PDF to high-quality JPG images.',
+    fullDesc: 'Convert every page of your PDF to a JPG file.',
+    icon: '🖼️'
+  },
+  {
+    id: 'html-to-pdf',
+    name: 'HTML to PDF',
+    slug: '/pdf-processing/html-to-pdf',
+    categoryId: 'pdf-tools',
+    shortDesc: 'Convert HTML pages or URLs to PDF documents.',
+    fullDesc: 'Capture websites or HTML files as static PDF pages.',
+    icon: '🌐'
+  },
 
   // ==================== IMAGE TOOLS ====================
   {
@@ -158,6 +212,60 @@ export const TOOLS_DATA: ToolItem[] = [
     shortDesc: 'Crop, scale, and rotate images to standard aspect ratios.',
     fullDesc: 'Precision photo cropper for social media banners, avatars, and e-commerce listings.',
     icon: '📐'
+  },
+  {
+    id: 'image-editor',
+    name: 'Advanced Image Editor',
+    slug: '/image-processing/image-editor',
+    categoryId: 'image-tools',
+    shortDesc: 'Apply filters, adjust brightness, contrast, and add text to your images.',
+    fullDesc: 'Client-side image editing studio with layer support and non-destructive filters.',
+    icon: '🎨'
+  },
+  {
+    id: 'image-to-pdf',
+    name: 'Image to PDF Maker',
+    slug: '/image-processing/image-to-pdf',
+    categoryId: 'image-tools',
+    shortDesc: 'Convert JPG, PNG, and WEBP images into a single PDF document.',
+    fullDesc: 'Quickly batch images and convert them into a standard PDF file for easy sharing.',
+    icon: '📸'
+  },
+  {
+    id: 'jpeg-to-png',
+    name: 'JPEG to PNG Converter',
+    slug: '/image-processing/jpeg-to-png',
+    categoryId: 'image-tools',
+    shortDesc: 'Convert JPEG images to high-quality PNG format.',
+    fullDesc: 'Convert JPEG photos to lossless PNG format maintaining quality.',
+    icon: '🖼️'
+  },
+  {
+    id: 'meme-generator',
+    name: 'Meme Generator',
+    slug: '/image-processing/meme-generator',
+    categoryId: 'image-tools',
+    shortDesc: 'Create funny memes with custom text and templates.',
+    fullDesc: 'Easy to use meme generator with popular templates and custom text tools.',
+    icon: '😂'
+  },
+  {
+    id: 'image-resizer',
+    name: 'Bulk Image Resizer',
+    slug: '/image-processing/resizer',
+    categoryId: 'image-tools',
+    shortDesc: 'Resize multiple images at once to exact dimensions.',
+    fullDesc: 'Resize photos for web, social media, and printing instantly.',
+    icon: '📏'
+  },
+  {
+    id: 'watermark-image',
+    name: 'Add Watermark to Image',
+    slug: '/image-processing/watermark',
+    categoryId: 'image-tools',
+    shortDesc: 'Protect your images by adding a text or logo watermark.',
+    fullDesc: 'Batch watermark your photos to protect your copyright.',
+    icon: '©️'
   },
 
   // ==================== CALCULATORS ====================

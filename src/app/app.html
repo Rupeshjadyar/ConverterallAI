@@ -5,13 +5,19 @@
   <div class="grid-bg"></div>
 </div>
 
-<!-- UNIVERSAL TOP NAVIGATION BAR WITH SPOTLIGHT SEARCH -->
+<!-- UNIVERSAL TOP NAVIGATION BAR -->
 <app-navbar></app-navbar>
 
-<!-- MAIN APP ROUTER CONTENT -->
-<main class="app-main-content">
-  <router-outlet></router-outlet>
-</main>
+<div class="app-layout">
+  <app-sidebar></app-sidebar>
 
-<!-- UNIVERSAL FOOTER -->
-<app-footer></app-footer>
+  <div class="main-column">
+    <!-- MAIN APP ROUTER CONTENT -->
+    <main class="app-main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- UNIVERSAL FOOTER -->
+    <app-footer></app-footer>
+  </div>
+</div>

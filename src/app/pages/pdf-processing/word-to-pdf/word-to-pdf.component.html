@@ -9,8 +9,8 @@
 
   <div class="tool-header animate-fade-in">
     <div class="badge">
-      <span class="badge-dot" [class.local]="false"></span>
-      Cloud API Processing
+      <span class="badge-dot" [class.local]="true"></span>
+      Local Processing
     </div>
     <h1>📝 Word to PDF</h1>
     <p class="tool-desc">Make DOC and DOCX files easy to read by converting them to PDF.</p>
@@ -29,7 +29,7 @@
     >
       <div class="dropzone-content">
         <div class="upload-icon">📝</div>
-        <div class="upload-title">Drag and drop your PDF here, or click to browse</div>
+        <div class="upload-title">Drag and drop your Word document here, or click to browse</div>
         <div class="upload-sub">Supports files up to 100MB</div>
         <button class="btn-action" style="max-width: 200px; margin-top: 1rem;">Choose Files</button>
       </div>
@@ -37,7 +37,7 @@
         #fileInput
         type="file" 
         class="file-input" 
-        [accept]="'application/pdf'"
+        accept=".doc,.docx,.txt,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
         
         (change)="onFileSelected($event)"
       />

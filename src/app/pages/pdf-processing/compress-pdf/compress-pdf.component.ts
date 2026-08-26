@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy, NgZone,
-  Inject, PLATFORM_ID,
+  Inject, PLATFORM_ID, ChangeDetectorRef
 } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -53,6 +53,7 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     private title: Title,
     private meta:  Meta,
     private zone:  NgZone,
+    private cdr:   ChangeDetectorRef,
     @Inject(PLATFORM_ID) pid: object,
   ) { this.isBrowser = isPlatformBrowser(pid); }
 
@@ -119,6 +120,7 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.progress = progress;
       this.progMsg  = msg;
+      this.cdr.detectChanges();
     });
     return new Promise<void>(resolve =>
       requestAnimationFrame(() => setTimeout(resolve, 0))
@@ -190,6 +192,7 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
         this.progress = 100;
         this.progMsg  = 'Done!';
         this.state    = 'done';
+        this.cdr.detectChanges();
       });
 
     } catch (err: any) {
@@ -197,6 +200,7 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
       this.zone.run(() => {
         this.error = 'Compression failed: ' + (err?.message ?? String(err));
         this.state = 'idle';
+        this.cdr.detectChanges();
       });
     }
   }

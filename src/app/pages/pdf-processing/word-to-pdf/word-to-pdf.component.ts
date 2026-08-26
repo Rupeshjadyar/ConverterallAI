@@ -23,32 +23,44 @@ export class WordToPdfComponent implements OnInit {
     this.isConverting = true; this.progress = 0;
     try {
       this.progress = 20;
-      const text = await this.selectedFiles[0].text();
+      const file = this.selectedFiles[0];
+      const arrayBuffer = await file.arrayBuffer();
+      
       this.progress = 40;
-      const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
-      const pdf = await PDFDocument.create();
-      const font = await pdf.embedFont(StandardFonts.Helvetica);
+      // @ts-ignore
+      const mammoth = await import('mammoth');
+      const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+      const html = result.value || '<p>No content</p>';
+      
       this.progress = 60;
-      const margin = 72; const pageW = 595.28; const pageH = 841.89;
-      const maxW = pageW - margin*2; const fontSize = 11; const lineH = fontSize * 1.5;
-      const lines: string[] = [];
-      for (const raw of text.split('\n')) {
-        if (!raw.trim()) { lines.push(''); continue; }
-        const words = raw.split(' '); let cur = '';
-        for (const w of words) { const t = cur ? cur+' '+w : w; if (font.widthOfTextAtSize(t, fontSize) > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
-        if (cur) lines.push(cur);
-      }
-      const lpp = Math.floor((pageH - margin*2) / lineH);
-      for (let i = 0; i < lines.length; i += lpp) {
-        const page = pdf.addPage([pageW, pageH]); let y = pageH - margin;
-        for (const line of lines.slice(i, i+lpp)) { if (line) page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0,0,0) }); y -= lineH; }
-      }
-      this.progress = 90;
-      const pdfBytes = await pdf.save();
-      this.convertedBlob = new Blob([pdfBytes as any], { type: 'application/pdf' });
-      this.convertedUrl = URL.createObjectURL(this.convertedBlob);
+      // @ts-ignore
+      const html2pdfModule = await import('html2pdf.js');
+      const html2pdf = html2pdfModule.default || html2pdfModule;
+      
+      const opt: any = {
+        margin:       10,
+        filename:     'converted.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      const element = document.createElement('div');
+      element.innerHTML = html;
+      element.style.padding = '20px';
+      element.style.color = '#000';
+      element.style.background = '#fff';
+      
+      this.progress = 80;
+      const pdfBlob = await html2pdf().from(element).set(opt).output('blob');
+      
+      this.convertedBlob = pdfBlob;
+      this.convertedUrl = URL.createObjectURL(this.convertedBlob!);
       this.progress = 100;
-    } catch (err) { console.error(err); alert('Conversion failed. For best results, use .txt or plain text files.'); }
+    } catch (err) {
+      console.error(err);
+      alert('Conversion failed. Please ensure you uploaded a valid .docx file.');
+    }
     this.isConverting = false;
   }
 

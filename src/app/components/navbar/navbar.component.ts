@@ -40,49 +40,50 @@ import { ToolItem } from '../../data/tools.data';
             <button class="nav-pill dropdown-btn" [class.active]="toolsMenuOpen()" (click)="toggleToolsMenu($event)">
               🧰 Tools <span class="caret-icon" [class.rotated]="toolsMenuOpen()">▼</span>
             </button>
-
-            <!-- AI — small positioned dropdown (stays inside) -->
-            <div class="dropdown-wrapper">
-              <button class="nav-pill dropdown-btn" [class.active]="aiMenuOpen()" (click)="toggleAiMenu($event)">
-                ✨ AI <span class="caret-icon" [class.rotated]="aiMenuOpen()">▼</span>
-              </button>
-              <div class="ai-dropdown glass" *ngIf="aiMenuOpen()">
-                <a routerLink="/audio-processing/text-to-mp3" (click)="closeAllMenus()" class="ai-drop-item">
-                  <span class="ai-drop-icon">🎙️</span>
-                  <div>
-                    <div class="ai-drop-name">Text to Audio MP3</div>
-                    <div class="ai-drop-sub">Studio voice narration engine</div>
-                  </div>
-                  <span class="tool-mini-badge">NEW</span>
-                </a>
-                <a routerLink="/image-processing/bg-remover" (click)="closeAllMenus()" class="ai-drop-item">
-                  <span class="ai-drop-icon">🪄</span>
-                  <div>
-                    <div class="ai-drop-name">AI Background Remover</div>
-                    <div class="ai-drop-sub">WebAssembly neural engine</div>
-                  </div>
-                  <span class="tool-mini-badge">PRO</span>
-                </a>
-                <a routerLink="/pdf-processing/ocr-pdf" (click)="closeAllMenus()" class="ai-drop-item">
-                  <span class="ai-drop-icon">🔍</span>
-                  <div>
-                    <div class="ai-drop-name">OCR PDF Scanner</div>
-                    <div class="ai-drop-sub">Intelligent text extraction</div>
-                  </div>
-                  <span class="tool-mini-badge">AI</span>
-                </a>
-              </div>
-            </div>
-
-            <a routerLink="/home" class="nav-pill">📝 Blog</a>
-            <a routerLink="/home" class="nav-pill">ℹ️ About</a>
-            <button class="nav-pill search-nav-btn" (click)="openSearch()">🔍 Search</button>
           </div>
 
           <!-- Right Actions -->
           <div class="nav-actions">
             <app-spotlight-search></app-spotlight-search>
             <app-theme-switcher></app-theme-switcher>
+
+            <!-- AdSense / Legal Pages Menu -->
+            <div class="dropdown-wrapper desktop-legal-menu">
+              <button class="nav-pill desktop-menu-btn" (click)="toggleLegalMenu($event)">
+                ☰
+              </button>
+              <div class="ai-dropdown glass" *ngIf="legalMenuOpen()">
+                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">ℹ️</span>
+                  <div>
+                    <div class="ai-drop-name">About Us</div>
+                    <div class="ai-drop-sub">Who we are</div>
+                  </div>
+                </a>
+                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">🛡️</span>
+                  <div>
+                    <div class="ai-drop-name">Privacy Policy</div>
+                    <div class="ai-drop-sub">Data protection</div>
+                  </div>
+                </a>
+                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">📄</span>
+                  <div>
+                    <div class="ai-drop-name">Terms of Service</div>
+                    <div class="ai-drop-sub">Usage guidelines</div>
+                  </div>
+                </a>
+                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">✉️</span>
+                  <div>
+                    <div class="ai-drop-name">Contact Us</div>
+                    <div class="ai-drop-sub">Get in touch</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
             <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" aria-label="Toggle mobile menu">☰</button>
           </div>
         </nav>
@@ -157,20 +158,23 @@ import { ToolItem } from '../../data/tools.data';
   styles: [`
     .universal-header {
       position: sticky;
-      top: 0.85rem;
+      top: 0;
       left: 0;
       width: 100%;
       z-index: 1050;
-      pointer-events: none;
-      padding: 0 1.25rem;
-      margin-bottom: 1.5rem;
+      padding: 0;
+      background: var(--card-color, rgba(14, 16, 24, 0.88));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
 
     /* nav-container is the POSITIONING PARENT for the mega-dropdown */
     .nav-container {
-      max-width: 1400px;
+      max-width: 100%;
+      padding: 0 1.5rem;
       margin: 0 auto;
-      pointer-events: auto;
       position: relative;
     }
 
@@ -179,13 +183,7 @@ import { ToolItem } from '../../data/tools.data';
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      background: var(--card-color, rgba(14, 16, 24, 0.88));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
-      border-radius: 18px;
-      padding: 0.6rem 1.2rem;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      padding: 0.7rem 0;
     }
 
     /* Logo */
@@ -300,6 +298,18 @@ import { ToolItem } from '../../data/tools.data';
       from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
       to   { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
+    
+    .desktop-legal-menu .ai-dropdown {
+      left: auto;
+      right: 0;
+      transform: none;
+      animation: dropFadeRight 0.2s cubic-bezier(0.16,1,0.3,1);
+    }
+    
+    @keyframes dropFadeRight {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     .ai-drop-item {
       display: flex;
@@ -352,13 +362,19 @@ import { ToolItem } from '../../data/tools.data';
        LIGHT THEME OVERRIDES (Flash White + Dual White)
        ===================================================================== */
 
-    /* Navbar pill on white background */
-    :host-context(body.light-theme) .navbar-glass {
+    /* Navbar on white background */
+    :host-context(body.light-theme) .universal-header {
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(15, 23, 42, 0.09);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.09);
       box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    }
+    
+    :host-context(body.light-theme) .navbar-glass {
+      background: transparent;
+      border: none;
+      box-shadow: none;
     }
 
     /* Brand tag on light */
@@ -747,6 +763,7 @@ export class NavbarComponent {
   mobileMenuOpen = signal(false);
   toolsMenuOpen = signal(false);
   aiMenuOpen = signal(false);
+  legalMenuOpen = signal(false);
 
   categories: CategoryItem[] = this.registry.getCategories();
 
@@ -758,18 +775,28 @@ export class NavbarComponent {
     this.mobileMenuOpen.set(!this.mobileMenuOpen());
     this.toolsMenuOpen.set(false);
     this.aiMenuOpen.set(false);
+    this.legalMenuOpen.set(false);
   }
 
   toggleToolsMenu(event: Event) {
     event.stopPropagation();
     this.toolsMenuOpen.set(!this.toolsMenuOpen());
     this.aiMenuOpen.set(false);
+    this.legalMenuOpen.set(false);
   }
 
   toggleAiMenu(event: Event) {
     event.stopPropagation();
     this.aiMenuOpen.set(!this.aiMenuOpen());
     this.toolsMenuOpen.set(false);
+    this.legalMenuOpen.set(false);
+  }
+
+  toggleLegalMenu(event: Event) {
+    event.stopPropagation();
+    this.legalMenuOpen.set(!this.legalMenuOpen());
+    this.toolsMenuOpen.set(false);
+    this.aiMenuOpen.set(false);
   }
 
   openSearch() {
@@ -781,11 +808,13 @@ export class NavbarComponent {
     this.mobileMenuOpen.set(false);
     this.toolsMenuOpen.set(false);
     this.aiMenuOpen.set(false);
+    this.legalMenuOpen.set(false);
   }
 
   @HostListener('document:click')
   onDocumentClick() {
     if (this.toolsMenuOpen()) this.toolsMenuOpen.set(false);
     if (this.aiMenuOpen()) this.aiMenuOpen.set(false);
+    if (this.legalMenuOpen()) this.legalMenuOpen.set(false);
   }
 }
