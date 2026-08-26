@@ -39,16 +39,16 @@ import { ToolItem } from '../../data/tools.data';
   `,
   styles: [`
     .sidebar-wrapper {
-      width: 76px;
+      width: 82px;
       margin: 1rem 0 1rem 1rem;
       position: sticky;
       top: 76px;
       height: calc(100vh - 90px);
-      z-index: 100;
+      z-index: 1040;
     }
 
     .app-sidebar {
-      width: 76px;
+      width: 82px;
       height: 100%;
       border-radius: 18px;
       background: var(--card-color, rgba(14, 16, 24, 0.88));
@@ -92,14 +92,14 @@ import { ToolItem } from '../../data/tools.data';
       flex: 1;
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 1rem 0.6rem;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(139,92,246,0.4) transparent;
+      padding: 1rem 0.8rem;
+      /* Hide scrollbar for a cleaner look */
+      scrollbar-width: none; 
+      -ms-overflow-style: none;
     }
-
-    .sidebar-nav::-webkit-scrollbar { width: 4px; }
-    .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 99px; }
+    .sidebar-nav::-webkit-scrollbar { 
+      display: none; 
+    }
     
     .sidebar-category {
       margin-bottom: 0.5rem;

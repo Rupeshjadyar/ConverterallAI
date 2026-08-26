@@ -315,5 +315,68 @@ export const TOOLS_DATA: ToolItem[] = [
     shortDesc: 'Compute exact age down to years, months, days, and hours.',
     fullDesc: 'Exact age interval calculation between birthdate and any future date.',
     icon: '🎂'
+  },
+  {
+    id: 'standard-calc',
+    name: 'Standard Calculator',
+    slug: '/calculators/standard',
+    categoryId: 'calculators',
+    shortDesc: 'Simple calculator for daily math.',
+    fullDesc: 'Basic arithmetic calculator for quick calculations.',
+    icon: '🔢'
+  },
+  {
+    id: 'scientific-calc',
+    name: 'Scientific Math',
+    slug: '/calculators/scientific',
+    categoryId: 'calculators',
+    shortDesc: 'Advanced scientific calculator with trigonometry.',
+    fullDesc: 'Evaluate complex mathematical expressions, logarithms, and trig functions.',
+    icon: '🧮'
+  },
+  {
+    id: 'percentage-calc',
+    name: 'Percentage Calculator',
+    slug: '/calculators/percentage',
+    categoryId: 'calculators',
+    shortDesc: 'Calculate discounts, markups, and percentage changes.',
+    fullDesc: 'Quickly find percentages of numbers, percent increase or decrease.',
+    icon: '💯'
+  },
+  {
+    id: 'currency-calc',
+    name: 'Currency Converter',
+    slug: '/calculators/currency',
+    categoryId: 'calculators',
+    shortDesc: 'Real-time currency exchange rates calculator.',
+    fullDesc: 'Convert between 150+ global currencies using live forex rates.',
+    icon: '💵'
+  },
+  {
+    id: 'discount-calc',
+    name: 'Discount Calculator',
+    slug: '/calculators/discount',
+    categoryId: 'calculators',
+    shortDesc: 'Find out the final price after sales tax and discount.',
+    fullDesc: 'Quickly calculate sale prices and shopping discounts.',
+    icon: '🏷️'
+  },
+  {
+    id: 'salary-calc',
+    name: 'Salary & Tax Calculator',
+    slug: '/calculators/salary',
+    categoryId: 'calculators',
+    shortDesc: 'Estimate take-home pay after taxes and deductions.',
+    fullDesc: 'Break down gross pay into net salary for different regions.',
+    icon: '💼'
+  },
+  {
+    id: 'time-calc',
+    name: 'Time Calculator',
+    slug: '/calculators/time',
+    categoryId: 'calculators',
+    shortDesc: 'Add or subtract time, calculate durations.',
+    fullDesc: 'Calculate hours and minutes worked or duration between dates.',
+    icon: '⏱️'
   }
 ];
