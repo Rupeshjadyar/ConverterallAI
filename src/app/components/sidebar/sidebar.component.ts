@@ -17,7 +17,7 @@ import { ToolItem } from '../../data/tools.data';
         </div>
         <nav class="sidebar-nav">
           <div *ngFor="let cat of categories" class="sidebar-category">
-            <div class="cat-header" (click)="toggleCat(cat.id)" [title]="cat.name">
+            <div class="cat-header" (click)="toggleCat(cat.id)" [class.active-cat]="openCatId === cat.id" [title]="cat.name">
               <span class="cat-icon">{{ cat.icon }}</span>
               <span class="cat-name">{{ cat.name }}</span>
               <span class="cat-chevron" [class.open]="openCatId === cat.id">▼</span>
@@ -40,9 +40,9 @@ import { ToolItem } from '../../data/tools.data';
   styles: [`
     .sidebar-wrapper {
       width: 82px;
-      margin: 1rem 0 1rem 1rem;
+      margin: 1rem 0 1rem 0; /* Align top/bottom with main content */
       position: sticky;
-      top: 76px;
+      top: 76px; /* Align with main content which has 1rem margin */
       height: calc(100vh - 90px);
       z-index: 1040;
     }
@@ -50,20 +50,27 @@ import { ToolItem } from '../../data/tools.data';
     .app-sidebar {
       width: 82px;
       height: 100%;
-      border-radius: 18px;
+      border-radius: 0 24px 24px 0;
       background: var(--card-color, rgba(14, 16, 24, 0.88));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
+      border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
       transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
     
+    /* Light theme override for the sidebar to match the exact white look */
+    :host-context(body.light-theme) .app-sidebar {
+      background: #ffffff;
+      border-right: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.04);
+    }
+    
     .app-sidebar:hover {
-      width: 260px;
+      width: 280px;
     }
     
     .sidebar-header {
@@ -110,30 +117,48 @@ import { ToolItem } from '../../data/tools.data';
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 0.7rem;
+      padding: 0.5rem;
+      margin: 0.2rem 0.6rem;
       cursor: pointer;
-      border-radius: 12px;
-      color: var(--text-color, #e2e8f0);
-      font-weight: 700;
+      border-radius: 14px;
+      color: var(--text-muted, #64748b);
+      font-weight: 600;
       font-size: 0.95rem;
-      transition: background 0.2s;
+      transition: all 0.2s;
       white-space: nowrap;
-      width: 236px;
+      width: 240px;
+    }
+    
+    :host-context(body.light-theme) .cat-header {
+      color: #64748b;
     }
     
     .cat-icon {
       font-size: 1.3rem;
       display: flex;
+      align-items: center;
       justify-content: center;
-      min-width: 32px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      transition: all 0.2s;
     }
 
     .cat-header:hover {
-      background: rgba(139, 92, 246, 0.15);
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--text-color, #e2e8f0);
+    }
+    
+    /* Make active categories look like the reference pill */
+    .cat-header.active-cat .cat-icon {
+      background: #257e84; /* Teal color from reference */
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 126, 132, 0.3);
     }
     
     .cat-chevron {
       margin-left: auto;
+      margin-right: 0.5rem;
       font-size: 0.7rem;
       transition: transform 0.3s ease;
       opacity: 0;
@@ -165,12 +190,13 @@ import { ToolItem } from '../../data/tools.data';
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 0.6rem 0.7rem;
+      padding: 0.5rem;
+      margin: 0.1rem 0.6rem;
       text-decoration: none;
       color: #94a3b8;
       font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 10px;
+      font-weight: 500;
+      border-radius: 12px;
       transition: all 0.2s;
       white-space: nowrap;
       width: 220px;
@@ -179,8 +205,12 @@ import { ToolItem } from '../../data/tools.data';
     .tool-icon {
       font-size: 1.1rem;
       display: flex;
+      align-items: center;
       justify-content: center;
-      min-width: 32px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      transition: all 0.2s;
     }
     
     .tool-name {
@@ -194,9 +224,19 @@ import { ToolItem } from '../../data/tools.data';
       opacity: 1;
     }
     
-    .tool-item:hover, .tool-item.active {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
+    .tool-item:hover {
+      background: rgba(139, 92, 246, 0.08);
+      color: var(--text-color, #e2e8f0);
+    }
+    
+    .tool-item.active {
+      color: var(--text-color, #fff);
+    }
+    
+    .tool-item.active .tool-icon {
+      background: #257e84; /* Teal color from reference */
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 126, 132, 0.3);
     }
     
     /* Light Theme Overrides */

@@ -1,7 +1,8 @@
 import {
   Component, OnInit, OnDestroy, NgZone,
-  Inject, PLATFORM_ID, ChangeDetectorRef
+  Inject, PLATFORM_ID, ChangeDetectorRef, inject
 } from '@angular/core';
+import { ToolExecutionService } from '../../../services/tool-execution.service';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
@@ -57,9 +58,22 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) pid: object,
   ) { this.isBrowser = isPlatformBrowser(pid); }
 
+  private toolExec = inject(ToolExecutionService);
+
   ngOnInit() {
     this.title.setTitle('Compress PDF – Reduce PDF File Size Online | ConverterAllAI');
     this.meta.updateTag({ name: 'description', content: 'Compress PDF files instantly in your browser. No uploads, 100% private.' });
+
+    // Check if AI Agent passed a file to process!
+    const task = this.toolExec.pendingTask();
+    if (task && task.toolId === 'compress-pdf' && task.file) {
+      this._pick([task.file]);
+      this.toolExec.clearTask();
+      
+      if (task.autoStart) {
+        setTimeout(() => this.compress(), 800);
+      }
+    }
   }
 
   ngOnDestroy() { this._revoke(); }

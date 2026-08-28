@@ -5,8 +5,10 @@ import {
   Inject,
   PLATFORM_ID,
   ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { ToolExecutionService } from '../../../services/tool-execution.service';
 import { FormsModule } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -83,6 +85,8 @@ export class MergePdfComponent implements OnInit, OnDestroy {
 
   // ── lifecycle ─────────────────────────────────────────────────────────────
 
+  private toolExec = inject(ToolExecutionService);
+
   ngOnInit(): void {
     this.titleSvc.setTitle('Merge PDF – Preview Pages & Combine | ConverterAllAI');
     this.metaSvc.updateTag({
@@ -90,6 +94,15 @@ export class MergePdfComponent implements OnInit, OnDestroy {
       content:
         'Upload one or more PDFs, preview every page as a thumbnail, remove unwanted pages, then merge and download as a single PDF – entirely in your browser.',
     });
+
+    // Check if AI Agent passed a file to process!
+    const task = this.toolExec.pendingTask();
+    if (task && task.toolId === 'merge-pdf' && task.file) {
+      this._ingestFiles([task.file]);
+      this.toolExec.clearTask();
+      // Merge doesn't autoStart immediately usually because they need to upload MORE than 1 file, 
+      // but we load it into the workspace!
+    }
   }
 
   ngOnDestroy(): void {

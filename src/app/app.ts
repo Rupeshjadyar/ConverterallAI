@@ -4,12 +4,13 @@ import { ThemeService } from './services/theme.service';
 import { SeoService } from './services/seo.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { RightSidebarComponent } from './components/sidebar/right-sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, SidebarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, SidebarComponent, RightSidebarComponent, FooterComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

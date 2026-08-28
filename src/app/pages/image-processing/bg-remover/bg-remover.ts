@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
@@ -14,6 +14,8 @@ interface BatchFileItem {
   resultUrl: string | null;
 }
 
+import { ToolExecutionService } from '../../../services/tool-execution.service';
+
 @Component({
   selector: 'app-bg-remover',
   standalone: true,
@@ -22,6 +24,8 @@ interface BatchFileItem {
   styleUrls: ['./bg-remover.css']
 })
 export class BgRemoverComponent {
+  private toolExec = inject(ToolExecutionService);
+
   // Navigation & Menu
   activeMenu: string = 'remover';
   
@@ -111,6 +115,19 @@ export class BgRemoverComponent {
     if (this.batchFiles.length > 0) {
       this.originalUrl = this.batchFiles[0].originalUrl;
       this.resultUrl = this.batchFiles[0].resultUrl;
+    }
+  }
+
+  ngOnInit() {
+    const task = this.toolExec.pendingTask();
+    if (task && task.toolId === 'bg-remover' && task.file) {
+      this.handleFiles([task.file] as any);
+      this.toolExec.clearTask();
+      
+      if (task.autoStart) {
+        // Wait for UI to update before processing
+        setTimeout(() => this.removeBackground(), 500);
+      }
     }
   }
 
