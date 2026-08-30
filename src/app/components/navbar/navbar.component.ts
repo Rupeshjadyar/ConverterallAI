@@ -32,7 +32,7 @@ import { ToolItem } from '../../data/tools.data';
 
           <!-- Center Nav Links -->
           <div class="nav-links">
-            <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill">
+            <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill" (click)="closeAllMenus()">
               🏠 Home
             </a>
 
@@ -40,6 +40,23 @@ import { ToolItem } from '../../data/tools.data';
             <button class="nav-pill dropdown-btn" [class.active]="toolsMenuOpen()" (click)="toggleToolsMenu($event)">
               🧰 Tools <span class="caret-icon" [class.rotated]="toolsMenuOpen()">▼</span>
             </button>
+
+            <!-- AdSense / Legal Pages in Top Navbar -->
+            <a routerLink="/about" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
+              ℹ️ About
+            </a>
+            <a routerLink="/contact" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
+              ✉️ Contact
+            </a>
+            <a routerLink="/privacy-policy" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
+              🛡️ Privacy
+            </a>
+            <a routerLink="/terms-of-service" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
+              📄 Terms
+            </a>
+            <a routerLink="/disclaimer" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
+              ⚠️ Disclaimer
+            </a>
           </div>
 
           <!-- Right Actions -->
@@ -47,38 +64,52 @@ import { ToolItem } from '../../data/tools.data';
             <app-spotlight-search></app-spotlight-search>
             <app-theme-switcher></app-theme-switcher>
 
-            <!-- AdSense / Legal Pages Menu -->
+            <!-- AdSense / Legal Pages Dropdown Menu -->
             <div class="dropdown-wrapper desktop-legal-menu">
-              <button class="nav-pill desktop-menu-btn" (click)="toggleLegalMenu($event)">
+              <button class="nav-pill desktop-menu-btn" (click)="toggleLegalMenu($event)" title="Legal & Policy Pages">
                 ☰
               </button>
               <div class="ai-dropdown glass" *ngIf="legalMenuOpen()">
-                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                <a routerLink="/about" (click)="closeAllMenus()" class="ai-drop-item">
                   <span class="ai-drop-icon">ℹ️</span>
                   <div>
                     <div class="ai-drop-name">About Us</div>
-                    <div class="ai-drop-sub">Who we are</div>
+                    <div class="ai-drop-sub">Who we are &amp; tech stack</div>
                   </div>
                 </a>
-                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
-                  <span class="ai-drop-icon">🛡️</span>
-                  <div>
-                    <div class="ai-drop-name">Privacy Policy</div>
-                    <div class="ai-drop-sub">Data protection</div>
-                  </div>
-                </a>
-                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
-                  <span class="ai-drop-icon">📄</span>
-                  <div>
-                    <div class="ai-drop-name">Terms of Service</div>
-                    <div class="ai-drop-sub">Usage guidelines</div>
-                  </div>
-                </a>
-                <a routerLink="/home" (click)="closeAllMenus()" class="ai-drop-item">
+                <a routerLink="/contact" (click)="closeAllMenus()" class="ai-drop-item">
                   <span class="ai-drop-icon">✉️</span>
                   <div>
                     <div class="ai-drop-name">Contact Us</div>
-                    <div class="ai-drop-sub">Get in touch</div>
+                    <div class="ai-drop-sub">24/7 support &amp; inquiries</div>
+                  </div>
+                </a>
+                <a routerLink="/privacy-policy" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">🛡️</span>
+                  <div>
+                    <div class="ai-drop-name">Privacy Policy</div>
+                    <div class="ai-drop-sub">GDPR, CCPA &amp; zero logs</div>
+                  </div>
+                </a>
+                <a routerLink="/terms-of-service" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">📄</span>
+                  <div>
+                    <div class="ai-drop-name">Terms of Service</div>
+                    <div class="ai-drop-sub">Usage guidelines &amp; license</div>
+                  </div>
+                </a>
+                <a routerLink="/disclaimer" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">⚠️</span>
+                  <div>
+                    <div class="ai-drop-name">Disclaimer</div>
+                    <div class="ai-drop-sub">Calculators &amp; tool liability</div>
+                  </div>
+                </a>
+                <a routerLink="/cookie-policy" (click)="closeAllMenus()" class="ai-drop-item">
+                  <span class="ai-drop-icon">🍪</span>
+                  <div>
+                    <div class="ai-drop-name">Cookie Policy</div>
+                    <div class="ai-drop-sub">AdSense &amp; browser storage</div>
                   </div>
                 </a>
               </div>
@@ -144,6 +175,15 @@ import { ToolItem } from '../../data/tools.data';
           </div>
           <div class="drawer-list">
             <a routerLink="/home" (click)="closeAllMenus()" class="drawer-item">🏠 Home</a>
+            
+            <div class="drawer-cat-heading">Company &amp; Legal</div>
+            <a routerLink="/about" (click)="closeAllMenus()" class="drawer-item">ℹ️ About Us</a>
+            <a routerLink="/contact" (click)="closeAllMenus()" class="drawer-item">✉️ Contact Us</a>
+            <a routerLink="/privacy-policy" (click)="closeAllMenus()" class="drawer-item">🛡️ Privacy Policy</a>
+            <a routerLink="/terms-of-service" (click)="closeAllMenus()" class="drawer-item">📄 Terms of Service</a>
+            <a routerLink="/disclaimer" (click)="closeAllMenus()" class="drawer-item">⚠️ Disclaimer</a>
+            <a routerLink="/cookie-policy" (click)="closeAllMenus()" class="drawer-item">🍪 Cookie Policy</a>
+
             <div class="drawer-cat-heading">Tool Categories</div>
             <a *ngFor="let cat of categories" [routerLink]="cat.slug" (click)="closeAllMenus()" class="drawer-item">
               <span>{{ cat.icon }} {{ cat.name }}</span>
@@ -238,19 +278,19 @@ import { ToolItem } from '../../data/tools.data';
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.2rem;
     }
 
     .nav-pill {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.48rem 0.9rem;
+      gap: 0.35rem;
+      padding: 0.44rem 0.68rem;
       border-radius: 11px;
       color: var(--text-color, #e2e8f0);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       transition: all 0.2s ease;
       background: transparent;
       border: 1px solid transparent;
@@ -675,7 +715,7 @@ import { ToolItem } from '../../data/tools.data';
     .mega-view-all:hover { color: #38bdf8; }
 
     /* Mobile */
-    @media (max-width: 1040px) {
+    @media (max-width: 1180px) {
       .nav-links { display: none; }
       .mobile-toggle-btn { display: flex; }
     }

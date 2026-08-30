@@ -272,7 +272,49 @@ export const routes: Routes = [
     {
         path: 'resume-builder',
         loadComponent: () => import('./pages/resume-builder/resume-builder.component').then(m => m.ResumeBuilderComponent)
+    },
+    {
+        path: 'about',
+        loadComponent: () => import('./pages/legal/about/about.component').then(m => m.AboutComponent)
+    },
+    {
+        path: 'about-us',
+        redirectTo: 'about',
+        pathMatch: 'full'
+    },
+    {
+        path: 'contact',
+        loadComponent: () => import('./pages/legal/contact/contact.component').then(m => m.ContactComponent)
+    },
+    {
+        path: 'contact-us',
+        redirectTo: 'contact',
+        pathMatch: 'full'
+    },
+    {
+        path: 'privacy-policy',
+        loadComponent: () => import('./pages/legal/privacy/privacy.component').then(m => m.PrivacyComponent)
+    },
+    {
+        path: 'privacy',
+        redirectTo: 'privacy-policy',
+        pathMatch: 'full'
+    },
+    {
+        path: 'terms-of-service',
+        loadComponent: () => import('./pages/legal/terms/terms.component').then(m => m.TermsComponent)
+    },
+    {
+        path: 'terms',
+        redirectTo: 'terms-of-service',
+        pathMatch: 'full'
+    },
+    {
+        path: 'disclaimer',
+        loadComponent: () => import('./pages/legal/disclaimer/disclaimer.component').then(m => m.DisclaimerComponent)
+    },
+    {
+        path: 'cookie-policy',
+        loadComponent: () => import('./pages/legal/cookie-policy/cookie-policy.component').then(m => m.CookiePolicyComponent)
     }
 ];
-
-//C:\Users\Rupesh\OneDrive\Desktop\converterallai\converterallai\src\app\pages\calculators\home\calculators\emi-calculator\emi-calculator.ts

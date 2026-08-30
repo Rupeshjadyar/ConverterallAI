@@ -69,6 +69,19 @@ import { RouterModule } from '@angular/router';
               <a routerLink="/pdf-processing">Explore 23+ Tools →</a>
             </div>
           </div>
+
+          <!-- Legal & Compliance Column -->
+          <div class="footer-col">
+            <h4 class="col-title">🏛️ Legal &amp; Company</h4>
+            <div class="col-links">
+              <a routerLink="/about">About Us</a>
+              <a routerLink="/contact">Contact Support</a>
+              <a routerLink="/privacy-policy">Privacy Policy</a>
+              <a routerLink="/terms-of-service">Terms of Service</a>
+              <a routerLink="/disclaimer">Disclaimer Notice</a>
+              <a routerLink="/cookie-policy">Cookie Policy</a>
+            </div>
+          </div>
         </div>
 
         <div class="footer-bottom">
@@ -109,7 +122,7 @@ import { RouterModule } from '@angular/router';
     }
 
     .footer-container {
-      max-width: 1280px;
+      max-width: 1320px;
       margin: 0 auto;
       padding: 4rem 1.5rem 2rem 1.5rem;
       position: relative;
@@ -118,17 +131,24 @@ import { RouterModule } from '@angular/router';
 
     .footer-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1.1fr;
+      gap: 2.2rem;
       margin-bottom: 3.5rem;
     }
 
-    @media (max-width: 960px) {
+    @media (max-width: 1100px) {
       .footer-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
       }
     }
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+    @media (max-width: 520px) {
       .footer-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
