@@ -32,7 +32,7 @@ import { ToolItem } from '../../data/tools.data';
 
           <!-- Center Nav Links -->
           <div class="nav-links">
-            <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill" (click)="closeAllMenus()">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill" (click)="closeAllMenus()">
               🏠 Home
             </a>
 
@@ -54,8 +54,8 @@ import { ToolItem } from '../../data/tools.data';
             <a routerLink="/terms-of-service" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
               📄 Terms
             </a>
-            <a routerLink="/disclaimer" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
-              ⚠️ Disclaimer
+            <a routerLink="/dashboard" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill cyber-pill">
+              📊 Analytics
             </a>
           </div>
 
@@ -174,13 +174,14 @@ import { ToolItem } from '../../data/tools.data';
             <button class="drawer-close" (click)="closeAllMenus()">✕</button>
           </div>
           <div class="drawer-list">
-            <a routerLink="/home" (click)="closeAllMenus()" class="drawer-item">🏠 Home</a>
+            <a routerLink="/" (click)="closeAllMenus()" class="drawer-item">🏠 Home</a>
             
             <div class="drawer-cat-heading">Company &amp; Legal</div>
             <a routerLink="/about" (click)="closeAllMenus()" class="drawer-item">ℹ️ About Us</a>
             <a routerLink="/contact" (click)="closeAllMenus()" class="drawer-item">✉️ Contact Us</a>
             <a routerLink="/privacy-policy" (click)="closeAllMenus()" class="drawer-item">🛡️ Privacy Policy</a>
             <a routerLink="/terms-of-service" (click)="closeAllMenus()" class="drawer-item">📄 Terms of Service</a>
+            <a routerLink="/dashboard" (click)="closeAllMenus()" class="drawer-item cyber-item">📊 Live Analytics Matrix</a>
             <a routerLink="/disclaimer" (click)="closeAllMenus()" class="drawer-item">⚠️ Disclaimer</a>
             <a routerLink="/cookie-policy" (click)="closeAllMenus()" class="drawer-item">🍪 Cookie Policy</a>
 

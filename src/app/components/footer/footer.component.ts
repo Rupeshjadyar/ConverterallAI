@@ -78,6 +78,7 @@ import { RouterModule } from '@angular/router';
               <a routerLink="/contact">Contact Support</a>
               <a routerLink="/privacy-policy">Privacy Policy</a>
               <a routerLink="/terms-of-service">Terms of Service</a>
+              <a routerLink="/dashboard" style="color: #00f0ff; font-weight: 700;">📊 Live Analytics Matrix</a>
               <a routerLink="/disclaimer">Disclaimer Notice</a>
               <a routerLink="/cookie-policy">Cookie Policy</a>
             </div>

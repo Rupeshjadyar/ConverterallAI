@@ -12,6 +12,11 @@ export interface SeoData {
 }
 
 const ROUTE_SEO_MAP: Record<string, SeoData> = {
+  '/': {
+    title: 'ConverterAllAI – Free Online PDF, Image & Audio Tools | 100% In-Browser',
+    description: 'Process PDFs, images, audio and more directly in your browser. No uploads, no servers — 100% private, blazing-fast WebAssembly tools. Merge, split, compress, convert and edit files for free.',
+    keywords: 'PDF tools, image converter, audio tools, online converter, free PDF editor, merge PDF, compress PDF, image to PDF, background remover'
+  },
   '/home': {
     title: 'ConverterAllAI – Free Online PDF, Image & Audio Tools | 100% In-Browser',
     description: 'Process PDFs, images, audio and more directly in your browser. No uploads, no servers — 100% private, blazing-fast WebAssembly tools. Merge, split, compress, convert and edit files for free.',
@@ -128,6 +133,16 @@ const ROUTE_SEO_MAP: Record<string, SeoData> = {
     title: 'Online Calculators – BMI, EMI, GST, SIP, Percentage & More | ConverterAllAI',
     description: 'Free online calculators for BMI, EMI, loan, GST, SIP, percentage, age, CGPA, discount and more. Fast, accurate, and easy to use.',
     keywords: 'BMI calculator, EMI calculator, GST calculator, SIP calculator, percentage calculator, loan calculator'
+  },
+  '/dashboard': {
+    title: 'Live Analytics Matrix & Global Telemetry | ConverterAllAI',
+    description: 'Real-time telemetry, visitor geo-distribution, most executed AI converter tools, and in-browser WASM metrics.',
+    keywords: 'analytics, telemetry, tool usage, converter stats, live visitors'
+  },
+  '/analytics': {
+    title: 'Live Analytics Matrix & Global Telemetry | ConverterAllAI',
+    description: 'Real-time telemetry, visitor geo-distribution, most executed AI converter tools, and in-browser WASM metrics.',
+    keywords: 'analytics, telemetry, tool usage, converter stats, live visitors'
   }
 };
 

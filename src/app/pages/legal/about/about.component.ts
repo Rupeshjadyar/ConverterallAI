@@ -127,7 +127,7 @@ import { RouterModule } from '@angular/router';
           <p>We are constantly expanding our tool registry and love hearing from our community.</p>
           <div class="cta-buttons">
             <a routerLink="/contact" class="cta-btn primary">✉️ Contact Support Team</a>
-            <a routerLink="/home" class="cta-btn secondary">🧰 Explore All Tools</a>
+            <a routerLink="/" class="cta-btn secondary">🧰 Explore All Tools</a>
           </div>
         </section>
       </div>

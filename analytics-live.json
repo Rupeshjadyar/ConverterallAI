@@ -1,0 +1,85 @@
+{
+  "totalVisitors": 1,
+  "totalPageViews": 5,
+  "totalToolExecutions": 0,
+  "totalDataSavedMB": 0,
+  "visitorSet": {
+    "usr_p5ixf5f": true
+  },
+  "topCountries": {
+    "IN": {
+      "code": "IN",
+      "name": "India",
+      "flag": "🇮🇳",
+      "count": 5
+    }
+  },
+  "topTools": {},
+  "weeklyTraffic": {
+    "2026-08-31": {
+      "visitors": 5,
+      "toolRuns": 0,
+      "day": "Mon",
+      "date": "Aug 31"
+    }
+  },
+  "devices": {
+    "desktop": 5,
+    "mobile": 0,
+    "tablet": 0
+  },
+  "browsers": {
+    "chrome": 0,
+    "safari": 0,
+    "edge": 5,
+    "firefox": 0,
+    "other": 0
+  },
+  "recentActivities": [
+    {
+      "id": "1788200248861",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-08-31T18:17:28.861Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788200244650",
+      "title": "Visited /pdf-processing/merge-pdf",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-08-31T18:17:24.650Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788200225606",
+      "title": "Visited /dashboard",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-08-31T18:17:05.606Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788200202613",
+      "title": "Visited /dashboard",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-08-31T18:16:42.613Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788200200487",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-08-31T18:16:40.487Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    }
+  ]
+}

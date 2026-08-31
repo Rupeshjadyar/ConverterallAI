@@ -3,13 +3,13 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
+        loadComponent: () =>
+            import('./pages/home/home').then(m => m.Home)
     },
     {
         path: 'home',
-        loadComponent: () =>
-            import('./pages/home/home').then(m => m.Home)
+        redirectTo: '',
+        pathMatch: 'full'
     },
     {
         path: 'calculators',
@@ -316,5 +316,19 @@ export const routes: Routes = [
     {
         path: 'cookie-policy',
         loadComponent: () => import('./pages/legal/cookie-policy/cookie-policy.component').then(m => m.CookiePolicyComponent)
+    },
+    {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+    },
+    {
+        path: 'analytics',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+    },
+    {
+        path: 'admin',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
     }
 ];
