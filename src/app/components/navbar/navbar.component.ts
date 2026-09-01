@@ -15,7 +15,7 @@ import { ToolItem } from '../../data/tools.data';
     <header class="universal-header">
       <div class="nav-container">
 
-        <!-- NAVBAR PILL -->
+        <!-- MAIN NAVBAR -->
         <nav class="navbar-glass">
           <!-- Logo -->
           <a routerLink="/" class="nav-logo" (click)="closeAllMenus()">
@@ -30,44 +30,26 @@ import { ToolItem } from '../../data/tools.data';
             </div>
           </a>
 
-          <!-- Center Nav Links -->
+          <!-- Center Nav Links (Clean, Spacious, Fits perfectly) -->
           <div class="nav-links">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-pill" (click)="closeAllMenus()">
               🏠 Home
             </a>
 
-            <!-- Tools trigger — mega menu renders BELOW navbar (sibling of navbar-glass) -->
+            <!-- Tools trigger — mega menu renders BELOW navbar -->
             <button class="nav-pill dropdown-btn" [class.active]="toolsMenuOpen()" (click)="toggleToolsMenu($event)">
               🧰 Tools <span class="caret-icon" [class.rotated]="toolsMenuOpen()">▼</span>
             </button>
 
-            <!-- AdSense / Legal Pages in Top Navbar -->
-            <a routerLink="/about" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
-              ℹ️ About
-            </a>
-            <a routerLink="/contact" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
-              ✉️ Contact
-            </a>
-            <a routerLink="/privacy-policy" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
-              🛡️ Privacy
-            </a>
-            <a routerLink="/terms-of-service" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill">
-              📄 Terms
-            </a>
+            <!-- Analytics Dashboard -->
             <a routerLink="/dashboard" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill cyber-pill">
               📊 Analytics
             </a>
-          </div>
 
-          <!-- Right Actions -->
-          <div class="nav-actions">
-            <app-spotlight-search></app-spotlight-search>
-            <app-theme-switcher></app-theme-switcher>
-
-            <!-- AdSense / Legal Pages Dropdown Menu -->
-            <div class="dropdown-wrapper desktop-legal-menu">
-              <button class="nav-pill desktop-menu-btn" (click)="toggleLegalMenu($event)" title="Legal & Policy Pages">
-                ☰
+            <!-- Legal & Info Dropdown -->
+            <div class="dropdown-wrapper">
+              <button class="nav-pill dropdown-btn" [class.active]="legalMenuOpen()" (click)="toggleLegalMenu($event)">
+                ⚖️ Legal <span class="caret-icon" [class.rotated]="legalMenuOpen()">▼</span>
               </button>
               <div class="ai-dropdown glass" *ngIf="legalMenuOpen()">
                 <a routerLink="/about" (click)="closeAllMenus()" class="ai-drop-item">
@@ -114,17 +96,19 @@ import { ToolItem } from '../../data/tools.data';
                 </a>
               </div>
             </div>
+          </div>
 
+          <!-- Right Actions -->
+          <div class="nav-actions">
+            <app-spotlight-search></app-spotlight-search>
+            <app-theme-switcher></app-theme-switcher>
+
+            <!-- Mobile Hamburger Button -->
             <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" aria-label="Toggle mobile menu">☰</button>
           </div>
         </nav>
 
-        <!-- =====================================================================
-             TOOLS MEGA MENU
-             Placed OUTSIDE navbar-glass, as a direct child of nav-container.
-             nav-container has position:relative and max-width:1400px.
-             So this mega menu will ALWAYS be perfectly centered and within bounds.
-             ===================================================================== -->
+        <!-- TOOLS MEGA MENU -->
         <div class="mega-dropdown glass" *ngIf="toolsMenuOpen()">
           <div class="mega-header">
             <div class="mega-title">🧰 Explore Tool Categories</div>
@@ -159,29 +143,28 @@ import { ToolItem } from '../../data/tools.data';
                 </a>
               </div>
 
+              <!-- View all link for category -->
               <a [routerLink]="cat.slug" (click)="closeAllMenus()" class="mega-view-all">
-                View All {{ cat.name }} →
+                All {{ cat.name }} →
               </a>
             </div>
           </div>
         </div>
 
-        <!-- Mobile Drawer -->
+        <!-- MOBILE DRAWER MENU -->
         <div class="mobile-drawer-overlay" *ngIf="mobileMenuOpen()" (click)="closeAllMenus()"></div>
         <div class="mobile-drawer-card" [class.open]="mobileMenuOpen()">
           <div class="drawer-header">
-            <span>Navigation</span>
+            <span>Navigation Menu</span>
             <button class="drawer-close" (click)="closeAllMenus()">✕</button>
           </div>
           <div class="drawer-list">
             <a routerLink="/" (click)="closeAllMenus()" class="drawer-item">🏠 Home</a>
-            
-            <div class="drawer-cat-heading">Company &amp; Legal</div>
+            <a routerLink="/dashboard" (click)="closeAllMenus()" class="drawer-item">📊 Live Analytics</a>
             <a routerLink="/about" (click)="closeAllMenus()" class="drawer-item">ℹ️ About Us</a>
             <a routerLink="/contact" (click)="closeAllMenus()" class="drawer-item">✉️ Contact Us</a>
             <a routerLink="/privacy-policy" (click)="closeAllMenus()" class="drawer-item">🛡️ Privacy Policy</a>
             <a routerLink="/terms-of-service" (click)="closeAllMenus()" class="drawer-item">📄 Terms of Service</a>
-            <a routerLink="/dashboard" (click)="closeAllMenus()" class="drawer-item cyber-item">📊 Live Analytics Matrix</a>
             <a routerLink="/disclaimer" (click)="closeAllMenus()" class="drawer-item">⚠️ Disclaimer</a>
             <a routerLink="/cookie-policy" (click)="closeAllMenus()" class="drawer-item">🍪 Cookie Policy</a>
 
@@ -211,10 +194,9 @@ import { ToolItem } from '../../data/tools.data';
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
 
-    /* nav-container is the POSITIONING PARENT for the mega-dropdown */
     .nav-container {
       max-width: 100%;
-      padding: 0 1.5rem;
+      padding: 0 1.2rem;
       margin: 0 auto;
       position: relative;
     }
@@ -223,8 +205,8 @@ import { ToolItem } from '../../data/tools.data';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      padding: 0.7rem 0;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
     }
 
     /* Logo */
@@ -279,14 +261,15 @@ import { ToolItem } from '../../data/tools.data';
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 0.2rem;
+      gap: 0.3rem;
+      flex-shrink: 0;
     }
 
     .nav-pill {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.44rem 0.68rem;
+      padding: 0.44rem 0.72rem;
       border-radius: 11px;
       color: var(--text-color, #e2e8f0);
       text-decoration: none;
@@ -310,6 +293,15 @@ import { ToolItem } from '../../data/tools.data';
       color: #fff;
     }
 
+    .cyber-pill {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.2);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .cyber-pill:hover {
+      background: rgba(56, 189, 248, 0.18);
+    }
+
     .caret-icon {
       font-size: 0.7rem;
       transition: transform 0.25s ease;
@@ -317,37 +309,24 @@ import { ToolItem } from '../../data/tools.data';
     }
     .caret-icon.rotated { transform: rotate(180deg); }
 
-    /* AI small dropdown (positioned relative to its wrapper button) */
+    /* Dropdown wrapper */
     .dropdown-wrapper { position: relative; }
 
     .ai-dropdown {
       position: absolute;
       top: calc(100% + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
+      right: 0;
+      width: 280px;
       background: var(--card-color, rgba(15, 18, 28, 0.97));
       border: 1px solid var(--border-color, rgba(255,255,255,0.16));
       border-radius: 16px;
       box-shadow: 0 20px 55px rgba(0,0,0,0.7);
-      padding: 0.6rem;
+      padding: 0.5rem;
       z-index: 1300;
       animation: dropFade 0.2s cubic-bezier(0.16,1,0.3,1);
     }
 
     @keyframes dropFade {
-      from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
-      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-    
-    .desktop-legal-menu .ai-dropdown {
-      left: auto;
-      right: 0;
-      transform: none;
-      animation: dropFadeRight 0.2s cubic-bezier(0.16,1,0.3,1);
-    }
-    
-    @keyframes dropFadeRight {
       from { opacity: 0; transform: translateY(-6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
@@ -356,28 +335,18 @@ import { ToolItem } from '../../data/tools.data';
       display: flex;
       align-items: center;
       gap: 0.7rem;
-      padding: 0.65rem 0.75rem;
+      padding: 0.6rem 0.75rem;
       border-radius: 10px;
       text-decoration: none;
       color: var(--text-color, #fff);
       transition: background 0.2s;
     }
     .ai-drop-item:hover { background: rgba(139, 92, 246, 0.15); }
-    .ai-drop-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .ai-drop-name { font-weight: 700; font-size: 0.9rem; }
-    .ai-drop-sub  { font-size: 0.74rem; color: #94a3b8; margin-top: 2px; }
+    .ai-drop-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .ai-drop-name { font-weight: 700; font-size: 0.88rem; }
+    .ai-drop-sub  { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
 
-    /* Search button style */
-    .search-nav-btn {
-      background: rgba(139, 92, 246, 0.1);
-      border: 1px solid rgba(139, 92, 246, 0.3) !important;
-      color: #c4b5fd !important;
-    }
-    .search-nav-btn:hover {
-      background: rgba(139, 92, 246, 0.22) !important;
-    }
-
-    /* Right actions bar */
+    /* Right Actions */
     .nav-actions {
       display: flex;
       align-items: center;
@@ -399,173 +368,26 @@ import { ToolItem } from '../../data/tools.data';
       cursor: pointer;
     }
 
-    /* =====================================================================
-       LIGHT THEME OVERRIDES (Flash White + Dual White)
-       ===================================================================== */
-
-    /* Navbar on white background */
-    :host-context(body.light-theme) .universal-header {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.09);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-    }
-    
-    :host-context(body.light-theme) .navbar-glass {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-    }
-
-    /* Brand tag on light */
-    :host-context(body.light-theme) .brand-tag {
-      background: #ede9fe;
-      color: #6d28d9;
-      border-color: rgba(109,40,217,0.2);
-    }
-
-    /* Brand AI gradient — vivid on white */
-    :host-context(body.light-theme) .brand-ai {
-      background: linear-gradient(135deg, #6d28d9 0%, #0ea5e9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Nav pills on light — dark text, subtle hover */
-    :host-context(body.light-theme) .nav-pill {
-      color: #374151;
-    }
-    :host-context(body.light-theme) .nav-pill:hover {
-      background: #f3f4f6;
-      color: #111827;
-    }
-    :host-context(body.light-theme) .nav-pill.active {
-      background: #ede9fe;
-      border-color: rgba(109,40,217,0.3);
-      color: #6d28d9;
-    }
-
-    /* Search button on light */
-    :host-context(body.light-theme) .search-nav-btn {
-      background: #ede9fe !important;
-      border: 1px solid rgba(109,40,217,0.25) !important;
-      color: #6d28d9 !important;
-    }
-    :host-context(body.light-theme) .search-nav-btn:hover {
-      background: #ddd6fe !important;
-    }
-
-    /* Mobile toggle on light */
-    :host-context(body.light-theme) .mobile-toggle-btn {
-      background: #f3f4f6;
-      border-color: rgba(15,23,42,0.1);
-      color: #111827;
-    }
-
-    /* AI small dropdown on light */
-    :host-context(body.light-theme) .ai-dropdown {
-      background: #ffffff;
-      border: 1px solid rgba(15,23,42,0.09);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
-    }
-    :host-context(body.light-theme) .ai-drop-item:hover {
-      background: #f5f3ff;
-    }
-    :host-context(body.light-theme) .ai-drop-sub {
-      color: #64748b;
-    }
-    :host-context(body.light-theme) .tool-mini-badge {
-      background: #ede9fe;
-      color: #6d28d9;
-    }
-
-    /* Mega menu on light */
-    :host-context(body.light-theme) .mega-dropdown {
-      background: #ffffff;
-      border: 1px solid rgba(15,23,42,0.09);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.1), 0 2px 10px rgba(0,0,0,0.06);
-    }
-    :host-context(body.light-theme) .mega-header {
-      background: rgba(255,255,255,0.99);
-      border-bottom-color: rgba(15,23,42,0.07);
-    }
-    :host-context(body.light-theme) .mega-title { color: #111827; }
-    :host-context(body.light-theme) .mega-badge-tag {
-      background: #ede9fe;
-      color: #6d28d9;
-    }
-    :host-context(body.light-theme) .mega-category-card {
-      background: #f7f8fc;
-      border-color: rgba(15,23,42,0.07);
-    }
-    :host-context(body.light-theme) .mega-category-card:hover {
-      background: #ffffff;
-      border-color: rgba(109,40,217,0.25);
-      box-shadow: 0 4px 16px rgba(109,40,217,0.08);
-    }
-    :host-context(body.light-theme) .mega-cat-name { color: #111827; }
-    :host-context(body.light-theme) .cat-count { color: #6d28d9; }
-    :host-context(body.light-theme) .mega-cat-desc { color: #64748b; }
-    :host-context(body.light-theme) .mega-subtool-link { color: #374151; }
-    :host-context(body.light-theme) .mega-subtool-link:hover {
-      background: #f5f3ff;
-      color: #6d28d9;
-    }
-    :host-context(body.light-theme) .mega-view-all { color: #6d28d9; }
-    :host-context(body.light-theme) .mega-view-all:hover { color: #0ea5e9; }
-
-    /* Mobile drawer on light */
-    :host-context(body.light-theme) .mobile-drawer-card {
-      background: #ffffff;
-      border-color: rgba(15,23,42,0.09);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-    }
-    :host-context(body.light-theme) .drawer-item:hover {
-      background: #f5f3ff;
-      color: #6d28d9;
-    }
-    :host-context(body.light-theme) .drawer-badge {
-      background: #ede9fe;
-      color: #6d28d9;
-    }
-
-
-
-    /* =====================================================================
-       TOOLS MEGA MENU
-       position: FIXED = relative to VIEWPORT, never clipped by parents.
-       backdrop-filter on navbar creates stacking context which clips
-       absolute children — fixed bypasses this completely.
-       ===================================================================== */
+    /* MEGA DROPDOWN */
     .mega-dropdown {
-      position: fixed;
-      top: 82px;                              /* just below the navbar pill */
-      left: 1.25rem;
-      right: 1.25rem;
-      max-width: 1390px;
-      margin: 0 auto;
-      background: var(--card-color, rgba(13, 16, 26, 0.97));
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 1.5rem;
+      right: 1.5rem;
+      background: var(--card-color, rgba(12, 15, 26, 0.98));
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
-      border: 1px solid var(--border-color, rgba(255,255,255,0.15));
+      border: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
       border-radius: 20px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.75);
-      padding: 1.25rem;
-      z-index: 9999;
-      animation: megaFade 0.22s cubic-bezier(0.16,1,0.3,1);
-      max-height: min(72vh, 540px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+      padding: 1.4rem;
+      z-index: 1200;
+      max-height: calc(85vh - 70px);
       overflow-y: auto;
-      overflow-x: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(139,92,246,0.4) transparent;
+      animation: megaFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .mega-dropdown::-webkit-scrollbar { width: 5px; }
-    .mega-dropdown::-webkit-scrollbar-track { background: transparent; }
-    .mega-dropdown::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.4); border-radius: 99px; }
-
-    @keyframes megaFade {
+    @keyframes megaFadeIn {
       from { opacity: 0; transform: translateY(-8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
@@ -574,112 +396,89 @@ import { ToolItem } from '../../data/tools.data';
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 1.2rem;
       padding-bottom: 0.75rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 1rem;
-      position: sticky;
-      top: -1.25rem;
-      background: var(--card-color, rgba(13, 16, 26, 0.99));
-      backdrop-filter: blur(10px);
-      margin-left: -1.25rem;
-      margin-right: -1.25rem;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-      padding-top: 1rem;
-      border-radius: 20px 20px 0 0;
-      z-index: 2;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     .mega-title {
+      font-size: 1.05rem;
       font-weight: 800;
-      font-size: 1rem;
-      color: var(--text-color, #fff);
+      color: #fff;
     }
 
     .mega-badge-tag {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.65rem;
+      font-size: 0.75rem;
+      color: #a78bfa;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 0.2rem 0.6rem;
       border-radius: 99px;
-      background: rgba(139,92,246,0.2);
-      color: #c4b5fd;
+      font-weight: 600;
     }
 
-    /* 3-column grid */
     .mega-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-    @media (max-width: 900px) {
-      .mega-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 560px) {
-      .mega-grid { grid-template-columns: 1fr; }
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.2rem;
     }
 
     .mega-category-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      padding: 0.9rem;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      transition: border-color 0.2s;
+      gap: 0.6rem;
     }
-    .mega-category-card:hover { border-color: rgba(139,92,246,0.35); }
 
     .mega-cat-header {
       display: flex;
-      align-items: flex-start;
-      gap: 0.7rem;
+      align-items: center;
+      gap: 0.65rem;
       text-decoration: none;
       color: inherit;
-      margin-bottom: 0.65rem;
     }
 
-    .mega-cat-icon { font-size: 1.5rem; flex-shrink: 0; }
-    .mega-cat-info { flex: 1; min-width: 0; }
+    .mega-cat-icon { font-size: 1.5rem; }
+
+    .mega-cat-info { flex: 1; }
 
     .mega-cat-name {
-      font-weight: 800;
-      font-size: 0.98rem;
-      color: var(--text-color, #fff);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
-      flex-wrap: wrap;
+      gap: 0.4rem;
     }
 
     .cat-count {
       font-size: 0.7rem;
-      font-weight: 700;
-      color: #a78bfa;
+      color: #94a3b8;
+      font-weight: 400;
     }
 
     .mega-cat-desc {
-      font-size: 0.77rem;
+      font-size: 0.76rem;
       color: #94a3b8;
-      line-height: 1.4;
-      margin-top: 0.2rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.35;
+      margin-top: 2px;
     }
 
     .mega-tools-list {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
-      margin-bottom: 0.65rem;
+      gap: 0.25rem;
+      margin: 0.3rem 0;
     }
 
     .mega-subtool-link {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       color: #cbd5e1;
       text-decoration: none;
       padding: 0.3rem 0.45rem;
@@ -716,7 +515,7 @@ import { ToolItem } from '../../data/tools.data';
     .mega-view-all:hover { color: #38bdf8; }
 
     /* Mobile */
-    @media (max-width: 1180px) {
+    @media (max-width: 1024px) {
       .nav-links { display: none; }
       .mobile-toggle-btn { display: flex; }
     }
@@ -740,6 +539,8 @@ import { ToolItem } from '../../data/tools.data';
       border-radius: 18px;
       padding: 1rem;
       z-index: 1100;
+      max-height: 80vh;
+      overflow-y: auto;
     }
     .mobile-drawer-card.open { display: block; }
 
@@ -797,13 +598,36 @@ import { ToolItem } from '../../data/tools.data';
       padding: 0.12rem 0.45rem;
       border-radius: 99px;
     }
+
+    /* LIGHT THEME */
+    :host-context(body.light-theme) .universal-header {
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.09);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    :host-context(body.light-theme) .nav-pill { color: #374151; }
+    :host-context(body.light-theme) .nav-pill:hover { background: #f3f4f6; color: #111827; }
+    :host-context(body.light-theme) .nav-pill.active { background: #ede9fe; color: #6d28d9; }
+    :host-context(body.light-theme) .ai-dropdown,
+    :host-context(body.light-theme) .mega-dropdown,
+    :host-context(body.light-theme) .mobile-drawer-card {
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    :host-context(body.light-theme) .ai-drop-item,
+    :host-context(body.light-theme) .drawer-item { color: #1f2937; }
+    :host-context(body.light-theme) .ai-drop-item:hover,
+    :host-context(body.light-theme) .drawer-item:hover { background: #f3f4f6; }
+    :host-context(body.light-theme) .mega-title,
+    :host-context(body.light-theme) .mega-cat-name { color: #111827; }
+    :host-context(body.light-theme) .mega-category-card { background: #f8fafc; border-color: #e2e8f0; }
   `]
 })
 export class NavbarComponent {
   private registry = inject(ToolRegistryService);
   mobileMenuOpen = signal(false);
   toolsMenuOpen = signal(false);
-  aiMenuOpen = signal(false);
   legalMenuOpen = signal(false);
 
   categories: CategoryItem[] = this.registry.getCategories();
@@ -815,21 +639,12 @@ export class NavbarComponent {
   toggleMobileMenu() {
     this.mobileMenuOpen.set(!this.mobileMenuOpen());
     this.toolsMenuOpen.set(false);
-    this.aiMenuOpen.set(false);
     this.legalMenuOpen.set(false);
   }
 
   toggleToolsMenu(event: Event) {
     event.stopPropagation();
     this.toolsMenuOpen.set(!this.toolsMenuOpen());
-    this.aiMenuOpen.set(false);
-    this.legalMenuOpen.set(false);
-  }
-
-  toggleAiMenu(event: Event) {
-    event.stopPropagation();
-    this.aiMenuOpen.set(!this.aiMenuOpen());
-    this.toolsMenuOpen.set(false);
     this.legalMenuOpen.set(false);
   }
 
@@ -837,25 +652,17 @@ export class NavbarComponent {
     event.stopPropagation();
     this.legalMenuOpen.set(!this.legalMenuOpen());
     this.toolsMenuOpen.set(false);
-    this.aiMenuOpen.set(false);
-  }
-
-  openSearch() {
-    const el = document.querySelector('app-spotlight-search button') as HTMLButtonElement | null;
-    el?.click();
   }
 
   closeAllMenus() {
     this.mobileMenuOpen.set(false);
     this.toolsMenuOpen.set(false);
-    this.aiMenuOpen.set(false);
     this.legalMenuOpen.set(false);
   }
 
   @HostListener('document:click')
   onDocumentClick() {
     if (this.toolsMenuOpen()) this.toolsMenuOpen.set(false);
-    if (this.aiMenuOpen()) this.aiMenuOpen.set(false);
     if (this.legalMenuOpen()) this.legalMenuOpen.set(false);
   }
 }

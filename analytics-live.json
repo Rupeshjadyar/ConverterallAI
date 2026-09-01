@@ -1,17 +1,19 @@
 {
-  "totalVisitors": 1,
-  "totalPageViews": 5,
+  "totalVisitors": 3,
+  "totalPageViews": 31,
   "totalToolExecutions": 0,
   "totalDataSavedMB": 0,
   "visitorSet": {
-    "usr_p5ixf5f": true
+    "usr_p5ixf5f": true,
+    "v_7jozcy395mtivr3jt": true,
+    "v_6ko4kwe3ymtiwi4nk": true
   },
   "topCountries": {
     "IN": {
       "code": "IN",
       "name": "India",
       "flag": "🇮🇳",
-      "count": 5
+      "count": 31
     }
   },
   "topTools": {},
@@ -21,21 +23,261 @@
       "toolRuns": 0,
       "day": "Mon",
       "date": "Aug 31"
+    },
+    "2026-09-01": {
+      "visitors": 26,
+      "toolRuns": 0,
+      "day": "Tue",
+      "date": "Sep 1"
     }
   },
   "devices": {
-    "desktop": 5,
+    "desktop": 29,
     "mobile": 0,
-    "tablet": 0
+    "tablet": 2
   },
   "browsers": {
-    "chrome": 0,
+    "chrome": 12,
     "safari": 0,
-    "edge": 5,
+    "edge": 19,
     "firefox": 0,
     "other": 0
   },
   "recentActivities": [
+    {
+      "id": "1788284287233",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:38:07.233Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788284162726",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:36:02.726Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788284103305",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:35:03.305Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283954305",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:32:34.305Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283926558",
+      "title": "Visited /dashboard",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:32:06.558Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283919225",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:31:59.225Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283890662",
+      "title": "Visited /dashboard",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:31:30.662Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283889400",
+      "title": "Visited /resume-builder",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:31:29.401Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283882383",
+      "title": "Visited /resume-builder",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:31:22.383Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283874502",
+      "title": "Visited /image-processing/bg-remover",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:31:14.503Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788283233887",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T17:20:33.887Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281804721",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:56:44.721Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281800813",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:56:40.813Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281759767",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:55:59.767Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281759256",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:55:59.256Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281623742",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:53:43.743Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281519316",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:51:59.316Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281400826",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:50:00.826Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281398328",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:49:58.328Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281395438",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:49:55.438Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281392887",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:49:52.887Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281390631",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:49:50.631Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788281282766",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:48:02.766Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788280749216",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:39:09.216Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788280743922",
+      "title": "Visited /resume-builder",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:39:03.922Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1788280735847",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-09-01T16:38:55.847Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
     {
       "id": "1788200248861",
       "title": "Visited /",
@@ -69,15 +311,6 @@
       "country": "India",
       "flag": "🇮🇳",
       "timestamp": "2026-08-31T18:16:42.613Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1788200200487",
-      "title": "Visited /",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-08-31T18:16:40.487Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     }
