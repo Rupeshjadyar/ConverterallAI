@@ -34,6 +34,11 @@ app.get('/home.png', (req: Request, res: Response) => {
   res.sendFile(homeImagePath);
 });
 
+/* Google Search Console Verification Endpoint */
+app.get('/googleabc606346e17bc34.html', (req: Request, res: Response) => {
+  res.type('text/html').send('google-site-verification: googleabc606346e17bc34.html');
+});
+
 /* ═══════════════════════════════════════════════════════════════
    REAL-TIME GLOBAL TELEMETRY & ANALYTICS BACKEND
    ═══════════════════════════════════════════════════════════════ */
