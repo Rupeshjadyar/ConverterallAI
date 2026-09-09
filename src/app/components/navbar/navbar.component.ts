@@ -518,6 +518,15 @@ import { ToolItem } from '../../data/tools.data';
     @media (max-width: 1024px) {
       .nav-links { display: none; }
       .mobile-toggle-btn { display: flex; }
+      .nav-container { padding: 0 0.8rem; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container { padding: 0 0.5rem; }
+      .brand-tag { display: none; }
+      .logo-icon-box { width: 32px; height: 32px; border-radius: 9px; }
+      .logo-title { font-size: 1rem; }
+      .nav-actions { gap: 0.35rem; }
     }
 
     .mobile-drawer-overlay {
@@ -525,24 +534,32 @@ import { ToolItem } from '../../data/tools.data';
       inset: 0;
       background: rgba(0,0,0,0.65);
       backdrop-filter: blur(4px);
-      z-index: 1090;
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 2000;
     }
 
     .mobile-drawer-card {
-      display: none;
-      position: absolute;
-      top: calc(100% + 10px);
+      position: fixed;
+      top: 0;
       right: 0;
-      width: 300px;
+      bottom: 0;
+      width: min(320px, 85vw);
+      height: 100vh;
       background: var(--card-color, #0f111a);
-      border: 1px solid var(--border-color, rgba(255,255,255,0.18));
-      border-radius: 18px;
-      padding: 1rem;
-      z-index: 1100;
-      max-height: 80vh;
+      border-left: 1px solid var(--border-color, rgba(255,255,255,0.18));
+      border-radius: 0;
+      padding: 1.2rem;
+      z-index: 2100;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
     }
-    .mobile-drawer-card.open { display: block; }
+    .mobile-drawer-card.open {
+      transform: translateX(0);
+    }
 
     .drawer-header {
       display: flex;
@@ -558,7 +575,8 @@ import { ToolItem } from '../../data/tools.data';
       border: none;
       color: inherit;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.2rem;
+      padding: 4px 8px;
     }
 
     .drawer-list {
@@ -587,7 +605,7 @@ import { ToolItem } from '../../data/tools.data';
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: #64748b;
-      padding: 0.5rem 0.25rem 0.25rem;
+      padding: 0.75rem 0.25rem 0.25rem;
     }
 
     .drawer-badge {

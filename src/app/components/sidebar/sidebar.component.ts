@@ -255,6 +255,12 @@ import { ToolItem } from '../../data/tools.data';
       color: #6d28d9;
       background: #f5f3ff;
     }
+
+    @media (max-width: 992px) {
+      .sidebar-wrapper {
+        display: none !important;
+      }
+    }
   `]
 })
 export class SidebarComponent {

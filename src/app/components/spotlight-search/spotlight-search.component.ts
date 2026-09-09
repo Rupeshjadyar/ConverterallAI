@@ -381,6 +381,50 @@ export interface AppTool {
       padding: 0.1rem 0.35rem;
       font-size: 0.7rem;
     }
+
+    @media (max-width: 640px) {
+      .spotlight-backdrop {
+        padding-top: 15px;
+      }
+
+      .spotlight-modal {
+        margin: 0 8px;
+        max-height: 90vh;
+        border-radius: 16px;
+      }
+
+      .shortcut-kbd {
+        display: none;
+      }
+
+      .spotlight-trigger {
+        padding: 0.4rem 0.6rem;
+      }
+
+      .category-tabs {
+        padding: 0.5rem 0.75rem;
+        gap: 0.35rem;
+      }
+
+      .tab-btn {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+      }
+
+      .spotlight-footer {
+        display: none;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .trigger-label {
+        display: none;
+      }
+      .spotlight-trigger {
+        padding: 0.45rem;
+        border-radius: 10px;
+      }
+    }
   `]
 })
 export class SpotlightSearchComponent {
