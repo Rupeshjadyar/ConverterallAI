@@ -1,0 +1,180 @@
+<div class="audiolab-viewport" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)">
+  
+  <!-- 1. TOP NAVBAR HEADER -->
+  <header class="audiolab-navbar">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <span class="logo-icon">📻</span>
+        <div class="brand-text">
+          <div class="title-row">
+            <h1>AudioLab Pro</h1>
+            <span class="badge-beta">BETA</span>
+          </div>
+          <p class="brand-sub">Audacity + Audition • Client-Side</p>
+        </div>
+      </div>
+
+      <div class="history-nav-btns">
+        <button class="btn-icon" (click)="undo()" [disabled]="undoStack.length < 2" title="Undo (Ctrl+Z)">↩️</button>
+        <button class="btn-icon" (click)="redo()" [disabled]="redoStack.length === 0" title="Redo (Ctrl+Shift+Z)">↪️</button>
+        <span class="tracks-counter">{{ tracks.length }} tracks • {{ formatTime(totalDuration) }}</span>
+      </div>
+    </div>
+
+    <!-- CENTER TOOLBAR ACTION PILLS -->
+    <div class="nav-toolbar">
+      <button class="btn-tool" (click)="cutSelection()" [disabled]="!totalDuration"><span class="t-icon">✂️</span> Cut</button>
+      <button class="btn-tool" (click)="copySelection()" [disabled]="!totalDuration"><span class="t-icon">📋</span> Copy</button>
+      <button class="btn-tool" (click)="pasteClipboard()" [disabled]="!activeBuffer"><span class="t-icon">📥</span> Paste</button>
+      <button class="btn-tool" (click)="cutSelection()" [disabled]="!totalDuration"><span class="t-icon">🗑️</span> Delete</button>
+      <button class="btn-tool" (click)="trimToSelection()" [disabled]="!totalDuration"><span class="t-icon">✂️</span> Trim</button>
+      <button class="btn-tool" (click)="splitAtPlayhead()" [disabled]="!totalDuration"><span class="t-icon">✂️</span> Split</button>
+      <button class="btn-tool" (click)="mergeStudioTracks()" [disabled]="tracks.length < 2"><span class="t-icon">🔀</span> Merge Mix</button>
+      <button class="btn-tool" (click)="applyFadeIn()" [disabled]="!totalDuration"><span class="t-icon">⏩</span> Fade In</button>
+      <button class="btn-tool" (click)="applyFadeOut()" [disabled]="!totalDuration"><span class="t-icon">⏩</span> Fade Out</button>
+      <button class="btn-tool" (click)="reverseAudio()" [disabled]="!totalDuration"><span class="t-icon">◀◀</span> Reverse</button>
+      <button class="btn-tool" (click)="exportAudioFile()" [disabled]="!totalDuration">Export Clip</button>
+      <button class="btn-tool active" (click)="applySpeedToRender()" [disabled]="!totalDuration">Apply {{ playbackSpeed }}x Speed</button>
+    </div>
+
+    <!-- RIGHT ACTION BUTTONS -->
+    <div class="nav-right">
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept="audio/*" class="hidden-input">
+      <button class="btn-add-audio" (click)="fileInput.click()">+ Add Audio</button>
+      <button class="btn-export-primary" (click)="exportAudioFile()" [disabled]="!totalDuration">
+        <span class="icon">↓</span> Export
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAIN WORKSPACE (LEFT SIDEBAR + CENTER CANVAS TIMELINE) -->
+  <div class="audiolab-workspace">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="left-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">TRACKS</div>
+        <div class="tracks-empty-notice" *ngIf="tracks.length === 0">
+          No files yet — drag &amp; drop audio or click Add Audio.
+        </div>
+
+        <div class="tracks-list" *ngIf="tracks.length > 0">
+          <div class="track-sidebar-card" *ngFor="let track of tracks; let i = index">
+            <div class="track-card-head">
+              <span class="trk-dot" [style.background]="track.color"></span>
+              <strong class="trk-name">{{ track.name }}</strong>
+              <button class="btn-del" (click)="removeTrack(i)">✕</button>
+            </div>
+            <div class="track-card-controls">
+              <button class="btn-pill" [class.active]="track.isMuted" (click)="toggleTrackMute(track)">Mute</button>
+              <div class="slider-field">
+                <span>Vol</span>
+                <input type="range" min="0" max="100" [(ngModel)]="track.volume">
+              </div>
+              <div class="slider-field">
+                <span>Pan</span>
+                <input type="range" min="-100" max="100" [(ngModel)]="track.pan">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MASTER VOLUME & SPEED PANEL -->
+      <div class="sidebar-section master-panel">
+        <div class="sidebar-title">MASTER • SPEED</div>
+        <div class="master-slider-row">
+          <label>Vol</label>
+          <input type="range" min="0" max="100" [(ngModel)]="masterVolume">
+          <span class="val">{{ masterVolume }}%</span>
+        </div>
+        <div class="master-slider-row">
+          <label>Speed</label>
+          <input type="range" min="0.25" max="3.0" step="0.05" [(ngModel)]="playbackSpeed" (ngModelChange)="drawWaveform()">
+          <span class="val">{{ playbackSpeed }}x</span>
+        </div>
+      </div>
+
+      <!-- QUICK GUIDE CARD -->
+      <div class="quick-guide-card">
+        <div class="guide-header">
+          <span>✨ Quick Guide</span>
+        </div>
+        <ul>
+          <li>Drag on waveform to select range</li>
+          <li>Click ruler to seek playhead</li>
+          <li>Use Solo / Mute to isolate mix</li>
+          <li>Speed previews live — Apply to render</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CENTER TIMELINE CANVAS AREA -->
+    <main class="center-timeline-view">
+      
+      <!-- DROP AUDIO EMPTY STATE CARD (EXACT MATCH TO SCREENSHOT) -->
+      <div class="empty-drop-area" *ngIf="!totalDuration">
+        <div class="drop-card-inner">
+          <div class="headphone-icon-box">
+            <span class="hp-icon">🎧</span>
+          </div>
+
+          <h2>Drop Audio Here</h2>
+          <p class="drop-sub">
+            Supports MP3, WAV, OGG, M4A. Drop multiple files at once. Waveforms render instantly. 100% client-side — no upload.
+          </p>
+
+          <div class="drop-actions">
+            <button class="btn-choose-files" (click)="fileInput.click()">
+              🎵 Choose Files
+            </button>
+            <button class="btn-demo-tone" (click)="loadPresetSample('synth')">
+              Create Demo Tone
+            </button>
+          </div>
+
+          <div class="tech-pills">
+            <span class="tech-pill">Web Audio API</span>
+            <span class="tech-pill">Offline WAV Export</span>
+            <span class="tech-pill">Private by Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE WAVEFORM CANVAS (SILKY SMOOTH 60FPS) -->
+      <div class="waveform-timeline-box" *ngIf="totalDuration">
+        <div class="canvas-container">
+          <canvas #waveformCanvas (click)="onCanvasClick($event)"></canvas>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- 3. BOTTOM TRANSPORT PLAYER BAR -->
+  <footer class="audiolab-transport-footer">
+    <div class="transport-left-controls">
+      <button class="btn-player-jump" (click)="currentTime = 0; drawWaveform()" [disabled]="!totalDuration" title="Jump to Start">⏮</button>
+      <button class="btn-player-play" (click)="isPlaying ? pauseAudio() : playAudio()" [disabled]="!totalDuration">
+        <span *ngIf="!isPlaying">▶</span>
+        <span *ngIf="isPlaying">⏸</span>
+      </button>
+      <button class="btn-player-stop" (click)="stopPlayback()" [disabled]="!totalDuration" title="Stop">⏹</button>
+      <button class="btn-player-loop" [class.active]="isLooping" (click)="isLooping = !isLooping" [disabled]="!totalDuration" title="Loop Selection">🔁</button>
+    </div>
+
+    <div class="transport-center-scrubber">
+      <span class="time-label">{{ formatTime(currentTime) }}</span>
+      <input type="range" class="timeline-scrubber-range" min="0" [max]="totalDuration" step="0.05" [(ngModel)]="currentTime" (ngModelChange)="drawWaveform()">
+      <span class="time-label">{{ formatTime(totalDuration) }}</span>
+    </div>
+
+    <div class="transport-right-master">
+      <span class="vol-icon">🔊</span>
+      <span class="lbl">Master {{ masterVolume }}%</span>
+      <input type="range" min="0" max="100" [(ngModel)]="masterVolume">
+      <span class="speed-indicator">{{ playbackSpeed }}x</span>
+    </div>
+  </footer>
+
+</div>

@@ -2,7 +2,7 @@ export interface ToolItem {
   id: string;
   name: string;
   slug: string; // Route path
-  categoryId: 'pdf-tools' | 'image-tools' | 'audio-tools' | 'calculators' | 'converters' | 'developer-tools' | 'resume-tools';
+  categoryId: 'games' | 'pdf-tools' | 'image-tools' | 'audio-tools' | 'calculators' | 'converters' | 'developer-tools' | 'resume-tools';
   shortDesc: string;
   fullDesc: string;
   icon: string;
@@ -13,20 +13,155 @@ export interface ToolItem {
 }
 
 export const TOOLS_DATA: ToolItem[] = [
-  // ==================== AUDIO TOOLS ====================
   {
-    id: 'text-to-mp3',
-    name: 'Text to Audio MP3 Studio',
-    slug: '/audio-processing/text-to-mp3',
-    categoryId: 'audio-tools',
-    shortDesc: 'Convert scripts and text to natural human voice narration with adjustable rate & pitch.',
-    fullDesc: 'Client-side studio speech narration engine with real-time audio playback, multi-language voice detection, and instant script/audio export.',
-    icon: '🎙️',
+    id: 'teen-do-paanch',
+    name: '3-2-5 Patte Wala',
+    slug: '/games/teen-do-paanch',
+    categoryId: 'games',
+    shortDesc: 'Play the classic Indian trick-taking card game 3-2-5 with AI bots.',
+    fullDesc: 'Classic Teen Do Paanch (3-2-5) card game played with 30 cards.',
+    icon: 'dYZ',
     badge: 'NEW',
     isPopular: true,
-    isLatest: true,
+    isLatest: true
+  },
+  {
+    id: 'snakes-ladders',
+    name: 'Saanp Seedi (Snakes & Ladders)',
+    slug: '/games/snakes-ladders',
+    categoryId: 'games',
+    shortDesc: 'Classic Indian board game of Snakes and Ladders. Roll the dice and climb to 100!',
+    fullDesc: 'Play Saanp Seedi (Snakes and Ladders) against the computer or a friend.',
+    icon: 'dY+',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'ludo',
+    name: 'Ludo King Game',
+    slug: '/games/ludo',
+    categoryId: 'games',
+    shortDesc: 'Classic Ludo board game for 2 to 4 players. Roll the dice and race your tokens home.',
+    fullDesc: 'Play the beloved Ludo game with your friends or against AI bots.',
+    icon: 'dY*',
+    badge: 'POPULAR',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'spelling-bee',
+    name: 'Spelling Master (Word Game)',
+    slug: '/games/spelling-bee',
+    categoryId: 'games',
+    shortDesc: 'Test your vocabulary and spelling skills by guessing the hidden words.',
+    fullDesc: 'A fun spelling and vocabulary game where you guess words.',
+    icon: 'dYT',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true
+  },
+  // ==================== GAMES ====================
+  {
+    id: 'warfare-3000',
+    name: 'Warfare 3000 (Tank Arena)',
+    slug: '/games/warfare-3000',
+    categoryId: 'games',
+    shortDesc: 'Real-time 2D multiplayer tank arena shooter! 1600x1000 arena, twin-stick mobile controls & live leaderboard.',
+    fullDesc: 'Free-for-all real-time multiplayer 2D tank shooter. Join the live shared arena, battle players, climb top-5 leaderboard with smooth 60fps canvas controls.',
+    icon: '⚔️',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'chess',
+    name: 'Chess vs AI',
+    slug: '/games/chess',
+    categoryId: 'games',
+    shortDesc: 'Challenge a Minimax AI at chess or play 2-player. Full legal moves, check indicators & history.',
+    fullDesc: 'Full-featured browser chess engine with Minimax AI. Supports all legal moves, castling, en passant, check/checkmate, and move history.',
+    icon: '♟️',
+    badge: 'POPULAR',
+    isPopular: true,
     isAI: true
   },
+  {
+    id: 'teen-patti',
+    name: 'Teen Patti Royale (3-Patti)',
+    slug: '/games/teen-patti',
+    categoryId: 'games',
+    shortDesc: 'Authentic Indian 3-card poker with AI bots. Place Blind & Chaal bets, build your chip empire.',
+    fullDesc: 'Experience classic Teen Patti (3-Patti) card game with AI opponents. Virtual chips, blind/chaal betting, and side show options.',
+    icon: '🃏',
+    badge: 'POPULAR',
+    isPopular: true,
+    isAI: true
+  },
+  {
+    id: 'snake',
+    name: 'Snake Classic',
+    slug: '/games/snake',
+    categoryId: 'games',
+    shortDesc: 'Classic snake game — eat food, grow longer, avoid walls. Touch D-pad for mobile!',
+    fullDesc: 'The timeless Snake arcade game with smooth controls, touch D-pad support, and a high score tracker stored locally.',
+    icon: '🐍',
+    badge: 'FREE',
+    isPopular: true
+  },
+  {
+    id: 'sudoku',
+    name: 'Sudoku Puzzle',
+    slug: '/games/sudoku',
+    categoryId: 'games',
+    shortDesc: 'Classic 9x9 Sudoku with Easy, Medium, Hard levels. Auto-validation and hints included.',
+    fullDesc: 'Solve classic 9x9 Sudoku puzzles with three difficulty levels. Includes auto-validation, pencil marks, undo, and hints.',
+    icon: '🔢',
+    badge: 'FREE',
+    isPopular: true
+  },
+  {
+    id: 'memory-match',
+    name: 'Memory Match',
+    slug: '/games/memory-match',
+    categoryId: 'games',
+    shortDesc: 'Flip cards to find matching pairs. Train your short-term memory and beat your best time.',
+    fullDesc: 'Classic card memory matching game with multiple grid sizes. Find all pairs as fast as possible.',
+    icon: '🧠',
+    badge: 'FREE'
+  },
+  {
+    id: 'tic-tac-toe',
+    name: 'Tic Tac Toe vs AI',
+    slug: '/games/tic-tac-toe',
+    categoryId: 'games',
+    shortDesc: 'Play Tic Tac Toe against a smart AI or a second player. Unbeatable Minimax engine!',
+    fullDesc: 'Classic Tic Tac Toe with an unbeatable Minimax AI. Play solo or 2-player pass & play.',
+    icon: '❌',
+    badge: 'FREE',
+    isAI: true
+  },
+  {
+    id: 'brick-breaker',
+    name: 'Brick Breaker',
+    slug: '/games/brick-breaker',
+    categoryId: 'games',
+    shortDesc: 'Classic arcade brick breaking game — destroy all bricks with the ball and paddle.',
+    fullDesc: 'Retro-style Brick Breaker arcade game. Break all bricks with bounce physics, power-ups, and increasing difficulty.',
+    icon: '🧱',
+    badge: 'FREE'
+  },
+  {
+    id: 'pong',
+    name: 'Pong Classic',
+    slug: '/games/pong',
+    categoryId: 'games',
+    shortDesc: 'The original arcade classic — play Pong against AI or a second player.',
+    fullDesc: 'Retro Pong game with smooth ball physics, AI paddle, and 2-player mode.',
+    icon: '🏓',
+    badge: 'FREE'
+  },
+
   {
     id: 'resume-builder',
     name: 'Professional Resume Builder',
@@ -266,6 +401,143 @@ export const TOOLS_DATA: ToolItem[] = [
     shortDesc: 'Protect your images by adding a text or logo watermark.',
     fullDesc: 'Batch watermark your photos to protect your copyright.',
     icon: '©️'
+  },
+
+  // ==================== AUDIO TOOLS ====================
+  {
+    id: 'text-to-mp3',
+    name: 'AI Text to Speech Studio',
+    slug: '/audio-processing/text-to-mp3',
+    categoryId: 'audio-tools',
+    shortDesc: 'Convert text to natural human speech in 100+ languages with voice cloning.',
+    fullDesc: 'Multi-lingual studio quality text-to-speech with dialogue mode, pitch controls, and instant MP3 download.',
+    icon: '🎙️',
+    badge: 'AI',
+    isPopular: true,
+    isAI: true
+  },
+  {
+    id: 'voice-cloning',
+    name: 'AI Voice Cloning Studio',
+    slug: '/audio-processing/voice-cloning',
+    categoryId: 'audio-tools',
+    shortDesc: 'Clone any voice from a 5-second sample & generate custom speech.',
+    fullDesc: 'Advanced spectral feature extraction for pitch F0, formants, and voice profile synthesis.',
+    icon: '🧬',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true,
+    isAI: true
+  },
+  {
+    id: 'audio-editor',
+    name: 'Powerful Audio Editor Pro',
+    slug: '/audio-processing/audio-editor',
+    categoryId: 'audio-tools',
+    shortDesc: 'Cut, trim, merge, pitch shift, normalize peak volume & equalize audio.',
+    fullDesc: 'Interactive canvas waveform visualizer with precision crop, multi-track audio joiner, and audio FX studio.',
+    icon: '🎛️',
+    badge: 'PRO',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'audio-cutter',
+    name: 'Audio Cutter & Trimmer',
+    slug: '/audio-processing/audio-cutter',
+    categoryId: 'audio-tools',
+    shortDesc: 'Cut, crop, and trim MP3/WAV files with interactive waveform UI.',
+    fullDesc: 'Browser-based audio trimmer with 60fps canvas waveform, millisecond start/end markers, fade transitions, and instant download.',
+    icon: '✂️',
+    badge: 'POPULAR',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'volume-booster',
+    name: 'Volume Booster & Peak Limiter',
+    slug: '/audio-processing/volume-booster',
+    categoryId: 'audio-tools',
+    shortDesc: 'Amplify low audio volume up to 500% with soft-knee peak limiting.',
+    fullDesc: 'Boost quiet MP3/WAV tracks up to +14dB using Web Audio API GainNode with automatic anti-clipping protection.',
+    icon: '🔊',
+    badge: 'FREE',
+    isPopular: true
+  },
+  {
+    id: 'speed-changer',
+    name: 'Audio Speed & Tempo Changer',
+    slug: '/audio-processing/speed-changer',
+    categoryId: 'audio-tools',
+    shortDesc: 'Change audio speed from 0.25x to 3.0x without pitch distortion.',
+    fullDesc: 'Adjust playback speed for podcasts, music practice, and lectures with real-time audio playback preview.',
+    icon: '⚡',
+    badge: 'FREE',
+    isPopular: true
+  },
+  {
+    id: 'audio-reverser',
+    name: 'Audio Reverser Studio',
+    slug: '/audio-processing/audio-reverser',
+    categoryId: 'audio-tools',
+    shortDesc: 'Reverse audio playback and PCM Float32 waveform data in 1 click.',
+    fullDesc: 'Flip song tracks backwards instantly in client browser memory with visual waveform inversion.',
+    icon: '🔄',
+    badge: 'FREE'
+  },
+  {
+    id: 'equalizer',
+    name: '5-Band Equalizer & Bass Booster',
+    slug: '/audio-processing/equalizer',
+    categoryId: 'audio-tools',
+    shortDesc: 'Adjust bass, treble, vocal clarity, and 5 frequency bands in real-time.',
+    fullDesc: 'BiquadFilterNode cascade EQ with presets for Bass Boost, Treble Enhancer, Vocal Clarity, and EDM Punch.',
+    icon: '🎚️',
+    badge: 'PRO',
+    isPopular: true
+  },
+  {
+    id: 'audio-compressor',
+    name: 'Audio Dynamic Range Compressor',
+    slug: '/audio-processing/audio-compressor',
+    categoryId: 'audio-tools',
+    shortDesc: 'Compress audio dynamic range for balanced radio & podcast volume.',
+    fullDesc: 'Inbuilt Web Audio API DynamicsCompressorNode to smooth quiet and loud sounds automatically.',
+    icon: '🗜️',
+    badge: 'PRO'
+  },
+  {
+    id: 'video-to-audio',
+    name: 'Video to Audio MP3 Extractor',
+    slug: '/audio-processing/video-to-audio',
+    categoryId: 'audio-tools',
+    shortDesc: 'Extract audio MP3/WAV tracks from MP4, WebM, MOV, and AVI videos.',
+    fullDesc: '100% in-browser video audio extractor — no file upload required. Decodes video container and exports clean MP3 audio.',
+    icon: '🎬',
+    badge: 'NEW',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'audio-format-converter',
+    name: 'Audio Format Converter',
+    slug: '/audio-processing/format-converter',
+    categoryId: 'audio-tools',
+    shortDesc: 'Convert between MP3, WAV, OGG, and AAC formats in batch.',
+    fullDesc: 'Batch convert audio files locally with custom bitrate selection (128k, 192k, 320k) and zero server uploads.',
+    icon: '🔁',
+    badge: 'POPULAR'
+  },
+  {
+    id: 'audio-joiner',
+    name: 'Audio Joiner & Merger',
+    slug: '/audio-processing/audio-joiner',
+    categoryId: 'audio-tools',
+    shortDesc: 'Merge multiple audio tracks into a single seamless audio file.',
+    fullDesc: 'Combine multiple MP3/WAV tracks with custom sequence ordering, crossfades, and single-click export.',
+    icon: '🔗',
+    badge: 'NEW',
+    isLatest: true
   },
 
   // ==================== CALCULATORS ====================

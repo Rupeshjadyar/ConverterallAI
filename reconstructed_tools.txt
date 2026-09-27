@@ -1,0 +1,28 @@
+python -c "
+import json
+log_path = r'C:\Users\Rupesh\.gemini\antigravity\brain\ddfdfd9a-894d-42d6-9982-0ef2512dfa7e\.system_generated\logs\transcript_full.jsonl'
+best_content = None
+
+with open(log_path, 'r', encoding='utf-8') as f:
+    for line in f:
+        try:
+            data = json.loads(line)
+            if 'tool_calls' in data:
+                for tc in data['tool_calls']:
+                    args = tc.get('args', {})
+                    if 'ReplacementContent' in args and 'export const TOOLS_DATA' in args['ReplacementContent']:
+                        best_content = args['ReplacementContent']
+                    elif 'CodeContent' in args and 'export const TOOLS_DATA' in args['CodeContent']:
+                        best_content = args['CodeContent']
+                    elif 'CommandLine' in args and 'export const TOOLS_DATA' in args['CommandLine']:
+                        best_content = args['CommandLine']
+        except Exception:
+            pass
+
+if best_content:
+    print('Found in args!')
+    with open('reconstructed_tools.txt', 'w', encoding='utf-8') as out:
+        out.write(best_content)
+else:
+    print('Not found in tool args')
+"

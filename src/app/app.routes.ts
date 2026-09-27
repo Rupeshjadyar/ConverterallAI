@@ -122,8 +122,43 @@ export const routes: Routes = [
     },
     {
         path: 'audio-processing',
-        redirectTo: 'tts',
-        pathMatch: 'full'
+        loadComponent: () => import('./pages/audio-processing/audio-processing-home/audio-processing-home.component').then(m => m.AudioProcessingHomeComponent)
+    },
+    {
+        path: 'audio-processing/audio-cutter',
+        loadComponent: () => import('./pages/audio-processing/audio-cutter/audio-cutter.component').then(m => m.AudioCutterComponent)
+    },
+    {
+        path: 'audio-processing/volume-booster',
+        loadComponent: () => import('./pages/audio-processing/volume-booster/volume-booster.component').then(m => m.VolumeBoosterComponent)
+    },
+    {
+        path: 'audio-processing/speed-changer',
+        loadComponent: () => import('./pages/audio-processing/speed-changer/speed-changer.component').then(m => m.SpeedChangerComponent)
+    },
+    {
+        path: 'audio-processing/audio-reverser',
+        loadComponent: () => import('./pages/audio-processing/audio-reverser/audio-reverser.component').then(m => m.AudioReverserComponent)
+    },
+    {
+        path: 'audio-processing/equalizer',
+        loadComponent: () => import('./pages/audio-processing/equalizer/equalizer.component').then(m => m.EqualizerComponent)
+    },
+    {
+        path: 'audio-processing/audio-compressor',
+        loadComponent: () => import('./pages/audio-processing/audio-compressor/audio-compressor.component').then(m => m.AudioCompressorComponent)
+    },
+    {
+        path: 'audio-processing/video-to-audio',
+        loadComponent: () => import('./pages/audio-processing/video-to-audio/video-to-audio.component').then(m => m.VideoToAudioComponent)
+    },
+    {
+        path: 'audio-processing/format-converter',
+        loadComponent: () => import('./pages/audio-processing/format-converter/format-converter.component').then(m => m.FormatConverterComponent)
+    },
+    {
+        path: 'audio-processing/audio-joiner',
+        loadComponent: () => import('./pages/audio-processing/audio-joiner/audio-joiner.component').then(m => m.AudioJoinerComponent)
     },
     {
         path: 'audio-processing/tts',
@@ -136,6 +171,24 @@ export const routes: Routes = [
     {
         path: 'audio-processing/text-to-mp3',
         loadComponent: () => import('./pages/audio-processing/text-to-mp3/text-to-mp3.component').then(m => m.TextToMp3Component)
+    },
+    {
+        path: 'audio-processing/audio-editor',
+        loadComponent: () => import('./pages/audio-processing/audio-editor/audio-editor.component').then(m => m.AudioEditorComponent)
+    },
+    {
+        path: 'audio-editor',
+        redirectTo: 'audio-processing/audio-editor',
+        pathMatch: 'full'
+    },
+    {
+        path: 'audio-processing/voice-cloning',
+        loadComponent: () => import('./pages/audio-processing/voice-cloning/voice-cloning.component').then(m => m.VoiceCloningComponent)
+    },
+    {
+        path: 'voice-cloning',
+        redirectTo: 'audio-processing/voice-cloning',
+        pathMatch: 'full'
     },
     {
         path: 'pdf-processing',
@@ -269,6 +322,86 @@ export const routes: Routes = [
         path: 'pdf-processing/text-to-pdf',
         loadComponent: () => import('./pages/pdf-processing/text-to-pdf/text-to-pdf.component').then(m => m.TextToPdfComponent)
     },
+    {
+        path: 'games',
+        loadComponent: () => import('./pages/games/games-home/games-home.component').then(m => m.GamesHomeComponent)
+    },
+    {
+        path: 'games/chess',
+        loadComponent: () => import('./pages/games/chess/chess.component').then(m => m.ChessComponent)
+    },
+    {
+        path: 'games/warfare-3000',
+        loadComponent: () => import('./pages/games/warfare-3000/warfare-3000.component').then(m => m.Warfare3000Component)
+    },
+      {
+          path: 'games/teen-do-paanch',
+          loadComponent: () => import('./pages/games/teen-do-paanch/teen-do-paanch').then(m => m.TeenDoPaanch)
+      },
+      {
+          path: 'games/snakes-ladders',
+          loadComponent: () => import('./pages/games/snakes-ladders/snakes-ladders').then(m => m.SnakesLadders)
+      },
+      {
+          path: 'games/ludo',
+          loadComponent: () => import('./pages/games/ludo/ludo').then(m => m.Ludo)
+      },
+      {
+          path: 'games/spelling-bee',
+          loadComponent: () => import('./pages/games/spelling-bee/spelling-bee').then(m => m.SpellingBee)
+      },
+
+    {
+        path: 'games/teen-patti',
+        loadComponent: () => import('./pages/games/teen-patti/teen-patti.component').then(m => m.TeenPattiComponent)
+    },
+    
+    {
+        path: 'games/sudoku',
+        loadComponent: () => import('./pages/games/sudoku/sudoku.component').then(m => m.SudokuComponent)
+    },
+    
+    
+    {
+        path: 'games/snake',
+        loadComponent: () => import('./pages/games/snake-game/snake-game.component').then(m => m.SnakeGameComponent)
+    },
+    {
+        path: 'games/memory-match',
+        loadComponent: () => import('./pages/games/memory-match/memory-match.component').then(m => m.MemoryMatchComponent)
+    },
+    {
+        path: 'games/tic-tac-toe',
+        loadComponent: () => import('./pages/games/tic-tac-toe/tic-tac-toe.component').then(m => m.TicTacToeComponent)
+    },
+    {
+        path: 'games/typing-test',
+        redirectTo: 'typing-master',
+        pathMatch: 'full'
+    },
+    {
+        path: 'typing-master',
+        loadComponent: () => import('./pages/typing-master/typing-master.component').then(m => m.TypingMasterComponent)
+    },
+    {
+        path: 'typing-tutor',
+        redirectTo: 'typing-master',
+        pathMatch: 'full'
+    },
+    {
+        path: 'typing-test',
+        redirectTo: 'typing-master',
+        pathMatch: 'full'
+    },
+    {
+        path: 'games/brick-breaker',
+        loadComponent: () => import('./pages/games/brick-breaker/brick-breaker.component').then(m => m.BrickBreakerComponent)
+    },
+    {
+        path: 'games/pong',
+        loadComponent: () => import('./pages/games/pong/pong.component').then(m => m.PongComponent)
+    },
+    
     {
         path: 'resume-builder',
         loadComponent: () => import('./pages/resume-builder/resume-builder.component').then(m => m.ResumeBuilderComponent)

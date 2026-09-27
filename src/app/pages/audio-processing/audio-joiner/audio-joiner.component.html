@@ -1,0 +1,66 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Joiner &amp; Merger</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🔗 Audio Joiner &amp; Merger</h1>
+    <p>Combine multiple audio tracks into a single seamless audio file with drag reordering and crossfade support.</p>
+  </div>
+
+  <div class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🔗</div>
+    <h3>Select or Drag Audio Tracks to Join</h3>
+    <p>Upload 2 or more MP3, WAV, AAC, OGG tracks</p>
+    <button class="btn-primary">+ Add Audio Tracks</button>
+    <input #fileInput type="file" (change)="onFilesSelected($event)" accept="audio/*" multiple style="display: none;" />
+  </div>
+
+  <div *ngIf="tracks.length > 0" class="workspace-card">
+    <div class="crossfade-row">
+      <label>Crossfade Transition Between Tracks:</label>
+      <select [(ngModel)]="crossfadeSec" (change)="rebuildMergedBuffer()" class="select-input">
+        <option [value]="0">No Crossfade (Direct Join)</option>
+        <option [value]="1">1.0 Second Crossfade</option>
+        <option [value]="2">2.0 Seconds Crossfade</option>
+        <option [value]="3">3.0 Seconds Crossfade</option>
+        <option [value]="5">5.0 Seconds Crossfade</option>
+      </select>
+    </div>
+
+    <!-- TRACK ORDER LIST -->
+    <div class="track-list">
+      <div *ngFor="let track of tracks; let idx = index" class="track-row">
+        <div class="track-num">{{ idx + 1 }}</div>
+        <div class="track-info">
+          <div class="track-name">🎵 {{ track.name }}</div>
+          <div class="track-dur">Duration: {{ formatDuration(track.duration) }}</div>
+        </div>
+
+        <div class="track-order-btns">
+          <button (click)="moveTrack(idx, -1)" [disabled]="idx === 0" class="btn-order">▲ Up</button>
+          <button (click)="moveTrack(idx, 1)" [disabled]="idx === tracks.length - 1" class="btn-order">▼ Down</button>
+          <button (click)="removeTrack(idx)" class="btn-del">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="mergedBuffer" class="merged-summary">
+      <span>Total Merged Duration: <strong>{{ formatDuration(mergedBuffer.duration) }}</strong></span>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playMerged()">
+        <span>{{ isPlaying ? '⏹️ Stop Playback' : '▶️ Play Merged Track' }}</span>
+      </button>
+      <button class="btn-export" (click)="downloadMergedAudio()" [disabled]="!mergedBuffer">
+        <span>💾 Download Joined Audio File</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Decoding &amp; Joining Audio Tracks...</p>
+  </div>
+</div>

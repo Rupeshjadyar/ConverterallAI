@@ -1,0 +1,114 @@
+<div class="tdp-container">
+  <div class="tdp-header">
+    <h1>🃏 3-2-5 Patte Wala</h1>
+    <div class="trump-info">
+      Trump: <span class="trump-suit" [class.red]="isRedSuit(trumpSuit())">{{ trumpSuit() }}</span>
+    </div>
+    <div class="scores-row">
+      @for (name of playerNames; track $index) {
+        <div class="score-chip">
+          {{ name }}: <strong>{{ scores()[$index] }}</strong> wins
+          <small>(Need {{ targets[$index] }} tricks)</small>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="tdp-board">
+    <!-- Bot 2 (top) -->
+    <div class="bot-area top-bot">
+      <div class="player-label">🤖 Bot 2 (needs {{ targets[2] }}) | Tricks: {{ tricks()[2] }}</div>
+      <div class="bot-cards">
+        @for (c of hands()[2]; track $index) {
+          <div class="card-back"></div>
+        }
+      </div>
+      @if (getTrickCard(2)) {
+        <div class="played-card" [class.red]="isRedSuit(getTrickCard(2)!.suit)">
+          {{ getTrickCard(2)!.rank }}{{ getTrickCard(2)!.suit }}
+        </div>
+      }
+    </div>
+
+    <!-- Middle area - current trick -->
+    <div class="trick-area">
+      <div class="trick-center">
+        <div class="message-box">{{ message() }}</div>
+        @if (trickWinner()) {
+          <div class="trick-winner-badge">✅ {{ trickWinner() }} won trick!</div>
+        }
+      </div>
+    </div>
+
+    <!-- Bot 1 (left) -->
+    <div class="bot-area left-bot">
+      <div class="player-label">🤖 Bot 1 (needs {{ targets[1] }}) | Tricks: {{ tricks()[1] }}</div>
+      <div class="bot-cards vertical">
+        @for (c of hands()[1]; track $index) {
+          <div class="card-back small"></div>
+        }
+      </div>
+      @if (getTrickCard(1)) {
+        <div class="played-card" [class.red]="isRedSuit(getTrickCard(1)!.suit)">
+          {{ getTrickCard(1)!.rank }}{{ getTrickCard(1)!.suit }}
+        </div>
+      }
+    </div>
+
+    <!-- Center played cards display -->
+    <div class="center-table">
+      <div class="table-felt">
+        @for (t of currentTrick(); track t.player) {
+          <div class="table-card" [class.red]="isRedSuit(t.card.suit)">
+            <div class="tc-rank">{{ t.card.rank }}</div>
+            <div class="tc-suit">{{ t.card.suit }}</div>
+            <div class="tc-player">{{ playerNames[t.player] }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Player hand (bottom) -->
+  <div class="player-area">
+    <div class="player-label-you">👤 You (needs {{ targets[0] }}) | Tricks: {{ tricks()[0] }}</div>
+
+    @if (gamePhase() === 'deal') {
+      <button class="btn-deal" (click)="deal()">🎴 Deal Cards</button>
+    }
+
+    @if (gamePhase() === 'play') {
+      <div class="hand">
+        @for (card of hands()[0]; track $index) {
+          <button
+            class="card"
+            [class.red]="isRedSuit(card.suit)"
+            [class.selected]="selectedCard() === card"
+            (click)="playCard(card)"
+            [disabled]="currentTrick().some(t => t.player === 0)">
+            <span class="rank">{{ card.rank }}</span>
+            <span class="suit">{{ card.suit }}</span>
+          </button>
+        }
+      </div>
+      @if (currentTrick().some(t => t.player === 0)) {
+        <p class="waiting-msg">⏳ Waiting for bots...</p>
+      }
+    }
+
+    @if (gamePhase() === 'result') {
+      <div class="result-panel">
+        <h2>Round Over!</h2>
+        <div class="final-tricks">
+          @for (name of playerNames; track $index) {
+            <div class="result-row" [class.success]="tricks()[$index] >= targets[$index]" [class.fail]="tricks()[$index] < targets[$index]">
+              {{ name }}: {{ tricks()[$index] }} / {{ targets[$index] }} tricks
+              {{ tricks()[$index] >= targets[$index] ? '✅' : '❌' }}
+            </div>
+          }
+        </div>
+        <button class="btn-deal" (click)="deal()">🔄 New Round</button>
+      </div>
+    }
+  </div>
+</div>

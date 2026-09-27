@@ -1,0 +1,72 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Dynamic Compressor</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🗜️ Audio Dynamic Range Compressor</h1>
+    <p>Smooth out loud peaks and boost quiet details with Web Audio DynamicsCompressorNode.</p>
+  </div>
+
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🗜️</div>
+    <h3>Select or Drag Audio File for Compression</h3>
+    <p>Supports MP3, WAV, AAC, OGG (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="file-name">🎵 {{ fileName }}</div>
+
+    <div class="preset-bar">
+      <span class="preset-label">Compressor Presets:</span>
+      <button (click)="applyPreset('vocal')" class="preset-btn" [class.active]="selectedPreset === 'vocal'">🗣️ Vocal Smooth</button>
+      <button (click)="applyPreset('punch')" class="preset-btn" [class.active]="selectedPreset === 'punch'">🥁 Heavy Punch</button>
+      <button (click)="applyPreset('radio')" class="preset-btn" [class.active]="selectedPreset === 'radio'">📻 Radio Master</button>
+      <button (click)="applyPreset('subtle')" class="preset-btn" [class.active]="selectedPreset === 'subtle'">🍃 Subtle Taming</button>
+    </div>
+
+    <div class="controls-grid">
+      <div class="control-group">
+        <label>Threshold: <strong>{{ threshold }} dB</strong></label>
+        <input type="range" [(ngModel)]="threshold" min="-100" max="0" step="1" (input)="updateCompressorValues()" class="slider-comp" />
+      </div>
+
+      <div class="control-group">
+        <label>Ratio: <strong>{{ ratio }}:1</strong></label>
+        <input type="range" [(ngModel)]="ratio" min="1" max="20" step="0.5" (input)="updateCompressorValues()" class="slider-comp" />
+      </div>
+
+      <div class="control-group">
+        <label>Knee: <strong>{{ knee }} dB</strong></label>
+        <input type="range" [(ngModel)]="knee" min="0" max="40" step="1" (input)="updateCompressorValues()" class="slider-comp" />
+      </div>
+
+      <div class="control-group">
+        <label>Attack Time: <strong>{{ (attack * 1000).toFixed(1) }} ms</strong></label>
+        <input type="range" [(ngModel)]="attack" min="0.001" max="0.5" step="0.001" (input)="updateCompressorValues()" class="slider-comp" />
+      </div>
+
+      <div class="control-group">
+        <label>Release Time: <strong>{{ (release * 1000).toFixed(0) }} ms</strong></label>
+        <input type="range" [(ngModel)]="release" min="0.01" max="1.0" step="0.01" (input)="updateCompressorValues()" class="slider-comp" />
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-secondary" (click)="audioBuffer = null">Change File</button>
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playAudio()">
+        <span>{{ isPlaying ? '⏹️ Stop Playback' : '▶️ Play Compressed Preview' }}</span>
+      </button>
+      <button class="btn-export" (click)="exportCompressedAudio()" [disabled]="isProcessing">
+        <span>💾 Export Compressed Audio</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Rendering Compressed Audio Track...</p>
+  </div>
+</div>

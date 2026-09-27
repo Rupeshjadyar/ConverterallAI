@@ -1,0 +1,62 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Video to Audio Extractor</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🎬 Video to Audio MP3 Extractor</h1>
+    <p>Extract high quality audio tracks (MP3 / WAV) from MP4, WebM, MOV, and AVI videos 100% in-browser.</p>
+  </div>
+
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🎬</div>
+    <h3>Select or Drag Video File</h3>
+    <p>Supports MP4, WebM, MOV, AVI, MKV (Processed in Browser Memory)</p>
+    <button class="btn-primary">Browse Video File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="video/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="video-preview-wrapper" *ngIf="videoSrcUrl">
+      <video [src]="videoSrcUrl" controls class="video-preview"></video>
+    </div>
+
+    <div class="meta-row">
+      <div>
+        <div class="file-name">🎬 {{ fileName }}</div>
+        <div class="file-sub">Video Weight: {{ fileSizeMb }} MB • Audio Duration: {{ formatDuration(audioBuffer.duration) }}</div>
+      </div>
+      <button class="btn-secondary" (click)="audioBuffer = null; videoSrcUrl = null">Select Another Video</button>
+    </div>
+
+    <div class="export-options">
+      <div class="option-group">
+        <label>Export Format:</label>
+        <select [(ngModel)]="exportFormat" class="select-input">
+          <option value="mp3">MP3 Audio</option>
+          <option value="wav">WAV Lossless Audio</option>
+        </select>
+      </div>
+
+      <div class="option-group">
+        <label>Audio Quality Bitrate:</label>
+        <select [(ngModel)]="bitrate" class="select-input">
+          <option value="320">320 kbps (Studio High Quality)</option>
+          <option value="192">192 kbps (Standard Quality)</option>
+          <option value="128">128 kbps (Compact Size)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-export" (click)="downloadExtractedAudio()">
+        <span>💾 Download Extracted Audio MP3</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isExtracting" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>{{ statusMessage }}</p>
+  </div>
+</div>

@@ -1,0 +1,627 @@
+.audiolab-viewport {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #0d0f17;
+  color: #f8fafc;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* 1. TOP NAVBAR */
+.audiolab-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background-color: #0f121d;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 16px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-row h1 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0;
+  color: #ffffff;
+}
+
+.badge-beta {
+  background: #1e2438;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.brand-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.history-nav-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.tracks-counter {
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: #64748b;
+  margin-left: 8px;
+}
+
+/* NAVBAR TOOLBAR PILLS */
+.nav-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.btn-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #161928;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-tool:hover:not(:disabled) {
+  background: #232840;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-tool:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-tool.active {
+  border-color: #8b5cf6;
+  color: #c084fc;
+}
+
+.t-icon {
+  font-size: 0.82rem;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.btn-add-audio {
+  background: #ffffff;
+  color: #0f121d;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-audio:hover {
+  background: #e2e8f0;
+}
+
+.btn-export-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-export-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(139, 92, 246, 0.5);
+}
+
+.btn-export-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 2. WORKSPACE LAYOUT (SIDEBAR + CENTER) */
+.audiolab-workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* LEFT SIDEBAR */
+.left-sidebar {
+  width: 250px;
+  background-color: #0f121d;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.tracks-empty-notice {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-sidebar-card {
+  background: #161928;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.track-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.trk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.trk-name {
+  font-size: 0.82rem;
+  color: #f8fafc;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-del {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.btn-del:hover { color: #ef4444; }
+
+.track-card-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: max-content;
+}
+
+.btn-pill.active {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.slider-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.slider-field input[type="range"] {
+  width: 140px;
+  accent-color: #8b5cf6;
+}
+
+/* MASTER PANEL */
+.master-panel {
+  background: #141724;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.master-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.master-slider-row label {
+  width: 45px;
+}
+
+.master-slider-row input[type="range"] {
+  flex: 1;
+  accent-color: #8b5cf6;
+}
+
+.master-slider-row .val {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #38bdf8;
+  width: 40px;
+  text-align: right;
+}
+
+/* QUICK GUIDE CARD */
+.quick-guide-card {
+  margin-top: auto;
+  background: linear-gradient(135deg, #161a2b 0%, #1c223a 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.guide-header {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #818cf8;
+  margin-bottom: 10px;
+}
+
+.quick-guide-card ul {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.quick-guide-card li {
+  margin-bottom: 4px;
+}
+
+/* CENTER TIMELINE VIEW */
+.center-timeline-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0f17;
+  position: relative;
+  overflow: hidden;
+}
+
+/* DROP AUDIO EMPTY STATE CARD (EXACT MATCH TO SCREENSHOT) */
+.empty-drop-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.drop-card-inner {
+  width: 100%;
+  max-width: 480px;
+  background-color: #141724;
+  border: 1.5px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.headphone-icon-box {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+}
+
+.hp-icon {
+  font-size: 1.8rem;
+}
+
+.drop-card-inner h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  color: #ffffff;
+}
+
+.drop-sub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.drop-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.btn-choose-files {
+  background: #ffffff;
+  color: #0d0f17;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-choose-files:hover {
+  background: #e2e8f0;
+}
+
+.btn-demo-tone {
+  background: #1e2438;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  border-radius: 24px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-demo-tone:hover {
+  background: #2b334d;
+}
+
+.tech-pills {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tech-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* WAVEFORM TIMELINE BOX */
+.waveform-timeline-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #0d0f17;
+  overflow: hidden;
+}
+
+.canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 3. BOTTOM TRANSPORT FOOTER */
+.audiolab-transport-footer {
+  height: 60px;
+  background-color: #0f121d;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.transport-left-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-player-jump, .btn-player-stop, .btn-player-loop {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-player-jump:hover:not(:disabled), .btn-player-stop:hover:not(:disabled), .btn-player-loop:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-player-loop.active {
+  border-color: #8b5cf6;
+  color: #c084fc;
+}
+
+.btn-player-play {
+  background: #ffffff;
+  color: #0d0f17;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.btn-player-play:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.transport-center-scrubber {
+  flex: 1;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-label {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  width: 50px;
+}
+
+.timeline-scrubber-range {
+  flex: 1;
+  accent-color: #8b5cf6;
+}
+
+.transport-right-master {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.transport-right-master input[type="range"] {
+  width: 100px;
+  accent-color: #8b5cf6;
+}
+
+.speed-indicator {
+  background: #1e2438;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #38bdf8;
+}

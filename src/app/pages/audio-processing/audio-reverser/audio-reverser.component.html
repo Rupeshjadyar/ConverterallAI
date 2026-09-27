@@ -1,0 +1,41 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Reverser</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🔄 Audio Reverser Studio</h1>
+    <p>Reverse audio playback and inverted waveform Float32 PCM sample data in 1 click with instant export.</p>
+  </div>
+
+  <div *ngIf="!originalBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🔄</div>
+    <h3>Select or Drag Audio File to Reverse</h3>
+    <p>Supports MP3, WAV, AAC, OGG (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="originalBuffer" class="workspace-card">
+    <div class="file-name">🎵 {{ fileName }} (Reversed Track)</div>
+
+    <div class="canvas-container">
+      <canvas #waveformCanvas class="waveform-canvas"></canvas>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-secondary" (click)="originalBuffer = null">Change File</button>
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playReversedAudio()">
+        <span>{{ isPlaying ? '⏹️ Stop Playback' : '▶️ Play Reversed Track' }}</span>
+      </button>
+      <button class="btn-export" (click)="downloadReversedAudio()">
+        <span>💾 Download Reversed Track</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Reversing Audio Buffer...</p>
+  </div>
+</div>

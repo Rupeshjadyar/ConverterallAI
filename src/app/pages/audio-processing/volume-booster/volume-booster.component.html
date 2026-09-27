@@ -1,0 +1,58 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Volume Booster</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🔊 Volume Booster &amp; Peak Limiter</h1>
+    <p>Amplify quiet audio files up to 500% (+14dB boost) with smart peak compression to prevent distortion.</p>
+  </div>
+
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🔊</div>
+    <h3>Select or Drag Audio File to Boost Volume</h3>
+    <p>Supports MP3, WAV, AAC, OGG (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="file-name">🎵 {{ fileName }}</div>
+
+    <div class="boost-meter-box">
+      <div class="meter-value">{{ volumeLevel }}%</div>
+      <div class="meter-sub">+{{ (20 * Math.log10(volumeLevel / 100)).toFixed(1) }} dB Boost</div>
+    </div>
+
+    <div class="control-group">
+      <label>Volume Amplification Gain:</label>
+      <input type="range" [(ngModel)]="volumeLevel" min="100" max="500" step="10" (input)="updateGainValue()" class="slider-gain" />
+      <div class="slider-ticks">
+        <span>100% (Original)</span>
+        <span>250% (+8dB)</span>
+        <span>500% (+14dB Boost)</span>
+      </div>
+    </div>
+
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" [(ngModel)]="enableLimiter" />
+        Enable Peak Limiter / Soft Anti-Clipping Protection (Recommended)
+      </label>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playAudio()">
+        <span>{{ isPlaying ? '⏹️ Stop Preview' : '▶️ Play Boosted Preview' }}</span>
+      </button>
+      <button class="btn-export" (click)="exportBoostedAudio()" [disabled]="isProcessing">
+        <span>💾 Export Boosted Audio</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Processing Audio Boost...</p>
+  </div>
+</div>

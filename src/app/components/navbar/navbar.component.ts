@@ -181,17 +181,19 @@ import { ToolItem } from '../../data/tools.data';
   `,
   styles: [`
     .universal-header {
-      position: sticky;
+      position: fixed;
       top: 0;
       left: 0;
+      right: 0;
       width: 100%;
+      height: 60px;
       z-index: 1050;
       padding: 0;
-      background: var(--card-color, rgba(14, 16, 24, 0.88));
+      background: var(--card-color, rgba(14, 16, 24, 0.94));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.14));
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
     }
 
     .nav-container {

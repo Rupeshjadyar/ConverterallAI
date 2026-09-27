@@ -1,0 +1,178 @@
+<div class="tm-layout">
+  <!-- OVERVIEW PHASE -->
+  <div *ngIf="lessonPhase() === 'overview'" class="tm-main">
+    <div class="course-header">
+      <h2>Fast Touch Typing Course</h2>
+      <div class="lesson-stepper">
+        <button *ngFor="let ml of mainLessons" class="step-btn" [class.active]="currentMainLesson() === ml.id" (click)="selectMainLesson(ml.id)">{{ml.id}}</button>
+      </div>
+    </div>
+    <div class="lesson-section">
+      <h3>Lesson {{currentMainLesson()}}: {{getMainLesson().title}}</h3>
+      <div class="sub-list">
+        <div *ngFor="let sub of getMainLesson().subLessons" class="sub-row" (click)="startSubLesson(sub)">
+          <span class="sub-circle">?</span>
+          <span class="sub-id">{{sub.id}}</span>
+          <a class="sub-name">{{sub.name}}</a>
+          <span class="sub-dur">{{sub.duration}}</span>
+        </div>
+        <!-- Lesson Nav Buttons -->
+        <div class="lesson-nav-buttons">
+          <button class="nav-arrow" *ngIf="currentMainLesson() > 1" (click)="selectMainLesson(currentMainLesson() - 1)">
+             <div class="arrow-circle left">?</div>
+             <span>Lesson {{currentMainLesson() - 1}}</span>
+          </button>
+          <div class="spacer"></div>
+          <button class="nav-arrow right" *ngIf="currentMainLesson() < mainLessons.length" (click)="selectMainLesson(currentMainLesson() + 1)">
+             <div class="arrow-circle right">?</div>
+             <span>Lesson {{currentMainLesson() + 1}}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="course-footer">
+      <div class="progress-section">
+        <span class="prog-label">Course progress</span>
+        <div class="prog-bar-wrap">
+          <span>0:01 h</span>
+          <div class="prog-bar"><div class="prog-fill" [style.width]="getCourseProgress() + '%'"></div></div>
+          <span>{{getTotalDuration()}}</span>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn-change">? Change course</button>
+        <button class="btn-adjust">? Adjust course duration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON SCREENS (INTRO, FINGERS, DRILL) -->
+  <div *ngIf="lessonPhase() !== 'overview' && lessonPhase() !== 'typing'" class="tm-lesson-layout">
+    <div class="tm-lesson-main">
+      <div *ngIf="lessonPhase() === 'intro'" class="phase-intro">
+        <p class="intro-instruction" [innerHTML]="currentSubLesson?.introText?.replace('\n','<br>')"></p>
+        <p class="press-hint">Press Space to continue</p>
+      </div>
+      <div *ngIf="lessonPhase() === 'finger-left'" class="phase-finger">
+        <p class="finger-instruction">Starting from the little finger, place your left hand fingers on {{getLeftHandLabel()}}.</p>
+        <p class="press-hint">Press Space to continue</p>
+      </div>
+      <div *ngIf="lessonPhase() === 'finger-right'" class="phase-finger">
+        <p class="finger-instruction">Starting from index finger, place your right hand fingers on {{getRightHandLabel()}}.</p>
+        <p class="press-hint">Press Space to continue</p>
+      </div>
+      <div *ngIf="lessonPhase() === 'drill'" class="phase-drill">
+        <p class="drill-instruction"><span style="color: #4ade80">?</span> Type the key sequences, follow the highlighted key</p>
+        <div class="drill-keys-grid">
+          <div *ngFor="let pair of getDrillPairs()" class="drill-pair">
+            <div *ngFor="let k of pair.keys" class="drill-key-box" [class.active-drill]="isDrillKeyActive(k)">{{k.toUpperCase()}}</div>
+            <div class="drill-key-box space-key">Space</div>
+          </div>
+        </div>
+        <p class="drill-look-hint"><span style="color: #4ade80">?</span> Look at the on-screen keyboard and hands for hints, when needed</p>
+      </div>
+
+      <div class="mini-kb">
+        <div *ngFor="let row of keyboardRows" class="kb-row">
+          <div *ngFor="let k of row" class="kb-key" [style.flex]="k.width || '1'" [ngClass]="getKeyClasses(k)" [style.backgroundColor]="getKeyColor(k) || ''">
+             <span [style.color]="getKeyColor(k) ? 'white' : ''">{{k.display}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hands-area">
+        <div class="hand-wrap left">
+          <div class="hand-visual">
+            <div *ngFor="let f of leftFingers" class="finger" [style.height]="f.height">
+              <div class="fingertip" [style.background]="isLeftFingerActive(f.id) ? getFingerColor(f.id) : '#d4b896'"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hand-wrap right">
+          <div class="hand-visual" style="flex-direction: row-reverse">
+            <div *ngFor="let f of rightFingers" class="finger" [style.height]="f.height">
+              <div class="fingertip" [style.background]="isRightFingerActive(f.id) ? getFingerColor(f.id) : '#d4b896'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tm-lesson-sidebar">
+      <div *ngIf="lessonPhase() === 'drill'" class="drill-progress">
+        <div class="dp-title">?? Your Progress</div>
+        <div class="dp-chart">
+          <div *ngFor="let bar of progressBars" class="dp-bar" [style.height]="bar + 'px'"></div>
+        </div>
+        <div class="dp-time-label">Time</div>
+        <div class="dp-timer">{{formatTime(drillTimeLeft())}}</div>
+      </div>
+      
+      <div class="sidebar-close" style="align-self: flex-end; margin-bottom: auto; cursor: pointer; color: #1e40af; font-weight: bold; background: #e0e7ff; padding: 2px 6px; border-radius: 4px;" (click)="goToOverview()">?</div>
+      
+      <button class="btn-lesson-next" (click)="nextPhase()">Next</button>
+      <button class="btn-lesson-cancel" (click)="goToOverview()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- TYPING PHASE -->
+  <div *ngIf="lessonPhase() === 'typing'" class="typing-phase">
+    <div class="typing-header">
+      <button class="btn-back" (click)="goToOverview()">? Back to Lessons</button>
+      <div class="typing-stats">
+        <div class="stat-box">
+          <span class="stat-label">WPM</span>
+          <span class="stat-val">{{liveWPM()}}</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Accuracy</span>
+          <span class="stat-val">{{accuracy()}}%</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Time</span>
+          <span class="stat-val">{{formatTime(elapsedSeconds())}}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="typing-arena" (click)="focusInput()">
+      <div class="text-display" #textDisplayArea>
+        <span *ngFor="let char of targetChars; let i = index" [ngClass]="getCharClass(i)">{{char === ' ' ? ' ' : char}}</span>
+      </div>
+      
+      <input type="text" #typingInput class="hidden-input" [(ngModel)]="userInput" (input)="onInput()" (keydown)="onKeyDown($event)" [disabled]="isFinished()" autocomplete="off" spellcheck="false">
+      
+      <div *ngIf="isFinished()" class="results-overlay">
+        <h3>Lesson Complete!</h3>
+        <p>Speed: {{finalWPM()}} WPM</p>
+        <p>Accuracy: {{accuracy()}}%</p>
+        <button class="btn-primary" (click)="goToOverview()">Continue</button>
+        <button class="btn-secondary" (click)="restartCurrent()">Try Again</button>
+      </div>
+    </div>
+    
+    <div class="mini-kb typing-kb">
+      <div *ngFor="let row of keyboardRows" class="kb-row">
+        <div *ngFor="let k of row" class="kb-key" [style.flex]="k.width || '1'" [ngClass]="getKeyClasses(k)">
+           <span>{{k.display}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN SIDEBAR (Only in Overview) -->
+  <div *ngIf="lessonPhase() === 'overview'" class="tm-sidebar">
+    <div class="sidebar-close-top">Close ?</div>
+    <div class="sidebar-nav-item active"><span class="icon">?</span> STUDYING</div>
+    <div class="sidebar-nav-item"><span class="icon">??</span> TYPING METER</div>
+    <div class="sidebar-nav-item"><span class="icon">??</span> CUSTOM REVIEW</div>
+    <div class="sidebar-nav-item"><span class="icon">??</span> TYPING TEST</div>
+    <div class="sidebar-nav-item"><span class="icon">??</span> GAMES</div>
+    <div class="sidebar-nav-item"><span class="icon">??</span> STATISTICS</div>
+    <div class="sidebar-nav-item"><span class="icon">?</span> SETTINGS</div>
+    <div class="sidebar-nav-item"><span class="icon">?</span> ABOUT</div>
+    <div class="sidebar-brand">
+       <div class="brand-icon">T</div> TypingMaster
+    </div>
+  </div>
+</div>

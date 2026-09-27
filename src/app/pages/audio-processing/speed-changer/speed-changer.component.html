@@ -1,0 +1,60 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Speed Changer</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>⚡ Audio Speed &amp; Tempo Changer</h1>
+    <p>Change audio speed from 0.25x (Slow Motion) to 3.0x (Fast Forward) with real-time playback preview.</p>
+  </div>
+
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">⚡</div>
+    <h3>Select or Drag Audio File to Change Speed</h3>
+    <p>Supports MP3, WAV, AAC, OGG (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="file-name">🎵 {{ fileName }}</div>
+
+    <div class="speed-display-box">
+      <div class="speed-value">{{ speed }}x</div>
+      <div class="speed-sub">
+        Duration: {{ (audioBuffer.duration / speed).toFixed(1) }}s (Original: {{ audioBuffer.duration.toFixed(1) }}s)
+      </div>
+    </div>
+
+    <!-- PRESETS -->
+    <div class="preset-row">
+      <button
+        *ngFor="let p of presets"
+        (click)="setSpeed(p)"
+        class="preset-chip"
+        [class.active]="speed === p"
+      >
+        {{ p }}x
+      </button>
+    </div>
+
+    <div class="control-group">
+      <label>Speed Multiplier Slider:</label>
+      <input type="range" [(ngModel)]="speed" min="0.25" max="3.0" step="0.05" (input)="setSpeed(speed)" class="slider-speed" />
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playAudio()">
+        <span>{{ isPlaying ? '⏹️ Stop Preview' : '▶️ Play Preview' }}</span>
+      </button>
+      <button class="btn-export" (click)="exportSpeedChangedAudio()" [disabled]="isProcessing">
+        <span>💾 Export Speed Changed Track</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Resampling &amp; Rendering Audio...</p>
+  </div>
+</div>

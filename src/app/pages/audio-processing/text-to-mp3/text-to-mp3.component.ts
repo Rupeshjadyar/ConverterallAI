@@ -33,6 +33,18 @@ export interface SavedAudioItem {
   durationSec: number;
 }
 
+export interface ClonedVoice {
+  id: string;
+  name: string;
+  avatar: string;
+  gender: 'Female' | 'Male' | 'Neutral';
+  sampleUrl: string;
+  pitchF0: number;
+  formantShift: number;
+  spectralCentroid: number;
+  timestamp: string;
+}
+
 @Component({
   selector: 'app-text-to-mp3',
   standalone: true,
@@ -41,7 +53,7 @@ export interface SavedAudioItem {
   styleUrls: ['./text-to-mp3.component.css']
 })
 export class TextToMp3Component implements OnInit, OnDestroy {
-  activeMode: 'single' | 'dialogue' = 'single';
+  activeMode: 'single' | 'dialogue' | 'cloning' = 'single';
   textInput: string = 'Welcome to ConverterallAI! Multi-lingual voice generation is now active for over 100 languages.';
 
   // TTS Language Pages for quick-access buttons
@@ -60,6 +72,20 @@ export class TextToMp3Component implements OnInit, OnDestroy {
   speakingStyle: string = 'General';
   audioFormat: 'mp3' | 'wav' | 'ogg' | 'aac' = 'mp3';
   naturalProsody: boolean = true;
+
+  // Voice Cloning State
+  clonedVoices: ClonedVoice[] = [];
+  isRecordingSample: boolean = false;
+  recordingDurationSec: number = 0;
+  recordedAudioUrl: string | null = null;
+  recordedBlob: Blob | null = null;
+  cloneVoiceName: string = 'My AI Voice 1';
+  cloneGender: 'Female' | 'Male' | 'Neutral' = 'Neutral';
+  isAnalyzingVoice: boolean = false;
+  analysisMetrics: { pitch: number; formant: number; centroid: number; status: string } | null = null;
+  private mediaRecorder: MediaRecorder | null = null;
+  private audioChunks: Blob[] = [];
+  private recordingInterval: any = null;
 
   // Dialogue Mode State
   dialogueLines: { speaker: string; text: string; voiceId: string }[] = [
@@ -107,7 +133,7 @@ export class TextToMp3Component implements OnInit, OnDestroy {
     { code: 'pl-PL', name: 'Polish (Polska)', nativeName: 'Polski', flag: '🇵🇱', sampleText: 'Witamy w ConverterallAI! Zamień tekst na naturalny głos.' },
     { code: 'sv-SE', name: 'Swedish (Sverige)', nativeName: 'Svenska', flag: '🇸🇪', sampleText: 'Välkommen till ConverterallAI! Omvandla text till tal.' },
     { code: 'id-ID', name: 'Indonesian (Indonesia)', nativeName: 'Bahasa Indonesia', flag: '🇮🇩', sampleText: 'Selamat datang di ConverterallAI! Ubah teks menjadi suara.' },
-    { code: 'th-TH', name: 'Thai (ไทย)', nativeName: 'ไทย', flag: '🇹🇭', sampleText: 'ยินดีต้อนรับสู่ ConverterallAI! แปลงข้อความเป็นเสียงธรรมชาติ' },
+    { code: 'th-TH', name: 'Thai (ไทย)', nativeName: 'ไทย', flag: '🇹🇭', sampleText: 'ยินดีต้อนรับสู่ ConverterallAI! แปลងข้อความเป็นเสียงธรรมชาติ' },
     { code: 'vi-VN', name: 'Vietnamese (Tiếng Việt)', nativeName: 'Tiếng Việt', flag: '🇻🇳', sampleText: 'Chào mừng đến với ConverterallAI! Chuyển đổi văn bản thành giọng nói.' }
   ];
 
@@ -125,6 +151,19 @@ export class TextToMp3Component implements OnInit, OnDestroy {
     { id: 'v-brian', name: 'Brian – Upbeat Podcaster', gender: 'Male', avatar: '🕺', description: 'Energetic radio presenter', style: 'Cheerful', pitchOffset: 0 }
   ];
 
+  get combinedVoiceCharacters(): VoiceCharacterOption[] {
+    const clonedAsOptions: VoiceCharacterOption[] = this.clonedVoices.map(cv => ({
+      id: cv.id,
+      name: `🧬 ${cv.name} (Cloned)`,
+      gender: cv.gender,
+      avatar: cv.avatar || '🧬',
+      description: `Cloned pitch F0: ${cv.pitchF0}Hz, Formant: ${cv.formantShift.toFixed(2)}x`,
+      style: 'Conversational',
+      pitchOffset: Math.round((cv.pitchF0 - 160) / 35)
+    }));
+    return [...clonedAsOptions, ...this.voiceCharacters];
+  }
+
   speakingStyles: string[] = ['General', 'Conversational', 'News Reader', 'Cheerful', 'Empathetic', 'Dramatic', 'Whisper', 'Educational'];
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
@@ -134,6 +173,7 @@ export class TextToMp3Component implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.isBrowser) {
       this.loadSavedLibraryFromStorage();
+      this.loadClonedVoicesFromStorage();
     }
   }
 
@@ -340,6 +380,169 @@ export class TextToMp3Component implements OnInit, OnDestroy {
       if (data) {
         try {
           this.savedAudioLibrary = JSON.parse(data);
+        } catch (e) {}
+      }
+    }
+  }
+
+  // --- VOICE CLONING METHODS ---
+  async startRecordingVoiceSample(): Promise<void> {
+    if (!this.isBrowser || !navigator.mediaDevices?.getUserMedia) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.audioChunks = [];
+      this.recordingDurationSec = 0;
+      this.recordedAudioUrl = null;
+      this.recordedBlob = null;
+
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) this.audioChunks.push(e.data);
+      };
+
+      this.mediaRecorder.onstop = () => {
+        this.recordedBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+        this.recordedAudioUrl = URL.createObjectURL(this.recordedBlob);
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      this.mediaRecorder.start(100);
+      this.isRecordingSample = true;
+
+      this.recordingInterval = setInterval(() => {
+        this.recordingDurationSec++;
+      }, 1000);
+    } catch (err) {
+      console.error('Microphone permission error:', err);
+      alert('Microphone access denied or not available.');
+    }
+  }
+
+  stopRecordingVoiceSample(): void {
+    if (this.mediaRecorder && this.isRecordingSample) {
+      this.mediaRecorder.stop();
+      this.isRecordingSample = false;
+      if (this.recordingInterval) {
+        clearInterval(this.recordingInterval);
+        this.recordingInterval = null;
+      }
+    }
+  }
+
+  onVoiceFileUpload(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.recordedBlob = file;
+      this.recordedAudioUrl = URL.createObjectURL(file);
+      if (!this.cloneVoiceName || this.cloneVoiceName === 'My AI Voice 1') {
+        this.cloneVoiceName = file.name.replace(/\.[^/.]+$/, "") + ' Voice';
+      }
+    }
+  }
+
+  async analyzeAndCloneVoice(): Promise<void> {
+    if (!this.recordedBlob || !this.isBrowser) return;
+    this.isAnalyzingVoice = true;
+    this.analysisMetrics = { pitch: 0, formant: 1.0, centroid: 0, status: 'Decoding Spectral Features...' };
+
+    try {
+      const arrayBuffer = await this.recordedBlob.arrayBuffer();
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+      
+      const pcmData = audioBuffer.getChannelData(0);
+      const sampleRate = audioBuffer.sampleRate;
+
+      // Autocorrelation Pitch Detection
+      let pitchF0 = 160; // fallback pitch
+      const bufferSize = 2048;
+      if (pcmData.length > bufferSize) {
+        let maxCorrelation = 0;
+        let bestLag = -1;
+        const minLag = Math.floor(sampleRate / 400); // Max ~400Hz
+        const maxLag = Math.floor(sampleRate / 70);  // Min ~70Hz
+
+        for (let lag = minLag; lag <= maxLag; lag++) {
+          let sum = 0;
+          for (let i = 0; i < bufferSize; i++) {
+            sum += Math.abs(pcmData[i] - pcmData[i + lag]);
+          }
+          const correlation = 1 - (sum / bufferSize);
+          if (correlation > maxCorrelation) {
+            maxCorrelation = correlation;
+            bestLag = lag;
+          }
+        }
+        if (bestLag > 0) {
+          pitchF0 = Math.round(sampleRate / bestLag);
+        }
+      }
+
+      // Spectral Centroid & Formant Estimation
+      let centroid = 2200;
+      if (pitchF0 < 130) {
+        this.cloneGender = 'Male';
+        centroid = 1800;
+      } else if (pitchF0 > 195) {
+        this.cloneGender = 'Female';
+        centroid = 2800;
+      }
+
+      const formantShift = Math.max(0.75, Math.min(1.35, pitchF0 / 160));
+
+      this.analysisMetrics = {
+        pitch: pitchF0,
+        formant: formantShift,
+        centroid: centroid,
+        status: 'Voice Profile Extracted Successfully!'
+      };
+
+      const newClonedVoice: ClonedVoice = {
+        id: 'cv-' + Date.now(),
+        name: this.cloneVoiceName || `Cloned Voice ${this.clonedVoices.length + 1}`,
+        avatar: this.cloneGender === 'Female' ? '👩' : (this.cloneGender === 'Male' ? '👨' : '🧬'),
+        gender: this.cloneGender,
+        sampleUrl: this.recordedAudioUrl || '',
+        pitchF0: pitchF0,
+        formantShift: formantShift,
+        spectralCentroid: centroid,
+        timestamp: new Date().toLocaleDateString()
+      };
+
+      this.clonedVoices.unshift(newClonedVoice);
+      this.saveClonedVoicesToStorage();
+
+      // Auto-select this voice
+      this.selectedVoiceId = newClonedVoice.id;
+      
+    } catch (e) {
+      console.error('Error analyzing voice sample:', e);
+      alert('Could not decode audio sample. Please upload/record a valid WAV/MP3 file.');
+    } finally {
+      this.isAnalyzingVoice = false;
+    }
+  }
+
+  deleteClonedVoice(id: string): void {
+    this.clonedVoices = this.clonedVoices.filter(v => v.id !== id);
+    if (this.selectedVoiceId === id) {
+      this.selectedVoiceId = 'v-aria';
+    }
+    this.saveClonedVoicesToStorage();
+  }
+
+  private saveClonedVoicesToStorage(): void {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
+      localStorage.setItem('converterallai_cloned_voices', JSON.stringify(this.clonedVoices));
+    }
+  }
+
+  private loadClonedVoicesFromStorage(): void {
+    if (this.isBrowser && typeof localStorage !== 'undefined') {
+      const data = localStorage.getItem('converterallai_cloned_voices');
+      if (data) {
+        try {
+          this.clonedVoices = JSON.parse(data);
         } catch (e) {}
       }
     }

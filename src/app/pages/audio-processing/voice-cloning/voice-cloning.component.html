@@ -1,0 +1,159 @@
+<div class="voice-cloning-viewport">
+  <div class="cloning-card">
+
+    <!-- HEADER -->
+    <div class="header-row">
+      <div class="title-with-icon">
+        <span class="header-icon">🧬</span>
+        <div>
+          <h2>AI Voice Cloning Studio</h2>
+          <p class="subtitle">Clone any human voice from a 5-second sample &amp; synthesize multi-lingual speech</p>
+        </div>
+      </div>
+      <div class="nav-links-row">
+        <a routerLink="/audio-processing/text-to-mp3" class="btn-subnav-link">🎙️ Text to MP3</a>
+        <a routerLink="/audio-processing/audio-editor" class="btn-subnav-link">🎛️ Audio Editor</a>
+      </div>
+    </div>
+
+    <!-- VOICE CAPTURE SECTION -->
+    <div class="capture-section">
+      <div class="section-label">
+        <span>1. CAPTURE OR UPLOAD VOICE SAMPLE</span>
+      </div>
+
+      <div class="capture-grid">
+        <!-- Mic Recording -->
+        <div class="capture-card">
+          <div class="card-emoji">🔴</div>
+          <h3>Record Microphone Sample</h3>
+          <p>Speak clearly for 5 to 10 seconds in your natural voice.</p>
+
+          <div class="rec-actions">
+            <button class="btn-mic-start" *ngIf="!isRecording" (click)="startMicRecord()">
+              🎙️ Start Recording Mic
+            </button>
+            <button class="btn-mic-stop" *ngIf="isRecording" (click)="stopMicRecord()">
+              ⏹️ Stop Recording ({{ recordingDurationSec }}s)
+            </button>
+          </div>
+          <div class="live-wave-indicator" *ngIf="isRecording">
+            <span class="pulse-dot"></span> Live Microphone Recording...
+          </div>
+        </div>
+
+        <!-- Audio File Upload -->
+        <div class="capture-card">
+          <div class="card-emoji">📁</div>
+          <h3>Upload Audio File</h3>
+          <p>Upload a clear MP3, WAV, or M4A recording of the target voice.</p>
+
+          <input type="file" #sampleInput (change)="onSampleUpload($event)" accept="audio/*" class="file-hidden">
+          <button class="btn-upload" (click)="sampleInput.click()">
+            📂 Upload Voice File
+          </button>
+        </div>
+      </div>
+
+      <!-- AUDIO PREVIEW & EXTRACTION BAR -->
+      <div class="sample-preview-card" *ngIf="recordedAudioUrl">
+        <div class="preview-title">
+          <span>🎧 Sample Loaded — Ready for Spectral Feature Extraction</span>
+          <audio [src]="recordedAudioUrl" controls class="sample-player"></audio>
+        </div>
+
+        <div class="voice-form-row">
+          <div class="form-field">
+            <label>Voice Profile Name:</label>
+            <input type="text" [(ngModel)]="voiceName" class="studio-input" placeholder="e.g. Rupesh Custom Voice">
+          </div>
+          <div class="form-field">
+            <label>Voice Gender Tone:</label>
+            <select [(ngModel)]="voiceGender" class="studio-select">
+              <option value="Neutral">Neutral Tone 🧬</option>
+              <option value="Female">Female Voice 👩</option>
+              <option value="Male">Male Voice 👨</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-extract-voice" (click)="extractAndSaveVoice()" [disabled]="isAnalyzing">
+          <span *ngIf="!isAnalyzing">⚡ Extract Spectral Pitch &amp; Clone Voice</span>
+          <span *ngIf="isAnalyzing">⏳ Analyzing F0 Frequencies &amp; Formants...</span>
+        </button>
+
+        <!-- EXTRACTION RESULTS BADGE -->
+        <div class="metrics-grid" *ngIf="metrics">
+          <div class="metric-card">🎵 Fundamental Pitch: {{ metrics.pitch }} Hz</div>
+          <div class="metric-card">🎛️ Formant Scale: {{ metrics.formant.toFixed(2) }}x</div>
+          <div class="metric-card">📊 Spectral Centroid: {{ metrics.centroid }} Hz</div>
+          <div class="metric-card success">✅ Cloned Voice Ready!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY CLONED VOICES GALLERY -->
+    <div class="gallery-section" *ngIf="clonedVoices.length > 0">
+      <div class="section-label">
+        <span>2. MY CLONED VOICES LIBRARY ({{ clonedVoices.length }})</span>
+      </div>
+
+      <div class="cloned-cards-grid">
+        <div class="voice-profile-card" 
+             *ngFor="let v of clonedVoices" 
+             [class.active]="selectedClonedVoiceId === v.id"
+             (click)="selectedClonedVoiceId = v.id">
+          <span class="v-avatar">{{ v.avatar }}</span>
+          <div class="v-details">
+            <strong>{{ v.name }}</strong>
+            <small>Pitch F0: {{ v.pitchF0 }}Hz • Formant: {{ v.formantShift.toFixed(2) }}x</small>
+          </div>
+          <div class="v-badge" *ngIf="selectedClonedVoiceId === v.id">Active</div>
+          <button class="btn-del-voice" (click)="deleteVoice(v.id); $event.stopPropagation()">🗑️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXT-TO-SPEECH SYNTHESIS TESTER -->
+    <div class="tts-test-section">
+      <div class="section-label">
+        <span>3. SYNTHESIZE SPEECH WITH CLONED VOICE</span>
+      </div>
+
+      <div class="textarea-box">
+        <textarea [(ngModel)]="testScript" rows="4" placeholder="Enter text to speak with your cloned voice..."></textarea>
+      </div>
+
+      <div class="test-controls-row">
+        <div class="field">
+          <label>Language &amp; Accent:</label>
+          <select [(ngModel)]="selectedLangCode" class="studio-select">
+            <option value="hi-IN">🇮🇳 Hindi (हिंदी)</option>
+            <option value="en-US">🇺🇸 English (US)</option>
+            <option value="en-IN">🇮🇳 English (India)</option>
+            <option value="mr-IN">🇮🇳 Marathi (मराठी)</option>
+            <option value="es-ES">🇪🇸 Spanish</option>
+            <option value="fr-FR">🇫🇷 French</option>
+            <option value="de-DE">🇩🇪 German</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Playback Speed: {{ playbackSpeed }}x</label>
+          <input type="range" min="0.5" max="2.0" step="0.1" [(ngModel)]="playbackSpeed">
+        </div>
+      </div>
+
+      <div class="test-action-bar">
+        <button class="btn-speak-cloned" (click)="synthesizeClonedSpeech()" [disabled]="isSynthesizing">
+          <span *ngIf="!isPlayingTest">🚀 Synthesize &amp; Speak Cloned Voice</span>
+          <span *ngIf="isPlayingTest">🔊 Speaking with Cloned Accent...</span>
+        </button>
+        <button class="btn-stop-test" (click)="stopTestPlayback()" *ngIf="isPlayingTest">
+          ⏹️ Stop
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

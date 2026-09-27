@@ -1,0 +1,73 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Format Converter</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🔁 Batch Audio Format Converter</h1>
+    <p>Convert MP3, WAV, OGG, AAC, and FLAC audio files in batch with custom quality settings in client memory.</p>
+  </div>
+
+  <!-- UPLOAD DROP ZONE -->
+  <div class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🔁</div>
+    <h3>Select or Drag Multiple Audio Files</h3>
+    <p>Convert MP3, WAV, OGG, M4A, AAC, FLAC in batch (Zero Server Upload)</p>
+    <button class="btn-primary">Browse Audio Files</button>
+    <input #fileInput type="file" (change)="onFilesSelected($event)" accept="audio/*" multiple style="display: none;" />
+  </div>
+
+  <!-- BATCH LIST -->
+  <div *ngIf="items.length > 0" class="workspace-card">
+    <div class="options-bar">
+      <div class="opt-group">
+        <label>Target Format:</label>
+        <select [(ngModel)]="targetFormat" class="select-input">
+          <option value="mp3">MP3 Audio</option>
+          <option value="wav">WAV Lossless</option>
+          <option value="ogg">OGG Audio</option>
+        </select>
+      </div>
+
+      <div class="opt-group">
+        <label>Quality Bitrate:</label>
+        <select [(ngModel)]="bitrate" class="select-input">
+          <option value="320">320 kbps (High Quality)</option>
+          <option value="192">192 kbps (Standard)</option>
+          <option value="128">128 kbps (Compact)</option>
+        </select>
+      </div>
+
+      <div class="opt-actions">
+        <button class="btn-clear" (click)="clearAll()">Clear All</button>
+        <button class="btn-convert" (click)="convertAll()" [disabled]="isProcessingBatch">
+          <span>⚡ Convert {{ items.length }} Files</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="file-table">
+      <div *ngFor="let item of items; let idx = index" class="file-row">
+        <div class="file-name-cell">
+          <span class="file-icon">🎵</span>
+          <div>
+            <div class="name-str">{{ item.name }}</div>
+            <div class="size-str">{{ item.sizeMb }} MB</div>
+          </div>
+        </div>
+
+        <div class="status-cell">
+          <span *ngIf="item.status === 'pending'" class="status-badge pending">Pending</span>
+          <span *ngIf="item.status === 'converting'" class="status-badge converting">Converting {{ item.progress }}%</span>
+          <span *ngIf="item.status === 'done'" class="status-badge done">Ready</span>
+          <span *ngIf="item.status === 'error'" class="status-badge error">Error</span>
+        </div>
+
+        <div class="action-cell">
+          <button *ngIf="item.status === 'done'" class="btn-dl" (click)="downloadItem(item)">⬇️ Download</button>
+          <button class="btn-remove" (click)="removeItem(idx)">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

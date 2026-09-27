@@ -1,0 +1,160 @@
+.ludo-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  padding: 1.5rem;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+}
+.ludo-header { text-align: center; margin-bottom: 1.5rem; }
+.ludo-header h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.turn-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.turn-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+
+.ludo-main {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.players-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 260px;
+}
+
+.player-panel {
+  padding: 1rem 1.2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.08);
+  transition: all 0.2s;
+}
+.player-panel.active {
+  border-color: rgba(139,92,246,0.5);
+  background: rgba(139,92,246,0.1);
+  box-shadow: 0 0 20px rgba(139,92,246,0.2);
+}
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+.p-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.p-finished { margin-left: auto; font-size: 0.75rem; color: #94a3b8; }
+
+.tokens-row { display: flex; gap: 0.5rem; }
+
+.token-btn {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+.token-btn.movable {
+  border-color: #fde047;
+  box-shadow: 0 0 15px rgba(253,224,71,0.6);
+  animation: tokenPulse 0.7s ease-in-out infinite alternate;
+  cursor: pointer;
+}
+.token-btn.finished-token { opacity: 0.5; cursor: not-allowed; }
+.token-btn.home-token { opacity: 0.7; }
+.token-btn:disabled:not(.movable) { cursor: not-allowed; }
+
+@keyframes tokenPulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.15); }
+}
+
+/* Dice Panel */
+.dice-panel {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.dice-face {
+  font-size: 5rem;
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(255,255,255,0.12);
+  transition: transform 0.1s;
+}
+.dice-face.rolling { animation: diceRoll 0.1s infinite; }
+@keyframes diceRoll {
+  0% { transform: rotate(-15deg) scale(0.9); }
+  50% { transform: rotate(15deg) scale(1.1); }
+  100% { transform: rotate(-15deg) scale(0.9); }
+}
+.btn-roll {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+  transition: all 0.2s;
+}
+.btn-roll:hover:not(:disabled) { transform: translateY(-2px); }
+.btn-roll:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.win-msg {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #fde047;
+  text-align: center;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+.btn-new {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 12px;
+  background: #22c55e;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-new:hover { opacity: 0.85; }
+
+.game-log {
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.log-line { font-size: 0.78rem; color: #64748b; margin: 0.2rem 0; }
+.log-line.first { color: #e2e8f0; font-weight: 600; }

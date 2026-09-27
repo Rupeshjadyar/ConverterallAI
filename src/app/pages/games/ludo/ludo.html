@@ -1,0 +1,66 @@
+<div class="ludo-container">
+  <div class="ludo-header">
+    <h1>🎲 Ludo King</h1>
+    <div class="turn-info">
+      <span class="turn-dot" [style.background]="playerColors[currentPlayer()]"></span>
+      {{ gameOver() ? winner() + ' Won! 🏆' : playerNames[currentPlayer()] + '\'s Turn' }}
+    </div>
+  </div>
+
+  <div class="ludo-main">
+    <!-- Player Panels -->
+    <div class="players-panel">
+      @for (p of [0,1,2,3].slice(0, numPlayers()); track p) {
+        <div class="player-panel" [class.active]="currentPlayer() === p && !gameOver()">
+          <div class="player-header">
+            <span class="p-dot" [style.background]="playerColors[p]"></span>
+            {{ playerNames[p] }}
+            <span class="p-finished">
+              {{ getPlayerTokens(p).filter(t => t.state === 'finished').length }}/4 home
+            </span>
+          </div>
+          <div class="tokens-row">
+            @for (token of getPlayerTokens(p); track token.id) {
+              <button
+                class="token-btn"
+                [style.background]="playerColors[p]"
+                [class.movable]="isMovable(token.id)"
+                [class.finished-token]="token.state === 'finished'"
+                [class.home-token]="token.state === 'home'"
+                (click)="moveToken(token.id)"
+                [disabled]="!isMovable(token.id)">
+                {{ token.state === 'finished' ? '🏠' : token.state === 'home' ? '●' : token.position }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Dice and Controls -->
+    <div class="dice-panel">
+      <div class="dice-face" [class.rolling]="isRolling()">
+        {{ isRolling() ? getDiceFace(diceAnim()) : (diceValue() > 0 ? getDiceFace(diceValue()) : '🎲') }}
+      </div>
+
+      @if (!gameOver()) {
+        <button
+          class="btn-roll"
+          (click)="rollDice()"
+          [disabled]="isRolling() || diceRolled() || currentPlayer() !== 0">
+          {{ isRolling() ? 'Rolling...' : diceRolled() ? 'Pick a token ↑' : currentPlayer() === 0 ? '🎲 Roll!' : 'Bot\'s turn...' }}
+        </button>
+      } @else {
+        <div class="win-msg">🎉 {{ winner() }} wins!</div>
+        <button class="btn-new" (click)="initGame()">New Game</button>
+      }
+
+      <!-- Log -->
+      <div class="game-log">
+        @for (log of gameLog(); track $index) {
+          <p class="log-line" [class.first]="$index === 0">{{ log }}</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

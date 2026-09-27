@@ -7,7 +7,7 @@ export interface AppTool {
   id: string;
   name: string;
   description: string;
-  category: 'Calculators' | 'Image Tools' | 'PDF Tools';
+  category: 'Calculators' | 'Image Tools' | 'PDF Tools' | 'Games' | string;
   route: string;
   icon: string;
   tag?: string;
@@ -78,6 +78,12 @@ export interface AppTool {
             [class.active]="selectedCategory === 'PDF Tools'"
             (click)="selectCategory('PDF Tools')">
             📄 PDF Tools
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'Games'"
+            (click)="selectCategory('Games')">
+            🎮 Games
           </button>
         </div>
 
@@ -430,7 +436,7 @@ export interface AppTool {
 export class SpotlightSearchComponent {
   isOpen = signal(false);
   searchQuery = '';
-  selectedCategory: 'ALL' | 'Calculators' | 'Image Tools' | 'PDF Tools' = 'ALL';
+  selectedCategory: 'ALL' | 'Calculators' | 'Image Tools' | 'PDF Tools' | 'Games' = 'ALL';
   selectedIndex = 0;
 
   allTools: AppTool[] = [
@@ -465,9 +471,24 @@ export class SpotlightSearchComponent {
     { id: 'jpg-to-pdf', name: 'JPG to PDF Builder', description: 'Combine JPG images into a clean multi-page PDF document', category: 'PDF Tools', route: '/pdf-processing/jpg-to-pdf', icon: '📂' },
     { id: 'sign-pdf', name: 'Sign & e-Signature PDF', description: 'Add your digital signature or draw signatures on PDF documents', category: 'PDF Tools', route: '/pdf-processing/sign-pdf', icon: '✍️' },
     { id: 'add-watermark', name: 'Add Watermark to PDF', description: 'Stamp text or image watermarks for copyright and branding protection', category: 'PDF Tools', route: '/pdf-processing/add-watermark', icon: '🛡️' },
-    { id: 'rotate-pdf', name: 'Rotate PDF Orientation', description: 'Rotate PDF pages 90, 180 or 270 degrees instantly', category: 'PDF Tools', route: '/pdf-processing/rotate-pdf', icon: '🔄' },
     { id: 'add-password', name: 'Protect PDF with Password', description: 'Encrypt sensitive PDF files with strong AES encryption', category: 'PDF Tools', route: '/pdf-processing/add-password', icon: '🔒' },
-    { id: 'remove-password', name: 'Unlock PDF Password', description: 'Remove password restrictions from PDF files you own', category: 'PDF Tools', route: '/pdf-processing/remove-password', icon: '🔓' }
+    { id: 'remove-password', name: 'Unlock PDF Password', description: 'Remove password restrictions from PDF files you own', category: 'PDF Tools', route: '/pdf-processing/remove-password', icon: '🔓' },
+
+    // Free In-Browser Games
+    { id: 'games-hub', name: 'Games Hub & Arcade', description: 'Browse all 12 free client-side mini games and puzzles', category: 'Games', route: '/games', icon: '🎮', tag: 'New' },
+    { id: 'chess', name: 'Grandmaster Chess', description: 'Play Chess against AI Bot or 2-Player local battle with move notation', category: 'Games', route: '/games/chess', icon: '♟️', tag: 'Popular' },
+    { id: 'teen-patti', name: 'Indian Teen Patti (3 Patti)', description: 'Classic Indian 3-card poker game with blind, chaal and sidepot bot AI', category: 'Games', route: '/games/teen-patti', icon: '🎴', tag: 'Hot' },
+    { id: 'connect4', name: 'Connect 4 in a Row', description: 'Drop discs and connect 4 in a line vs smart AI or 2-Player local', category: 'Games', route: '/games/connect4', icon: '🔴', tag: 'Classic' },
+    { id: 'sudoku', name: 'Sudoku Master Puzzle', description: '9x9 Sudoku puzzles with pencil notes, hints and mistake checker', category: 'Games', route: '/games/sudoku', icon: '🔢', tag: 'Logic' },
+    { id: 'minesweeper', name: 'Classic Minesweeper', description: 'Sweep the minefield with safe first click and fast flag placement', category: 'Games', route: '/games/minesweeper', icon: '💣', tag: 'Retro' },
+    { id: 'game-2048', name: '2048 Number Puzzle', description: 'Slide numbers and merge tiles to reach the legendary 2048 tile', category: 'Games', route: '/games/2048', icon: '🧩', tag: 'Viral' },
+    { id: 'snake', name: 'Retro Snake Arcade', description: '60fps arcade snake game with bonus apples and speed multipliers', category: 'Games', route: '/games/snake', icon: '🐍', tag: 'Arcade' },
+    { id: 'memory-match', name: 'Memory Card Match', description: '3D card flip memory matching game to boost brain recall power', category: 'Games', route: '/games/memory-match', icon: '🧠', tag: 'Brain' },
+    { id: 'tic-tac-toe', name: 'Cyber Tic-Tac-Toe', description: 'Glow neon 3x3 grid with unbeatable Minimax AI & 2-Player mode', category: 'Games', route: '/games/tic-tac-toe', icon: '❌', tag: 'Quick' },
+    { id: 'typing-master', name: 'Typing Master Pro Academy', description: 'Touch-typing lessons, mechanical sounds, QWERTY keyboard & speed tests like typingtest.com', category: 'Special Tools', route: '/typing-master', icon: '⌨️', tag: 'Typing' },
+    { id: 'brick-breaker', name: 'Neon Brick Breaker', description: 'Break glowing brick walls with paddle bounces and dynamic powerups', category: 'Games', route: '/games/brick-breaker', icon: '🧱', tag: 'Arcade' },
+    { id: 'pong', name: 'Neon Cyber Pong', description: 'Retro 2-player and AI table tennis pong with responsive physics', category: 'Games', route: '/games/pong', icon: '🏓', tag: 'Retro' },
+    { id: 'battle-royale', name: 'Cyber Battlegrounds (PUBG 2D)', description: '30-player top-down Battle Royale with loot rifles, shrinking storm zone and Chicken Dinner', category: 'Games', route: '/games/battle-royale', icon: '🪂', tag: 'Hot' }
   ];
 
   constructor(private router: Router) {}
@@ -496,7 +517,7 @@ export class SpotlightSearchComponent {
     this.isOpen.set(false);
   }
 
-  selectCategory(category: 'ALL' | 'Calculators' | 'Image Tools' | 'PDF Tools') {
+  selectCategory(category: 'ALL' | 'Calculators' | 'Image Tools' | 'PDF Tools' | 'Games') {
     this.selectedCategory = category;
     this.selectedIndex = 0;
   }

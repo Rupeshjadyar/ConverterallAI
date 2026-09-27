@@ -7,7 +7,10 @@ import { TOOLS_DATA, ToolItem } from '../data/tools.data';
 })
 export class ToolRegistryService {
   getCategories(): CategoryItem[] {
-    return CATEGORIES_DATA;
+    return CATEGORIES_DATA.map(cat => ({
+      ...cat,
+      toolCount: this.getToolsByCategory(cat.id).length || cat.toolCount
+    }));
   }
 
   getCategoryById(id: string): CategoryItem | undefined {

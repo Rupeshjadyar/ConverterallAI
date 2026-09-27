@@ -1,0 +1,71 @@
+<div class="sl-container">
+  <div class="sl-header">
+    <h1>🐍 Saanp Seedi <span class="subtitle">Snakes &amp; Ladders</span></h1>
+    <div class="players-status">
+      @for (p of players(); track p.id) {
+        <div class="player-chip" [class.active]="currentPlayerIndex() === $index && !gameOver()">
+          <span class="dot" [style.background]="p.color"></span>
+          <span>{{ p.name }}: <strong>{{ p.position === 0 ? 'Start' : p.position }}</strong></span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="sl-main">
+    <!-- Board -->
+    <div class="board-wrap">
+      <div class="board">
+        @for (cell of board(); track cell) {
+          <div class="cell" [class.ladder-cell]="getCellType(cell) === 'ladder'" [class.snake-cell]="getCellType(cell) === 'snake'">
+            <span class="cell-num">{{ cell }}</span>
+            <span class="sl-info">{{ getSnakeLadderInfo(cell) }}</span>
+            <div class="tokens">
+              @for (p of getPlayersOnCell(cell); track p.id) {
+                <div class="token" [style.background]="p.color" [title]="p.name">{{ p.name[0] }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="dice-area">
+        <div class="dice" [class.rolling]="isRolling()">
+          {{ isRolling() ? getDiceFace(diceAnimFrame()) : (diceValue() > 0 ? getDiceFace(diceValue()) : '🎲') }}
+        </div>
+        @if (!gameOver()) {
+          <button class="btn-roll" (click)="rollDice()" [disabled]="isRolling() || currentPlayer.isBot">
+            {{ isRolling() ? 'Rolling...' : currentPlayer.isBot ? 'Bot thinking...' : '🎲 Roll Dice' }}
+          </button>
+          <p class="turn-label">
+            <span class="dot" [style.background]="currentPlayer.color"></span>
+            {{ currentPlayer.name }}'s turn
+          </p>
+        }
+        @if (gameOver()) {
+          <div class="win-banner">
+            🎉 {{ winner()?.name }} Wins!
+          </div>
+          <button class="btn-reset" (click)="resetGame()">Play Again</button>
+        }
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <h3>Legend</h3>
+        <div class="legend-item"><span class="ladder-dot">🪜</span> Ladder = Go up</div>
+        <div class="legend-item"><span class="snake-dot">🐍</span> Snake = Come down</div>
+      </div>
+
+      <!-- Log -->
+      <div class="game-log">
+        <h3>Game Log</h3>
+        @for (log of gameLog(); track $index) {
+          <p class="log-entry">{{ log }}</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

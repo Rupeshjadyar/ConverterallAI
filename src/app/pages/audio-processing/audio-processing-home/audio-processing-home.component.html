@@ -1,0 +1,133 @@
+<div class="audio-home-wrapper">
+  <!-- HERO HEADER SECTION -->
+  <section class="hero-section">
+    <div class="hero-badge">
+      <span class="pulse-dot"></span>
+      100% In-Browser Web Audio API Privacy & WASM Speed
+    </div>
+    <h1 class="hero-title">
+      Studio Quality <span class="gradient-text">Audio Processing Suite</span>
+    </h1>
+    <p class="hero-sub">
+      Trim, amplify, reverse, equalize, compress, merge, and convert audio files directly inside your browser. No files are uploaded to any server.
+    </p>
+
+    <!-- SEARCH & FILTER ROW -->
+    <div class="search-bar-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterTools()"
+        placeholder="Search audio tools (e.g. Cut, Boost Volume, Speed, Merge, Equalizer, Video to MP3)..."
+        class="search-input"
+      />
+      <button *ngIf="searchTerm" (click)="searchTerm = ''; filterTools()" class="clear-btn">✕</button>
+    </div>
+
+    <!-- CATEGORY CHIPS -->
+    <div class="category-pills">
+      <button
+        *ngFor="let cat of categories"
+        (click)="filterByCategory(cat.id)"
+        class="cat-chip"
+        [class.active]="selectedCategory === cat.id"
+      >
+        <span>{{ cat.icon }}</span> {{ cat.name }}
+      </button>
+    </div>
+  </section>
+
+  <!-- POPULAR TOOLS CAROUSEL / SECTION -->
+  <section class="section-container" *ngIf="selectedCategory === 'all' && !searchTerm">
+    <div class="section-header">
+      <h2>🔥 Most Popular Audio Tools</h2>
+      <span class="section-tag">Instant Client Processing</span>
+    </div>
+    <div class="tools-grid">
+      <div
+        *ngFor="let tool of popularTools"
+        (click)="openTool(tool)"
+        class="tool-card popular-card"
+      >
+        <div class="card-icon-box" [style.background]="tool.color">
+          <span>{{ tool.icon }}</span>
+        </div>
+        <div class="card-content">
+          <div class="card-title-row">
+            <h3>{{ tool.name }}</h3>
+            <span *ngIf="tool.badge" class="badge-tag" [class.badge-ai]="tool.badge === 'AI'" [class.badge-pro]="tool.badge === 'PRO'">
+              {{ tool.badge }}
+            </span>
+          </div>
+          <p>{{ tool.description }}</p>
+        </div>
+        <div class="card-action">
+          <span>Open Tool →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL AUDIO TOOLS GRID -->
+  <section class="section-container">
+    <div class="section-header">
+      <h2>🧰 All Audio Processing Utilities ({{ filteredTools.length }})</h2>
+    </div>
+
+    <div *ngIf="filteredTools.length === 0" class="no-results">
+      <span>🎙️</span>
+      <h3>No audio tools found matching "{{ searchTerm }}"</h3>
+      <button (click)="searchTerm = ''; selectedCategory = 'all'; filterTools()" class="reset-btn">Reset Filters</button>
+    </div>
+
+    <div class="tools-grid">
+      <div
+        *ngFor="let tool of filteredTools"
+        (click)="openTool(tool)"
+        class="tool-card"
+      >
+        <div class="card-icon-box" [style.background]="tool.color">
+          <span>{{ tool.icon }}</span>
+        </div>
+        <div class="card-content">
+          <div class="card-title-row">
+            <h3>{{ tool.name }}</h3>
+            <span *ngIf="tool.badge" class="badge-tag" [class.badge-ai]="tool.badge === 'AI'" [class.badge-pro]="tool.badge === 'PRO'">
+              {{ tool.badge }}
+            </span>
+          </div>
+          <p>{{ tool.description }}</p>
+        </div>
+        <div class="card-action">
+          <span>Launch Tool →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES BANNER -->
+  <section class="features-banner">
+    <div class="feature-item">
+      <span class="feat-icon">🔒</span>
+      <div>
+        <h4>100% Client Privacy</h4>
+        <p>Your audio and video files never leave your browser memory.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <span class="feat-icon">⚡</span>
+      <div>
+        <h4>Zero Latency Web Audio</h4>
+        <p>Hardware accelerated processing via Web Audio API & Float32 PCM.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <span class="feat-icon">🎵</span>
+      <div>
+        <h4>Studio Audio Formats</h4>
+        <p>Full support for MP3, WAV, OGG, AAC, MP4, WebM, and MOV.</p>
+      </div>
+    </div>
+  </section>
+</div>

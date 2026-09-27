@@ -125,9 +125,19 @@ const ROUTE_SEO_MAP: Record<string, SeoData> = {
     keywords: 'image compressor, image converter, background remover, image cropper, photo editor, image to PDF'
   },
   '/audio-processing/text-to-mp3': {
-    title: 'Text to Speech – Convert Text to MP3 Audio | ConverterAllAI',
-    description: 'Convert text to natural sounding speech. Choose voice, speed, and pitch. Download as MP3 — free text-to-speech tool.',
-    keywords: 'text to speech, TTS, text to mp3, speech synthesis, voice generator'
+    title: 'Text to Speech – Convert Text to MP3 Audio & Voice Cloning | ConverterAllAI',
+    description: 'Convert text to natural sounding speech with voice cloning. Choose voice, speed, and pitch. Download as MP3 — free text-to-speech tool.',
+    keywords: 'text to speech, TTS, text to mp3, speech synthesis, voice generator, voice cloning'
+  },
+  '/audio-processing/audio-editor': {
+    title: 'Powerful Audio Editor Pro – Cut, Trim, Merge & Pitch Shift Audio | ConverterAllAI',
+    description: 'Edit, cut, trim, merge, equalizer and pitch shift audio files in your browser. Interactive waveform editor with MP3 & WAV export.',
+    keywords: 'audio editor, audio trimmer, cut audio, merge audio, pitch shifter, audio equalizer, mp3 cutter'
+  },
+  '/audio-processing/voice-cloning': {
+    title: 'AI Voice Cloning Studio – Clone Any Voice Free | ConverterAllAI',
+    description: 'Clone human voice from a 5-second mic sample. Extract pitch F0 and formant frequency profiles for multi-lingual text to speech synthesis.',
+    keywords: 'voice cloning, AI voice clone, voice copier, voice synthesis, clone voice free, spectral analysis'
   },
   '/calculators': {
     title: 'Online Calculators – BMI, EMI, GST, SIP, Percentage & More | ConverterAllAI',

@@ -1,0 +1,68 @@
+<div class="tool-container">
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Equalizer &amp; Bass Booster</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>🎚️ 5-Band Equalizer &amp; Bass Booster</h1>
+    <p>Adjust Bass, Treble, Vocal Clarity, and frequency curves using Web Audio BiquadFilterNodes in real-time.</p>
+  </div>
+
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🎚️</div>
+    <h3>Select or Drag Audio File for EQ Adjustment</h3>
+    <p>Supports MP3, WAV, AAC, OGG (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="file-name">🎵 {{ fileName }}</div>
+
+    <!-- PRESET SELECTION -->
+    <div class="preset-bar">
+      <span class="preset-label">EQ Studio Presets:</span>
+      <button (click)="applyPreset('flat')" class="preset-btn" [class.active]="selectedPreset === 'flat'">Flat</button>
+      <button (click)="applyPreset('bass')" class="preset-btn" [class.active]="selectedPreset === 'bass'">💥 Bass Booster</button>
+      <button (click)="applyPreset('treble')" class="preset-btn" [class.active]="selectedPreset === 'treble'">✨ Treble Boost</button>
+      <button (click)="applyPreset('vocal')" class="preset-btn" [class.active]="selectedPreset === 'vocal'">🎙️ Vocal Enhancer</button>
+      <button (click)="applyPreset('edm')" class="preset-btn" [class.active]="selectedPreset === 'edm'">🎧 EDM Punch</button>
+    </div>
+
+    <!-- 5-BAND SLIDERS GRID -->
+    <div class="eq-bands-grid">
+      <div *ngFor="let b of bands; let i = index" class="eq-band-card">
+        <div class="band-header">
+          <span class="band-title">{{ b.label }}</span>
+          <span class="band-gain" [class.positive]="b.gain > 0" [class.negative]="b.gain < 0">
+            {{ b.gain > 0 ? '+' : '' }}{{ b.gain }} dB
+          </span>
+        </div>
+        <input
+          type="range"
+          [(ngModel)]="b.gain"
+          min="-12"
+          max="12"
+          step="1"
+          (input)="updateFilterGains()"
+          class="vertical-slider"
+        />
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-secondary" (click)="audioBuffer = null">Change File</button>
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playAudio()">
+        <span>{{ isPlaying ? '⏹️ Stop Playback' : '▶️ Play Equalized Preview' }}</span>
+      </button>
+      <button class="btn-export" (click)="exportEqualizedAudio()" [disabled]="isProcessing">
+        <span>💾 Export Equalized Audio</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Rendering Offline Equalized Audio...</p>
+  </div>
+</div>

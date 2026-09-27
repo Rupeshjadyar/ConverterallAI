@@ -1,0 +1,75 @@
+<div class="tool-container">
+  <!-- BREADCRUMB NAV -->
+  <div class="breadcrumb">
+    <a routerLink="/audio-processing">🎙️ Audio Tools</a> &gt; <span>Audio Cutter &amp; Trimmer</span>
+  </div>
+
+  <div class="tool-header">
+    <h1>✂️ Audio Cutter &amp; Trimmer</h1>
+    <p>Cut, crop, and trim MP3, WAV, AAC, and OGG audio files with precision waveform UI and zero server uploads.</p>
+  </div>
+
+  <!-- DROP ZONE -->
+  <div *ngIf="!audioBuffer" class="upload-zone" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (click)="fileInput.click()">
+    <div class="upload-icon">🎵</div>
+    <h3>Select or Drag &amp; Drop Audio File</h3>
+    <p>Supports MP3, WAV, AAC, OGG, FLAC (Max 100MB)</p>
+    <button class="btn-primary">Browse Audio File</button>
+    <input #fileInput type="file" (change)="onFileSelected($event)" accept="audio/*" style="display: none;" />
+  </div>
+
+  <!-- WORKSPACE -->
+  <div *ngIf="audioBuffer" class="workspace-card">
+    <div class="track-info-bar">
+      <div class="file-details">
+        <span class="file-name">🎵 {{ fileName }}</span>
+        <span class="file-duration">Duration: {{ formatTime(duration) }}</span>
+      </div>
+      <button class="btn-secondary" (click)="audioBuffer = null">Change File</button>
+    </div>
+
+    <!-- WAVEFORM CANVAS -->
+    <div class="canvas-container">
+      <canvas #waveformCanvas class="waveform-canvas"></canvas>
+    </div>
+
+    <!-- RANGE CONTROL SLIDERS -->
+    <div class="control-grid">
+      <div class="control-group">
+        <label>Start Time (Cut From): <strong>{{ formatTime(startTime) }}</strong></label>
+        <input type="range" [(ngModel)]="startTime" [min]="0" [max]="duration" step="0.05" (input)="onRangeChange()" class="slider-start" />
+      </div>
+
+      <div class="control-group">
+        <label>End Time (Cut To): <strong>{{ formatTime(endTime) }}</strong></label>
+        <input type="range" [(ngModel)]="endTime" [min]="0" [max]="duration" step="0.05" (input)="onRangeChange()" class="slider-end" />
+      </div>
+
+      <div class="control-group">
+        <label>Fade Effect Transition:</label>
+        <select [(ngModel)]="fadeTransition" class="select-input">
+          <option value="none">No Fade (Clean Cut)</option>
+          <option value="in">Fade In (1.5s)</option>
+          <option value="out">Fade Out (1.5s)</option>
+          <option value="both">Fade In &amp; Fade Out</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-bar">
+      <button class="btn-preview" (click)="isPlaying ? stopPlayback() : playSelection()">
+        <span>{{ isPlaying ? '⏹️ Stop Preview' : '▶️ Play Selected Range' }}</span>
+      </button>
+      <button class="btn-export" (click)="exportTrimmedAudio()" [disabled]="isProcessing">
+        <span>💾 Trim &amp; Download Audio</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div *ngIf="isProcessing" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>{{ processingMessage }}</p>
+  </div>
+</div>

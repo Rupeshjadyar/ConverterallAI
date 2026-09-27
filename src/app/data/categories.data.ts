@@ -4,7 +4,7 @@ export interface CategoryItem {
   name: string;
   icon: string;
   description: string;
-  color: 'violet' | 'cyan' | 'amber' | 'emerald' | 'blue' | 'fuchsia' | 'rose';
+  color: 'violet' | 'cyan' | 'amber' | 'emerald' | 'blue' | 'fuchsia' | 'rose' | 'indigo';
   toolCount: number;
 }
 
@@ -28,13 +28,22 @@ export const CATEGORIES_DATA: CategoryItem[] = [
     toolCount: 15,
   },
   {
+    id: 'games',
+    slug: '/games',
+    name: 'Games Hub',
+    icon: '🎮',
+    description: '12 free trending browser games: Cyber Battlegrounds (PUBG 2D), Chess vs AI, Teen Patti 3-Patti, Sudoku, 2048, Snake & more.',
+    color: 'indigo',
+    toolCount: 12,
+  },
+  {
     id: 'audio-tools',
-    slug: '/audio-processing/text-to-mp3',
+    slug: '/audio-processing',
     name: 'Audio Tools',
     icon: '🎙️',
-    description: 'Studio-grade AI speech synthesis: Text to Audio MP3 narration with real-time rate, pitch, and voice controls.',
+    description: '12+ studio-grade audio processing & AI speech tools: Audio Cutter, Volume Booster, Speed Changer, Audio Reverser, 5-Band Equalizer, Dynamics Compressor, Video to Audio Extractor, Audio Joiner, Format Converter & TTS Voice Studio.',
     color: 'amber',
-    toolCount: 5,
+    toolCount: 12,
   },
   {
     id: 'calculators',
@@ -59,9 +68,9 @@ export const CATEGORIES_DATA: CategoryItem[] = [
     slug: '/developer-tools',
     name: 'Developer Tools',
     icon: '💻',
-    description: 'JSON formatters, Base64 encoders/decoders, Hash generators, Regex testers, and Markdown utilities.',
+    description: 'Typing Master Pro, JSON formatters, Base64 encoders/decoders, Hash generators, Regex testers, and Markdown utilities.',
     color: 'fuchsia',
-    toolCount: 14,
+    toolCount: 15,
   },
   {
     id: 'resume-tools',

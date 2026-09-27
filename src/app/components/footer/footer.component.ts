@@ -72,8 +72,9 @@ import { RouterModule } from '@angular/router';
 
           <!-- Legal & Compliance Column -->
           <div class="footer-col">
-            <h4 class="col-title">🏛️ Legal &amp; Company</h4>
+            <h4 class="col-title">🏛️ Quick Links</h4>
             <div class="col-links">
+              <a routerLink="/games" style="color: #f59e0b; font-weight: 700;">🎮 Free Web Games (12)</a>
               <a routerLink="/about">About Us</a>
               <a routerLink="/contact">Contact Support</a>
               <a routerLink="/privacy-policy">Privacy Policy</a>

@@ -17,6 +17,9 @@
       <button class="mode-pill" [class.active]="activeMode === 'dialogue'" (click)="activeMode = 'dialogue'">
         Multi-Voice Dialogue
       </button>
+      <button class="mode-pill" [class.active]="activeMode === 'cloning'" (click)="activeMode = 'cloning'">
+        🎙️ AI Voice Cloning
+      </button>
     </div>
 
     <!-- MODE 1: SINGLE VOICE SCRIPT INPUT -->
@@ -45,11 +48,108 @@
         <div class="line-header">
           <input type="text" class="speaker-name-input" [(ngModel)]="line.speaker" placeholder="Speaker Name">
           <select class="voice-select-sm" [(ngModel)]="line.voiceId">
-            <option *ngFor="let vc of voiceCharacters" [value]="vc.id">{{ vc.avatar }} {{ vc.name }}</option>
+            <option *ngFor="let vc of combinedVoiceCharacters" [value]="vc.id">{{ vc.avatar }} {{ vc.name }}</option>
           </select>
           <button class="btn-remove-line" (click)="removeDialogueLine(i)">🗑️</button>
         </div>
         <textarea class="line-textarea" [(ngModel)]="line.text" rows="2" placeholder="Dialogue line..."></textarea>
+      </div>
+    </div>
+
+    <!-- MODE 3: AI VOICE CLONING STUDIO -->
+    <div class="studio-section" *ngIf="activeMode === 'cloning'">
+      <div class="section-label">
+        <span>🎙️ CLONE YOUR OWN VOICE (RECORD OR UPLOAD SAMPLE)</span>
+      </div>
+
+      <div class="clone-box-grid">
+        <!-- Mic Recording Card -->
+        <div class="clone-card">
+          <div class="card-icon">🎙️</div>
+          <h4>Option A: Record Your Voice</h4>
+          <p>Record a 5-10 second speech sample using your microphone.</p>
+          
+          <div class="rec-controls">
+            <button class="btn-rec-start" *ngIf="!isRecordingSample" (click)="startRecordingVoiceSample()">
+              🔴 Start Recording Mic
+            </button>
+            <button class="btn-rec-stop" *ngIf="isRecordingSample" (click)="stopRecordingVoiceSample()">
+              ⏹️ Stop Recording ({{ recordingDurationSec }}s)
+            </button>
+          </div>
+          <div class="rec-pulse-indicator" *ngIf="isRecordingSample">
+            <span class="pulse-wave"></span> Recording Audio Sample... Speak clearly!
+          </div>
+        </div>
+
+        <!-- File Upload Card -->
+        <div class="clone-card">
+          <div class="card-icon">📁</div>
+          <h4>Option B: Upload Audio File</h4>
+          <p>Upload a clear MP3, WAV, or M4A sample of the voice to clone.</p>
+          <input type="file" #voiceFileInput (change)="onVoiceFileUpload($event)" accept="audio/*" class="file-input-hidden">
+          <button class="btn-upload-file" (click)="voiceFileInput.click()">
+            📂 Choose Voice Sample File
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Recorded / Uploaded Sample & Extraction Controls -->
+      <div class="sample-preview-banner" *ngIf="recordedAudioUrl">
+        <div class="preview-header">
+          <span>🎧 Sample Loaded Ready for Spectral Analysis</span>
+          <audio [src]="recordedAudioUrl" controls class="sample-audio-player"></audio>
+        </div>
+
+        <div class="clone-meta-fields">
+          <div class="meta-field">
+            <label>Voice Profile Name:</label>
+            <input type="text" [(ngModel)]="cloneVoiceName" class="studio-input" placeholder="e.g. My Personal AI Voice">
+          </div>
+          <div class="meta-field">
+            <label>Voice Gender:</label>
+            <select [(ngModel)]="cloneGender" class="studio-select-sm">
+              <option value="Neutral">Neutral 🧬</option>
+              <option value="Female">Female 👩</option>
+              <option value="Male">Male 👨</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-analyze-clone" (click)="analyzeAndCloneVoice()" [disabled]="isAnalyzingVoice">
+          <span *ngIf="!isAnalyzingVoice">⚡ Extract Spectral Features &amp; Clone Voice</span>
+          <span *ngIf="isAnalyzingVoice">⏳ Analyzing Pitch F0 &amp; Formants...</span>
+        </button>
+
+        <!-- Analysis Metrics Result -->
+        <div class="metrics-badge-box" *ngIf="analysisMetrics">
+          <div class="metric-chip">🎵 Pitch F0: {{ analysisMetrics.pitch }} Hz</div>
+          <div class="metric-chip">🎛️ Formant Offset: {{ analysisMetrics.formant.toFixed(2) }}x</div>
+          <div class="metric-chip">📊 Centroid: {{ analysisMetrics.centroid }} Hz</div>
+          <div class="metric-chip status">✅ Voice Profile Saved!</div>
+        </div>
+      </div>
+
+      <!-- MY CLONED VOICES LIBRARY -->
+      <div class="cloned-library-container" *ngIf="clonedVoices.length > 0">
+        <h4>🧬 My Cloned Voices ({{ clonedVoices.length }})</h4>
+        <div class="cloned-voices-list">
+          <div class="cloned-voice-item" *ngFor="let cv of clonedVoices" [class.selected]="selectedVoiceId === cv.id">
+            <div class="cv-info">
+              <span class="cv-avatar">{{ cv.avatar }}</span>
+              <div>
+                <strong>{{ cv.name }}</strong>
+                <small>F0: {{ cv.pitchF0 }}Hz • Formant: {{ cv.formantShift.toFixed(2) }}x • {{ cv.timestamp }}</small>
+              </div>
+            </div>
+            <div class="cv-actions">
+              <button class="btn-cv-use" (click)="selectedVoiceId = cv.id; activeMode = 'single'">
+                {{ selectedVoiceId === cv.id ? '✓ Selected' : 'Use for Speech' }}
+              </button>
+              <button class="btn-cv-del" (click)="deleteClonedVoice(cv.id)">🗑️</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -65,9 +165,9 @@
       </div>
 
       <div class="field-box">
-        <label class="field-label">🤖 VOICE CHARACTER</label>
+        <label class="field-label">🤖 VOICE CHARACTER (INCLUDES CLONED VOICES)</label>
         <select class="studio-select" [(ngModel)]="selectedVoiceId">
-          <option *ngFor="let vc of voiceCharacters" [value]="vc.id">
+          <option *ngFor="let vc of combinedVoiceCharacters" [value]="vc.id">
             {{ vc.avatar }} {{ vc.name }} — {{ vc.description }}
           </option>
         </select>

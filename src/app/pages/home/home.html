@@ -211,6 +211,31 @@
   </div>
 </section>
 
+<!-- GAMES & ARCADE SECTION -->
+<section *ngIf="!searchQuery" class="category-section py-5">
+  <div class="container">
+    <div class="section-header-row mb-4">
+      <div>
+        <span class="section-tag" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">ARCADE & STRATEGY</span>
+        <h2 class="section-title">Free In-Browser Games</h2>
+      </div>
+      <a routerLink="/games" class="view-all-link" style="color: #fbbf24;">View All 13 Games →</a>
+    </div>
+
+    <div class="tools-grid">
+      <a *ngFor="let tool of gameTools" [routerLink]="tool.slug" class="tool-card glass">
+        <div class="tool-card-top">
+          <span class="tool-icon">{{ tool.icon }}</span>
+          <span *ngIf="tool.badge" class="tool-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">{{ tool.badge }}</span>
+        </div>
+        <h3 class="tool-name">{{ tool.name }}</h3>
+        <p class="tool-desc">{{ tool.shortDesc }}</p>
+        <span class="tool-launch" style="color: #fbbf24;">Play Free →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- PLATFORM STATISTICS -->
 <section *ngIf="!searchQuery" class="stats-section py-5">
   <div class="container">
