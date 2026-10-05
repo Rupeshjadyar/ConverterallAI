@@ -7,11 +7,12 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { RightSidebarComponent } from './components/sidebar/right-sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { CookieConsentComponent } from './components/cookie-consent/cookie-consent.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, SidebarComponent, RightSidebarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, SidebarComponent, RightSidebarComponent, FooterComponent, CookieConsentComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

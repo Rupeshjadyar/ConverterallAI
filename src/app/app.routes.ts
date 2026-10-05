@@ -331,6 +331,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/games/chess/chess.component').then(m => m.ChessComponent)
     },
     {
+        path: 'games/frontline-survivor',
+        loadComponent: () => import('./pages/games/frontline-survivor/frontline-survivor.component').then(m => m.FrontlineSurvivorComponent)
+    },
+    {
         path: 'games/warfare-3000',
         loadComponent: () => import('./pages/games/warfare-3000/warfare-3000.component').then(m => m.Warfare3000Component)
     },
@@ -463,5 +467,108 @@ export const routes: Routes = [
         path: 'admin',
         redirectTo: 'dashboard',
         pathMatch: 'full'
+    },
+    {
+        path: 'developer-tools',
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./pages/developer-tools/developer-tools-home.component').then(m => m.DeveloperToolsHomeComponent)
+            },
+            {
+                path: 'json-formatter',
+                loadComponent: () => import('./pages/developer-tools/json-formatter/json-formatter.component').then(m => m.JsonFormatterComponent)
+            },
+            {
+                path: 'json',
+                redirectTo: 'json-formatter',
+                pathMatch: 'full'
+            },
+            {
+                path: 'sql',
+                loadComponent: () => import('./pages/developer-tools/sql/sql-wrapper.component').then(m => m.SqlWrapperComponent),
+                children: [
+                    {
+                        path: '',
+                        loadComponent: () => import('./pages/developer-tools/sql/sql-home.component').then(m => m.SqlHomeComponent)
+                    },
+                    {
+                        path: 'intro',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-intro.component').then(m => m.SqlIntroComponent)
+                    },
+                    {
+                        path: 'syntax',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-commands.component').then(m => m.SqlCommandsComponent)
+                    },
+                    {
+                        path: 'commands',
+                        redirectTo: 'syntax',
+                        pathMatch: 'full'
+                    },
+                    {
+                        path: 'ddl',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-ddl.component').then(m => m.SqlDdlComponent)
+                    },
+                    {
+                        path: 'dml',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-dml.component').then(m => m.SqlDmlComponent)
+                    },
+                    {
+                        path: 'dql',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-dql.component').then(m => m.SqlDqlComponent)
+                    },
+                    {
+                        path: 'dcl',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-dcl.component').then(m => m.SqlDclComponent)
+                    },
+                    {
+                        path: 'tcl',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-tcl.component').then(m => m.SqlTclComponent)
+                    },
+                    {
+                        path: 'joins',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-joins.component').then(m => m.SqlJoinsComponent)
+                    },
+                    {
+                        path: 'data-types',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-data-types.component').then(m => m.SqlDataTypesComponent)
+                    },
+                    {
+                        path: 'constraints',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-constraints.component').then(m => m.SqlConstraintsComponent)
+                    },
+                    {
+                        path: 'functions',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-functions.component').then(m => m.SqlFunctionsComponent)
+                    },
+                    {
+                        path: 'group-by',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-group-by.component').then(m => m.SqlGroupByComponent)
+                    },
+                    {
+                        path: 'subqueries',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-subqueries.component').then(m => m.SqlSubqueriesComponent)
+                    },
+                    {
+                        path: 'foreign-keys',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-foreign-keys.component').then(m => m.SqlForeignKeysComponent)
+                    },
+                    {
+                        path: 'views',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-views.component').then(m => m.SqlViewsComponent)
+                    },
+                    {
+                        path: 'playground',
+                        loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-playground.component').then(m => m.SqlPlaygroundComponent)
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        path: 'sql',
+        redirectTo: 'developer-tools/sql',
+        pathMatch: 'full'
     }
 ];
+

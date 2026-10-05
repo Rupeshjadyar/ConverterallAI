@@ -690,7 +690,10 @@ export class Warfare3000Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Generate default random callsign if empty
-    const savedName = localStorage.getItem('warfare3000_callsign');
+    let savedName = null;
+    if (typeof window !== 'undefined' && window.localStorage) {
+      savedName = localStorage.getItem('warfare3000_callsign');
+    }
     this.playerName = savedName || 'Tanker_' + Math.floor(100 + Math.random() * 900);
 
     this.serverUrl = this.detectServerUrl();

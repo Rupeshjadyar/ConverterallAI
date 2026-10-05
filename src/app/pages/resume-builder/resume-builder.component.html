@@ -10,10 +10,16 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn-secondary" (click)="exportJsonData()">
+      <button class="btn-secondary" (click)="resetToDefaultData()" title="Reset to default sample resume">
+        <span class="icon">🔄</span> Reset
+      </button>
+      <button class="btn-secondary" (click)="clearAllFields()" title="Clear all fields to start blank">
+        <span class="icon">🧹</span> Clear
+      </button>
+      <button class="btn-secondary" (click)="exportJsonData()" title="Save backup JSON file">
         <span class="icon">💾</span> Backup
       </button>
-      <label class="btn-secondary file-label">
+      <label class="btn-secondary file-label" title="Load backup JSON file">
         <span class="icon">📂</span> Load
         <input type="file" (change)="importJsonData($event)" accept=".json" style="display:none;">
       </label>
@@ -62,7 +68,8 @@
           <button class="pill-btn" [class.active]="activeEditorSection === 'education'" (click)="activeEditorSection = 'education'">🎓 Education</button>
           <button class="pill-btn" [class.active]="activeEditorSection === 'skills'" (click)="activeEditorSection = 'skills'">⚡ Skills</button>
           <button class="pill-btn" [class.active]="activeEditorSection === 'projects'" (click)="activeEditorSection = 'projects'">🚀 Projects</button>
-          <button class="pill-btn" [class.active]="activeEditorSection === 'certifications'" (click)="activeEditorSection = 'certifications'">📜 Extra</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'certifications'" (click)="activeEditorSection = 'certifications'">📜 Certs</button>
+          <button class="pill-btn" [class.active]="activeEditorSection === 'languages'" (click)="activeEditorSection = 'languages'">🌐 Languages</button>
           <button class="pill-btn" [class.active]="activeEditorSection === 'customSections'" (click)="activeEditorSection = 'customSections'">➕ Custom</button>
         </div>
 
@@ -270,6 +277,31 @@
             </div>
           </div>
 
+          <!-- 6.5 LANGUAGES -->
+          <div class="form-card" *ngIf="activeEditorSection === 'languages'">
+            <div class="card-header-flex">
+              <h3 class="card-title">Languages Spoken</h3>
+              <button class="btn-add" (click)="addLanguage()">+ Add Language</button>
+            </div>
+
+            <div class="accordion-item" *ngFor="let lang of resume.languages; let i = index">
+              <div class="accordion-header">
+                <strong>{{ lang.language }} - {{ lang.proficiency }}</strong>
+                <button class="btn-remove" (click)="removeLanguage(i)">🗑️</button>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Language Name</label>
+                  <input type="text" [(ngModel)]="lang.language" (ngModelChange)="saveToLocalStorage()" placeholder="e.g. English, Hindi, German">
+                </div>
+                <div class="form-group">
+                  <label>Proficiency Level</label>
+                  <input type="text" [(ngModel)]="lang.proficiency" (ngModelChange)="saveToLocalStorage()" placeholder="e.g. Native, Fluent, Intermediate">
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 7. CUSTOM USER SECTIONS -->
           <div class="form-card" *ngIf="activeEditorSection === 'customSections'">
             <div class="card-header-flex">
@@ -420,28 +452,52 @@
             </button>
           </div>
 
+          <h3 class="card-title" style="margin-top: 20px;">📏 Document Spacing & Page Fit</h3>
+          <div class="form-group">
+            <button class="btn-fit-one-full" (click)="autoFitToOnePage()">⚡ Auto-Fit Content to 1 Page</button>
+          </div>
+          <div class="form-group">
+            <label>Font Size Scale</label>
+            <div class="opt-btn-group">
+              <button class="opt-btn" [class.active]="fontSizeScale === 'small'" (click)="setFontSizeScale('small')">Small</button>
+              <button class="opt-btn" [class.active]="fontSizeScale === 'medium'" (click)="setFontSizeScale('medium')">Medium</button>
+              <button class="opt-btn" [class.active]="fontSizeScale === 'large'" (click)="setFontSizeScale('large')">Large</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Section Spacing</label>
+            <div class="opt-btn-group">
+              <button class="opt-btn" [class.active]="sectionSpacing === 'compact'" (click)="setSectionSpacing('compact')">Tight</button>
+              <button class="opt-btn" [class.active]="sectionSpacing === 'normal'" (click)="setSectionSpacing('normal')">Normal</button>
+              <button class="opt-btn" [class.active]="sectionSpacing === 'spacious'" (click)="setSectionSpacing('spacious')">Spacious</button>
+            </div>
+          </div>
+
           <h3 class="card-title" style="margin-top: 20px;">👁️ Section Visibility Toggles</h3>
           <div class="visibility-toggles-grid">
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.summary"> Summary
+              <input type="checkbox" [(ngModel)]="sectionVisibility.summary" (ngModelChange)="saveToLocalStorage()"> Summary
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.experience"> Experience
+              <input type="checkbox" [(ngModel)]="sectionVisibility.experience" (ngModelChange)="saveToLocalStorage()"> Experience
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.education"> Education
+              <input type="checkbox" [(ngModel)]="sectionVisibility.education" (ngModelChange)="saveToLocalStorage()"> Education
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.skills"> Skills
+              <input type="checkbox" [(ngModel)]="sectionVisibility.skills" (ngModelChange)="saveToLocalStorage()"> Skills
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.projects"> Projects
+              <input type="checkbox" [(ngModel)]="sectionVisibility.projects" (ngModelChange)="saveToLocalStorage()"> Projects
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.certifications"> Certifications
+              <input type="checkbox" [(ngModel)]="sectionVisibility.certifications" (ngModelChange)="saveToLocalStorage()"> Certifications
             </label>
             <label class="toggle-item">
-              <input type="checkbox" [(ngModel)]="sectionVisibility.customSections"> Custom Sections
+              <input type="checkbox" [(ngModel)]="sectionVisibility.languages" (ngModelChange)="saveToLocalStorage()"> Languages
+            </label>
+            <label class="toggle-item">
+              <input type="checkbox" [(ngModel)]="sectionVisibility.customSections" (ngModelChange)="saveToLocalStorage()"> Custom Sections
             </label>
           </div>
         </div>
@@ -453,20 +509,79 @@
       <!-- PREVIEW TOOLBAR -->
       <div class="preview-toolbar">
         <div class="active-tpl-badge">
-          Template: <strong>{{ selectedTemplate.name }}</strong> • <span class="edit-hint">Click text anywhere on document to edit inline!</span>
+          Template: <strong>{{ selectedTemplate.name }}</strong> • 
+          <span class="page-count-badge" [class.multi-page]="calculatedTotalPages > 1">
+            📄 {{ calculatedTotalPages }} {{ calculatedTotalPages === 1 ? 'Page' : 'Pages' }}
+          </span>
         </div>
+
+        <div class="page-fit-controls">
+          <button class="btn-fit-one" (click)="autoFitToOnePage()" title="Optimize font & spacing to fit onto 1 Page">
+            ⚡ Fit 1-Page
+          </button>
+          
+          <div class="quick-select-group">
+            <span class="qs-label">Font:</span>
+            <button class="qs-btn" [class.active]="fontSizeScale === 'small'" (click)="setFontSizeScale('small')">S</button>
+            <button class="qs-btn" [class.active]="fontSizeScale === 'medium'" (click)="setFontSizeScale('medium')">M</button>
+            <button class="qs-btn" [class.active]="fontSizeScale === 'large'" (click)="setFontSizeScale('large')">L</button>
+          </div>
+
+          <div class="quick-select-group">
+            <span class="qs-label">Space:</span>
+            <button class="qs-btn" [class.active]="sectionSpacing === 'compact'" (click)="setSectionSpacing('compact')">Tight</button>
+            <button class="qs-btn" [class.active]="sectionSpacing === 'normal'" (click)="setSectionSpacing('normal')">Norm</button>
+            <button class="qs-btn" [class.active]="sectionSpacing === 'spacious'" (click)="setSectionSpacing('spacious')">Wide</button>
+          </div>
+        </div>
+
         <div class="zoom-controls">
-          <button (click)="zoomLevel = zoomLevel - 10" [disabled]="zoomLevel <= 40">-</button>
-          <span>{{ zoomLevel }}%</span>
-          <button (click)="zoomLevel = zoomLevel + 10" [disabled]="zoomLevel >= 130">+</button>
+          <button class="zoom-btn" (click)="zoomOut()" [disabled]="zoomLevel <= 40" title="Zoom Out">-</button>
+          <span class="zoom-val">{{ zoomLevel }}%</span>
+          <button class="zoom-btn" (click)="zoomIn()" [disabled]="zoomLevel >= 150" title="Zoom In">+</button>
+          <button class="zoom-fit-btn" (click)="fitToWidth()" title="Fit to Available Width">Fit</button>
+          <button class="zoom-reset-btn" (click)="zoomReset()" title="Reset to 100%">100%</button>
         </div>
       </div>
 
-      <!-- LIVE DOCUMENT CONTAINER WITH DUAL INLINE & FORM EDITING -->
+      <!-- LIVE DOCUMENT CONTAINER WITH NOVORESUME MULTI-PAGE CARDS -->
       <div class="document-viewport">
-        <div class="a4-sheet" #pdfTarget [style.transform]="'scale(' + (zoomLevel / 100) + ')'"
+        <div class="pages-wrapper" [style.transform]="'scale(' + (zoomLevel / 100) + ')'">
+          <div class="novoresume-page-card" *ngFor="let pageIdx of getPageArray(); let pageNum = index">
+            <div class="page-content-clipper">
+              <div class="page-content-shift" [style.transform]="'translateY(' + (-pageIdx * 1085) + 'px)'"
+                   [class.font-scale-small]="fontSizeScale === 'small'"
+                   [class.font-scale-medium]="fontSizeScale === 'medium'"
+                   [class.font-scale-large]="fontSizeScale === 'large'"
+                   [class.spacing-compact]="sectionSpacing === 'compact'"
+                   [class.spacing-normal]="sectionSpacing === 'normal'"
+                   [class.spacing-spacious]="sectionSpacing === 'spacious'"
+                   [style.font-family]="customFont === 'serif' ? 'Georgia, serif' : (customFont === 'mono' ? '\'Courier New\', monospace' : '\'Inter\', \'Segoe UI\', sans-serif')">
+                <ng-container *ngTemplateOutlet="resumeTemplates"></ng-container>
+              </div>
+            </div>
+
+            <div class="novoresume-page-footer">
+              <span>Novorésumé Style • Page {{ pageIdx + 1 }} of {{ calculatedTotalPages }}</span>
+              <span class="watermark-tag">ConverterAll AI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HIDDEN MASTER TEMPLATE TARGET FOR HIGH-RES PDF EXPORT -->
+        <div class="hidden-pdf-target" #pdfTarget
+             [class.font-scale-small]="fontSizeScale === 'small'"
+             [class.font-scale-medium]="fontSizeScale === 'medium'"
+             [class.font-scale-large]="fontSizeScale === 'large'"
+             [class.spacing-compact]="sectionSpacing === 'compact'"
+             [class.spacing-normal]="sectionSpacing === 'normal'"
+             [class.spacing-spacious]="sectionSpacing === 'spacious'"
              [style.font-family]="customFont === 'serif' ? 'Georgia, serif' : (customFont === 'mono' ? '\'Courier New\', monospace' : '\'Inter\', \'Segoe UI\', sans-serif')">
-          
+          <ng-container *ngTemplateOutlet="resumeTemplates"></ng-container>
+        </div>
+
+        <!-- REUSABLE TEMPLATES DEFINITION -->
+        <ng-template #resumeTemplates>
           <!-- TEMPLATE LAYOUT 1: MODERN EXECUTIVE -->
           <div class="tpl-render-container tpl-modern-executive" *ngIf="activeEffectiveLayout === '2col-left-main'">
             <div class="sidebar-col" [style.background]="customPrimaryColor">
@@ -501,6 +616,14 @@
                 <div class="side-cert-item" *ngFor="let cert of resume.certifications">
                   <div class="side-cert-name">{{ cert.name }}</div>
                   <div class="side-cert-issuer">{{ cert.issuer }} ({{ cert.year }})</div>
+                </div>
+              </div>
+
+              <div class="sidebar-section" *ngIf="sectionVisibility.languages && resume.languages && resume.languages.length > 0">
+                <h3 class="side-sec-title">LANGUAGES</h3>
+                <div class="side-cert-item" *ngFor="let lang of resume.languages">
+                  <div class="side-cert-name">{{ lang.language }}</div>
+                  <div class="side-cert-issuer">{{ lang.proficiency }}</div>
                 </div>
               </div>
             </div>
@@ -616,6 +739,14 @@
                     <small>{{ edu.institute }} ({{ edu.year }})</small>
                   </div>
                 </div>
+
+                <div class="main-sec" *ngIf="sectionVisibility.languages && resume.languages && resume.languages.length > 0">
+                  <h2 class="main-sec-title creative-sec" [style.color]="customPrimaryColor">LANGUAGES</h2>
+                  <div class="creative-skills-list">
+                    <span class="creative-skill-pill" *ngFor="let lang of resume.languages" 
+                          [style.background]="customAccentColor">{{ lang.language }} ({{ lang.proficiency }})</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -681,6 +812,14 @@
                 </div>
               </div>
 
+              <div class="main-sec" *ngIf="sectionVisibility.languages && resume.languages && resume.languages.length > 0">
+                <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">LANGUAGES</h2>
+                <div class="min-skills-wrap">
+                  <span class="min-skill-badge" *ngFor="let lang of resume.languages" 
+                        [style.background]="customAccentColor" [style.color]="'#ffffff'">{{ lang.language }} ({{ lang.proficiency }})</span>
+                </div>
+              </div>
+
               <div class="main-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
                 <div *ngFor="let cs of resume.customSections">
                   <h2 class="min-sec-title" [style.color]="customPrimaryColor" [style.border-bottom-color]="customPrimaryColor">{{ cs.title | uppercase }}</h2>
@@ -734,6 +873,15 @@
                 </div>
               </div>
 
+              <div class="term-sec" *ngIf="sectionVisibility.languages && resume.languages && resume.languages.length > 0">
+                <div class="term-prompt">$ locale --languages</div>
+                <div class="term-skills-box">
+                  <span class="term-tag" *ngFor="let lang of resume.languages" [style.border-color]="customAccentColor" [style.color]="customAccentColor">
+                    {{ lang.language }}: {{ lang.proficiency }}
+                  </span>
+                </div>
+              </div>
+
               <div class="term-sec" *ngIf="sectionVisibility.customSections && resume.customSections.length > 0">
                 <div *ngFor="let cs of resume.customSections">
                   <div class="term-prompt">$ cat {{ cs.title.toLowerCase().replace(' ', '_') }}.txt</div>
@@ -742,8 +890,7 @@
               </div>
             </div>
           </div>
-
-        </div>
+        </ng-template>
       </div>
     </main>
   </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, HostListener, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Title, Meta } from '@angular/platform-browser';
 
 export interface ExperienceItem {
   id: string;
@@ -89,7 +90,7 @@ export class ResumeBuilderComponent implements OnInit {
   @ViewChild('pdfTarget', { static: false }) pdfTarget!: ElementRef;
 
   activeTab: 'templates' | 'editor' | 'customize' | 'preview' = 'editor';
-  activeEditorSection: 'personal' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications' | 'customSections' = 'personal';
+  activeEditorSection: 'personal' | 'experience' | 'education' | 'skills' | 'projects' | 'certifications' | 'languages' | 'customSections' = 'personal';
   activeCategory: string = 'All';
 
   // Customization Options
@@ -102,6 +103,7 @@ export class ResumeBuilderComponent implements OnInit {
   zoomLevel: number = 100;
   isDesktopView: boolean = true;
   private isBrowser: boolean = false;
+  private readonly STORAGE_KEY = 'converterall_resume_builder_data_v2';
 
   // Section Visibility Flags
   sectionVisibility = {
@@ -162,8 +164,8 @@ export class ResumeBuilderComponent implements OnInit {
 
   selectedTemplate: ResumeTemplate = this.templates[0];
 
-  // --- DEFAULT RESUME DATA FOR RUPESH JADYAR ---
-  resume: ResumeData = {
+  // Default Template Data Reference
+  private readonly defaultResume: ResumeData = {
     fullName: 'Rupesh Jadyar',
     jobTitle: 'Senior Full Stack Developer & AI Engineer',
     email: 'rupesh.jadyar@example.com',
@@ -228,7 +230,8 @@ export class ResumeBuilderComponent implements OnInit {
     ],
     languages: [
       { id: '1', language: 'English', proficiency: 'Fluent / Full Professional' },
-      { id: '2', language: 'Hindi', proficiency: 'Native / Bilingual' }
+      { id: '2', language: 'Hindi', proficiency: 'Native / Bilingual' },
+      { id: '3', language: 'Marathi', proficiency: 'Native' }
     ],
     customSections: [
       {
@@ -239,16 +242,76 @@ export class ResumeBuilderComponent implements OnInit {
     ]
   };
 
+  resume: ResumeData = JSON.parse(JSON.stringify(this.defaultResume));
   newSkillInput: string = '';
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    private titleService: Title,
+    private metaService: Meta
+  ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit() {
+    this.setSeoTags();
+    this.loadFromLocalStorage();
     this.customPrimaryColor = this.selectedTemplate.colorPrimary;
     this.customAccentColor = this.selectedTemplate.colorAccent;
     this.checkViewport();
+  }
+
+  private setSeoTags() {
+    this.titleService.setTitle('Free AI Resume Builder 2026 - Create Professional ATS Resume Online | ConverterAll AI');
+    
+    this.metaService.addTags([
+      { name: 'description', content: 'Build ATS-friendly professional resumes online for free. Choose from 30+ executive templates, customize colors, layout & fonts, optimize content with AI, and download instant high-quality PDF.' },
+      { name: 'keywords', content: 'resume builder, free resume builder, AI resume builder, ATS resume maker, professional resume template, online CV builder, resume generator, Novoresume alternative, Rupesh Jadyar' },
+      { name: 'robots', content: 'index, follow, max-image-preview:large' },
+      { property: 'og:title', content: 'Free AI Resume Builder - Create Professional ATS-Friendly Resumes' },
+      { property: 'og:description', content: 'Create ATS-optimized professional resumes with 30+ customizable templates, real-time Novorésumé style multi-page preview, and instant PDF download.' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: 'https://converterallai.com/resume-builder' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Free AI Resume Builder - Create Professional ATS Resumes' },
+      { name: 'twitter:description', content: 'Build ATS-friendly professional resumes online for free with 30+ templates and AI suggestions.' }
+    ]);
+
+    if (this.isBrowser && typeof document !== 'undefined') {
+      // 1. Inject Canonical Link
+      let canonical = document.querySelector("link[rel='canonical']") as HTMLLinkElement;
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', 'https://converterallai.com/resume-builder');
+
+      // 2. Inject JSON-LD Schema
+      let script = document.getElementById('json-ld-resume-builder') as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement('script');
+        script.id = 'json-ld-resume-builder';
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ConverterAll AI Resume Builder",
+        "url": "https://converterallai.com/resume-builder",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript",
+        "description": "Free online AI Resume Builder with 30+ ATS-friendly templates, live Novorésumé style multi-page preview, and instant PDF download.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      };
+      script.text = JSON.stringify(schemaData);
+    }
   }
 
   @HostListener('window:resize', [])
@@ -256,13 +319,161 @@ export class ResumeBuilderComponent implements OnInit {
     this.checkViewport();
   }
 
+  zoomIn() {
+    if (this.zoomLevel < 150) {
+      this.zoomLevel = Math.min(150, this.zoomLevel + 10);
+    }
+  }
+
+  zoomOut() {
+    if (this.zoomLevel > 40) {
+      this.zoomLevel = Math.max(40, this.zoomLevel - 10);
+    }
+  }
+
+  zoomReset() {
+    this.zoomLevel = 100;
+  }
+
+  fitToWidth() {
+    if (!this.isBrowser || typeof window === 'undefined') return;
+    const sidebarWidth = this.isDesktopView ? 420 : 0;
+    const availableWidth = window.innerWidth - sidebarWidth - 60;
+    const optimalZoom = Math.min(100, Math.max(45, Math.floor((availableWidth / 794) * 100)));
+    this.zoomLevel = optimalZoom;
+  }
+
   private checkViewport() {
     if (this.isBrowser && typeof window !== 'undefined') {
       this.isDesktopView = window.innerWidth > 992;
-      if (!this.isDesktopView && this.activeTab === 'editor') {
-        // Adjust zoom scale automatically on mobile screens
+      if (this.isDesktopView) {
+        const availableWidth = window.innerWidth - 420 - 80;
+        if (availableWidth < 794 && this.zoomLevel === 100) {
+          this.zoomLevel = Math.max(50, Math.floor((availableWidth / 794) * 100));
+        }
+      } else if (this.activeTab === 'editor') {
         this.zoomLevel = Math.max(45, Math.floor((window.innerWidth / 794) * 90));
       }
+    }
+  }
+
+  // --- LOCAL STORAGE PERSISTENCE ---
+  saveToLocalStorage() {
+    if (!this.isBrowser) return;
+    try {
+      const stateToSave = {
+        resume: this.resume,
+        selectedTemplateId: this.selectedTemplate.id,
+        customPrimaryColor: this.customPrimaryColor,
+        customAccentColor: this.customAccentColor,
+        customFont: this.customFont,
+        customLayout: this.customLayout,
+        fontSizeScale: this.fontSizeScale,
+        sectionSpacing: this.sectionSpacing,
+        sectionVisibility: this.sectionVisibility
+      };
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
+    } catch (e) {
+      console.warn('Could not save resume data to localStorage:', e);
+    }
+  }
+
+  loadFromLocalStorage() {
+    if (!this.isBrowser) return;
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.resume && typeof parsed.resume === 'object') {
+          this.resume = {
+            ...JSON.parse(JSON.stringify(this.defaultResume)),
+            ...parsed.resume
+          };
+          this.resume.experience = this.resume.experience || [];
+          this.resume.education = this.resume.education || [];
+          this.resume.skills = this.resume.skills || [];
+          this.resume.projects = this.resume.projects || [];
+          this.resume.certifications = this.resume.certifications || [];
+          this.resume.languages = this.resume.languages || [];
+          this.resume.customSections = this.resume.customSections || [];
+        }
+        if (parsed.selectedTemplateId) {
+          const found = this.templates.find(t => t.id === parsed.selectedTemplateId);
+          if (found) this.selectedTemplate = found;
+        }
+        if (parsed.customPrimaryColor) this.customPrimaryColor = parsed.customPrimaryColor;
+        if (parsed.customAccentColor) this.customAccentColor = parsed.customAccentColor;
+        if (parsed.customFont) this.customFont = parsed.customFont;
+        if (parsed.customLayout) this.customLayout = parsed.customLayout;
+        if (parsed.fontSizeScale) this.fontSizeScale = parsed.fontSizeScale;
+        if (parsed.sectionSpacing) this.sectionSpacing = parsed.sectionSpacing;
+        if (parsed.sectionVisibility) this.sectionVisibility = { ...this.sectionVisibility, ...parsed.sectionVisibility };
+      }
+    } catch (e) {
+      console.warn('Could not load resume data from localStorage:', e);
+    }
+  }
+
+  autoFitToOnePage() {
+    this.fontSizeScale = 'small';
+    this.sectionSpacing = 'compact';
+    this.saveToLocalStorage();
+  }
+
+  setFontSizeScale(scale: 'small' | 'medium' | 'large') {
+    this.fontSizeScale = scale;
+    this.saveToLocalStorage();
+  }
+
+  setSectionSpacing(spacing: 'compact' | 'normal' | 'spacious') {
+    this.sectionSpacing = spacing;
+    this.saveToLocalStorage();
+  }
+
+  get calculatedTotalPages(): number {
+    if (!this.isBrowser || !this.pdfTarget) return 1;
+    const el = this.pdfTarget.nativeElement;
+    const height = el ? el.scrollHeight : 0;
+    if (height <= 1100) return 1;
+    return Math.max(1, Math.ceil(height / 1080));
+  }
+
+  getPageArray(): number[] {
+    const count = this.calculatedTotalPages;
+    const pages: number[] = [];
+    for (let i = 0; i < count; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  resetToDefaultData() {
+    if (confirm('Are you sure you want to reset all fields to sample data? Unsaved custom entries will be restored.')) {
+      this.resume = JSON.parse(JSON.stringify(this.defaultResume));
+      this.saveToLocalStorage();
+    }
+  }
+
+  clearAllFields() {
+    if (confirm('Are you sure you want to clear all resume fields to start completely from scratch?')) {
+      this.resume = {
+        fullName: '',
+        jobTitle: '',
+        email: '',
+        phone: '',
+        location: '',
+        linkedin: '',
+        portfolio: '',
+        summary: '',
+        experience: [],
+        education: [],
+        skills: [],
+        projects: [],
+        certifications: [],
+        languages: [],
+        customSections: []
+      };
+      this.saveToLocalStorage();
     }
   }
 
@@ -281,6 +492,7 @@ export class ResumeBuilderComponent implements OnInit {
       this.customFont = tpl.font as any;
       this.customLayout = tpl.layout as any;
     }
+    this.saveToLocalStorage();
   }
 
   get activeEffectiveLayout(): string {
@@ -301,6 +513,8 @@ export class ResumeBuilderComponent implements OnInit {
     else if (fieldPath === 'phone') this.resume.phone = text;
     else if (fieldPath === 'location') this.resume.location = text;
     else if (fieldPath === 'summary') this.resume.summary = text;
+
+    this.saveToLocalStorage();
   }
 
   onExpInlineEdit(index: number, key: 'role' | 'company' | 'description', event: Event) {
@@ -308,6 +522,7 @@ export class ResumeBuilderComponent implements OnInit {
     if (this.resume.experience[index]) {
       this.resume.experience[index][key] = target.innerText.trim();
     }
+    this.saveToLocalStorage();
   }
 
   // --- CUSTOM SECTIONS & FORM HANDLERS ---
@@ -317,10 +532,12 @@ export class ResumeBuilderComponent implements OnInit {
       title: 'New Custom Section',
       content: '• Enter your custom details or accomplishments...'
     });
+    this.saveToLocalStorage();
   }
 
   removeCustomSection(index: number) {
     this.resume.customSections.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   addExperience() {
@@ -333,10 +550,12 @@ export class ResumeBuilderComponent implements OnInit {
       current: true,
       description: '• Key achievement or responsibility point.'
     });
+    this.saveToLocalStorage();
   }
 
   removeExperience(index: number) {
     this.resume.experience.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   addEducation() {
@@ -348,21 +567,25 @@ export class ResumeBuilderComponent implements OnInit {
       year: '2023',
       grade: 'Grade/GPA'
     });
+    this.saveToLocalStorage();
   }
 
   removeEducation(index: number) {
     this.resume.education.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   addSkill() {
     if (this.newSkillInput.trim()) {
       this.resume.skills.push(this.newSkillInput.trim());
       this.newSkillInput = '';
+      this.saveToLocalStorage();
     }
   }
 
   removeSkill(index: number) {
     this.resume.skills.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   addProject() {
@@ -373,10 +596,12 @@ export class ResumeBuilderComponent implements OnInit {
       description: 'Short project summary and metrics achieved.',
       link: 'project-link.com'
     });
+    this.saveToLocalStorage();
   }
 
   removeProject(index: number) {
     this.resume.projects.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   addCertification() {
@@ -386,10 +611,26 @@ export class ResumeBuilderComponent implements OnInit {
       issuer: 'Issuing Body',
       year: '2024'
     });
+    this.saveToLocalStorage();
   }
 
   removeCertification(index: number) {
     this.resume.certifications.splice(index, 1);
+    this.saveToLocalStorage();
+  }
+
+  addLanguage() {
+    this.resume.languages.push({
+      id: Date.now().toString(),
+      language: 'New Language',
+      proficiency: 'Fluent / Intermediate'
+    });
+    this.saveToLocalStorage();
+  }
+
+  removeLanguage(index: number) {
+    this.resume.languages.splice(index, 1);
+    this.saveToLocalStorage();
   }
 
   // --- JSON EXPORT / IMPORT ---
@@ -398,7 +639,7 @@ export class ResumeBuilderComponent implements OnInit {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.resume, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `${this.resume.fullName.replace(/\s+/g, '_')}_resume_data.json`);
+    downloadAnchor.setAttribute("download", `${(this.resume.fullName || 'Resume').replace(/\s+/g, '_')}_resume_data.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -412,8 +653,9 @@ export class ResumeBuilderComponent implements OnInit {
       reader.onload = (e: any) => {
         try {
           const parsed = JSON.parse(e.target.result);
-          if (parsed.fullName) {
+          if (parsed.fullName !== undefined) {
             this.resume = parsed;
+            this.saveToLocalStorage();
           }
         } catch (err) {
           alert('Invalid JSON File structure');
@@ -450,7 +692,7 @@ export class ResumeBuilderComponent implements OnInit {
     setTimeout(() => {
       this.aiLoading = false;
       if (this.aiPromptType === 'summary') {
-        this.aiGeneratedResult = `High-impact ${this.resume.jobTitle} with demonstrated expertise in scalable system design, cross-functional leadership, and software engineering. Leverages cutting-edge technologies and data-driven solutions to accelerate business growth, optimize application efficiency, and elevate user experience.`;
+        this.aiGeneratedResult = `High-impact ${this.resume.jobTitle || 'Professional'} with demonstrated expertise in scalable system design, cross-functional leadership, and software engineering. Leverages cutting-edge technologies and data-driven solutions to accelerate business growth, optimize application efficiency, and elevate user experience.`;
       } else if (this.aiPromptType === 'experience') {
         if (this.aiSelectedOption === 'action_verbs') {
           this.aiGeneratedResult = `• Engineered robust end-to-end features utilizing modern frameworks, reducing system downtime by 30%.\n• Spearheaded cross-team collaboration to streamline product delivery and improve user satisfaction scores by 25%.\n• Orchestrated cloud infrastructure migrations, cutting monthly hosting costs by $12,000.`;
@@ -470,6 +712,7 @@ export class ResumeBuilderComponent implements OnInit {
     } else if (this.aiPromptType === 'experience' && this.targetExperienceIndex >= 0) {
       this.resume.experience[this.targetExperienceIndex].description = this.aiGeneratedResult;
     }
+    this.saveToLocalStorage();
     this.closeAiModal();
   }
 
@@ -481,32 +724,43 @@ export class ResumeBuilderComponent implements OnInit {
     const html2canvas = (await import('html2canvas')).default;
     const jsPDF = (await import('jspdf')).default;
 
-    const opt = {
-      scale: 2,
-      useCORS: true,
-      logging: false
-    };
+    const originalTransform = element.style.transform;
+    element.style.transform = 'scale(1)';
 
-    html2canvas(element, opt).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
+      const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
+      const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
+      const imgHeightMm = (canvasHeight * pdfWidth) / canvasWidth;
+      let heightLeft = imgHeightMm;
       let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeightMm);
+      heightLeft -= pdfHeight;
 
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
+      while (heightLeft > 2) {
+        position -= pdfHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeightMm);
+        heightLeft -= pdfHeight;
       }
 
-      pdf.save(`${this.resume.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
-    });
+      pdf.save(`${(this.resume.fullName || 'Resume').replace(/\s+/g, '_')}_Resume.pdf`);
+    } catch (err) {
+      console.error('PDF Export Error:', err);
+    } finally {
+      element.style.transform = originalTransform;
+    }
   }
 }

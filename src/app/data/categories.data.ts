@@ -68,9 +68,9 @@ export const CATEGORIES_DATA: CategoryItem[] = [
     slug: '/developer-tools',
     name: 'Developer Tools',
     icon: '💻',
-    description: 'Typing Master Pro, JSON formatters, Base64 encoders/decoders, Hash generators, Regex testers, and Markdown utilities.',
+    description: 'Developer suite: Interactive SQL Masterclass, Type Master, and JSON Formatter.',
     color: 'fuchsia',
-    toolCount: 15,
+    toolCount: 3,
   },
   {
     id: 'resume-tools',

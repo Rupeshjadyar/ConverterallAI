@@ -1,0 +1,299 @@
+<div class="fragen-container">
+
+  <!-- ==================== SCREEN 1: MAIN LOBBY ==================== -->
+  <div *ngIf="currentScreen === 'lobby'" class="lobby-viewport">
+    
+    <!-- 3D Operator Backdrop -->
+    <div class="lobby-3d-bg" #lobbyCanvasContainer>
+      <canvas #lobbyCanvas></canvas>
+    </div>
+
+    <!-- UI Overlay -->
+    <div class="lobby-ui-overlay">
+      
+      <!-- Top Navigation & Balance -->
+      <header class="top-nav-bar">
+        <div class="top-left-bonus">
+          <div class="bonus-box">
+            <span class="icon-cash">$</span>
+            <span class="bonus-text">+1000</span>
+          </div>
+
+          <div class="bonus-box reward-gold">
+            <span>🎁 DAILY REWARD</span>
+            <span class="reward-val">2500</span>
+          </div>
+        </div>
+
+        <div class="top-right-balance">
+          <div class="currency-pill">
+            <span>$</span>
+            <span>{{ playerCash }}</span>
+          </div>
+
+          <button class="btn-settings">⚙️</button>
+        </div>
+      </header>
+
+      <!-- Season 1 Pass & Daily Missions Card (Right Side) -->
+      <aside class="season-panel">
+        <div class="season-header">
+          <span class="season-title">🏆 SEASON 1</span>
+          <span class="season-lvl">0 / 28</span>
+        </div>
+        <div class="season-progress-bar">
+          <div class="season-fill" style="width: 15%;"></div>
+        </div>
+
+        <div class="mission-list">
+          <div class="mission-item">
+            <div class="mission-desc">Kill 40 enemies</div>
+            <div class="mission-footer">
+              <span class="mission-prog">0 / 40</span>
+              <span class="mission-reward">$500</span>
+            </div>
+          </div>
+
+          <div class="mission-item">
+            <div class="mission-desc">Use a grenade launcher 3 times</div>
+            <div class="mission-footer">
+              <span class="mission-prog">0 / 3</span>
+              <span class="mission-reward">$500</span>
+            </div>
+          </div>
+
+          <div class="mission-item">
+            <div class="mission-desc">Claim reward for watching ads</div>
+            <div class="mission-footer">
+              <span class="mission-prog">0 / 2</span>
+              <span class="mission-reward">$100</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Bottom Action Bar -->
+      <footer class="bottom-nav-bar">
+        <div class="player-badge">
+          <span class="rank-icon">🎖️</span>
+          <span class="player-name">PLAYER 8843</span>
+        </div>
+
+        <button class="btn-arsenal" (click)="openScreen('arsenal')">
+          ARSENAL
+        </button>
+
+        <button class="btn-multiplayer" (click)="openScreen('mode-select')">
+          MULTIPLAYER
+        </button>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 2: MODE SELECT ==================== -->
+  <div *ngIf="currentScreen === 'mode-select'" class="lobby-viewport">
+    <div class="mode-select-overlay">
+      <header class="mode-header">
+        <button class="btn-back" (click)="openScreen('lobby')">‹ BACK</button>
+        <h2>CHOOSE MATCH TYPE</h2>
+        <div></div>
+      </header>
+
+      <!-- Category Selector (Solo vs Team) -->
+      <div *ngIf="modeCategory === 'main'" class="category-cards-grid">
+        <div class="cat-card" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80');" (click)="selectCategory('solo')">
+          <div class="cat-title">SOLO BATTLE</div>
+        </div>
+
+        <div class="cat-card" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80');" (click)="selectCategory('team')">
+          <div class="cat-title">TEAM BATTLE</div>
+        </div>
+      </div>
+
+      <!-- Specific Sub-Modes (Free for All, Gun Race, Sniper Only, Secondary Only) -->
+      <div *ngIf="modeCategory !== 'main'" class="modes-cards-grid">
+        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Free For All')">
+          <div class="online-badge"><span class="dot"></span> Online</div>
+          <div class="mode-name">FREE FOR ALL</div>
+        </div>
+
+        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Gun Race')">
+          <div class="online-badge"><span class="dot"></span> Online</div>
+          <div class="mode-name">GUN RACE</div>
+        </div>
+
+        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Sniper Only')">
+          <div class="online-badge"><span class="dot"></span> Online</div>
+          <div class="mode-name">SNIPER ONLY</div>
+        </div>
+
+        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Secondary Only')">
+          <div class="online-badge"><span class="dot"></span> Online</div>
+          <div class="mode-name">SECONDARY ONLY</div>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <button *ngIf="modeCategory !== 'main'" class="btn-back" (click)="modeCategory = 'main'">‹ Mode Selection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 3: ARSENAL ==================== -->
+  <div *ngIf="currentScreen === 'arsenal'" class="lobby-viewport">
+    <div class="arsenal-overlay">
+      <header class="arsenal-header">
+        <button class="btn-back" (click)="openScreen('lobby')">‹ BACK</button>
+        <h2>TACTICAL ARSENAL</h2>
+        <div class="currency-pill">$ {{ playerCash }}</div>
+      </header>
+
+      <div class="arsenal-content">
+        <div class="weapon-selector-list">
+          <div 
+            *ngFor="let w of weaponsList" 
+            class="w-card" 
+            [class.active]="selectedWeapon.id === w.id" 
+            (click)="selectWeapon(w)">
+            <h4>{{ w.name }}</h4>
+            <span>{{ w.type }}</span>
+          </div>
+        </div>
+
+        <div class="weapon-preview-panel">
+          <div class="weapon-3d-render">
+            <span>{{ selectedWeapon.icon }}</span>
+          </div>
+
+          <div class="weapon-stats-box">
+            <div class="stat-bar-item">
+              <span>DAMAGE</span>
+              <div class="val">{{ selectedWeapon.damage }}</div>
+            </div>
+            <div class="stat-bar-item">
+              <span>FIRE RATE</span>
+              <div class="val">{{ selectedWeapon.fireRate }}</div>
+            </div>
+            <div class="stat-bar-item">
+              <span>ACCURACY</span>
+              <div class="val">{{ selectedWeapon.accuracy }}%</div>
+            </div>
+            <div class="stat-bar-item">
+              <span>CAPACITY</span>
+              <div class="val">{{ selectedWeapon.clipSize }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-multiplayer" (click)="openScreen('lobby')" style="width: 100%;">
+        EQUIP WEAPON
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 4: IN-GAME 3D FPS COMBAT ==================== -->
+  <div *ngIf="currentScreen === 'in-game'" class="ingame-viewport" #gameCanvasContainer (click)="onGameViewportClick()">
+    
+    <canvas #gameCanvas></canvas>
+
+    <!-- Center Precision Crosshair -->
+    <div *ngIf="!isAdsActive && !isPaused && !isGameOver" class="crosshair-box">
+      <div class="ch-dot"></div>
+      <div class="ch-line t"></div>
+      <div class="ch-line b"></div>
+      <div class="ch-line l"></div>
+      <div class="ch-line r"></div>
+      
+      <!-- Hitmarker -->
+      <div *ngIf="showHitmarker" class="hitmarker" [class.headshot]="isHeadshot"></div>
+    </div>
+
+    <!-- Sniper Scope Overlay -->
+    <div *ngIf="isAdsActive" class="sniper-scope-overlay">
+      <div *ngIf="showHitmarker" class="hitmarker" [class.headshot]="isHeadshot"></div>
+    </div>
+
+    <!-- Real-Time Kill Feed -->
+    <div class="hud-killfeed">
+      <div *ngFor="let msg of killFeed" class="kill-item">
+        {{ msg }}
+      </div>
+    </div>
+
+    <!-- Health & Armor HUD -->
+    <div class="hud-health-armor">
+      <div class="bar-box">
+        <span class="bar-lbl">HEALTH {{ playerHealth }} / 100</span>
+        <div class="track">
+          <div class="fill-hp" [style.width.%]="playerHealth"></div>
+        </div>
+      </div>
+      <div class="bar-box">
+        <span class="bar-lbl">ARMOR {{ playerArmor }} / 100</span>
+        <div class="track">
+          <div class="fill-ap" [style.width.%]="playerArmor"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ammo HUD -->
+    <div class="hud-ammo">
+      <div class="ammo-val">{{ currentAmmo }} / {{ reserveAmmo }}</div>
+      <div class="weapon-name">{{ selectedWeapon.name }}</div>
+    </div>
+
+    <!-- Red Damage Flash -->
+    <div *ngIf="showDamageFlash" class="damage-vignette"></div>
+
+    <!-- Wave Banner -->
+    <div *ngIf="showWaveBanner" class="wave-banner">
+      {{ selectedMode }} — WAVE {{ wave }}
+    </div>
+
+    <!-- PAUSE OVERLAY -->
+    <div *ngIf="isPaused && !isGameOver" class="modal-overlay">
+      <div class="modal-card">
+        <span class="modal-badge">TACTICAL PAUSE</span>
+        <h2>POINTER UNLOCKED</h2>
+        <p class="premise">Click anywhere on the screen to lock mouse look and resume combat.</p>
+        <button class="btn-action-primary" (click)="requestPointerLock()" style="margin-bottom: 0.8rem;">
+          RESUME COMBAT ▶
+        </button>
+        <button class="btn-action-primary" (click)="exitToLobby()" style="background: #334155; color: #fff;">
+          EXIT TO LOBBY
+        </button>
+      </div>
+    </div>
+
+    <!-- GAME OVER OVERLAY -->
+    <div *ngIf="isGameOver" class="modal-overlay">
+      <div class="modal-card">
+        <span class="modal-badge danger">PERIMETER BREACHED</span>
+        <h2 class="danger">MATCH ENDED</h2>
+        <p class="premise">You eliminated {{ matchKills }} enemy soldiers!</p>
+
+        <div class="score-summary">
+          <div class="score-item">
+            <div class="label">KILLS</div>
+            <div class="value">{{ matchKills }}</div>
+          </div>
+          <div class="score-item">
+            <div class="label">EARNED</div>
+            <div class="value">${{ matchKills * 100 }}</div>
+          </div>
+        </div>
+
+        <button class="btn-action-primary" (click)="startMatch(selectedMode)">
+          RETRY MATCH 🔄
+        </button>
+        <button class="btn-action-primary" (click)="exitToLobby()" style="background: #334155; color: #fff; margin-top: 0.8rem;">
+          EXIT TO LOBBY
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>

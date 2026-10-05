@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit, PLATFORM_ID, HostBinding } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { ToolRegistryService } from '../../services/tool-registry.service';
 import { CategoryItem } from '../../data/categories.data';
 import { ToolItem } from '../../data/tools.data';
@@ -391,6 +392,7 @@ import { ToolItem } from '../../data/tools.data';
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
+      overflow: hidden;
     }
     
     .tool-name {
@@ -473,6 +475,7 @@ import { ToolItem } from '../../data/tools.data';
 export class SidebarComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private registry = inject(ToolRegistryService);
+  private router = inject(Router);
   
   categories: CategoryItem[] = this.registry.getCategories();
   openCatId: string | null = null;
@@ -490,6 +493,21 @@ export class SidebarComponent implements OnInit {
       if (saved === 'true') {
         this.isPinned.set(true);
       }
+    }
+
+    this.checkCurrentRoute(this.router.url);
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        const url = event.urlAfterRedirects || event.url;
+        this.checkCurrentRoute(url);
+      });
+  }
+
+  private checkCurrentRoute(url: string) {
+    if (url.includes('/developer-tools')) {
+      this.openCatId = 'developer-tools';
     }
   }
 

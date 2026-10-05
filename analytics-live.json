@@ -1,6 +1,6 @@
 {
-  "totalVisitors": 6,
-  "totalPageViews": 390,
+  "totalVisitors": 9,
+  "totalPageViews": 916,
   "totalToolExecutions": 0,
   "totalDataSavedMB": 0,
   "visitorSet": {
@@ -9,14 +9,17 @@
     "v_6ko4kwe3ymtiwi4nk": true,
     "v_h8pw9o4v3mtuijcwj": true,
     "v_ogdkfytfhmtx9zx3t": true,
-    "v_g3alqcbbmmtz87rd9": true
+    "v_g3alqcbbmmtz87rd9": true,
+    "v_rjv7kig1mmuu26j0t": true,
+    "v_lkvauplhcmuu3yx27": true,
+    "v_ue1i3dltymuvj9mn3": true
   },
   "topCountries": {
     "IN": {
       "code": "IN",
       "name": "India",
       "flag": "🇮🇳",
-      "count": 390
+      "count": 916
     }
   },
   "topTools": {},
@@ -94,292 +97,328 @@
       "date": "Sep 27"
     },
     "2026-09-27": {
-      "visitors": 2,
+      "visitors": 210,
       "toolRuns": 0,
       "day": "Sun",
       "date": "Sep 27"
+    },
+    "2026-09-29": {
+      "visitors": 91,
+      "toolRuns": 0,
+      "day": "Wed",
+      "date": "Sep 30"
+    },
+    "2026-09-30": {
+      "visitors": 1,
+      "toolRuns": 0,
+      "day": "Wed",
+      "date": "Sep 30"
+    },
+    "2026-10-01": {
+      "visitors": 6,
+      "toolRuns": 0,
+      "day": "Thu",
+      "date": "Oct 1"
+    },
+    "2026-10-02": {
+      "visitors": 160,
+      "toolRuns": 0,
+      "day": "Fri",
+      "date": "Oct 2"
+    },
+    "2026-10-04": {
+      "visitors": 22,
+      "toolRuns": 0,
+      "day": "Sun",
+      "date": "Oct 4"
+    },
+    "2026-10-05": {
+      "visitors": 38,
+      "toolRuns": 0,
+      "day": "Mon",
+      "date": "Oct 5"
     }
   },
   "devices": {
-    "desktop": 387,
+    "desktop": 911,
     "mobile": 0,
-    "tablet": 3
+    "tablet": 5
   },
   "browsers": {
-    "chrome": 261,
+    "chrome": 692,
     "safari": 0,
-    "edge": 129,
+    "edge": 224,
     "firefox": 0,
     "other": 0
   },
   "recentActivities": [
     {
-      "id": "1790479697080",
-      "title": "Visited /pdf-processing/word-to-pdf",
+      "id": "1791224508351",
+      "title": "Visited /typing-master",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-27T03:28:17.080Z",
+      "timestamp": "2026-10-05T18:21:48.351Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790479642420",
-      "title": "Visited /audio-processing/audio-joiner",
+      "id": "1791224491190",
+      "title": "Visited /developer-tools/sql",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-27T03:27:22.420Z",
+      "timestamp": "2026-10-05T18:21:31.190Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448416130",
-      "title": "Visited /audio-processing/audio-joiner",
+      "id": "1791224439519",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:46:56.130Z",
+      "timestamp": "2026-10-05T18:20:39.521Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448413921",
-      "title": "Visited /audio-processing/format-converter",
+      "id": "1791223900723",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:46:53.921Z",
+      "timestamp": "2026-10-05T18:11:40.723Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448412186",
-      "title": "Visited /audio-processing/video-to-audio",
+      "id": "1791223870715",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:46:52.186Z",
+      "timestamp": "2026-10-05T18:11:10.715Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448393003",
-      "title": "Visited /audio-processing/audio-compressor",
+      "id": "1791223820300",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:46:33.003Z",
+      "timestamp": "2026-10-05T18:10:20.300Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448355723",
-      "title": "Visited /audio-processing/equalizer",
+      "id": "1791222712034",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:55.723Z",
+      "timestamp": "2026-10-05T17:51:52.034Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448350678",
-      "title": "Visited /audio-processing/audio-reverser",
+      "id": "1791222088414",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:50.678Z",
+      "timestamp": "2026-10-05T17:41:28.414Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448344397",
-      "title": "Visited /audio-processing/speed-changer",
+      "id": "1791221894083",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:44.397Z",
+      "timestamp": "2026-10-05T17:38:14.083Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448339438",
-      "title": "Visited /audio-processing/volume-booster",
+      "id": "1791221873023",
+      "title": "Visited /developer-tools/json-formatter",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:39.438Z",
+      "timestamp": "2026-10-05T17:37:53.023Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448330998",
-      "title": "Visited /audio-processing/audio-reverser",
+      "id": "1791221646256",
+      "title": "Visited /typing-master",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:30.998Z",
+      "timestamp": "2026-10-05T17:34:06.256Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448316453",
-      "title": "Visited /audio-processing/speed-changer",
+      "id": "1791221626168",
+      "title": "Visited /developer-tools/sql/syntax",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:16.453Z",
+      "timestamp": "2026-10-05T17:33:46.168Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448312164",
-      "title": "Visited /audio-processing/volume-booster",
+      "id": "1791221617793",
+      "title": "Visited /developer-tools/sql/intro",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:45:12.164Z",
+      "timestamp": "2026-10-05T17:33:37.793Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448286396",
-      "title": "Visited /audio-processing/audio-cutter",
+      "id": "1791221610566",
+      "title": "Visited /developer-tools/sql/dql",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:44:46.396Z",
+      "timestamp": "2026-10-05T17:33:30.566Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448280372",
-      "title": "Visited /audio-processing/audio-editor",
+      "id": "1791221281191",
+      "title": "Visited /developer-tools/sql/foreign-keys",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:44:40.372Z",
+      "timestamp": "2026-10-05T17:28:01.191Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448272323",
-      "title": "Visited /audio-processing/voice-cloning",
+      "id": "1791221269531",
+      "title": "Visited /developer-tools/sql/intro",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:44:32.323Z",
+      "timestamp": "2026-10-05T17:27:49.531Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448252014",
-      "title": "Visited /audio-processing/text-to-mp3",
+      "id": "1791221261726",
+      "title": "Visited /developer-tools/sql",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:44:12.014Z",
+      "timestamp": "2026-10-05T17:27:41.726Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448220626",
-      "title": "Visited /games/spelling-bee",
+      "id": "1791221222529",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:43:40.626Z",
+      "timestamp": "2026-10-05T17:27:02.529Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448217333",
-      "title": "Visited /games/ludo",
+      "id": "1791221211378",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:43:37.333Z",
+      "timestamp": "2026-10-05T17:26:51.378Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448214385",
-      "title": "Visited /games/snakes-ladders",
+      "id": "1791218405926",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:43:34.385Z",
+      "timestamp": "2026-10-05T16:40:05.926Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448201866",
-      "title": "Visited /games/teen-do-paanch",
+      "id": "1791218387711",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:43:21.866Z",
+      "timestamp": "2026-10-05T16:39:47.711Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448160099",
-      "title": "Visited /games/teen-patti",
+      "id": "1791218373242",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:42:40.099Z",
+      "timestamp": "2026-10-05T16:39:33.242Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448149517",
-      "title": "Visited /games/tic-tac-toe",
+      "id": "1791218345349",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:42:29.517Z",
+      "timestamp": "2026-10-05T16:39:05.349Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448140306",
-      "title": "Visited /games/brick-breaker",
+      "id": "1791218312634",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:42:20.306Z",
+      "timestamp": "2026-10-05T16:38:32.634Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448126829",
-      "title": "Visited /games/pong",
+      "id": "1791218285748",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:42:06.829Z",
+      "timestamp": "2026-10-05T16:38:05.748Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790448100101",
-      "title": "Visited /",
+      "id": "1791218197651",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:41:40.101Z",
+      "timestamp": "2026-10-05T16:36:37.651Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790447786763",
-      "title": "Visited /pdf-processing/remove-password",
+      "id": "1791218165471",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:36:26.763Z",
+      "timestamp": "2026-10-05T16:36:05.471Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790447779225",
-      "title": "Visited /pdf-processing/remove-password",
+      "id": "1791218105404",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:36:19.225Z",
+      "timestamp": "2026-10-05T16:35:05.404Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790447522779",
-      "title": "Visited /pdf-processing/remove-password",
+      "id": "1791218045273",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:32:02.779Z",
+      "timestamp": "2026-10-05T16:34:05.273Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1790447463508",
-      "title": "Visited /audio-processing/audio-editor",
+      "id": "1791218017617",
+      "title": "Visited /developer-tools",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-09-26T18:31:03.508Z",
+      "timestamp": "2026-10-05T16:33:37.617Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     }

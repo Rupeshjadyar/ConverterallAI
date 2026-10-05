@@ -28,6 +28,7 @@ export class Home {
   audioTools: ToolItem[] = this.registry.getTopToolsByCategory('audio-tools', 6);
   calcTools: ToolItem[] = this.registry.getTopToolsByCategory('calculators', 6);
   gameTools: ToolItem[] = this.registry.getTopToolsByCategory('games', 6);
+  devTools: ToolItem[] = this.registry.getTopToolsByCategory('developer-tools', 6);
 
   stats = [
     { value: '500+', label: 'Target Tools & Utilities' },

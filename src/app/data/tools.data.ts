@@ -6,7 +6,7 @@ export interface ToolItem {
   shortDesc: string;
   fullDesc: string;
   icon: string;
-  badge?: 'NEW' | 'PRO' | 'AI' | 'FREE' | 'POPULAR';
+  badge?: 'NEW' | 'PRO' | 'AI' | 'FREE' | 'POPULAR' | '3D FPS' | 'HOT' | 'ALL-IN-1';
   isPopular?: boolean;
   isLatest?: boolean;
   isAI?: boolean;
@@ -62,6 +62,18 @@ export const TOOLS_DATA: ToolItem[] = [
     isLatest: true
   },
   // ==================== GAMES ====================
+  {
+    id: 'frontline-survivor',
+    name: 'Battleground (3D FPS)',
+    slug: '/games/frontline-survivor',
+    categoryId: 'games',
+    shortDesc: 'First-person 3D survival shooter! Pointer-lock mouse aim, WASD movement, sprint, jump & raycast laser shooting.',
+    fullDesc: 'First-person 3D survival arena shooter powered by Three.js. Features true FPS mouse-look controls, camera-relative WASD movement, sprinting, jumping, and precision raycast shooting against advancing 3D sentry bot waves.',
+    icon: '🪖',
+    badge: '3D FPS',
+    isPopular: true,
+    isLatest: true
+  },
   {
     id: 'warfare-3000',
     name: 'Warfare 3000 (Tank Arena)',
@@ -650,5 +662,42 @@ export const TOOLS_DATA: ToolItem[] = [
     shortDesc: 'Add or subtract time, calculate durations.',
     fullDesc: 'Calculate hours and minutes worked or duration between dates.',
     icon: '⏱️'
+  },
+
+  // ==================== DEVELOPER TOOLS ====================
+  {
+    id: 'sql',
+    name: 'SQL',
+    slug: '/developer-tools/sql',
+    categoryId: 'developer-tools',
+    shortDesc: 'Complete in-browser SQL Masterclass with DDL, DML, DQL, DCL, TCL, Joins & live query sandbox.',
+    fullDesc: 'Interactive SQL learning curriculum with internal navigation: Introduction, Syntax, DDL, DML, DQL, DCL, TCL, Joins, and sandbox.',
+    icon: '🗄️',
+    badge: 'PRO',
+    isPopular: true,
+    isLatest: true
+  },
+  {
+    id: 'typing-master',
+    name: 'Type Master',
+    slug: '/typing-master',
+    categoryId: 'developer-tools',
+    shortDesc: 'Master touch typing with interactive finger drills, keyboard heatmap, and live WPM scoring.',
+    fullDesc: 'Full touch-typing course with home row drills, real-time typing test, accuracy, and speed analytics.',
+    icon: '⌨️',
+    badge: 'POPULAR',
+    isPopular: true
+  },
+  {
+    id: 'json-formatter',
+    name: 'JSON Formatter',
+    slug: '/developer-tools/json-formatter',
+    categoryId: 'developer-tools',
+    shortDesc: 'Prettify, format, validate, and minify JSON documents with instant syntax error detection.',
+    fullDesc: 'Direct in-browser JSON formatter and validator with two-way split view, minify, beautify, and copy.',
+    icon: '🧩',
+    badge: 'POPULAR',
+    isPopular: true
   }
 ];
+

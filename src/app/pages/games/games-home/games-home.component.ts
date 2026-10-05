@@ -643,11 +643,11 @@ export class GamesHomeComponent {
     }
 
     if (genre === 'action') {
-      list = list.filter(g => ['warfare-3000', 'snake', 'brick-breaker', 'pong'].includes(g.id));
+      list = list.filter(g => ['frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong'].includes(g.id));
     } else if (genre === 'board') {
       list = list.filter(g => ['chess', 'teen-patti', 'teen-do-paanch', 'snakes-ladders', 'ludo', 'tic-tac-toe'].includes(g.id));
     } else if (genre === 'arcade') {
-      list = list.filter(g => ['warfare-3000', 'snake', 'brick-breaker', 'pong', 'snakes-ladders'].includes(g.id));
+      list = list.filter(g => ['frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong', 'snakes-ladders'].includes(g.id));
     } else if (genre === 'puzzle') {
       list = list.filter(g => ['sudoku', 'memory-match', 'typing-test', 'spelling-bee'].includes(g.id));
     } else if (genre === 'multiplayer') {

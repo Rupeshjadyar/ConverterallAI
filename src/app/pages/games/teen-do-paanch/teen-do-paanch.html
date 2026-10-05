@@ -1,114 +1,188 @@
 <div class="tdp-container">
-  <div class="tdp-header">
-    <h1>🃏 3-2-5 Patte Wala</h1>
-    <div class="trump-info">
-      Trump: <span class="trump-suit" [class.red]="isRedSuit(trumpSuit())">{{ trumpSuit() }}</span>
+  
+  <!-- Header Bar -->
+  <header class="tdp-header-bar">
+    <div class="title-area">
+      <h1>🃏 3-2-5 (Teen Do Paanch)</h1>
+      <p>Classic Indian 3-Player Trick-Taking Card Table</p>
     </div>
-    <div class="scores-row">
-      @for (name of playerNames; track $index) {
-        <div class="score-chip">
-          {{ name }}: <strong>{{ scores()[$index] }}</strong> wins
-          <small>(Need {{ targets[$index] }} tricks)</small>
-        </div>
-      }
+
+    <div class="header-actions">
+      <button class="btn-room" (click)="showRoomModal = true">
+        👥 Live Room / Share Code
+      </button>
+
+      <button class="btn-icon-sound" (click)="toggleMute()">
+        <span>{{ isMuted ? '🔇' : '🔊' }}</span>
+        <span>{{ isMuted ? 'Muted' : 'Sound' }}</span>
+      </button>
+
+      <a routerLink="/games" class="btn-icon-sound" style="text-decoration: none;">
+        <span>🔙</span>
+        <span>Exit Hub</span>
+      </a>
     </div>
+  </header>
+
+  <!-- Active Room Info Bar -->
+  <div class="room-status-bar">
+    <div>
+      <span>MODE: </span>
+      <span class="room-id">{{ isMultiplayer ? 'LIVE MULTIPLAYER' : 'OFFLINE VS BOTS' }}</span>
+      <span *ngIf="roomId" style="margin-left: 1rem;">ROOM CODE: <strong class="room-id">{{ roomId }}</strong></span>
+    </div>
+
+    <button *ngIf="roomId" class="btn-copy-link" (click)="copyRoomLink()">
+      📋 Copy Share Link
+    </button>
   </div>
 
-  <div class="tdp-board">
-    <!-- Bot 2 (top) -->
-    <div class="bot-area top-bot">
-      <div class="player-label">🤖 Bot 2 (needs {{ targets[2] }}) | Tricks: {{ tricks()[2] }}</div>
-      <div class="bot-cards">
-        @for (c of hands()[2]; track $index) {
-          <div class="card-back"></div>
-        }
-      </div>
-      @if (getTrickCard(2)) {
-        <div class="played-card" [class.red]="isRedSuit(getTrickCard(2)!.suit)">
-          {{ getTrickCard(2)!.rank }}{{ getTrickCard(2)!.suit }}
+  <!-- ==================== OVAL GREEN FELT TABLE (MATCHING SCREENSHOT) ==================== -->
+  <div class="table-wrapper">
+    <div class="green-felt-table">
+      
+      <!-- Top Hostess Avatar & Tip Button -->
+      <div class="dealer-hostess-area">
+        <div class="hostess-avatar">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Hostess" />
         </div>
-      }
-    </div>
-
-    <!-- Middle area - current trick -->
-    <div class="trick-area">
-      <div class="trick-center">
-        <div class="message-box">{{ message() }}</div>
-        @if (trickWinner()) {
-          <div class="trick-winner-badge">✅ {{ trickWinner() }} won trick!</div>
-        }
+        <button class="btn-tip" (click)="tipHostess()">TIP $100</button>
       </div>
-    </div>
 
-    <!-- Bot 1 (left) -->
-    <div class="bot-area left-bot">
-      <div class="player-label">🤖 Bot 1 (needs {{ targets[1] }}) | Tricks: {{ tricks()[1] }}</div>
-      <div class="bot-cards vertical">
-        @for (c of hands()[1]; track $index) {
-          <div class="card-back small"></div>
-        }
-      </div>
-      @if (getTrickCard(1)) {
-        <div class="played-card" [class.red]="isRedSuit(getTrickCard(1)!.suit)">
-          {{ getTrickCard(1)!.rank }}{{ getTrickCard(1)!.suit }}
+      <!-- SEAT 2 (Top-Left: Kinsley) -->
+      <div class="player-seat seat-left">
+        <div class="avatar-box">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80" alt="Kinsley" />
+          <div class="quota-badge" [class.completed]="tricks()[2] >= targets[2]">
+            {{ tricks()[2] }}/{{ targets[2] }}
+          </div>
         </div>
-      }
-    </div>
 
-    <!-- Center played cards display -->
-    <div class="center-table">
-      <div class="table-felt">
-        @for (t of currentTrick(); track t.player) {
-          <div class="table-card" [class.red]="isRedSuit(t.card.suit)">
+        <div class="player-info-pill">
+          <span class="name">{{ playerNames[2] }}</span>
+          <span class="chips">Tricks: {{ tricks()[2] }}</span>
+        </div>
+      </div>
+
+      <!-- SEAT 1 (Top-Right: Emma) -->
+      <div class="player-seat seat-right">
+        <div class="avatar-box">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80" alt="Emma" />
+          <div class="quota-badge" [class.completed]="tricks()[1] >= targets[1]">
+            {{ tricks()[1] }}/{{ targets[1] }}
+          </div>
+        </div>
+
+        <div class="player-info-pill">
+          <span class="name">{{ playerNames[1] }}</span>
+          <span class="chips">Tricks: {{ tricks()[1] }}</span>
+        </div>
+      </div>
+
+      <!-- SEAT 0 (Bottom-Left: You / Guest) -->
+      <div class="player-seat seat-you">
+        <div class="avatar-box">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="You" />
+          <div class="quota-badge" [class.completed]="tricks()[0] >= targets[0]">
+            {{ tricks()[0] }}/{{ targets[0] }}
+          </div>
+        </div>
+
+        <div class="player-info-pill">
+          <span class="name">{{ playerNames[0] }}</span>
+          <span class="chips">$ {{ playerChips }}</span>
+        </div>
+      </div>
+
+      <!-- Center Table Pot & Round Indicator -->
+      <div class="center-table-pot">
+        <div class="round-badge">
+          Round {{ currentRound }} / 3
+        </div>
+
+        <div class="pot-coins-box">
+          <span class="coin-icon">💰</span>
+          <span class="pot-amount">$ {{ currentPot }}</span>
+        </div>
+
+        <div style="font-size: 0.85rem; color: #fbbf24; font-weight: 800; margin-top: 0.2rem;">
+          Trump: <span [style.color]="isRedSuit(trumpSuit()) ? '#ef4444' : '#fff'">{{ trumpSuit() }}</span>
+        </div>
+
+        <!-- Played Cards Pile in Center Table -->
+        <div class="played-cards-pile" *ngIf="currentTrick().length > 0">
+          <div 
+            *ngFor="let t of currentTrick()" 
+            class="played-card-item"
+            [class.red-suit]="isRedSuit(t.card.suit)">
             <div class="tc-rank">{{ t.card.rank }}</div>
             <div class="tc-suit">{{ t.card.suit }}</div>
-            <div class="tc-player">{{ playerNames[t.player] }}</div>
+            <div class="tc-owner">{{ playerNames[t.player] }}</div>
           </div>
-        }
+        </div>
       </div>
+
+      <!-- Player Hand Fan at Bottom -->
+      <div class="player-hand-fan">
+        <ng-container *ngIf="gamePhase() === 'play'">
+          <button 
+            *ngFor="let card of hands()[0]"
+            class="card-btn"
+            [class.red-suit]="isRedSuit(card.suit)"
+            (click)="playCard(card)"
+            [disabled]="currentTrick().some(t => t.player === 0)">
+            <span class="card-top">{{ card.rank }}</span>
+            <span class="card-center-suit">{{ card.suit }}</span>
+            <span class="card-bottom">{{ card.rank }}</span>
+          </button>
+        </ng-container>
+
+        <button *ngIf="gamePhase() === 'deal'" class="btn-room" (click)="deal()" style="padding: 1rem 2.5rem; font-size: 1.1rem;">
+          🎴 Deal Cards
+        </button>
+      </div>
+
+      <!-- Right Table Controls -->
+      <div class="table-right-controls">
+        <button class="btn-action-icon" (click)="deal()">
+          🎴
+          <span class="lbl">Deal</span>
+        </button>
+        <button class="btn-action-icon" (click)="toggleMute()">
+          🔊
+          <span class="lbl">Sound</span>
+        </button>
+      </div>
+
     </div>
   </div>
 
-  <!-- Player hand (bottom) -->
-  <div class="player-area">
-    <div class="player-label-you">👤 You (needs {{ targets[0] }}) | Tricks: {{ tricks()[0] }}</div>
+  <!-- Room Modal Overlay -->
+  <div *ngIf="showRoomModal" class="modal-overlay">
+    <div class="modal-card">
+      <h2>LIVE MULTIPLAYER ROOM</h2>
+      <p>Create a room code to play live with friends or enter a 6-digit code to join!</p>
 
-    @if (gamePhase() === 'deal') {
-      <button class="btn-deal" (click)="deal()">🎴 Deal Cards</button>
-    }
-
-    @if (gamePhase() === 'play') {
-      <div class="hand">
-        @for (card of hands()[0]; track $index) {
-          <button
-            class="card"
-            [class.red]="isRedSuit(card.suit)"
-            [class.selected]="selectedCard() === card"
-            (click)="playCard(card)"
-            [disabled]="currentTrick().some(t => t.player === 0)">
-            <span class="rank">{{ card.rank }}</span>
-            <span class="suit">{{ card.suit }}</span>
-          </button>
-        }
+      <div class="room-input-box">
+        <input 
+          type="text" 
+          [(ngModel)]="inputRoomCode" 
+          placeholder="ENTER ROOM CODE (E.G. TDP-8492)" 
+          maxlength="8" 
+        />
+        <button class="btn-action-primary" (click)="joinRoom(inputRoomCode)" style="width: 120px;">
+          JOIN
+        </button>
       </div>
-      @if (currentTrick().some(t => t.player === 0)) {
-        <p class="waiting-msg">⏳ Waiting for bots...</p>
-      }
-    }
 
-    @if (gamePhase() === 'result') {
-      <div class="result-panel">
-        <h2>Round Over!</h2>
-        <div class="final-tricks">
-          @for (name of playerNames; track $index) {
-            <div class="result-row" [class.success]="tricks()[$index] >= targets[$index]" [class.fail]="tricks()[$index] < targets[$index]">
-              {{ name }}: {{ tricks()[$index] }} / {{ targets[$index] }} tricks
-              {{ tricks()[$index] >= targets[$index] ? '✅' : '❌' }}
-            </div>
-          }
-        </div>
-        <button class="btn-deal" (click)="deal()">🔄 New Round</button>
-      </div>
-    }
+      <button class="btn-action-primary" (click)="createRoom()" style="margin-bottom: 0.8rem;">
+        ➕ CREATE NEW ROOM CODE
+      </button>
+
+      <button class="btn-action-primary" (click)="playVsBots()" style="background: #334155; color: #fff;">
+        🤖 PLAY VS BOTS (OFFLINE)
+      </button>
+    </div>
   </div>
+
 </div>

@@ -729,60 +729,329 @@ input:focus, textarea:focus {
 }
 
 .preview-toolbar {
-  height: 44px;
+  height: 48px;
   background: #0f172a;
   border-bottom: 1px solid #1e293b;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   font-size: 0.8rem;
   color: #94a3b8;
+  gap: 12px;
 }
 
-.active-tpl-badge strong {
+.page-count-badge {
+  background: #1e293b;
   color: #38bdf8;
+  border: 1px solid #334155;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  margin-left: 6px;
 }
 
-.edit-hint {
-  color: #c084fc;
-  font-weight: 500;
+.page-count-badge.multi-page {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.page-fit-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-fit-one {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+.btn-fit-one:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.btn-fit-one-full {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.btn-fit-one-full:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.quick-select-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #1e293b;
+  padding: 2px 4px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.qs-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  padding-left: 4px;
+  font-weight: 600;
+}
+
+.qs-btn {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.qs-btn:hover {
+  color: #ffffff;
+  background: #334155;
+}
+
+.qs-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.opt-btn-group {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.opt-btn {
+  flex: 1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.opt-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
 }
 
 .zoom-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.zoom-controls button {
+  gap: 4px;
   background: #1e293b;
   border: 1px solid #334155;
-  color: #f8fafc;
-  width: 26px;
-  height: 26px;
+  border-radius: 6px;
+  padding: 3px 6px;
+  height: 30px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.zoom-btn, .zoom-fit-btn, .zoom-reset-btn {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  height: 22px;
   border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.15s;
+  padding: 0 7px;
+  line-height: 1;
+}
+
+.zoom-btn {
+  width: 24px;
+  padding: 0;
+}
+
+.zoom-btn:hover:not(:disabled), .zoom-fit-btn:hover, .zoom-reset-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.zoom-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.zoom-val {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+  min-width: 38px;
+  text-align: center;
+  font-family: monospace;
 }
 
 .document-viewport {
   flex: 1;
-  overflow: auto;
-  padding: 40px 20px;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  padding: 30px 40px 100px 40px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: safe center;
+  justify-content: flex-start;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.a4-sheet {
-  width: 794px; /* Proportional A4 Width */
-  min-height: 1123px; /* Proportional A4 Height */
-  background: #ffffff;
-  color: #1e293b;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-  box-sizing: border-box;
+.pages-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   transform-origin: top center;
   transition: transform 0.2s ease;
+  padding-bottom: 60px;
+  margin: 0 auto;
+  min-width: min-content;
+}
+
+.novoresume-page-card {
+  width: 794px;
+  height: 1123px;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 4px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  margin-bottom: 36px;
+  position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content-clipper {
+  width: 794px;
+  height: 1085px;
+  overflow: hidden;
+  position: relative;
+}
+
+.page-content-shift {
+  width: 794px;
+  min-height: 1085px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.15s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content-shift .tpl-render-container {
+  min-height: 1085px;
+  flex: 1;
+}
+
+.novoresume-page-footer {
+  height: 38px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: auto;
+  user-select: none;
+}
+
+.watermark-tag {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.hidden-pdf-target {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 794px;
+  background: #ffffff;
+}
+
+/* Font Scale & Spacing Rules */
+.font-scale-small {
+  font-size: 12.5px !important;
+}
+.font-scale-small h1, .font-scale-small .header-name, .font-scale-small .banner-name { font-size: 1.8rem !important; }
+.font-scale-small h2, .font-scale-small .main-sec-title, .font-scale-small .side-sec-title { font-size: 0.85rem !important; margin-top: 10px !important; margin-bottom: 6px !important; }
+.font-scale-small .exp-desc-text, .font-scale-small .proj-desc-text, .font-scale-small .summary-p { font-size: 0.78rem !important; line-height: 1.35 !important; }
+
+.font-scale-large {
+  font-size: 15.5px !important;
+}
+.font-scale-large h1, .font-scale-large .header-name, .font-scale-large .banner-name { font-size: 2.5rem !important; }
+.font-scale-large h2, .font-scale-large .main-sec-title { font-size: 1.05rem !important; margin-top: 22px !important; margin-bottom: 12px !important; }
+
+.spacing-compact .sidebar-col, 
+.spacing-compact .main-col, 
+.spacing-compact .creative-body, 
+.spacing-compact .min-body,
+.spacing-compact .top-banner {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+}
+.spacing-compact .sidebar-section, 
+.spacing-compact .main-sec, 
+.spacing-compact .exp-card, 
+.spacing-compact .proj-card {
+  margin-bottom: 8px !important;
+}
+
+.spacing-spacious .sidebar-col, 
+.spacing-spacious .main-col, 
+.spacing-spacious .creative-body, 
+.spacing-spacious .min-body,
+.spacing-spacious .top-banner {
+  padding-top: 45px !important;
+  padding-bottom: 45px !important;
+}
+.spacing-spacious .sidebar-section, 
+.spacing-spacious .main-sec, 
+.spacing-spacious .exp-card, 
+.spacing-spacious .proj-card {
+  margin-bottom: 24px !important;
 }
 
 /* INLINE EDITABLE HIGHLIGHTS */
@@ -811,13 +1080,16 @@ input:focus, textarea:focus {
 /* --- TEMPLATE 1: MODERN EXECUTIVE --- */
 .tpl-modern-executive {
   display: flex;
-  min-height: 1123px;
+  min-height: auto;
 }
 
 .tpl-modern-executive .sidebar-col {
   width: 260px;
   padding: 40px 24px;
   color: #ffffff;
+  align-self: stretch;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 .tpl-modern-executive .sidebar-section {
@@ -888,6 +1160,9 @@ input:focus, textarea:focus {
   flex: 1;
   padding: 40px;
   background: #ffffff;
+  align-self: stretch;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
 .tpl-modern-executive .header-name {
@@ -1074,7 +1349,7 @@ input:focus, textarea:focus {
 .tpl-tech-developer {
   background: #0f172a;
   color: #f8fafc;
-  min-height: 1123px;
+  min-height: auto;
   font-family: 'Courier New', monospace;
 }
 
