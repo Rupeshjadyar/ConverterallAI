@@ -39,6 +39,11 @@ app.get('/googleabc606346e17bc34.html', (req: Request, res: Response) => {
   res.type('text/html').send('google-site-verification: googleabc606346e17bc34.html');
 });
 
+/* Google AdSense ads.txt Endpoint */
+app.get('/ads.txt', (req: Request, res: Response) => {
+  res.type('text/plain').send('google.com, pub-9707682105347147, DIRECT, f08c47fec0942fa0\n');
+});
+
 /* ═══════════════════════════════════════════════════════════════
    REAL-TIME GLOBAL TELEMETRY & ANALYTICS BACKEND
    ═══════════════════════════════════════════════════════════════ */

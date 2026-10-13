@@ -66,7 +66,7 @@ declare global {
   `]
 })
 export class AdBannerComponent implements AfterViewInit {
-  @Input() adClient: string = 'ca-pub-0000000000000000'; // Replace with actual Publisher ID
+  @Input() adClient: string = 'ca-pub-9707682105347147';
   @Input() adSlot: string = '0000000000';
   @Input() adFormat: string = 'auto';
   @Input() responsive: boolean = true;
