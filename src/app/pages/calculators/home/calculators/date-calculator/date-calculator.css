@@ -74,6 +74,12 @@
   font-size: 0.875rem;
   color: #a0aec0;
 }
+.date-note {
+  font-size: 0.85rem;
+  color: #38bdf8;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
 .details-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

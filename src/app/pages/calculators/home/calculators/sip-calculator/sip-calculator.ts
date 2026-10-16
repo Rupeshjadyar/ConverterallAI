@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-sip-calculator',
@@ -20,13 +19,10 @@ export class SipCalculator implements OnInit {
   totalValue: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.calculateSip();
   }
 
@@ -52,13 +48,5 @@ export class SipCalculator implements OnInit {
     this.investedAmount = Math.round(invested);
     this.totalValue = Math.round(futureValue);
     this.estReturns = Math.round(futureValue - invested);
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('SIP Calculator - Calculate Mutual Fund SIP Returns');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Calculate the future value of your Mutual Fund SIP investments easily with our free online SIP calculator.'
-    });
   }
 }

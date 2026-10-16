@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
@@ -15,11 +14,6 @@ export class CropperComponent {
   imageChangedEvent: any = '';
   croppedImage: any = '';
   aspectRatio: number = 4 / 3;
-
-  constructor(private title: Title, private meta: Meta) {
-    this.title.setTitle('Image Cropper - Crop Photos Online');
-    this.meta.updateTag({ name: 'description', content: 'Crop, rotate, and resize your images perfectly.' });
-  }
 
   fileChangeEvent(event: any): void {
     this.imageChangedEvent = event;
@@ -44,5 +38,10 @@ export class CropperComponent {
 
   setRatio(ratio: number) {
     this.aspectRatio = ratio;
+  }
+
+  resetImage() {
+    this.imageChangedEvent = '';
+    this.croppedImage = '';
   }
 }

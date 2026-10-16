@@ -34,6 +34,9 @@
         <button class="ratio-btn" [class.active]="aspectRatio === 16/9" (click)="setRatio(16/9)">16:9</button>
         <button class="ratio-btn" [class.active]="aspectRatio === 3/4" (click)="setRatio(3/4)">3:4</button>
       </div>
+      <div class="change-image-container">
+        <button class="change-image-btn" (click)="resetImage()">Change Image</button>
+      </div>
     </div>
   </div>
 

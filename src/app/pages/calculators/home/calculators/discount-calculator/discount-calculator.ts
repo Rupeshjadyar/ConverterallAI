@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-discount-calculator',
@@ -17,19 +16,25 @@ export class DiscountCalculator implements OnInit {
 
   savingAmount: number | null = null;
   finalPrice: number | null = null;
+  discountError: string = '';
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.calculateDiscount();
   }
 
   calculateDiscount(): void {
+    if (this.discountPercent !== null && this.discountPercent > 100) {
+      this.discountError = 'Discount cannot exceed 100%';
+    } else if (this.discountPercent !== null && this.discountPercent < 0) {
+      this.discountError = 'Discount cannot be negative';
+    } else {
+      this.discountError = '';
+    }
+
     if (this.originalPrice === null || isNaN(this.originalPrice) || this.originalPrice <= 0) {
       this.savingAmount = null;
       this.finalPrice = null;
@@ -37,22 +42,16 @@ export class DiscountCalculator implements OnInit {
     }
 
     const price = this.originalPrice;
-    const discount = this.discountPercent !== null && !isNaN(this.discountPercent) ? this.discountPercent : 0;
-    const tax = this.additionalTaxPercent !== null && !isNaN(this.additionalTaxPercent) ? this.additionalTaxPercent : 0;
+    const rawDiscount = this.discountPercent !== null && !isNaN(this.discountPercent) ? this.discountPercent : 0;
+    const discount = Math.min(100, Math.max(0, rawDiscount));
+    const rawTax = this.additionalTaxPercent !== null && !isNaN(this.additionalTaxPercent) ? this.additionalTaxPercent : 0;
+    const tax = Math.max(0, rawTax);
 
     const discountValue = (price * discount) / 100;
-    const priceAfterDiscount = price - discountValue;
+    const priceAfterDiscount = Math.max(0, price - discountValue);
     const taxValue = (priceAfterDiscount * tax) / 100;
 
     this.savingAmount = Number(discountValue.toFixed(2));
     this.finalPrice = Number((priceAfterDiscount + taxValue).toFixed(2));
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('Discount Calculator - Save Money Calculation');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Calculate final prices after discounts and taxes. Find exactly how much you save.'
-    });
   }
 }

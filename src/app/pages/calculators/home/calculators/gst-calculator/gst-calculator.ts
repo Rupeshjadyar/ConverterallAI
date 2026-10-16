@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-gst-calculator',
@@ -22,13 +21,10 @@ export class GstCalculator implements OnInit {
   totalAmount: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.calculateGst();
   }
 
@@ -70,13 +66,5 @@ export class GstCalculator implements OnInit {
     this.totalGst = null;
     this.netAmount = null;
     this.totalAmount = null;
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('GST Calculator - Calculate GST Online');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Calculate Goods and Services Tax (GST) easily. Supports GST inclusive and exclusive calculations with details of CGST and SGST.'
-    });
   }
 }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
 import jsPDF from 'jspdf';
@@ -44,10 +43,7 @@ export class ImageToPdfComponent {
     { id: 'pdf-processing', name: 'PDF Toolkit', icon: '📚', route: '/pdf-processing' }
   ];
 
-  constructor(private title: Title, private meta: Meta, private router: Router, public themeService: ThemeService) {
-    this.title.setTitle('Create Ultra Premium PDF - Pro Image to PDF Converter');
-    this.meta.updateTag({ name: 'description', content: 'Transform images into professional PDF documents — fast, secure, and elegant with 16-bit compression and multi-page reordering.' });
-  }
+  constructor(private router: Router, public themeService: ThemeService) {}
 
   navigateTo(route: string, id: string) {
     this.activeNavTab = id;

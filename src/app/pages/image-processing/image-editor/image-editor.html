@@ -95,18 +95,8 @@
       <div class="tool-inspector" *ngIf="activeTool === 'crop'">
         <div class="panel-section-head">CROP OPTIONS</div>
         <div class="inspector-body">
-          <div class="opt-row">
-            <label>Aspect Ratio</label>
-            <select [(ngModel)]="aspectRatio" class="pw-select">
-              <option value="Freeform">Freeform</option>
-              <option value="16:9">16:9 Landscape</option>
-              <option value="4:3">4:3 Standard</option>
-              <option value="1:1">1:1 Square</option>
-              <option value="9:16">9:16 Portrait / Story</option>
-            </select>
-          </div>
           <div class="opt-row toggle-row">
-            <label>Rule of Thirds Overlay</label>
+            <label>Grid Overlay (Rule of Thirds)</label>
             <label class="pw-switch">
               <input type="checkbox" [(ngModel)]="ruleOfThirds" (change)="applyChanges()"/>
               <span class="slider-round"></span>
@@ -459,18 +449,8 @@
 
         <!-- 3. CROP & ROTATE POPUP BODY -->
         <div *ngIf="activeTool === 'crop'" class="popup-tool-section">
-          <div class="opt-row">
-            <label>Aspect Ratio</label>
-            <select [(ngModel)]="aspectRatio" class="pw-select">
-              <option value="Freeform">Freeform</option>
-              <option value="16:9">16:9 Landscape</option>
-              <option value="4:3">4:3 Standard</option>
-              <option value="1:1">1:1 Square</option>
-              <option value="9:16">9:16 Portrait / Story</option>
-            </select>
-          </div>
-          <div class="opt-row toggle-row" style="margin-top:0.4rem;">
-            <label>Rule of Thirds Overlay</label>
+          <div class="opt-row toggle-row">
+            <label>Grid Overlay (Rule of Thirds)</label>
             <label class="pw-switch">
               <input type="checkbox" [(ngModel)]="ruleOfThirds" (change)="applyChanges()"/>
               <span class="slider-round"></span>

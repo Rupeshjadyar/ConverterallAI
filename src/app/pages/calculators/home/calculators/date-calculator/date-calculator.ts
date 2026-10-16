@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-date-calculator',
@@ -18,15 +17,13 @@ export class DateCalculator implements OnInit {
   weeksDiff: number | null = null;
   monthsDiff: number | null = null;
   yearsDiff: number | null = null;
+  dateNote: string = '';
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     const today = new Date();
     this.startDate = today.toISOString().split('T')[0];
     const nextWeek = new Date();
@@ -44,8 +41,16 @@ export class DateCalculator implements OnInit {
     const start = new Date(this.startDate);
     const end = new Date(this.endDate);
 
-    const diffTime = end.getTime() - start.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    if (end.getTime() < start.getTime()) {
+      this.dateNote = 'End date is earlier than start date';
+    } else if (start.getTime() < end.getTime()) {
+      this.dateNote = 'Start date is earlier than end date';
+    } else {
+      this.dateNote = 'Both dates are identical';
+    }
 
     this.daysDiff = diffDays;
     this.weeksDiff = Number((diffDays / 7).toFixed(1));
@@ -58,13 +63,6 @@ export class DateCalculator implements OnInit {
     this.weeksDiff = null;
     this.monthsDiff = null;
     this.yearsDiff = null;
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('Date Calculator - Calculate Duration Between Dates');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Find the total number of days, weeks, months, and years between two calendar dates.'
-    });
+    this.dateNote = '';
   }
 }

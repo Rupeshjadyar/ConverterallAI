@@ -30,6 +30,7 @@
     <div class="primary-result">
       <div class="result-value">{{ daysDiff | number }} Days</div>
       <div class="result-label">Total difference duration</div>
+      <div class="date-note" *ngIf="dateNote">{{ dateNote }}</div>
     </div>
 
     <div class="details-grid">

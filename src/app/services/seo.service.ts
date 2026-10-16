@@ -614,6 +614,26 @@ const ROUTE_SEO_MAP: Record<string, SeoData> = {
       "operatingSystem": "All"
     }
   },
+  "/image-processing/jpeg-to-png": {
+    "title": "JPEG to PNG Converter Online – Convert JPG to Transparent PNG Free | ConverterAllAI",
+    "description": "Convert JPEG/JPG images to high-resolution lossless PNG format online in seconds. 100% free, private in-browser conversion with zero server upload.",
+    "keywords": "jpeg to png, convert jpg to png, jpg to png converter, photo to png converter online, convert jpeg to png high quality, transparent png maker",
+    "canonicalUrl": "https://converterallai.com/image-processing/format-converter",
+    "jsonLd": {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "JPEG to PNG Converter Online",
+      "url": "https://converterallai.com/image-processing/format-converter",
+      "description": "Lossless in-browser JPEG to PNG image converter.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  },
   "/image-processing/cropper": {
     "title": "Image Cropper Online – Crop Photos to Custom Aspect Ratios (16:9, 1:1, 4:3) Free | ConverterAllAI",
     "description": "Crop and trim photos online with precise aspect ratio presets: square 1:1, 16:9 widescreen, 4:3 portrait, and freehand selection. Export high-res PNG or JPG.",

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-format-converter',
@@ -15,29 +14,58 @@ export class FormatConverterComponent {
   previewUrl: string | null = null;
   targetFormat: string = 'image/jpeg';
   convertedUrl: string | null = null;
+  isDragging: boolean = false;
 
   formats = [
     { value: 'image/jpeg', label: 'JPG' },
     { value: 'image/png', label: 'PNG' },
-    { value: 'image/webp', label: 'WEBP' },
-    { value: 'image/bmp', label: 'BMP' },
-    { value: 'image/gif', label: 'GIF' },
-    { value: 'image/x-icon', label: 'ICO' },
-    { value: 'image/tiff', label: 'TIFF' }
+    { value: 'image/webp', label: 'WEBP' }
   ];
-
-  constructor(private title: Title, private meta: Meta) {
-    this.title.setTitle('Image Format Converter - Free Online Tool');
-    this.meta.updateTag({ name: 'description', content: 'Convert images to JPG, PNG, WEBP for free online. No API needed, fast and secure.' });
-  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-      this.previewUrl = URL.createObjectURL(this.selectedFile);
-      this.convertedUrl = null;
+      this.processFile(input.files[0]);
     }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        this.processFile(file);
+      }
+    }
+  }
+
+  processFile(file: File) {
+    this.selectedFile = file;
+    this.previewUrl = URL.createObjectURL(this.selectedFile);
+    this.convertedUrl = null;
+  }
+
+  resetImage() {
+    this.selectedFile = null;
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+    }
+    this.previewUrl = null;
+    this.convertedUrl = null;
   }
 
   convertImage() {
@@ -63,11 +91,16 @@ export class FormatConverterComponent {
   }
 
   downloadImage() {
-    if (this.convertedUrl) {
+    if (this.convertedUrl && this.selectedFile) {
       const link = document.createElement('a');
       link.href = this.convertedUrl;
-      const extension = this.targetFormat.split('/')[1];
-      const originalName = this.selectedFile!.name.split('.')[0];
+      const extMap: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp'
+      };
+      const extension = extMap[this.targetFormat] || 'jpg';
+      const originalName = this.selectedFile.name.replace(/\.[^/.]+$/, '');
       link.download = `${originalName}-converted.${extension}`;
       link.click();
     }

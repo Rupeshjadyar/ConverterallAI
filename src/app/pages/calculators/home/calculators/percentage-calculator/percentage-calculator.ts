@@ -15,10 +15,9 @@
 
 
 
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-percentage-calculator',
@@ -27,7 +26,7 @@ import { Meta, Title } from '@angular/platform-browser';
   templateUrl: './percentage-calculator.html',
   styleUrl: './percentage-calculator.css'
 })
-export class PercentageCalculator implements OnInit {
+export class PercentageCalculator implements OnInit, OnDestroy {
 
   activeTab: 'find' | 'what' | 'change' = 'find';
 
@@ -47,15 +46,19 @@ export class PercentageCalculator implements OnInit {
   result3: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.addFaqSchema();
     this.calculateAll();
+  }
+
+  ngOnDestroy(): void {
+    const existingSchema = this.document.getElementById('percentage-faq-schema');
+    if (existingSchema) {
+      existingSchema.remove();
+    }
   }
 
   switchTab(tab: 'find' | 'what' | 'change'): void {
@@ -117,42 +120,12 @@ export class PercentageCalculator implements OnInit {
     }
 
     this.result3 = this.round(
-      ((this.newValue - this.oldValue) / this.oldValue) * 100
+      ((this.newValue - this.oldValue) / Math.abs(this.oldValue)) * 100
     );
   }
 
   private round(value: number): number {
     return Number(value.toFixed(2));
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle(
-      'Percentage Calculator - Calculate Percentages, Increase & Decrease Online'
-    );
-
-    this.meta.updateTag({
-      name: 'description',
-      content:
-        'Free online percentage calculator to calculate percentages, percentage increase, percentage decrease, and percentage changes instantly. Fast, accurate and mobile friendly.'
-    });
-
-    this.meta.updateTag({
-      name: 'keywords',
-      content:
-        'percentage calculator, percentage increase calculator, percentage decrease calculator, percent of number calculator, online percentage calculator'
-    });
-
-    this.meta.updateTag({
-      property: 'og:title',
-      content:
-        'Percentage Calculator - Calculate Percentages Online'
-    });
-
-    this.meta.updateTag({
-      property: 'og:description',
-      content:
-        'Calculate percentages, percentage increases and decreases instantly.'
-    });
   }
 
   private addFaqSchema(): void {

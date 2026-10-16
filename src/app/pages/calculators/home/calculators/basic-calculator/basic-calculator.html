@@ -30,8 +30,8 @@
     
     <div class="button-deck">
       <button class="key-control key-ac" (click)="clear()" title="Shortcut: Esc">AC</button>
-      <button class="key-control key-backspace" (click)="backspace()" title="Shortcut: Backspace">⌫</button>
       <button class="key-control" (click)="toggleSign()" title="Toggle ±">±</button>
+      <button class="key-control" (click)="getPercentage()">%</button>
       <button class="key-operator color-cyan" (click)="performOperation('/')">÷</button>
       
       <button class="key-digit" (click)="inputDigit('7')">7</button>
@@ -51,7 +51,6 @@
       
       <button class="key-digit span-two" (click)="inputDigit('0')">0</button>
       <button class="key-digit" (click)="inputDecimal()">.</button>
-      <button class="key-control" (click)="getPercentage()">%</button>
       <button class="key-submit-equals" (click)="calculateResult()">=</button>
     </div>
   </div>

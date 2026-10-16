@@ -1,7 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 
 interface TextOverlay {
   id: string;
@@ -135,12 +134,8 @@ export class ImageEditorComponent implements AfterViewInit {
   fileName = 'converterall-studio';
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     private cdr: ChangeDetectorRef
   ) {
-    this.title.setTitle('ConverterAll AI Studio Pro - Free Browser Photo & Color Editor');
-    this.meta.updateTag({ name: 'description', content: 'Professional desktop-grade browser photo studio. RAW/Image color grading, AI enhance, exposure curves, vector drawing, and layers locally.' });
     if (typeof window !== 'undefined' && typeof Image !== 'undefined' && (!this.image || !this.image.onload)) {
       this.image = new Image();
     }

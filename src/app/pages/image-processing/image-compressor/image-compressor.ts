@@ -16,7 +16,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 interface CompressedImage {
   id: string;
   file: File;
@@ -59,17 +58,7 @@ export class ImageCompressor implements OnInit, OnDestroy {
   readonly ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/bmp', 'image/gif'];
   readonly MAX_SIZE = 50 * 1024 * 1024;
   readonly MAX_FILES = 20;
-  constructor(private meta: Meta, private title: Title) {}
-  ngOnInit(): void {
-    this.title.setTitle('Free Image Compressor Online — Reduce Image Size | ImageToolkit');
-    this.meta.updateTag({ name: 'description', content: 'Compress JPG, PNG, WEBP images online for free. Reduce file size up to 90% without quality loss. No signup, no watermarks, 100% private — works in your browser.' });
-    this.meta.updateTag({ name: 'keywords', content: 'image compressor, compress image online, reduce image size, jpg compressor, png optimizer, webp compressor, free image compression tool' });
-    this.meta.updateTag({ property: 'og:title', content: 'Free Image Compressor — Reduce Image Size Online' });
-    this.meta.updateTag({ property: 'og:description', content: 'Compress images up to 90% without quality loss. Free, fast & private.' });
-    this.meta.updateTag({ property: 'og:type', content: 'website' });
-    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'robots', content: 'index, follow' });
-  }
+  ngOnInit(): void {}
   ngOnDestroy(): void {
     this.images.forEach(i => {
       URL.revokeObjectURL(i.originalUrl);

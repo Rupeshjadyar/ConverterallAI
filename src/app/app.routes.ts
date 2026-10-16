@@ -93,6 +93,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/image-processing/format-converter/format-converter').then(m => m.FormatConverterComponent)
     },
     {
+        path: 'image-processing/jpeg-to-png',
+        redirectTo: 'image-processing/format-converter',
+        pathMatch: 'full'
+    },
+    {
         path: 'image-processing/cropper',
         loadComponent: () => import('./pages/image-processing/cropper/cropper').then(m => m.CropperComponent)
     },

@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-age-calculator',
@@ -26,13 +25,10 @@ export class AgeCalculator implements OnInit {
   totalMinutes: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     // Set default birthdate to 25 years ago
     const defaultDate = new Date();
     defaultDate.setFullYear(defaultDate.getFullYear() - 25);
@@ -107,13 +103,5 @@ export class AgeCalculator implements OnInit {
     this.totalDays = null;
     this.totalHours = null;
     this.totalMinutes = null;
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('Age Calculator - Calculate Exact Age Online');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Calculate your exact age in years, months, weeks, days, hours, and minutes relative to any date.'
-    });
   }
 }

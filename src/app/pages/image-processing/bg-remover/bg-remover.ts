@@ -1,7 +1,6 @@
 import { Component, ChangeDetectorRef, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 import { removeBackground as imglyRemoveBackground } from '@imgly/background-removal';
 
 interface BatchFileItem {
@@ -75,42 +74,10 @@ export class BgRemoverComponent {
   exportQuality: number = 100;
 
   // Batch Files List
-  batchFiles: BatchFileItem[] = [
-    {
-      id: '1',
-      name: 'portrait_01.jpg',
-      size: '12.4 MB',
-      status: 'done',
-      progress: 100,
-      originalUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80',
-      resultUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'
-    },
-    {
-      id: '2',
-      name: 'product_shot.png',
-      size: '8.2 MB',
-      status: 'done',
-      progress: 100,
-      originalUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
-      resultUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80'
-    },
-    {
-      id: '3',
-      name: 'team_photo.jpg',
-      size: '15.1 MB',
-      status: 'done',
-      progress: 100,
-      originalUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80',
-      resultUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80'
-    }
-  ];
+  batchFiles: BatchFileItem[] = [];
+  activeBatchId: string = '';
 
-  activeBatchId: string = '1';
-
-  constructor(private title: Title, private meta: Meta, private cdr: ChangeDetectorRef) {
-    this.title.setTitle('ConverterAll AI BgRemover 2026 - Ultra 4K Background Removal');
-    this.meta.updateTag({ name: 'description', content: 'Remove backgrounds instantly with AI v3.1 in 4K resolution. Supports batch processing, AI scene replacement, and local browser processing.' });
-    
+  constructor(private cdr: ChangeDetectorRef) {
     // Set initial preview from first batch item
     if (this.batchFiles.length > 0) {
       this.originalUrl = this.batchFiles[0].originalUrl;
@@ -405,13 +372,75 @@ export class BgRemoverComponent {
     this.sliderPosition = Number(input.value);
   }
 
-  downloadImage() {
-    if (!this.resultUrl && !this.originalUrl) return;
-    const downloadUrl = this.resultUrl || this.originalUrl;
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = `ConverterAll_4K_NoBg_${Date.now()}.png`;
-    link.click();
+  async downloadImage() {
+    const rawUrl = this.resultUrl || this.originalUrl;
+    if (!rawUrl) return;
+
+    if (this.bgType === 'transparent') {
+      const link = document.createElement('a');
+      link.href = rawUrl;
+      link.download = `ConverterAll_4K_NoBg_${Date.now()}.png`;
+      link.click();
+      return;
+    }
+
+    try {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = reject;
+        img.src = rawUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      if (this.bgType === 'solid') {
+        ctx.fillStyle = this.solidColor || '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (this.bgType === 'gradient' || this.bgType === 'ai') {
+        const colors = (this.selectedGradient || '').match(/#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)/g);
+        if (colors && colors.length >= 2) {
+          const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+          colors.forEach((color, idx) => {
+            grad.addColorStop(idx / (colors.length - 1), color);
+          });
+          ctx.fillStyle = grad;
+        } else {
+          ctx.fillStyle = '#06b6d4';
+        }
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (this.bgType === 'image' && this.customBgImageUrl) {
+        const bgImg = new Image();
+        bgImg.crossOrigin = 'anonymous';
+        await new Promise<void>((res) => {
+          bgImg.onload = () => res();
+          bgImg.onerror = () => res();
+          bgImg.src = this.customBgImageUrl!;
+        });
+        if (bgImg.width) {
+          ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const compositeUrl = canvas.toDataURL('image/png', 1.0);
+      const link = document.createElement('a');
+      link.href = compositeUrl;
+      link.download = `ConverterAll_4K_Composite_${Date.now()}.png`;
+      link.click();
+    } catch (err) {
+      console.error('Error compositing background on download:', err);
+      const link = document.createElement('a');
+      link.href = rawUrl;
+      link.download = `ConverterAll_4K_NoBg_${Date.now()}.png`;
+      link.click();
+    }
   }
 
   downloadAllBatch() {
@@ -425,10 +454,5 @@ export class BgRemoverComponent {
         }, index * 400);
       }
     });
-  }
-
-  copyApiKey() {
-    navigator.clipboard.writeText('cnv_live_998877665544332211_pro_2026');
-    alert('API Key copied to clipboard! Unlimited local rate limit active.');
   }
 }

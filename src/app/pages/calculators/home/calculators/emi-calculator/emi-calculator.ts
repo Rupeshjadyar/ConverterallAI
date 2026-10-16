@@ -10,10 +10,9 @@
 
 // }
 
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-emi-calculator',
@@ -22,7 +21,7 @@ import { Meta, Title } from '@angular/platform-browser';
   templateUrl: './emi-calculator.html',
   styleUrls: ['./emi-calculator.css']
 })
-export class EmiCalculator implements OnInit {
+export class EmiCalculator implements OnInit, OnDestroy {
 
   // Inputs
   loanAmount: number | null = 500000;
@@ -35,15 +34,19 @@ export class EmiCalculator implements OnInit {
   totalPayment: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.addFaqSchema();
     this.calculateEMI();
+  }
+
+  ngOnDestroy(): void {
+    const existingSchema = this.document.getElementById('emi-faq-schema');
+    if (existingSchema) {
+      existingSchema.remove();
+    }
   }
 
   calculateEMI(): void {
@@ -94,37 +97,6 @@ export class EmiCalculator implements OnInit {
 
   private round(value: number): number {
     return Number(value.toFixed(2));
-  }
-
-  private setupSeo(): void {
-
-    this.title.setTitle(
-      'EMI Calculator - Calculate Loan EMI Online Free'
-    );
-
-    this.meta.updateTag({
-      name: 'description',
-      content:
-        'Free EMI Calculator to calculate monthly loan EMI, total interest payable, and total repayment amount for home loans, personal loans, car loans, and education loans.'
-    });
-
-    this.meta.updateTag({
-      name: 'keywords',
-      content:
-        'emi calculator, loan emi calculator, home loan emi calculator, car loan emi calculator, personal loan emi calculator, monthly emi calculator'
-    });
-
-    this.meta.updateTag({
-      property: 'og:title',
-      content:
-        'EMI Calculator - Calculate Monthly Loan EMI'
-    });
-
-    this.meta.updateTag({
-      property: 'og:description',
-      content:
-        'Calculate EMI, total interest and total repayment amount instantly.'
-    });
   }
 
   private addFaqSchema(): void {

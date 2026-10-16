@@ -125,3 +125,22 @@
 .action-btn:hover {
   opacity: 0.9;
 }
+.change-image-container {
+  margin-top: 1.25rem;
+}
+.change-image-btn {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.change-image-btn:hover {
+  background: var(--border-color);
+  border-color: #43e97b;
+  color: #43e97b;
+}
+

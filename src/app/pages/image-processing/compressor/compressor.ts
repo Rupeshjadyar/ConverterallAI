@@ -1,7 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-compressor',
@@ -43,13 +42,8 @@ export class CompressorComponent {
   isDragging: boolean = false;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     private cdr: ChangeDetectorRef
-  ) {
-    this.title.setTitle('Image Compressor - Reduce Photo Size');
-    this.meta.updateTag({ name: 'description', content: 'Compress images to exact target size.' });
-  }
+  ) {}
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

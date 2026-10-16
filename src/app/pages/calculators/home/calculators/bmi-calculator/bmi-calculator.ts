@@ -51,7 +51,7 @@ export class BmiCalculator {
 
   calculate() {
     // Prevent mathematical crashes if inputs are wiped clean by user
-    if (!this.weight || !this.height) {
+    if (!this.weight || !this.height || this.weight <= 0 || this.height <= 0) {
       this.bmi = null;
       return;
     }
@@ -81,10 +81,9 @@ export class BmiCalculator {
 
   get markerPosition(): string {
     if (!this.bmi) return '0%';
-    // Clamping values safely between 0% and 100%
-    if (this.bmi < 18.5) return `${Math.max(0, (this.bmi / 18.5) * 20)}%`;
-    if (this.bmi < 25) return `${20 + ((this.bmi - 18.5) / 6.5) * 30}%`;
-    if (this.bmi < 30) return `${50 + ((this.bmi - 25) / 5) * 25}%`;
+    if (this.bmi < 18.5) return `${(this.bmi / 18.5) * 46.25}%`;
+    if (this.bmi < 25) return `${46.25 + ((this.bmi - 18.5) / 6.5) * 16.25}%`;
+    if (this.bmi < 30) return `${62.5 + ((this.bmi - 25) / 5) * 12.5}%`;
     return `${75 + Math.min(((this.bmi - 30) / 10) * 25, 25)}%`;
   }
 

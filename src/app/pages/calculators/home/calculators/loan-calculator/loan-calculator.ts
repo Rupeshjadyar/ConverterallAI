@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-loan-calculator',
@@ -20,13 +19,10 @@ export class LoanCalculator implements OnInit {
   totalPayment: number | null = null;
 
   constructor(
-    private title: Title,
-    private meta: Meta,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
-    this.setupSeo();
     this.calculateLoan();
   }
 
@@ -52,13 +48,5 @@ export class LoanCalculator implements OnInit {
     this.monthlyEmi = Math.round(emi);
     this.totalPayment = Math.round(payment);
     this.totalInterest = Math.round(payment - principal);
-  }
-
-  private setupSeo(): void {
-    this.title.setTitle('Loan Calculator - Advanced Loan Details');
-    this.meta.updateTag({
-      name: 'description',
-      content: 'Calculate home loans, auto loans, personal loans and compare monthly repayments, total interest and final amounts.'
-    });
   }
 }

@@ -21,11 +21,14 @@
         <input
           id="discount-input"
           type="number"
+          min="0"
+          max="100"
           class="input-field"
           [(ngModel)]="discountPercent"
           (ngModelChange)="calculateDiscount()"
           placeholder="e.g. 15"
         />
+        <span class="validation-error" *ngIf="discountError">{{ discountError }}</span>
       </div>
 
       <div class="input-group">
