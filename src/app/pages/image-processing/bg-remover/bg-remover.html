@@ -128,13 +128,13 @@
             <!-- AFTER (Underneath / Background layer with custom BG) -->
             <div class="layer-after" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
               <span class="corner-badge after-badge">AFTER</span>
-              <img [src]="resultUrl || originalUrl" class="compared-img" />
+              <img [src]="resultUrl || originalUrl" class="compared-img" alt="Background removed result image" />
             </div>
 
             <!-- BEFORE (Top clipped layer) -->
             <div class="layer-before" [style.clip-path]="'polygon(0 0, ' + sliderPosition + '% 0, ' + sliderPosition + '% 100%, 0 100%)'">
               <span class="corner-badge before-badge">BEFORE</span>
-              <img [src]="originalUrl" class="compared-img" />
+              <img [src]="originalUrl" class="compared-img" alt="Original source image before background removal" />
             </div>
 
             <!-- SLIDER HANDLE & DIVIDER -->
@@ -150,11 +150,11 @@
           <div class="side-by-side-grid" *ngIf="!isSliderView">
             <div class="side-box before-side">
               <span class="corner-badge before-badge">BEFORE</span>
-              <img [src]="originalUrl" class="side-img" />
+              <img [src]="originalUrl" class="side-img" alt="Original source preview" />
             </div>
             <div class="side-box after-side" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
               <span class="corner-badge after-badge">AFTER</span>
-              <img [src]="resultUrl || originalUrl" class="side-img" />
+              <img [src]="resultUrl || originalUrl" class="side-img" alt="Background removed transparent preview" />
             </div>
           </div>
 
@@ -177,7 +177,7 @@
       <div class="bg-batch-list">
         <div *ngFor="let item of batchFiles" class="batch-card" [class.active-card]="activeBatchId === item.id" (click)="selectBatchItem(item)">
           <div class="thumb-wrap" [class.transparent-check]="item.resultUrl">
-            <img [src]="item.resultUrl || item.originalUrl" class="thumb-img" />
+            <img [src]="item.resultUrl || item.originalUrl" class="thumb-img" [alt]="item.name || 'Processed image thumbnail'" />
             <span class="status-badge" *ngIf="item.status === 'done'">✔</span>
           </div>
           <div class="batch-details">

@@ -1,8 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /api/
 
 Sitemap: https://converterallai.com/sitemap.xml
-
-# Disallow admin/internal paths
-Disallow: /api/
-Disallow: /.well-known/

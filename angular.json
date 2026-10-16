@@ -41,7 +41,32 @@
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "html2canvas",
+              "jspdf",
+              "mammoth",
+              "jszip",
+              "pako",
+              "pdf-lib",
+              "base64-js",
+              "raf",
+              "rgbcolor",
+              "core-js",
+              "socket.io-client",
+              "engine.io-client",
+              "fflate",
+              "dompurify",
+              "@xmldom/xmldom",
+              "bluebird",
+              "lop",
+              "dingbat-to-unicode",
+              "path-is-absolute",
+              "xmlbuilder",
+              "@pdf-lib/upng",
+              "@pdf-lib/standard-fonts"
+            ]
           },
           "configurations": {
             "production": {

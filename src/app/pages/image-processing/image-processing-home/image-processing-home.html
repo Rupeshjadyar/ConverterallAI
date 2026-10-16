@@ -76,10 +76,10 @@
         <p>Used by millions of creators worldwide</p>
       </div>
       <div class="tools-grid popular-grid">
-        <div
+        <a
           class="tool-card glass"
           *ngFor="let tool of popularTools; trackBy: trackByToolId"
-          (click)="openTool(tool)"
+          [routerLink]="tool.route"
         >
           <div class="tool-card-glow" [style.background]="tool.color"></div>
           <div class="tool-icon-wrap">
@@ -90,7 +90,7 @@
           <div class="tool-info">
             <h3>{{ tool.name }}</h3>
             <p>{{ tool.description }}</p>
-            <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+            <span class="tool-btn">
               Try Now
               <svg
                 width="16"
@@ -104,9 +104,9 @@
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </button>
+            </span>
           </div>
-        </div>
+        </a>
       </div>
     </section>
     <!-- All Tools -->
@@ -116,10 +116,10 @@
         <p>Everything you need to edit and optimize images</p>
       </div>
       <div class="tools-grid all-grid">
-        <div
+        <a
           class="tool-card glass"
           *ngFor="let tool of filteredTools; trackBy: trackByToolId"
-          (click)="openTool(tool)"
+          [routerLink]="tool.route"
         >
           <div class="tool-card-glow" [style.background]="tool.color"></div>
           <div class="tool-icon-wrap">
@@ -134,7 +134,7 @@
               <span class="popular-badge" *ngIf="tool.popular">
                 <span class="fire-icon">🔥</span> Popular
               </span>
-              <button class="tool-btn" (click)="openTool(tool); $event.stopPropagation()">
+              <span class="tool-btn">
                 Try Now
                 <svg
                   width="16"
@@ -148,10 +148,10 @@
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-              </button>
+              </span>
             </div>
           </div>
-        </div>
+        </a>
       </div>
       <!-- Empty State -->
       <div class="empty-state glass" *ngIf="filteredTools.length === 0">

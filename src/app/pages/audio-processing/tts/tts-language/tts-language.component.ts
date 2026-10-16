@@ -107,12 +107,7 @@ export class TtsLanguageComponent implements OnInit, OnDestroy {
     this.fact = getLanguageFact(this.lang.code);
     this.textInput = this.lang.sampleText;
 
-    // Dynamic SEO Meta Tags
-    this.titleService.setTitle(this.lang.seoTitle);
-    this.metaService.updateTag({ name: 'description', content: this.lang.metaDescription });
-    this.metaService.updateTag({ name: 'keywords', content: this.lang.keywords });
-    this.metaService.updateTag({ property: 'og:title', content: this.lang.seoTitle });
-    this.metaService.updateTag({ property: 'og:description', content: this.lang.metaDescription });
+
 
     // FAQs
     this.faqs = [

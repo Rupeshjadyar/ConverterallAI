@@ -17,8 +17,18 @@ export class ToolRegistryService {
     return CATEGORIES_DATA.find(c => c.id === id);
   }
 
+  getCategoryBySlug(slug: string): CategoryItem | undefined {
+    const clean = slug.split('?')[0].split('#')[0].replace(/\/+$/, '');
+    return CATEGORIES_DATA.find(c => c.slug.replace(/\/+$/, '') === clean);
+  }
+
   getAllTools(): ToolItem[] {
     return TOOLS_DATA;
+  }
+
+  getToolBySlug(slug: string): ToolItem | undefined {
+    const clean = slug.split('?')[0].split('#')[0].replace(/\/+$/, '');
+    return TOOLS_DATA.find(t => t.slug.replace(/\/+$/, '') === clean);
   }
 
   getToolsByCategory(categoryId: string): ToolItem[] {

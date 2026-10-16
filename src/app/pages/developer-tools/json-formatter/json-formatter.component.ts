@@ -537,13 +537,6 @@ export class JsonFormatterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.seo.updateTags({
-      title: 'JSON Formatter & Validator Online – Prettify, Minify & Inspect JSON',
-      description: 'Free in-browser JSON Formatter, Prettifier, Validator and Minifier. Clean format, validate syntax error diagnostics, and copy formatted JSON.',
-      keywords: 'json formatter, json prettifier, json validator, json minifier, format json online, validate json syntax',
-      canonicalUrl: 'https://converterallai.com/developer-tools/json-formatter'
-    });
-
     // Default sample on initial load
     this.loadSampleJson();
   }

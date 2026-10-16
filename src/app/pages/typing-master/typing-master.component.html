@@ -2,7 +2,7 @@
   <!-- OVERVIEW PHASE -->
   <div *ngIf="lessonPhase() === 'overview'" class="tm-main">
     <div class="course-header">
-      <h2>Fast Touch Typing Course</h2>
+      <h1>Fast Touch Typing Course</h1>
       <div class="lesson-stepper">
         <button *ngFor="let ml of mainLessons" class="step-btn" [class.active]="currentMainLesson() === ml.id" (click)="selectMainLesson(ml.id)">{{ml.id}}</button>
       </div>

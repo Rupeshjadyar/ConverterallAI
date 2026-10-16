@@ -630,7 +630,7 @@
 
             <div class="main-col">
               <div class="main-header">
-                <h1 class="header-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
+                <div class="header-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</div>
                 <div class="header-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)" [style.color]="customAccentColor">{{ resume.jobTitle }}</div>
               </div>
 
@@ -675,7 +675,7 @@
           <!-- TEMPLATE LAYOUT 2: CREATIVE DESIGNER -->
           <div class="tpl-render-container tpl-creative-designer" *ngIf="activeEffectiveLayout === '2col-top-banner'">
             <div class="top-banner" [style.background]="'linear-gradient(135deg, ' + customPrimaryColor + ', ' + customAccentColor + ')'">
-              <h1 class="banner-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)">{{ resume.fullName }}</h1>
+              <div class="banner-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)">{{ resume.fullName }}</div>
               <div class="banner-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)">{{ resume.jobTitle }}</div>
               <div class="banner-contact">
                 <span>✉ {{ resume.email }}</span> • 
@@ -754,7 +754,7 @@
           <!-- TEMPLATE LAYOUT 3: MINIMALIST ELEGANT -->
           <div class="tpl-render-container tpl-minimalist" *ngIf="activeEffectiveLayout === '1col-minimal' || activeEffectiveLayout === '2col-right-sidebar'">
             <div class="minimal-header">
-              <h1 class="min-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</h1>
+              <div class="min-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customPrimaryColor">{{ resume.fullName }}</div>
               <div class="min-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)" [style.color]="customAccentColor">{{ resume.jobTitle }}</div>
               <div class="min-contact">
                 <span>✉ {{ resume.email }}</span>
@@ -838,7 +838,7 @@
 
             <div class="terminal-body" [style.border-color]="customPrimaryColor">
               <div class="term-header">
-                <h1 class="term-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customAccentColor">&gt; {{ resume.fullName }}</h1>
+                <div class="term-name" contenteditable="true" (blur)="onInlineEdit('fullName', $event)" [style.color]="customAccentColor">&gt; {{ resume.fullName }}</div>
                 <div class="term-title" contenteditable="true" (blur)="onInlineEdit('jobTitle', $event)">// {{ resume.jobTitle }}</div>
                 <div class="term-contact">
                   <span>email: "{{ resume.email }}"</span> | 

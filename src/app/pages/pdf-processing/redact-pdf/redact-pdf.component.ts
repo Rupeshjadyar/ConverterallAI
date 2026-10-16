@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core'; import { CommonModule } from 
 export class RedactPdfComponent implements OnInit {
   selectedFiles: File[] = []; isDragging = false; isConverting = false; progress = 0; convertedUrl: string | null = null; convertedBlob: Blob | null = null;
   redactText = '';
-  constructor(private title: Title, private meta: Meta) {} ngOnInit() { this.title.setTitle('Redact PDF – Black Out Sensitive Information | ConverterAllAI'); this.meta.updateTag({ name: 'description', content: 'Redact and black out sensitive information in PDF files.' }); }
+  constructor(private title: Title, private meta: Meta) {} ngOnInit() {}
   onDragOver(e: DragEvent) { e.preventDefault(); this.isDragging = true; } onDragLeave(e: DragEvent) { e.preventDefault(); this.isDragging = false; }
   onDrop(e: DragEvent) { e.preventDefault(); this.isDragging = false; if (e.dataTransfer?.files.length) this.addFiles(e.dataTransfer.files); }
   onFileSelected(e: Event) { const input = e.target as HTMLInputElement; if (input.files?.length) this.addFiles(input.files); }

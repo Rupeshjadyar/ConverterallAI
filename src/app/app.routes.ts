@@ -119,11 +119,13 @@ export const routes: Routes = [
     },
     {
         path: 'tts',
-        loadComponent: () => import('./pages/audio-processing/tts/tts-index/tts-index.component').then(m => m.TtsIndexComponent)
+        redirectTo: 'audio-processing/tts',
+        pathMatch: 'full'
     },
     {
         path: 'tts/:slug',
-        loadComponent: () => import('./pages/audio-processing/tts/tts-language/tts-language.component').then(m => m.TtsLanguageComponent)
+        redirectTo: 'audio-processing/tts/:slug',
+        pathMatch: 'full'
     },
     {
         path: 'audio-processing',
@@ -574,6 +576,14 @@ export const routes: Routes = [
         path: 'sql',
         redirectTo: 'developer-tools/sql',
         pathMatch: 'full'
+    },
+    {
+        path: '404',
+        loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
+    },
+    {
+        path: '**',
+        loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
     }
 ];
 

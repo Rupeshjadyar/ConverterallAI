@@ -28,7 +28,7 @@
 
     <!-- Calculator Grid -->
     <div class="calculators-grid">
-      <div class="calculator-card glass" *ngFor="let calc of filteredCalculators" (click)="openCalculator(calc)">
+      <a class="calculator-card glass" *ngFor="let calc of filteredCalculators" [routerLink]="calc.route">
         <div class="card-icon" [style.background]="calc.gradient">
           <span class="icon">{{ calc.icon }}</span>
         </div>
@@ -36,11 +36,11 @@
         <p>{{ calc.description }}</p>
         <div class="card-footer">
           <span class="category-badge">{{ calc.categoryIcon }} {{ calc.category }}</span>
-          <button class="btn-calc" (click)="openCalculator(calc); $event.stopPropagation()">
+          <span class="btn-calc">
             Calculate <span>→</span>
-          </button>
+          </span>
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Stats Section -->

@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "ng build",
     "build:cf": "ng build && cp dist/converterallai/browser/index.csr.html dist/converterallai/browser/index.html",
+    "seo:audit": "node scripts/seo-audit.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:converterallai": "node dist/converterallai/server/server.mjs"

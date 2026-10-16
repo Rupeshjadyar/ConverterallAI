@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild, NgZone, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, NgZone, HostListener, PLATFORM_ID, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { io, Socket } from 'socket.io-client';
@@ -686,9 +686,14 @@ export class Warfare3000Component implements OnInit, OnDestroy {
   private camera = { x: ARENA_WIDTH / 2, y: ARENA_HEIGHT / 2, scale: 1 };
   private dpr: number = 1;
 
+  private platformId = inject(PLATFORM_ID);
+
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Generate default random callsign if empty
     let savedName = null;
     if (typeof window !== 'undefined' && window.localStorage) {

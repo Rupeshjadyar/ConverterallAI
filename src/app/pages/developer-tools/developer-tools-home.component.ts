@@ -1089,7 +1089,7 @@ export class DeveloperToolsHomeComponent implements OnInit {
   htmlStatus = '';
 
   // 9. Markdown
-  markdownInput = '# Hello Developer!\n\nThis is a **live Markdown preview** editor.\n- Fast in-browser execution\n- GitHub-flavored formatting\n- Instant HTML generation';
+  markdownInput = '### Hello Developer!\n\nThis is a **live Markdown preview** editor.\n- Fast in-browser execution\n- GitHub-flavored formatting\n- Instant HTML generation';
   markdownHtml = '';
   safeMarkdownHtml: SafeHtml = '';
   mdStatus = '';

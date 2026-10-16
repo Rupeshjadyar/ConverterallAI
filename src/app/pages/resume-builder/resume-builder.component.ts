@@ -254,7 +254,6 @@ export class ResumeBuilderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.setSeoTags();
     this.loadFromLocalStorage();
     this.customPrimaryColor = this.selectedTemplate.colorPrimary;
     this.customAccentColor = this.selectedTemplate.colorAccent;

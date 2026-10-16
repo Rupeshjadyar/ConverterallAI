@@ -35,51 +35,62 @@ import { RouterModule } from '@angular/router';
           <div class="footer-col">
             <h4 class="col-title">🧮 Calculators</h4>
             <div class="col-links">
-              <a routerLink="/calculators/emi">EMI Calculator</a>
-              <a routerLink="/calculators/bmi">BMI Calculator</a>
+              <a routerLink="/calculators">All Calculators</a>
+              <a routerLink="/calculators/emi">Loan EMI Calculator</a>
+              <a routerLink="/calculators/sip">SIP Investment Calc</a>
               <a routerLink="/calculators/gst">GST Calculator</a>
-              <a routerLink="/calculators/sip">SIP Calculator</a>
-              <a routerLink="/calculators/basic">Scientific Math</a>
-              <a routerLink="/calculators">Explore All 12 →</a>
+              <a routerLink="/calculators/bmi">BMI Calculator</a>
+              <a routerLink="/calculators/percentage">Percentage Calc</a>
             </div>
           </div>
 
-          <!-- Image Tools Column -->
+          <!-- Image & Audio Column -->
           <div class="footer-col">
-            <h4 class="col-title">🖼️ Image Tools</h4>
+            <h4 class="col-title">🎨 Image &amp; Audio</h4>
             <div class="col-links">
+              <a routerLink="/image-processing">Image Processing Suite</a>
               <a routerLink="/image-processing/compressor">AI Image Compressor</a>
               <a routerLink="/image-processing/bg-remover">Background Remover</a>
-              <a routerLink="/image-processing/format-converter">Format Converter</a>
-              <a routerLink="/image-processing/cropper">Crop &amp; Rotate</a>
-              <a routerLink="/image-processing/image-to-pdf">Image to PDF</a>
-              <a routerLink="/image-processing">Explore All Tools →</a>
+              <a routerLink="/audio-processing">Audio Processing Suite</a>
+              <a routerLink="/audio-processing/text-to-mp3">Text to MP3 Speech</a>
+              <a routerLink="/audio-processing/audio-cutter">Audio Cutter &amp; Trimmer</a>
             </div>
           </div>
 
-          <!-- PDF Tools Column -->
+          <!-- PDF Suite Column -->
           <div class="footer-col">
             <h4 class="col-title">📄 PDF Suite</h4>
             <div class="col-links">
-              <a routerLink="/pdf-processing/merge-pdf">Merge PDFs</a>
-              <a routerLink="/pdf-processing/split-pdf">Split Pages</a>
+              <a routerLink="/pdf-processing">All 30+ PDF Tools</a>
+              <a routerLink="/pdf-processing/merge-pdf">Merge PDF Files</a>
+              <a routerLink="/pdf-processing/split-pdf">Split PDF Pages</a>
               <a routerLink="/pdf-processing/compress-pdf">Compress PDF</a>
-              <a routerLink="/pdf-processing/pdf-to-word">PDF to Word</a>
-              <a routerLink="/pdf-processing/word-to-pdf">Word to PDF</a>
-              <a routerLink="/pdf-processing">Explore 23+ Tools →</a>
+              <a routerLink="/pdf-processing/pdf-to-word">PDF to Word Converter</a>
+              <a routerLink="/pdf-processing/word-to-pdf">Word to PDF Converter</a>
+            </div>
+          </div>
+
+          <!-- Dev & Games Column -->
+          <div class="footer-col">
+            <h4 class="col-title">⚡ Dev, AI &amp; Games</h4>
+            <div class="col-links">
+              <a routerLink="/developer-tools">Developer Tools Hub</a>
+              <a routerLink="/developer-tools/sql">Interactive SQL Masterclass</a>
+              <a routerLink="/developer-tools/json-formatter">JSON Formatter &amp; Validator</a>
+              <a routerLink="/games">Free Web Arcade Games</a>
+              <a routerLink="/resume-builder">AI Resume Builder</a>
+              <a routerLink="/typing-master">Typing Master Tutor</a>
             </div>
           </div>
 
           <!-- Legal & Compliance Column -->
           <div class="footer-col">
-            <h4 class="col-title">🏛️ Quick Links</h4>
+            <h4 class="col-title">🏛️ Company &amp; Legal</h4>
             <div class="col-links">
-              <a routerLink="/games" style="color: #f59e0b; font-weight: 700;">🎮 Free Web Games (12)</a>
               <a routerLink="/about">About Us</a>
               <a routerLink="/contact">Contact Support</a>
               <a routerLink="/privacy-policy">Privacy Policy</a>
               <a routerLink="/terms-of-service">Terms of Service</a>
-              <a routerLink="/dashboard" style="color: #00f0ff; font-weight: 700;">📊 Live Analytics Matrix</a>
               <a routerLink="/disclaimer">Disclaimer Notice</a>
               <a routerLink="/cookie-policy">Cookie Policy</a>
             </div>
@@ -133,8 +144,8 @@ import { RouterModule } from '@angular/router';
 
     .footer-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr 1fr 1.1fr;
-      gap: 2.2rem;
+      grid-template-columns: 1.4fr repeat(5, 1fr);
+      gap: 1.8rem;
       margin-bottom: 3.5rem;
     }
 

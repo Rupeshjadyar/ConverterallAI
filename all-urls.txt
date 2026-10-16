@@ -1,0 +1,257 @@
+# ======================================
+# Home & Main Hubs (7 URLs)
+# ======================================
+https://converterallai.com
+https://converterallai.com/audio-processing
+https://converterallai.com/calculators
+https://converterallai.com/developer-tools
+https://converterallai.com/games
+https://converterallai.com/image-processing
+https://converterallai.com/pdf-processing
+
+# ======================================
+# PDF Tools (32 Tools) (32 URLs)
+# ======================================
+https://converterallai.com/pdf-processing/add-page-numbers
+https://converterallai.com/pdf-processing/add-password
+https://converterallai.com/pdf-processing/add-watermark
+https://converterallai.com/pdf-processing/ai-summarizer
+https://converterallai.com/pdf-processing/compare-pdf
+https://converterallai.com/pdf-processing/compress-pdf
+https://converterallai.com/pdf-processing/crop-pdf
+https://converterallai.com/pdf-processing/edit-pdf
+https://converterallai.com/pdf-processing/excel-to-pdf
+https://converterallai.com/pdf-processing/html-to-pdf
+https://converterallai.com/pdf-processing/jpg-to-pdf
+https://converterallai.com/pdf-processing/merge-pdf
+https://converterallai.com/pdf-processing/ocr-pdf
+https://converterallai.com/pdf-processing/organize-pdf
+https://converterallai.com/pdf-processing/pdf-forms
+https://converterallai.com/pdf-processing/pdf-to-excel
+https://converterallai.com/pdf-processing/pdf-to-jpg
+https://converterallai.com/pdf-processing/pdf-to-pdfa
+https://converterallai.com/pdf-processing/pdf-to-ppt
+https://converterallai.com/pdf-processing/pdf-to-text
+https://converterallai.com/pdf-processing/pdf-to-word
+https://converterallai.com/pdf-processing/ppt-to-pdf
+https://converterallai.com/pdf-processing/redact-pdf
+https://converterallai.com/pdf-processing/remove-password
+https://converterallai.com/pdf-processing/repair-pdf
+https://converterallai.com/pdf-processing/rotate-pdf
+https://converterallai.com/pdf-processing/scan-to-pdf
+https://converterallai.com/pdf-processing/sign-pdf
+https://converterallai.com/pdf-processing/split-pdf
+https://converterallai.com/pdf-processing/text-to-pdf
+https://converterallai.com/pdf-processing/translate-pdf
+https://converterallai.com/pdf-processing/word-to-pdf
+
+# ======================================
+# Image Tools (6 Tools) (7 URLs)
+# ======================================
+https://converterallai.com/image-Compressor
+https://converterallai.com/image-processing/bg-remover
+https://converterallai.com/image-processing/compressor
+https://converterallai.com/image-processing/cropper
+https://converterallai.com/image-processing/editor
+https://converterallai.com/image-processing/format-converter
+https://converterallai.com/image-processing/image-to-pdf
+
+# ======================================
+# Audio Tools (12 Tools) (13 URLs)
+# ======================================
+https://converterallai.com/audio-processing/audio-compressor
+https://converterallai.com/audio-processing/audio-cutter
+https://converterallai.com/audio-processing/audio-editor
+https://converterallai.com/audio-processing/audio-joiner
+https://converterallai.com/audio-processing/audio-reverser
+https://converterallai.com/audio-processing/equalizer
+https://converterallai.com/audio-processing/format-converter
+https://converterallai.com/audio-processing/speed-changer
+https://converterallai.com/audio-processing/text-to-mp3
+https://converterallai.com/audio-processing/tts
+https://converterallai.com/audio-processing/video-to-audio
+https://converterallai.com/audio-processing/voice-cloning
+https://converterallai.com/audio-processing/volume-booster
+
+# ======================================
+# Text to Speech (TTS) Regional Voices (104 Languages) (104 URLs)
+# ======================================
+https://converterallai.com/audio-processing/tts/afrikaans-text-to-speech-south-africa
+https://converterallai.com/audio-processing/tts/albanian-text-to-speech-albania
+https://converterallai.com/audio-processing/tts/amharic-text-to-speech-ethiopia
+https://converterallai.com/audio-processing/tts/arabic-text-to-speech-egypt
+https://converterallai.com/audio-processing/tts/arabic-text-to-speech-morocco
+https://converterallai.com/audio-processing/tts/arabic-text-to-speech-saudi-arabia
+https://converterallai.com/audio-processing/tts/arabic-text-to-speech-uae
+https://converterallai.com/audio-processing/tts/armenian-text-to-speech-armenia
+https://converterallai.com/audio-processing/tts/azerbaijani-text-to-speech-azerbaijan
+https://converterallai.com/audio-processing/tts/basque-text-to-speech-spain
+https://converterallai.com/audio-processing/tts/bengali-text-to-speech-bangladesh
+https://converterallai.com/audio-processing/tts/bengali-text-to-speech-india
+https://converterallai.com/audio-processing/tts/bosnian-text-to-speech-bosnia
+https://converterallai.com/audio-processing/tts/bulgarian-text-to-speech-bulgaria
+https://converterallai.com/audio-processing/tts/burmese-text-to-speech-myanmar
+https://converterallai.com/audio-processing/tts/cantonese-text-to-speech-hong-kong
+https://converterallai.com/audio-processing/tts/catalan-text-to-speech-spain
+https://converterallai.com/audio-processing/tts/chinese-text-to-speech-china
+https://converterallai.com/audio-processing/tts/chinese-text-to-speech-taiwan
+https://converterallai.com/audio-processing/tts/croatian-text-to-speech-croatia
+https://converterallai.com/audio-processing/tts/czech-text-to-speech-czech-republic
+https://converterallai.com/audio-processing/tts/danish-text-to-speech-denmark
+https://converterallai.com/audio-processing/tts/dutch-text-to-speech-belgium
+https://converterallai.com/audio-processing/tts/dutch-text-to-speech-netherlands
+https://converterallai.com/audio-processing/tts/english-text-to-speech-australia
+https://converterallai.com/audio-processing/tts/english-text-to-speech-canada
+https://converterallai.com/audio-processing/tts/english-text-to-speech-india
+https://converterallai.com/audio-processing/tts/english-text-to-speech-nigeria
+https://converterallai.com/audio-processing/tts/english-text-to-speech-south-africa
+https://converterallai.com/audio-processing/tts/english-text-to-speech-united-kingdom
+https://converterallai.com/audio-processing/tts/english-text-to-speech-united-states
+https://converterallai.com/audio-processing/tts/estonian-text-to-speech-estonia
+https://converterallai.com/audio-processing/tts/filipino-text-to-speech-philippines
+https://converterallai.com/audio-processing/tts/finnish-text-to-speech-finland
+https://converterallai.com/audio-processing/tts/french-text-to-speech-belgium
+https://converterallai.com/audio-processing/tts/french-text-to-speech-canada
+https://converterallai.com/audio-processing/tts/french-text-to-speech-france
+https://converterallai.com/audio-processing/tts/french-text-to-speech-switzerland
+https://converterallai.com/audio-processing/tts/galician-text-to-speech-spain
+https://converterallai.com/audio-processing/tts/georgian-text-to-speech-georgia
+https://converterallai.com/audio-processing/tts/german-text-to-speech-austria
+https://converterallai.com/audio-processing/tts/german-text-to-speech-germany
+https://converterallai.com/audio-processing/tts/german-text-to-speech-switzerland
+https://converterallai.com/audio-processing/tts/greek-text-to-speech-greece
+https://converterallai.com/audio-processing/tts/gujarati-text-to-speech-india
+https://converterallai.com/audio-processing/tts/hausa-text-to-speech-nigeria
+https://converterallai.com/audio-processing/tts/hebrew-text-to-speech-israel
+https://converterallai.com/audio-processing/tts/hindi-text-to-speech-india
+https://converterallai.com/audio-processing/tts/hungarian-text-to-speech-hungary
+https://converterallai.com/audio-processing/tts/icelandic-text-to-speech-iceland
+https://converterallai.com/audio-processing/tts/indonesian-text-to-speech-indonesia
+https://converterallai.com/audio-processing/tts/irish-text-to-speech-ireland
+https://converterallai.com/audio-processing/tts/italian-text-to-speech-italy
+https://converterallai.com/audio-processing/tts/japanese-text-to-speech-japan
+https://converterallai.com/audio-processing/tts/javanese-text-to-speech-indonesia
+https://converterallai.com/audio-processing/tts/kannada-text-to-speech-india
+https://converterallai.com/audio-processing/tts/kazakh-text-to-speech-kazakhstan
+https://converterallai.com/audio-processing/tts/khmer-text-to-speech-cambodia
+https://converterallai.com/audio-processing/tts/korean-text-to-speech-south-korea
+https://converterallai.com/audio-processing/tts/kyrgyz-text-to-speech-kyrgyzstan
+https://converterallai.com/audio-processing/tts/lao-text-to-speech-laos
+https://converterallai.com/audio-processing/tts/latvian-text-to-speech-latvia
+https://converterallai.com/audio-processing/tts/lithuanian-text-to-speech-lithuania
+https://converterallai.com/audio-processing/tts/macedonian-text-to-speech-north-macedonia
+https://converterallai.com/audio-processing/tts/malay-text-to-speech-malaysia
+https://converterallai.com/audio-processing/tts/malayalam-text-to-speech-india
+https://converterallai.com/audio-processing/tts/maltese-text-to-speech-malta
+https://converterallai.com/audio-processing/tts/marathi-text-to-speech-india
+https://converterallai.com/audio-processing/tts/mongolian-text-to-speech-mongolia
+https://converterallai.com/audio-processing/tts/nepali-text-to-speech-nepal
+https://converterallai.com/audio-processing/tts/norwegian-text-to-speech-norway
+https://converterallai.com/audio-processing/tts/odia-text-to-speech-india
+https://converterallai.com/audio-processing/tts/pashto-text-to-speech-afghanistan
+https://converterallai.com/audio-processing/tts/persian-text-to-speech-iran
+https://converterallai.com/audio-processing/tts/polish-text-to-speech-poland
+https://converterallai.com/audio-processing/tts/portuguese-text-to-speech-brazil
+https://converterallai.com/audio-processing/tts/portuguese-text-to-speech-portugal
+https://converterallai.com/audio-processing/tts/punjabi-text-to-speech-india
+https://converterallai.com/audio-processing/tts/romanian-text-to-speech-romania
+https://converterallai.com/audio-processing/tts/russian-text-to-speech-russia
+https://converterallai.com/audio-processing/tts/serbian-text-to-speech-serbia
+https://converterallai.com/audio-processing/tts/sinhala-text-to-speech-sri-lanka
+https://converterallai.com/audio-processing/tts/slovak-text-to-speech-slovakia
+https://converterallai.com/audio-processing/tts/slovenian-text-to-speech-slovenia
+https://converterallai.com/audio-processing/tts/somali-text-to-speech-somalia
+https://converterallai.com/audio-processing/tts/spanish-text-to-speech-argentina
+https://converterallai.com/audio-processing/tts/spanish-text-to-speech-colombia
+https://converterallai.com/audio-processing/tts/spanish-text-to-speech-mexico
+https://converterallai.com/audio-processing/tts/spanish-text-to-speech-spain
+https://converterallai.com/audio-processing/tts/spanish-text-to-speech-united-states
+https://converterallai.com/audio-processing/tts/swahili-text-to-speech-kenya
+https://converterallai.com/audio-processing/tts/swedish-text-to-speech-sweden
+https://converterallai.com/audio-processing/tts/tamil-text-to-speech-india
+https://converterallai.com/audio-processing/tts/telugu-text-to-speech-india
+https://converterallai.com/audio-processing/tts/thai-text-to-speech-thailand
+https://converterallai.com/audio-processing/tts/turkish-text-to-speech-turkey
+https://converterallai.com/audio-processing/tts/turkmen-text-to-speech-turkmenistan
+https://converterallai.com/audio-processing/tts/ukrainian-text-to-speech-ukraine
+https://converterallai.com/audio-processing/tts/urdu-text-to-speech-pakistan
+https://converterallai.com/audio-processing/tts/uzbek-text-to-speech-uzbekistan
+https://converterallai.com/audio-processing/tts/vietnamese-text-to-speech-vietnam
+https://converterallai.com/audio-processing/tts/welsh-text-to-speech-wales
+https://converterallai.com/audio-processing/tts/yoruba-text-to-speech-nigeria
+https://converterallai.com/audio-processing/tts/zulu-text-to-speech-south-africa
+
+# ======================================
+# Financial & Math Calculators (11 Calculators) (11 URLs)
+# ======================================
+https://converterallai.com/calculators/age
+https://converterallai.com/calculators/basic
+https://converterallai.com/calculators/bmi
+https://converterallai.com/calculators/cgpa
+https://converterallai.com/calculators/date
+https://converterallai.com/calculators/discount
+https://converterallai.com/calculators/emi
+https://converterallai.com/calculators/gst
+https://converterallai.com/calculators/loan
+https://converterallai.com/calculators/percentage
+https://converterallai.com/calculators/sip
+
+# ======================================
+# Developer Tools & Utilities (2 URLs)
+# ======================================
+https://converterallai.com/developer-tools/json-formatter
+https://converterallai.com/developer-tools/sql
+
+# ======================================
+# MySQL Masterclass Tutorial (14 Modules) (16 URLs)
+# ======================================
+https://converterallai.com/developer-tools/sql/constraints
+https://converterallai.com/developer-tools/sql/data-types
+https://converterallai.com/developer-tools/sql/dcl
+https://converterallai.com/developer-tools/sql/ddl
+https://converterallai.com/developer-tools/sql/dml
+https://converterallai.com/developer-tools/sql/dql
+https://converterallai.com/developer-tools/sql/foreign-keys
+https://converterallai.com/developer-tools/sql/functions
+https://converterallai.com/developer-tools/sql/group-by
+https://converterallai.com/developer-tools/sql/intro
+https://converterallai.com/developer-tools/sql/joins
+https://converterallai.com/developer-tools/sql/playground
+https://converterallai.com/developer-tools/sql/subqueries
+https://converterallai.com/developer-tools/sql/syntax
+https://converterallai.com/developer-tools/sql/tcl
+https://converterallai.com/developer-tools/sql/views
+
+# ======================================
+# Online Games (14 Games) (14 URLs)
+# ======================================
+https://converterallai.com/games/brick-breaker
+https://converterallai.com/games/chess
+https://converterallai.com/games/frontline-survivor
+https://converterallai.com/games/ludo
+https://converterallai.com/games/memory-match
+https://converterallai.com/games/pong
+https://converterallai.com/games/snake
+https://converterallai.com/games/snakes-ladders
+https://converterallai.com/games/spelling-bee
+https://converterallai.com/games/sudoku
+https://converterallai.com/games/teen-do-paanch
+https://converterallai.com/games/teen-patti
+https://converterallai.com/games/tic-tac-toe
+https://converterallai.com/games/warfare-3000
+
+# ======================================
+# Career & Productivity Tools (2 URLs)
+# ======================================
+https://converterallai.com/resume-builder
+https://converterallai.com/typing-master
+
+# ======================================
+# Legal & Company Pages (6 URLs)
+# ======================================
+https://converterallai.com/about
+https://converterallai.com/contact
+https://converterallai.com/cookie-policy
+https://converterallai.com/disclaimer
+https://converterallai.com/privacy-policy
+https://converterallai.com/terms-of-service

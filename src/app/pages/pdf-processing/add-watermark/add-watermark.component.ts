@@ -22,10 +22,7 @@ export class AddWatermarkComponent implements OnInit {
 
   constructor(private title: Title, private meta: Meta) {}
 
-  ngOnInit() {
-    this.title.setTitle('Add Watermark to PDF – Free PDF Watermark Tool | ConverterAllAI');
-    this.meta.updateTag({ name: 'description', content: 'Add custom text watermarks to your PDF documents. Set opacity, position, and rotation — processed locally.' });
-  }
+  ngOnInit() {}
 
   onDragOver(e: DragEvent) { e.preventDefault(); this.isDragging = true; }
   onDragLeave(e: DragEvent) { e.preventDefault(); this.isDragging = false; }

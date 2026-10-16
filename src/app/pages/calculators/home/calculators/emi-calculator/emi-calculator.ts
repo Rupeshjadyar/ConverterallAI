@@ -1,15 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-emi-calculator',
-//   imports: [],
-//   templateUrl: './emi-calculator.html',
-//   styleUrl: './emi-calculator.css',
-// })
-// export class EmiCalculator {
-
-// }
-
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';

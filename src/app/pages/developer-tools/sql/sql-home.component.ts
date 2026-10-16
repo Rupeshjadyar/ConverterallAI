@@ -450,15 +450,5 @@ import { SeoService } from '../../../services/seo.service';
     }
   `]
 })
-export class SqlHomeComponent implements OnInit {
-  private seo = inject(SeoService);
+export class SqlHomeComponent {}
 
-  ngOnInit() {
-    this.seo.updateTags({
-      title: 'SQL Masterclass Home – Introduction, Syntax, DDL, DML, DQL, DCL, TCL & Joins',
-      description: 'Comprehensive MySQL & SQL curriculum covering all 102 slides. Interactive internal navigation across Introduction, Syntax, DDL, DML, DQL, DCL, TCL, and Joins.',
-      keywords: 'sql learn, mysql masterclass, sql syntax, ddl, dml, dql, dcl, tcl, sql joins, sql course online',
-      canonicalUrl: 'https://converterallai.com/developer-tools/sql'
-    });
-  }
-}

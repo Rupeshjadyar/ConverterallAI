@@ -78,7 +78,7 @@
     <div class="languages-grid" *ngIf="filteredLanguages.length > 0">
       <a 
         *ngFor="let lang of filteredLanguages" 
-        [routerLink]="['/tts', lang.slug]" 
+        [routerLink]="['/audio-processing/tts', lang.slug]" 
         class="lang-card"
       >
         <div class="card-top">

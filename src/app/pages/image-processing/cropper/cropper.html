@@ -1,5 +1,5 @@
 <div class="tool-container">
-  <h2 class="tool-title">✂️ Image Cropper & Rotator</h2>
+  <h1 class="tool-title">✂️ Image Cropper & Rotator</h1>
   <p class="tool-subtitle">Crop and rotate your photos. Perfect for passports, profile pictures, and more!</p>
 
   <div class="upload-section" *ngIf="!imageChangedEvent">
@@ -42,7 +42,7 @@
 
   <div class="result-section" *ngIf="croppedImage">
     <h3>Preview</h3>
-    <img [src]="croppedImage" class="cropped-preview" />
+    <img [src]="croppedImage" class="cropped-preview" alt="Cropped output preview" />
     <button class="action-btn" (click)="downloadImage()">Download Cropped Image</button>
   </div>
 </div>

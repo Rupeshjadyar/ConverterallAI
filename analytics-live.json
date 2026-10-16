@@ -1,6 +1,6 @@
 {
   "totalVisitors": 9,
-  "totalPageViews": 919,
+  "totalPageViews": 926,
   "totalToolExecutions": 0,
   "totalDataSavedMB": 0,
   "visitorSet": {
@@ -19,7 +19,7 @@
       "code": "IN",
       "name": "India",
       "flag": "🇮🇳",
-      "count": 919
+      "count": 926
     }
   },
   "topTools": {},
@@ -145,25 +145,94 @@
       "date": "Oct 6"
     },
     "2026-10-13": {
-      "visitors": 1,
+      "visitors": 2,
       "toolRuns": 0,
       "day": "Tue",
       "date": "Oct 13"
+    },
+    "2026-10-16": {
+      "visitors": 6,
+      "toolRuns": 0,
+      "day": "Fri",
+      "date": "Oct 16"
     }
   },
   "devices": {
-    "desktop": 914,
+    "desktop": 920,
     "mobile": 0,
-    "tablet": 5
+    "tablet": 6
   },
   "browsers": {
-    "chrome": 693,
+    "chrome": 699,
     "safari": 0,
-    "edge": 226,
+    "edge": 227,
     "firefox": 0,
     "other": 0
   },
   "recentActivities": [
+    {
+      "id": "1792169230007",
+      "title": "Visited /cookie-policy",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:47:10.008Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1792167763089",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:22:43.089Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1792167756889",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:22:36.889Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1792167285246",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:14:45.246Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1792167139091",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:12:19.091Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1792167114318",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-16T16:11:54.318Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1791915451108",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-13T18:17:31.108Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
     {
       "id": "1791911039685",
       "title": "Visited /",
@@ -368,69 +437,6 @@
       "country": "India",
       "flag": "🇮🇳",
       "timestamp": "2026-10-05T16:40:05.926Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218387711",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:39:47.711Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218373242",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:39:33.242Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218345349",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:39:05.349Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218312634",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:38:32.634Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218285748",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:38:05.748Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218197651",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:36:37.651Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1791218165471",
-      "title": "Visited /developer-tools",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-05T16:36:05.471Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     }

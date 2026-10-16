@@ -2,11 +2,13 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/converterallai/browser",
-  "framework": null,
+  "trailingSlash": false,
   "routes": [
     { "handle": "filesystem" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/ads.txt", "dest": "/ads.txt" },
+    { "src": "/manifest.webmanifest", "dest": "/manifest.webmanifest" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
@@ -14,13 +16,18 @@
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     },
     {
       "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(?:js|css|woff2|woff|ttf|png|jpg|jpeg|webp|svg|ico)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
