@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -12,6 +12,9 @@ import { RouterModule } from '@angular/router';
 })
 export class AudioReverserComponent implements OnInit, OnDestroy {
   @ViewChild('waveformCanvas', { static: false }) waveformCanvas!: ElementRef<HTMLCanvasElement>;
+
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
@@ -54,16 +57,29 @@ export class AudioReverserComponent implements OnInit, OnDestroy {
   async loadAudio(file: File): Promise<void> {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
 
     try {
       const arrayBuf = await file.arrayBuffer();
-      this.originalBuffer = await this.audioCtx.decodeAudioData(arrayBuf);
-      this.fileName = file.name;
-      this.processReverse();
+      const decoded = await this.audioCtx.decodeAudioData(arrayBuf);
+      this.ngZone.run(() => {
+        this.originalBuffer = decoded;
+        this.fileName = file.name;
+        this.processReverse();
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     } catch (e) {
-      alert('Failed to load audio file.');
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+        alert('Failed to load audio file.');
+      });
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -127,7 +143,12 @@ export class AudioReverserComponent implements OnInit, OnDestroy {
     this.sourceNode.start(0);
     this.isPlaying = true;
 
-    this.sourceNode.onended = () => { this.isPlaying = false; };
+    this.sourceNode.onended = () => {
+      this.ngZone.run(() => {
+        this.isPlaying = false;
+        this.cdr.detectChanges();
+      });
+    };
   }
 
   stopPlayback(): void {
@@ -136,6 +157,7 @@ export class AudioReverserComponent implements OnInit, OnDestroy {
       this.sourceNode = null;
     }
     this.isPlaying = false;
+    this.cdr.detectChanges();
   }
 
   downloadReversedAudio(): void {

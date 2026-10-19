@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,6 +11,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./video-to-audio.component.css']
 })
 export class VideoToAudioComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
   audioBuffer: AudioBuffer | null = null;
@@ -62,17 +65,30 @@ export class VideoToAudioComponent implements OnInit, OnDestroy {
 
     if (this.videoSrcUrl) URL.revokeObjectURL(this.videoSrcUrl);
     this.videoSrcUrl = URL.createObjectURL(file);
+    this.cdr.detectChanges();
 
     try {
       const arrayBuf = await file.arrayBuffer();
-      this.audioBuffer = await this.audioCtx.decodeAudioData(arrayBuf);
-      this.isExtracted = true;
-      this.statusMessage = 'Audio Track Extracted Successfully!';
+      const decoded = await this.audioCtx.decodeAudioData(arrayBuf);
+      this.ngZone.run(() => {
+        this.audioBuffer = decoded;
+        this.isExtracted = true;
+        this.statusMessage = 'Audio Track Extracted Successfully!';
+        this.isExtracting = false;
+        this.cdr.detectChanges();
+      });
     } catch (e) {
       console.error(e);
-      alert('Could not decode audio stream from this video file. Please ensure it has an audio track.');
+      this.ngZone.run(() => {
+        this.isExtracting = false;
+        this.cdr.detectChanges();
+        alert('Could not decode audio stream from this video file. Please ensure it has an audio track.');
+      });
     } finally {
-      this.isExtracting = false;
+      this.ngZone.run(() => {
+        this.isExtracting = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

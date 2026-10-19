@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -23,6 +23,8 @@ export interface ClonedVoiceProfile {
   styleUrls: ['./voice-cloning.component.css']
 })
 export class VoiceCloningComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
   private isBrowser: boolean = false;
 
   // Recording State
@@ -123,6 +125,7 @@ export class VoiceCloningComponent implements OnInit, OnDestroy {
   async extractAndSaveVoice(): Promise<void> {
     if (!this.recordedBlob || !this.isBrowser) return;
     this.isAnalyzing = true;
+    this.cdr.detectChanges();
 
     try {
       const arrayBuffer = await this.recordedBlob.arrayBuffer();
@@ -179,15 +182,26 @@ export class VoiceCloningComponent implements OnInit, OnDestroy {
         timestamp: new Date().toLocaleDateString()
       };
 
-      this.clonedVoices.unshift(newVoice);
-      this.selectedClonedVoiceId = newVoice.id;
-      this.saveClonedVoices();
+      this.ngZone.run(() => {
+        this.clonedVoices.unshift(newVoice);
+        this.selectedClonedVoiceId = newVoice.id;
+        this.saveClonedVoices();
+        this.isAnalyzing = false;
+        this.cdr.detectChanges();
+      });
 
     } catch (e) {
       console.error(e);
-      alert('Audio file analysis failed. Please try another audio file.');
+      this.ngZone.run(() => {
+        this.isAnalyzing = false;
+        this.cdr.detectChanges();
+        alert('Audio file analysis failed. Please try another audio file.');
+      });
     } finally {
-      this.isAnalyzing = false;
+      this.ngZone.run(() => {
+        this.isAnalyzing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

@@ -109,7 +109,7 @@
   --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-// Dark White Theme (Pure Black & White High Contrast Vercel-Style)
+// Dark Theme (Glassmorphism Dark)
 body.dark-theme {
   --bg-color: #0a0a0a;
   --surface-color: #171717;
@@ -118,9 +118,9 @@ body.dark-theme {
   --text-color: #ffffff;
   --text-secondary: #a3a3a3;
   --border-color: rgba(255, 255, 255, 0.18);
-  --primary-color: #ffffff;
-  --primary-hover: #e5e5e5;
-  --accent: #d4d4d4;
+  --primary-color: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --accent: #06b6d4;
   --shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   --radius: 12px;
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);

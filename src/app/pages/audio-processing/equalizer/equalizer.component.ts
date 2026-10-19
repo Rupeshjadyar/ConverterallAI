@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -18,6 +18,9 @@ export interface EqBand {
   styleUrls: ['./equalizer.component.css']
 })
 export class EqualizerComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
   audioBuffer: AudioBuffer | null = null;
@@ -69,14 +72,27 @@ export class EqualizerComponent implements OnInit, OnDestroy {
   async loadAudio(file: File): Promise<void> {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
     try {
       const buf = await file.arrayBuffer();
-      this.audioBuffer = await this.audioCtx.decodeAudioData(buf);
-      this.fileName = file.name;
+      const decoded = await this.audioCtx.decodeAudioData(buf);
+      this.ngZone.run(() => {
+        this.audioBuffer = decoded;
+        this.fileName = file.name;
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     } catch (e) {
-      alert('Could not decode audio.');
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+        alert('Could not decode audio.');
+      });
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -160,7 +176,12 @@ export class EqualizerComponent implements OnInit, OnDestroy {
 
     this.sourceNode.start(0);
     this.isPlaying = true;
-    this.sourceNode.onended = () => { this.isPlaying = false; };
+    this.sourceNode.onended = () => {
+      this.ngZone.run(() => {
+        this.isPlaying = false;
+        this.cdr.detectChanges();
+      });
+    };
   }
 
   stopPlayback(): void {
@@ -169,11 +190,13 @@ export class EqualizerComponent implements OnInit, OnDestroy {
       this.sourceNode = null;
     }
     this.isPlaying = false;
+    this.cdr.detectChanges();
   }
 
   async exportEqualizedAudio(): Promise<void> {
     if (!this.audioBuffer || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
 
     try {
       const offlineCtx = new OfflineAudioContext(
@@ -213,7 +236,10 @@ export class EqualizerComponent implements OnInit, OnDestroy {
     } catch (e) {
       alert('Equalizer export failed.');
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

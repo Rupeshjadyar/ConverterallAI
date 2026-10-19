@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,6 +11,8 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./volume-booster.component.css']
 })
 export class VolumeBoosterComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
   audioBuffer: AudioBuffer | null = null;
@@ -55,14 +57,27 @@ export class VolumeBoosterComponent implements OnInit, OnDestroy {
   async loadAudio(file: File): Promise<void> {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
     try {
       const buf = await file.arrayBuffer();
-      this.audioBuffer = await this.audioCtx.decodeAudioData(buf);
-      this.fileName = file.name;
+      const decoded = await this.audioCtx.decodeAudioData(buf);
+      this.ngZone.run(() => {
+        this.audioBuffer = decoded;
+        this.fileName = file.name;
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     } catch (e) {
-      alert('Could not load audio file.');
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+        alert('Could not load audio file.');
+      });
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -83,7 +98,12 @@ export class VolumeBoosterComponent implements OnInit, OnDestroy {
     this.sourceNode.start(0);
     this.isPlaying = true;
 
-    this.sourceNode.onended = () => { this.isPlaying = false; };
+    this.sourceNode.onended = () => {
+      this.ngZone.run(() => {
+        this.isPlaying = false;
+        this.cdr.detectChanges();
+      });
+    };
   }
 
   updateGainValue(): void {
@@ -98,11 +118,13 @@ export class VolumeBoosterComponent implements OnInit, OnDestroy {
       this.sourceNode = null;
     }
     this.isPlaying = false;
+    this.cdr.detectChanges();
   }
 
   async exportBoostedAudio(): Promise<void> {
     if (!this.audioBuffer || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
 
     try {
       const factor = this.volumeLevel / 100;
@@ -137,7 +159,10 @@ export class VolumeBoosterComponent implements OnInit, OnDestroy {
     } catch (e) {
       alert('Failed to export audio.');
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

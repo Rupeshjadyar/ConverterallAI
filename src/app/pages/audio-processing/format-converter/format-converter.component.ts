@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -22,6 +22,9 @@ export interface ConvertItem {
   styleUrls: ['./format-converter.component.css']
 })
 export class FormatConverterComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
 
@@ -68,43 +71,62 @@ export class FormatConverterComponent implements OnInit {
         });
       }
     });
+    this.cdr.detectChanges();
   }
 
   removeItem(index: number): void {
     this.items.splice(index, 1);
+    this.cdr.detectChanges();
   }
 
   clearAll(): void {
     this.items = [];
+    this.cdr.detectChanges();
   }
 
   async convertAll(): Promise<void> {
     if (!this.isBrowser || !this.audioCtx || this.items.length === 0) return;
     this.isProcessingBatch = true;
+    this.cdr.detectChanges();
 
     for (const item of this.items) {
       if (item.status === 'done') continue;
-      item.status = 'converting';
-      item.progress = 20;
+      this.ngZone.run(() => {
+        item.status = 'converting';
+        item.progress = 20;
+        this.cdr.detectChanges();
+      });
 
       try {
         const arrayBuf = await item.file.arrayBuffer();
-        item.progress = 50;
-        const decodedBuffer = await this.audioCtx.decodeAudioData(arrayBuf);
-        item.progress = 80;
+        this.ngZone.run(() => {
+          item.progress = 50;
+          this.cdr.detectChanges();
+        });
 
-        const wavBlob = this.bufferToWav(decodedBuffer);
-        item.convertedBlob = wavBlob;
-        const baseName = item.name.replace(/\.[^/.]+$/, '');
-        item.convertedName = `${baseName}.${this.targetFormat}`;
-        item.status = 'done';
-        item.progress = 100;
+        const decodedBuffer = await this.audioCtx.decodeAudioData(arrayBuf);
+        this.ngZone.run(() => {
+          item.progress = 80;
+          const wavBlob = this.bufferToWav(decodedBuffer);
+          item.convertedBlob = wavBlob;
+          const baseName = item.name.replace(/\.[^/.]+$/, '');
+          item.convertedName = `${baseName}.${this.targetFormat}`;
+          item.status = 'done';
+          item.progress = 100;
+          this.cdr.detectChanges();
+        });
       } catch (e) {
-        item.status = 'error';
+        this.ngZone.run(() => {
+          item.status = 'error';
+          this.cdr.detectChanges();
+        });
       }
     }
 
-    this.isProcessingBatch = false;
+    this.ngZone.run(() => {
+      this.isProcessingBatch = false;
+      this.cdr.detectChanges();
+    });
   }
 
   downloadItem(item: ConvertItem): void {

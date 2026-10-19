@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -101,6 +101,8 @@ export class TextToMp3Component implements OnInit, OnDestroy {
   // Saved Audio Library (Server/Persistent Storage)
   savedAudioLibrary: SavedAudioItem[] = [];
 
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
   private isBrowser: boolean = false;
 
   // --- 100+ REAL MULTI-LINGUAL LANGUAGES ---
@@ -444,6 +446,7 @@ export class TextToMp3Component implements OnInit, OnDestroy {
     if (!this.recordedBlob || !this.isBrowser) return;
     this.isAnalyzingVoice = true;
     this.analysisMetrics = { pitch: 0, formant: 1.0, centroid: 0, status: 'Decoding Spectral Features...' };
+    this.cdr.detectChanges();
 
     try {
       const arrayBuffer = await this.recordedBlob.arrayBuffer();
@@ -509,17 +512,26 @@ export class TextToMp3Component implements OnInit, OnDestroy {
         timestamp: new Date().toLocaleDateString()
       };
 
-      this.clonedVoices.unshift(newClonedVoice);
-      this.saveClonedVoicesToStorage();
-
-      // Auto-select this voice
-      this.selectedVoiceId = newClonedVoice.id;
+      this.ngZone.run(() => {
+        this.clonedVoices.unshift(newClonedVoice);
+        this.saveClonedVoicesToStorage();
+        this.selectedVoiceId = newClonedVoice.id;
+        this.isAnalyzingVoice = false;
+        this.cdr.detectChanges();
+      });
       
     } catch (e) {
       console.error('Error analyzing voice sample:', e);
-      alert('Could not decode audio sample. Please upload/record a valid WAV/MP3 file.');
+      this.ngZone.run(() => {
+        this.isAnalyzingVoice = false;
+        this.cdr.detectChanges();
+        alert('Could not decode audio sample. Please upload/record a valid WAV/MP3 file.');
+      });
     } finally {
-      this.isAnalyzingVoice = false;
+      this.ngZone.run(() => {
+        this.isAnalyzingVoice = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

@@ -133,4 +133,4 @@ select.input-field {
   color: var(--text-color);
 }
 
-body.dark-theme .toggle-btn.active { color: #000000 !important; }
+body.dark-theme .toggle-btn.active { color: #a8edea !important; }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -18,6 +18,9 @@ export interface TrackItem {
   styleUrls: ['./audio-joiner.component.css']
 })
 export class AudioJoinerComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
   mergedBuffer: AudioBuffer | null = null;
@@ -60,24 +63,31 @@ export class AudioJoinerComponent implements OnInit, OnDestroy {
   async loadTracks(files: File[]): Promise<void> {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
+    this.cdr.detectChanges();
 
     for (const file of files) {
       try {
         const buf = await file.arrayBuffer();
         const decoded = await this.audioCtx.decodeAudioData(buf);
-        this.tracks.push({
-          id: Math.random().toString(36).substring(2, 9),
-          name: file.name,
-          duration: decoded.duration,
-          buffer: decoded
+        this.ngZone.run(() => {
+          this.tracks.push({
+            id: Math.random().toString(36).substring(2, 9),
+            name: file.name,
+            duration: decoded.duration,
+            buffer: decoded
+          });
+          this.cdr.detectChanges();
         });
       } catch (e) {
         console.error(e);
       }
     }
 
-    this.isProcessing = false;
-    this.rebuildMergedBuffer();
+    this.ngZone.run(() => {
+      this.isProcessing = false;
+      this.rebuildMergedBuffer();
+      this.cdr.detectChanges();
+    });
   }
 
   moveTrack(index: number, dir: -1 | 1): void {
@@ -160,7 +170,12 @@ export class AudioJoinerComponent implements OnInit, OnDestroy {
     this.sourceNode.connect(this.audioCtx.destination);
     this.sourceNode.start(0);
     this.isPlaying = true;
-    this.sourceNode.onended = () => { this.isPlaying = false; };
+    this.sourceNode.onended = () => {
+      this.ngZone.run(() => {
+        this.isPlaying = false;
+        this.cdr.detectChanges();
+      });
+    };
   }
 
   stopPlayback(): void {
@@ -169,6 +184,7 @@ export class AudioJoinerComponent implements OnInit, OnDestroy {
       this.sourceNode = null;
     }
     this.isPlaying = false;
+    this.cdr.detectChanges();
   }
 
   downloadMergedAudio(): void {

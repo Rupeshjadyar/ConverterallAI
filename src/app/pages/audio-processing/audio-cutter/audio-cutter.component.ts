@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -13,6 +13,9 @@ import { RouterModule } from '@angular/router';
 export class AudioCutterComponent implements OnInit, OnDestroy {
   @ViewChild('waveformCanvas', { static: false }) waveformCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
+
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   isBrowser: boolean = false;
   audioCtx: AudioContext | null = null;
@@ -67,19 +70,32 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
     this.processingMessage = 'Decoding audio file...';
+    this.cdr.detectChanges();
     try {
       const arrayBuffer = await file.arrayBuffer();
-      this.audioBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
-      this.fileName = file.name;
-      this.duration = Number(this.audioBuffer.duration.toFixed(2));
-      this.startTime = 0;
-      this.endTime = this.duration;
-      this.currentTime = 0;
-      setTimeout(() => this.drawWaveform(), 50);
+      const decoded = await this.audioCtx.decodeAudioData(arrayBuffer);
+      this.ngZone.run(() => {
+        this.audioBuffer = decoded;
+        this.fileName = file.name;
+        this.duration = Number(this.audioBuffer.duration.toFixed(2));
+        this.startTime = 0;
+        this.endTime = this.duration;
+        this.currentTime = 0;
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+        setTimeout(() => this.drawWaveform(), 50);
+      });
     } catch (e) {
-      alert('Could not decode audio file. Please select a valid MP3, WAV, or AAC file.');
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+        alert('Could not decode audio file. Please select a valid MP3, WAV, or AAC file.');
+      });
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -145,9 +161,12 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
     this.isPlaying = true;
 
     this.sourceNode.onended = () => {
-      this.isPlaying = false;
-      this.currentTime = this.startTime;
-      this.drawWaveform();
+      this.ngZone.run(() => {
+        this.isPlaying = false;
+        this.currentTime = this.startTime;
+        this.drawWaveform();
+        this.cdr.detectChanges();
+      });
     };
 
     this.updateProgress();
@@ -160,6 +179,7 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
     }
     this.isPlaying = false;
     if (this.animFrame) cancelAnimationFrame(this.animFrame);
+    this.cdr.detectChanges();
   }
 
   updateProgress(): void {
@@ -183,6 +203,7 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
     if (!this.audioBuffer || !this.audioCtx) return;
     this.isProcessing = true;
     this.processingMessage = 'Slicing & Rendering Trimmed Track...';
+    this.cdr.detectChanges();
 
     try {
       const sampleRate = this.audioBuffer.sampleRate;
@@ -224,7 +245,10 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
     } catch (e) {
       alert('Error trimming audio.');
     } finally {
-      this.isProcessing = false;
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 

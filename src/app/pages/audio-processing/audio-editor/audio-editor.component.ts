@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID, HostListener, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -33,6 +33,8 @@ export class AudioEditorComponent implements OnInit, OnDestroy {
   @ViewChild('waveformCanvas', { static: false }) waveformCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
   private isBrowser: boolean = false;
   private audioCtx: AudioContext | null = null;
   public activeBuffer: AudioBuffer | null = null;
@@ -196,37 +198,52 @@ export class AudioEditorComponent implements OnInit, OnDestroy {
     if (!this.isBrowser || !this.audioCtx) return;
     this.isProcessing = true;
     this.processingMessage = 'Decoding & Rendering Waveforms...';
+    this.cdr.detectChanges();
     
     try {
       const arrayBuffer = await file.arrayBuffer();
       const decodedBuffer = await this.audioCtx.decodeAudioData(arrayBuffer);
       
-      this.pushHistoryState(decodedBuffer, file.name);
-      this.setActiveBuffer(decodedBuffer, file.name);
-      
-      const trackColor = this.trackColors[this.tracks.length % this.trackColors.length];
-      const peaks = this.buildPeakCache(decodedBuffer, 600);
+      this.ngZone.run(() => {
+        this.pushHistoryState(decodedBuffer, file.name);
+        this.setActiveBuffer(decodedBuffer, file.name);
+        
+        const trackColor = this.trackColors[this.tracks.length % this.trackColors.length];
+        const peaks = this.buildPeakCache(decodedBuffer, 600);
 
-      this.tracks.push({
-        id: 'trk-' + Date.now() + '-' + Math.random().toString(36).substring(2, 5),
-        name: file.name.substring(0, 25),
-        duration: decodedBuffer.duration,
-        buffer: decodedBuffer,
-        volume: 100,
-        pan: 0,
-        isMuted: false,
-        isSolo: false,
-        color: trackColor,
-        peaksMin: peaks.min,
-        peaksMax: peaks.max
+        this.tracks.push({
+          id: 'trk-' + Date.now() + '-' + Math.random().toString(36).substring(2, 5),
+          name: file.name.substring(0, 25),
+          duration: decodedBuffer.duration,
+          buffer: decodedBuffer,
+          volume: 100,
+          pan: 0,
+          isMuted: false,
+          isSolo: false,
+          color: trackColor,
+          peaksMin: peaks.min,
+          peaksMax: peaks.max
+        });
+
+        this.isProcessing = false;
+        this.processingMessage = '';
+        this.cdr.detectChanges();
       });
 
     } catch (e) {
       console.error('Audio load error:', e);
-      alert('Failed to load audio file. Please try a valid MP3, WAV, or AAC file.');
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.processingMessage = '';
+        this.cdr.detectChanges();
+        alert('Failed to load audio file. Please try a valid MP3, WAV, or AAC file.');
+      });
     } finally {
-      this.isProcessing = false;
-      this.processingMessage = '';
+      this.ngZone.run(() => {
+        this.isProcessing = false;
+        this.processingMessage = '';
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -284,8 +301,11 @@ export class AudioEditorComponent implements OnInit, OnDestroy {
         if (this.audioCtx) {
           const buffer = await this.audioCtx.decodeAudioData(arrayBuf);
           const name = `Mic Rec (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
-          this.pushHistoryState(buffer, name);
-          this.setActiveBuffer(buffer, name);
+          this.ngZone.run(() => {
+            this.pushHistoryState(buffer, name);
+            this.setActiveBuffer(buffer, name);
+            this.cdr.detectChanges();
+          });
         }
         stream.getTracks().forEach(t => t.stop());
       };

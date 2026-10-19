@@ -74,7 +74,7 @@
 
 .filter-chip.active {
   background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-  color: var(--text-color);
+  color: #ffffff !important;
   border-color: transparent;
 }
 
@@ -236,6 +236,6 @@
 }
 
 body.dark-theme .filter-chip.active {
-  color: #000000 !important;
+  color: #ffffff !important;
 }
-body.dark-theme .filter-chip.active { color: #000000 !important; }
+body.dark-theme .filter-chip.active { color: #ffffff !important; }
