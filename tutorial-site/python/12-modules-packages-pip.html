@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Modules, Packages, __name__ & Dependency Management — WebDev Academy</title>
+  <meta name="description" content="Architect scalable Python projects. Master module importing mechanisms, sys.path resolution, package creation with __init__.py, the crucial __name__ == '__main__' idiom, and managing production dependencies with pip and requirements.txt.">
+  <meta name="keywords" content="Python modules, Python packages, __init__.py, __name__ == '__main__', sys.path, pip install requirements.txt, Python project structure">
+  <meta property="og:title" content="Python Modules, Packages, __name__ & Dependency Management">
+  <meta property="og:description" content="Architect scalable Python projects. Master module importing mechanisms, sys.path resolution, package creation with __init__.py, the crucial __name__ == '__main__' idiom, and managing production dependencies with pip and requirements.txt.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="12-modules-packages-pip.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 12</span>
+          </div>
+          <h1 class="lesson-title">Python Modules, Packages, __name__ & Dependency Management</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Architect scalable Python projects. Master module importing mechanisms, sys.path resolution, package creation with __init__.py, the crucial __name__ == '__main__' idiom, and managing production dependencies with pip and requirements.txt.</span>
+            <span class="lang-hi">Python Modules aur Packages seekhein: import kaise kaam karta hai, __name__ == '__main__' ka role, package structure aur pip se dependencies manage karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The difference between a Script, a Module (.py), and a Package (folder with __init__.py).</li><li>How Python's import system resolves paths using sys.path and sys.modules.</li><li>Demystifying if __name__ == '__main__': Executable script vs imported module.</li><li>Absolute vs Relative Imports (from . import sibling).</li><li>Managing production dependencies with pip, requirements.txt, and pip freeze.</li><li>Structuring professional, production-grade Python project repositories.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 11: Exception Handling, Custom Errors & Context Managers.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of building with LEGO blocks. <strong>A single LEGO brick is a Python Module (a single .py file)</strong>: it has a specific shape and purpose (e.g. math_utils.py). <strong>A LEGO set box containing 50 related bricks is a Package</strong>: a folder containing multiple modules bound together with an instruction manual (<code>__init__.py</code>). <strong>The <code>if __name__ == '__main__':</code> check is a testing switch on a toy robot</strong>: when the toy manufacturer is in the factory testing the robot individually, the switch says 'I am in standalone test mode (__main__)' and dances. But when the robot is packed inside a giant spaceship box (imported into another project), it remains quiet and waits for orders from the spaceship captain!</span>
+            <span class="lang-hi">LEGO blocks ki misaal lein: <strong>Ek single LEGO block ek Module (.py file) hai</strong> jisme kuch functions likhe hain. <strong>Saare blocks ka dabba ek Package hai</strong> jiske andar ek guide (<code>__init__.py</code>) hoti hai. <strong><code>if __name__ == '__main__':</code> ek testing switch hai</strong>: jab aap file ko akele chalate hain toh wo run hota hai; lekin jab koi doosra program use import karta hai, toh wo chupchaap tools provide karta hai bina faltu execute hue!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is the purpose of if __name__ == '__main__'?</strong> When a Python file is executed directly from the terminal (<code>python script.py</code>), the interpreter assigns the special built-in variable <code>__name__ = '__main__'</code>. When that same file is imported by another module (<code>import script</code>), <code>__name__</code> is set to the module's actual filename (<code>'script'</code>). This allows a file to serve as both an importable library and a standalone executable tool without running testing code on import!</li><li><strong>How does Python locate modules during import?</strong> Python searches directories in <code>sys.path</code> in order: 1) The current working directory where the script was launched. 2) The <code>PYTHONPATH</code> environment variable. 3) Standard library directories. 4) The <code>site-packages</code> directory (where pip installs external packages).</li><li><strong>What does __init__.py do?</strong> In Python 3.3+, namespace packages allow omitting <code>__init__.py</code>, but in professional production projects, <code>__init__.py</code> is still standard: it marks a directory as a regular Python package, initializes package-level state, and controls exports via <code>__all__</code>.</li><li><strong>Circular Imports:</strong> When module A imports module B, and module B imports module A. At runtime, module B attempts to access attributes of module A before module A has finished initializing, raising an <code>ImportError</code>. Fix: Refactor shared logic into a module C or import inside function scope.</li><li><strong>sys.modules cache:</strong> Python caches imported modules in the dictionary <code>sys.modules</code>. Re-importing a module in another file simply returns the cached object in memory without re-executing the file's top-level code.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Modules vs Packages: Structuring Python Projects</h2>
+        <p>As software grows beyond a single file, organizing code becomes paramount:</p>
+        <p>• <strong>Module:</strong> Any single Python file (e.g. <code>database.py</code>) containing functions, classes, and variables.<br>• <strong>Package:</strong> A directory containing multiple modules and an <code>__init__.py</code> file, allowing dot-notation imports: <code>from app.services.auth import verify_password</code>.</p>
+        
+        <h2>2. The Golden Idiom: if __name__ == '__main__'</h2>
+        <p>Every Python developer sees this boilerplate on line 1 of script entrypoints:</p>
+        <p>Whenever you import a file, Python executes all top-level statements in that file from top to bottom. Wrapping test or launch code inside <code>if __name__ == '__main__':</code> guarantees it runs ONLY when explicitly invoked from the terminal.</p>
+        
+        <h2>3. Dependency Management: pip & requirements.txt</h2>
+        <p>In enterprise development, projects depend on external libraries from the Python Package Index (PyPI) such as <code>requests</code>, <code>fastapi</code>, or <code>pandas</code>.</p>
+        <p>We track explicit versions using <code>pip freeze &gt; requirements.txt</code> and install them cleanly inside our virtual environment with <code>pip install -r requirements.txt</code>.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Demonstrating if __name__ == '__main__' Behavior</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: math_calculator.py
+
+def add(a: float, b: float) -&gt; float:
+    return a + b
+
+def multiply(a: float, b: float) -&gt; float:
+    return a * b
+
+# Code below runs ONLY when run directly: python math_calculator.py
+# It will NOT run when another file does: import math_calculator
+if __name__ == '__main__':
+    print('Running standalone self-tests...')
+    assert add(2, 3) == 5
+    assert multiply(4, 5) == 20
+    print('All unit tests passed successfully!')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • When imported by another file, only <code>add</code> and <code>multiply</code> are exposed; the test block remains inert.
+        </div>
+        
+        <h3>Code Example 2: Professional Project Folder Architecture</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Standard Production Enterprise Repository Structure:
+#
+# my_project/
+# ├── .venv/                   # Isolated virtual environment (git-ignored)
+# ├── requirements.txt         # Pinned production dependencies
+# ├── README.md                # Project documentation
+# ├── main.py                  # Entrypoint launcher script
+# └── my_app/                  # Top-level application package
+#     ├── __init__.py          # Marks folder as package, exports public API
+#     ├── config.py            # Environment variables &amp; settings
+#     ├── database.py          # Database connection pool
+#     ├── models/              # Sub-package for data models
+#     │   ├── __init__.py
+#     │   └── user.py
+#     └── services/            # Business logic services
+#         ├── __init__.py
+#         └── auth.py</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Modular directory structures make codebases navigable and scalable for multi-developer teams.
+        </div>
+        
+        <h3>Code Example 3: Package Initialization and Controlling Exports with __all__</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: my_app/services/__init__.py
+"""Package initializer controlling wildcard exports."""
+from .auth import authenticate_user, generate_jwt_token
+from .mailer import send_welcome_email
+
+# Controls what 'from my_app.services import *' will expose
+__all__ = ['authenticate_user', 'generate_jwt_token', 'send_welcome_email']</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>__all__</code> explicitly defines the public API of a package, hiding private internal helpers.
+        </div>
+        
+        <h3>Code Example 4: Inspecting sys.path and Module Search Resolution</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sys
+
+print('Python Module Search Resolution Order:')
+for idx, directory in enumerate(sys.path, 1):
+    print(f'  {idx}. {directory}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>sys.path</code> displays the exact directory search order used by Python when resolving imports.
+        </div>
+        
+        <h3>Code Example 5: Dynamic Module Importing with importlib</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import importlib
+
+# Dynamically load plugins or drivers at runtime
+module_name = 'math'
+math_lib = importlib.import_module(module_name)
+
+print(f'Pi from dynamically loaded {module_name}: {math_lib.pi}')
+print(f'Cosine of 0: {math_lib.cos(0)}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>importlib.import_module()</code> is the backbone of plugin architectures in modern Python frameworks.
+        </div>
+        
+        <h3>Code Example 6: Managing Dependencies with pip & requirements.txt</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Pinned requirements.txt format for deterministic enterprise builds:
+# requests==2.31.0
+# pydantic&gt;=2.5.0,&lt;3.0.0
+# fastapi==0.110.0
+# uvicorn[standard]==0.28.0
+# pytest==8.1.0
+
+# Terminal installation command:
+# pip install -r requirements.txt</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Pinning exact versions prevents breaking updates from crashing automated deployment pipelines.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Modules, Packages, __name__ & Dependency Management</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Modules Sandbox
+import sys
+import os
+
+print(f'Current OS: {os.name}')
+print(f'Current Working Dir: {os.getcwd()}')
+print(f'Total modules in sys.modules cache: {len(sys.modules)}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Circular Imports:</strong> Having file A import file B, while file B imports file A. Fix by refactoring shared models into a separate <code>models.py</code> file.</li><li><strong>Using wildcard imports (from module import *):</strong> Pollutes the local namespace, obscures where functions came from, and can silently overwrite built-in functions. Always import explicit symbols!</li><li><strong>Naming a local script after a standard library module:</strong> Naming a file <code>email.py</code> or <code>json.py</code> shadows the standard library, breaking all imports of that library.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use pip-tools or Poetry:</strong> In production projects, use tools like <code>poetry</code> or <code>pip-compile</code> to generate lockfiles (<code>poetry.lock</code>) that guarantee 100% cryptographic reproducibility across all machines.</li><li><strong>Relative imports in packages:</strong> Inside a package, use <code>from . import sibling</code> or <code>from ..parent import helper</code> to keep internal imports portable even if the root package is renamed.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>A module is a .py file; a package is a directory containing modules and an __init__.py file.</li><li>if __name__ == '__main__' allows files to act as both libraries and standalone executables.</li><li>Python searches sys.path to resolve imports and caches loaded modules in sys.modules.</li><li>Never use wildcard imports (from x import *); import explicit symbols.</li><li>Pin exact dependency versions in requirements.txt for production stability.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What is printed when a Python file named <code>utils.py</code> is imported by another script using <code>import utils</code> if <code>utils.py</code> contains: <code>print(f'Name is {__name__}')</code>?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> What is __name__ set to on import?</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># When imported, __name__ is set to the module's name: 'utils'.
+# Output:
+# Name is utils</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Python script that programmatically inspects <code>sys.modules</code> and checks if the <code>json</code> module is currently loaded into memory.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use 'json' in sys.modules.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">import sys
+
+print('Is json in cache before import?', 'json' in sys.modules)
+import json
+print('Is json in cache after import?', 'json' in sys.modules)</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what a Circular Import is in Python, provide an example scenario that crashes with an ImportError, and describe two distinct architectural patterns to resolve it.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about module A loading module B while module A is half-initialized.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Scenario:
+# file_a.py has: from file_b import func_b
+# file_b.py has: from file_a import func_a
+# When file_a runs, it imports file_b. file_b immediately tries to import func_a from file_a,
+# but file_a is still paused mid-import and func_a has not been defined yet -&gt; ImportError!
+
+# Resolutions:
+# 1. Refactor shared dependencies: Move func_a and func_b's shared code into a 3rd module: shared.py.
+# 2. Deferred / Local Import: Move 'from file_b import func_b' inside the specific function body that uses it.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="0" data-explanation="When executed directly, Python assigns the string <code>'__main__'</code> to the special <code>__name__</code> variable.">
+          <div class="quiz-question-text">1. What is the value of __name__ when a Python script is executed directly from the terminal?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> '__main__'</div><div class="quiz-option"><span>B)</span> 'script'</div><div class="quiz-option"><span>C)</span> '__init__'</div><div class="quiz-option"><span>D)</span> 'root'</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>__init__.py</code> marks a directory as an importable Python package.">
+          <div class="quiz-question-text">2. What is the file __init__.py traditionally used for in a Python directory?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To initialize computer hardware</div><div class="quiz-option"><span>B)</span> To mark the directory as a Python package and configure package-level exports</div><div class="quiz-option"><span>C)</span> To delete temporary files</div><div class="quiz-option"><span>D)</span> To compile C code</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Third-party packages are installed in the <code>site-packages</code> directory.">
+          <div class="quiz-question-text">3. Where does pip install external third-party libraries by default?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> In the Windows system32 folder</div><div class="quiz-option"><span>B)</span> In the site-packages directory of the active Python or virtual environment</div><div class="quiz-option"><span>C)</span> In the Desktop folder</div><div class="quiz-option"><span>D)</span> In the browser cache</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Wildcard imports pollute the namespace and make code hard to read and debug.">
+          <div class="quiz-question-text">4. Why are wildcard imports (from module import *) considered bad practice in PEP 8?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> They cause computer screens to flicker</div><div class="quiz-option"><span>B)</span> They pollute the local namespace, obscure where functions originate, and can silently overwrite built-in variables</div><div class="quiz-option"><span>C)</span> Wildcard imports are illegal in Python 3</div><div class="quiz-option"><span>D)</span> They take 10 minutes to compile</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>pip freeze &gt; requirements.txt</code> captures exact installed package versions.">
+          <div class="quiz-question-text">5. What command exports all installed packages and their exact pinned versions to a file?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> pip export packages.txt</div><div class="quiz-option"><span>B)</span> pip freeze > requirements.txt</div><div class="quiz-option"><span>C)</span> python --save-packages</div><div class="quiz-option"><span>D)</span> pip list --save</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, print the first item of sys.path using sys.path[0] and inspect the active directory!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#module" class="ref-pill">Glossary: Module</a><a href="../reference/glossary.html#package" class="ref-pill">Glossary: Package</a><a href="13-database-sqlite-postgres.html" class="ref-pill">Lesson 13: Database Connectivity</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="11-error-handling-and-files.html" class="btn btn-outline">&larr; 11. Error Handling & Files</a>
+          <button class="mark-complete-btn" data-lesson-id="python-12">Mark as Complete</button>
+          <a href="13-database-sqlite-postgres.html" class="btn btn-primary">13. Database Connectivity &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

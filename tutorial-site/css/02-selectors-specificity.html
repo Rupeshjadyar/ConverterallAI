@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Selectors & Specificity — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="02-selectors-specificity.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 02</span>
+          </div>
+          <h1 class="lesson-title">CSS Selectors and Specificity Hierarchy</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master element targeting with combinators and attribute selectors, and understand the mathematical formula behind CSS specificity.</span>
+            <span class="lang-hi">CSS selectors aur specificity ka mathematical formula samjhein taaki aapke styles hamesha sahi element par apply hon.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Simple selectors: Universal (<code>*</code>), Type (<code>p</code>), Class (<code>.btn</code>), and ID (<code>#main</code>).</li>
+            <li>Combinator selectors: Descendant (space), Direct Child (<code>&gt;</code>), Adjacent Sibling (<code>+</code>), General Sibling (<code>~</code>).</li>
+            <li>Pattern-matching attribute selectors (<code>[href^="https"]</code>, <code>[class*="icon"]</code>).</li>
+            <li>The mathematical Specificity formula: <code>(Inline, ID, Class, Element)</code>.</li>
+            <li>Why <code>!important</code> causes maintenance nightmares and how to avoid specificity wars.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="01-introduction-and-syntax.html">01. Intro &amp; Syntax</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Medieval Royal Court Hierarchy</div>
+          <p>
+            <span class="lang-en">Imagine a dispute in a royal medieval court: 1. A Common Peasant says the castle flag should be red (<strong>Element selector, score: 1</strong>). 2. A Knight in armor says it should be blue (<strong>Class selector, score: 10</strong>). The Knight overrules the Peasant! 3. The Duke says it should be gold (<strong>ID selector, score: 100</strong>). The Duke overrules the Knight! 4. The King personally hands down a decree (<strong>Inline style, score: 1000</strong>). The King overrules the Duke! And what is <strong><code>!important</code></strong>? It is a mythical fire-breathing Dragon that burns the entire castle court to ash &mdash; you win the argument today, but your castle is ruined tomorrow!</span>
+            <span class="lang-hi">Ek shahi darbar ki tarah sochiye. Aam nagrik (Element = 1 point), Senapati (Class = 10 points), Mantri (ID = 100 points) aur Raja (Inline style = 1000 points). Jiska rank sabse bada hota hai, uski baat maani jaati hai. Aur <code>!important</code> aisi missile hai jo sabko khatam kar deti hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Core Combinators</h2>
+        <p>
+          Combinators explain the relationship between two selectors:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Four CSS Combinators</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Descendant Selector (space):
+   Matches ANY <p> inside <article>, no matter how deeply nested */
+article p {
+  color: #334155;
+}
+
+/* 2. Direct Child Selector (>):
+   Matches ONLY <p> that are DIRECT children of <article> (not inside nested divs) */
+article > p {
+  font-size: 1.1rem;
+}
+
+/* 3. Adjacent Sibling Selector (+):
+   Matches the very first <p> immediately following an <h2> */
+h2 + p {
+  font-weight: 600; /* Lead paragraph styling */
+}
+
+/* 4. General Sibling Selector (~):
+   Matches ALL <p> elements that follow an <h2> sharing the same parent */
+h2 ~ p {
+  line-height: 1.7;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Distinction:</strong><br>
+          &bull; <code>article p</code> targets grandchildren, great-grandchildren, and all descendants.<br>
+          &bull; <code>article &gt; p</code> strictly targets immediate children only.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Advanced Attribute Selectors</h2>
+        <p>
+          You can target elements based on their HTML attributes and values:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Attribute Pattern Matching</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Exact Match [attr="val"]: Target password inputs specifically */
+input[type="password"] {
+  border-color: #ef4444;
+}
+
+/* 2. Starts With [attr^="val"]: Target external links beginning with https */
+a[href^="https"] {
+  color: #2563eb;
+}
+
+/* 3. Ends With [attr$="val"]: Target links pointing to PDF files */
+a[href$=".pdf"]::after {
+  content: " (PDF)";
+  font-size: 0.8em;
+  color: #64748b;
+}
+
+/* 4. Contains Substring [attr*="val"]: Target any element whose class contains 'icon-' */
+span[class*="icon-"] {
+  display: inline-block;
+  vertical-align: middle;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Regex Memory Hook:</strong> <code>^</code> means starts-with, <code>$</code> means ends-with, and <code>*</code> means contains anywhere.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Combinators and Specificity</h2>
+        <p>Observe how different selectors target specific paragraph levels in the sandbox:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Combinator Sandbox</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; line-height: 1.6; }
+    /* Direct child selector: only direct paragraphs get blue */
+    .parent-box > p {
+      color: #2563eb;
+      font-weight: bold;
+    }
+    /* Adjacent sibling: paragraph immediately following h3 gets highlighted */
+    h3 + p {
+      background-color: #fef08a;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="parent-box">
+    <h3>Section Header</h3>
+    <p>Paragraph 1: Adjacent sibling to h3 (Highlighted yellow + Bold blue direct child).</p>
+    <p>Paragraph 2: Second direct child (Bold blue).</p>
+    <div class="nested-box" style="margin-left: 20px; border-left: 2px solid #cbd5e1; padding-left: 10px;">
+      <p>Paragraph 3: Inside nested box (NOT a direct child, so normal black text).</p>
+    </div>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Specificity Mathematical Formula</h2>
+        <p>
+          When multiple rules conflict on an element, the browser scores each selector using a 4-column tuple: <strong>(Inline, ID, Class, Element)</strong>:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Specificity Scoreboard</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">Selector Syntax                          (Inline, ID, Class, Element)   Total Score
+-------------------------------------------------------------------------------------
+*                                        (  0   ,  0,   0  ,    0   )   0
+p                                        (  0   ,  0,   0  ,    1   )   1
+article p                                (  0   ,  0,   0  ,    2   )   2
+.btn                                     (  0   ,  0,   1  ,    0   )   10
+button.btn                               (  0   ,  0,   1  ,    1   )   11
+.nav .nav-item a                         (  0   ,  0,   2  ,    1   )   21
+#main-header                             (  0   ,  1,   0  ,    0   )   100
+#main-header .title                      (  0   ,  1,   1  ,    0   )   110
+style="color: red;"                      (  1   ,  0,   0  ,    0   )   1000</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How Comparison Works:</strong> Compare column by column from left to right. Even a million classes (score: 0, 0, 1000000, 0) can NEVER beat a single ID (score: 0, 1, 0, 0)!
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The <code>!important</code> Nuclear Option</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Normal rule: Score (0, 0, 1, 0) */
+.alert-box {
+  background-color: #fef2f2;
+}
+
+/* Nuclear override: Trumps all specificity calculations! */
+.urgent-override {
+  background-color: #fee2e2 !important;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why senior developers avoid <code>!important</code>:</strong> Once you use <code>!important</code> to fix a bug, the only way to override that rule later is to write ANOTHER <code>!important</code>. Soon, your stylesheet is full of exclamation points and impossible to maintain. Use class architecture instead!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Pseudo-Class Selectors in Specificity</h3>
+        <p>Pseudo-classes (like <code>:hover</code>, <code>:focus</code>, <code>:first-child</code>) have the exact same specificity weight as a regular class (10 points):</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Specificity: 1 element + 1 pseudo-class = (0, 0, 1, 1) -> Score: 11 */
+button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Specificity: 1 class + 1 pseudo-class = (0, 0, 2, 0) -> Score: 20 (WINS!) */
+.btn:hover {
+  background-color: #15803d;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Rule:</strong> <code>.btn:hover</code> wins over <code>button:hover</code> because classes outrank bare element tag names.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Checking Element Match via JavaScript <code>matches()</code></h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const el = document.querySelector(".btn-submit");
+
+// JavaScript can test if an element matches any valid CSS selector string:
+console.log(el.matches("button.btn-submit"));        // true
+console.log(el.matches("form > .btn-submit"));       // true (if direct child of form)
+console.log(el.matches('[type="submit"]'));          // true</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Power Method:</strong> <code>element.matches(selector)</code> is heavily used in event delegation to check if a clicked target matches specific CSS selector criteria.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Overusing IDs for styling:</strong> Styling with <code>#sidebar { ... }</code> locks that selector at 100 specificity points, making it very hard to override with utility classes. Use <strong>classes</strong> for styling and save IDs for JS/anchors.</li>
+            <li><strong>Chaining too many selectors:</strong> Writing <code>body div.wrapper main.content article.post h2.title</code> has high specificity and makes CSS brittle. Keep selectors short: <code>.post__title</code>.</li>
+            <li><strong>Confusing space (descendant) with no space (compound):</strong> <code>a.button</code> targets an <code>&lt;a class="button"&gt;</code> element. But <code>a .button</code> (with a space) targets an element with class <code>button</code> nested <em>inside</em> an anchor tag!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Strive for <strong>flat specificity</strong>: When 90% of your stylesheet rules use simple single classes (specificity 0, 0, 1, 0), modifying and reordering styles is completely painless.</li>
+            <li>Use the <code>:is()</code> and <code>:where()</code> modern pseudo-classes &mdash; <code>:where()</code> reduces the specificity of whatever is inside it to <strong>zero</strong>!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>space</code> = Descendant (all descendants); <code>&gt;</code> = Direct child only.</li>
+            <li><code>+</code> = Adjacent sibling (immediate next element); <code>~</code> = General sibling.</li>
+            <li>Attribute selectors: <code>[attr^="val"]</code> (starts with), <code>[attr$="val"]</code> (ends with).</li>
+            <li>Specificity hierarchy: <strong>Inline (1000) &gt; ID (100) &gt; Class (10) &gt; Element (1)</strong>.</li>
+            <li>Avoid <code>!important</code> &mdash; solve conflicts by managing selector specificity cleanly.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Calculate Specificity Score</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>What is the mathematical specificity score of the selector: <code>nav.main-nav ul li a</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Count the classes and count the element tags.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <strong>(0, 0, 1, 4) &rarr; Score: 14</strong>.<br>
+              It has 1 class (<code>.main-nav</code> = 10) and 4 elements (<code>nav</code>, <code>ul</code>, <code>li</code>, <code>a</code> = 4).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Who Wins the Battle?</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>An element <code>&lt;p id="hero-text" class="lead-text"&gt;</code> is targeted by:<br>
+          Rule 1: <code>#hero-text { color: red; }</code><br>
+          Rule 2: <code>p.lead-text { color: blue; }</code><br>
+          Which color will the paragraph display, and why?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Compare ID weight vs Class+Element weight.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <strong>Red</strong>! Rule 1 uses an ID selector, which scores <strong>(0, 1, 0, 0) = 100</strong>. Rule 2 uses a class + element, which only scores <strong>(0, 0, 1, 1) = 11</strong>. The ID easily wins.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Direct Child vs Descendant</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Explain why <code>div.card &gt; p</code> does NOT style <code>&lt;p&gt;</code> in this markup: <code>&lt;div class="card"&gt;&lt;header&gt;&lt;p&gt;Subhead&lt;/p&gt;&lt;/header&gt;&lt;/div&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Who is the direct parent of the p tag?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Because <code>&lt;p&gt;</code> is a direct child of <code>&lt;header&gt;</code>, not <code>&lt;div class="card"&gt;</code>! To target it with a direct child selector, you would need <code>div.card &gt; header &gt; p</code> (or use the descendant space combinator: <code>div.card p</code>).
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 02 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The > combinator targets only direct children (immediate first generation).">
+            <div class="quiz-question-text">1. Which combinator targets only elements that are DIRECT children of a parent?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Space (e.g. div p)</div>
+              <div class="quiz-option"><span>B)</span> Greater-than symbol (e.g. div > p)</div>
+              <div class="quiz-option"><span>C)</span> Plus symbol (e.g. div + p)</div>
+              <div class="quiz-option"><span>D)</span> Tilde symbol (e.g. div ~ p)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="ID selectors score (0, 1, 0, 0), beating any combination of classes and elements.">
+            <div class="quiz-question-text">2. Which of the following selectors has the highest specificity?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> .btn.btn-primary.large</div>
+              <div class="quiz-option"><span>B)</span> html body div.container ul.nav li a.active</div>
+              <div class="quiz-option"><span>C)</span> #submit-button</div>
+              <div class="quiz-option"><span>D)</span> button:hover</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="^= matches attribute values starting with the specified string.">
+            <div class="quiz-question-text">3. Which attribute selector matches any link that starts with 'https://'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> a[href^="https://"]</div>
+              <div class="quiz-option"><span>B)</span> a[href$="https://"]</div>
+              <div class="quiz-option"><span>C)</span> a[href*="https://"]</div>
+              <div class="quiz-option"><span>D)</span> a[href="https://"]</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The adjacent sibling combinator (+) targets the very next sibling element.">
+            <div class="quiz-question-text">4. What does the selector 'h2 + p' target?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> All paragraphs inside an h2</div>
+              <div class="quiz-option"><span>B)</span> All paragraphs anywhere on the page</div>
+              <div class="quiz-option"><span>C)</span> Both the h2 and the p combined</div>
+              <div class="quiz-option"><span>D)</span> The single paragraph that immediately follows an h2 element</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="!important breaks natural cascade flow and makes maintenance difficult.">
+            <div class="quiz-question-text">5. What is the major architectural drawback of using '!important' in production CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It breaks color values in Chrome</div>
+              <div class="quiz-option"><span>B)</span> It overrides the cascade and forces you to use more !important rules to override it later</div>
+              <div class="quiz-option"><span>C)</span> It prevents web pages from running offline</div>
+              <div class="quiz-option"><span>D)</span> It disables JavaScript</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Target the Nested Paragraph</h3>
+          <p>
+            In the live editor above, add a new CSS rule using the descendant combinator (space) to make all paragraphs inside <code>.nested-box</code> italicized with a green color (<code>color: #16a34a; font-style: italic;</code>). Click <strong>Run Code</strong> to test your selector!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html" class="ref-pill">CSS Properties Reference</a>
+            <a href="../reference/glossary.html#specificity" class="ref-pill">Glossary: Specificity</a>
+            <a href="../reference/glossary.html#combinator" class="ref-pill">Glossary: Combinator</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Selectors Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-introduction-and-syntax.html" class="btn btn-outline">&larr; Previous: Intro &amp; Syntax</a>
+          <button class="mark-complete-btn" data-lesson-id="css-02">Mark as Complete</button>
+          <a href="03-colors-units-backgrounds.html" class="btn btn-primary">Next: Colors, Units &amp; Backgrounds &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

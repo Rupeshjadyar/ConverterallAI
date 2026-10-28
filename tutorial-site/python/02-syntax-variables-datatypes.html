@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Variables, Dynamic Typing & Primitive Data Types — WebDev Academy</title>
+  <meta name="description" content="Master how Python handles variables in memory. Learn variable naming rules, reference pointers, type casting (int, float, str, bool), memory IDs, and reference counting garbage collection.">
+  <meta name="keywords" content="Python variables, Python data types, dynamic typing, type casting, id() in Python, memory management, garbage collection">
+  <meta property="og:title" content="Python Variables, Dynamic Typing & Primitive Data Types">
+  <meta property="og:description" content="Master how Python handles variables in memory. Learn variable naming rules, reference pointers, type casting (int, float, str, bool), memory IDs, and reference counting garbage collection.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="02-syntax-variables-datatypes.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 02</span>
+          </div>
+          <h1 class="lesson-title">Python Variables, Dynamic Typing & Primitive Data Types</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master how Python handles variables in memory. Learn variable naming rules, reference pointers, type casting (int, float, str, bool), memory IDs, and reference counting garbage collection.</span>
+            <span class="lang-hi">Python variables aur data types seekhein: dynamic typing kaise kaam karti hai, type casting, memory references aur garbage collection.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How Python variables work as labeled pointers to memory objects, not memory boxes.</li><li>The foundational primitive types: int, float, str, bool, and NoneType.</li><li>Inspecting types with type() and memory memory addresses with id().</li><li>Type casting and conversion functions: int(), float(), str(), and bool().</li><li>How Python's automatic garbage collection and reference counting clean up unused memory.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 01: Python 3 Introduction & Setup.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">In languages like C or Java, a variable is like a rigid wooden box with a label: you build an 'Integer Box', and you can only put whole numbers inside. <strong>In Python, a variable is NOT a box &mdash; it is a luggage sticky tag with a string tied to an object</strong>! The object floats in memory (Heap). When you write <code>x = 42</code>, you are sticking a tag named 'x' onto the number 42. If you later write <code>x = 'Hello'</code>, you simply peeled the 'x' sticker off the number 42 and stuck it onto the word 'Hello'! When an object in memory has zero sticky tags left pointing to it, the Python Garbage Collector sweeps it into the trash!</span>
+            <span class="lang-hi">Java ya C me variable ek lakdi ka dabba hota hai jisme wahi samaan aa sakta hai. <strong>Python me variable koi dabba nahi hai, balki ek naam ka tag (label) hai</strong>. Jab aap <code>x = 42</code> likhte hain, toh memory me 42 ke upar 'x' ka sticker chipak gaya. Baad me aapne wahi sticker nikal kar 'Hello' par chipka diya! Jab kisi cheez par koi sticker nahi bachta, toh Python ka Safai Karamchari (Garbage Collector) use memory se saaf kar deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>How are variables stored in Python memory?</strong> Everything in Python is an object on the heap. A variable name is merely a reference (pointer) stored in a namespace table pointing to that object.</li><li><strong>What is 'None' in Python?</strong> <code>None</code> is a singleton object of class <code>NoneType</code> representing the absence of a value (equivalent to null in other languages). Always compare with <code>is None</code> or <code>is not None</code>, never with <code>== None</code>.</li><li><strong>Type Casting Rules for Booleans:</strong> <code>bool()</code> converts values to False if they are 'Falsy' (0, 0.0, empty string '', empty list [], empty dict {}, None). Everything else evaluates to True.</li><li><strong>Integer Caching (-5 to 256):</strong> CPython pre-allocates and caches small integers between -5 and 256 in memory at startup. Therefore, <code>a = 100; b = 100; a is b</code> evaluates to True because they share the exact same memory address!</li><li><strong>Garbage Collection Mechanism:</strong> Python uses <strong>Reference Counting</strong> as its primary memory cleanup engine, complemented by a generational cyclic garbage collector to detect circular references (e.g. A points to B and B points to A).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Variables as Named References (Pointers)</h2>
+        <p>In Python, you do not declare variable types explicitly with keywords like <code>int x;</code> or <code>let x;</code>. You simply assign a name to an expression using the assignment operator (<code>=</code>).</p>
+        <p>When you write <code>x = 500</code>, Python creates an integer object <code>500</code> in heap memory, and binds the name <code>x</code> to that memory address.</p>
+        
+        <h2>2. Core Primitive Data Types</h2>
+        <p>Python provides 5 built-in primitive scalar data types:</p>
+        <p>• <code>int</code>: Arbitrary precision integers (no integer overflow limit!).<br>• <code>float</code>: 64-bit double-precision IEEE 754 floating point numbers.<br>• <code>str</code>: Immutable Unicode text sequences.<br>• <code>bool</code>: Boolean values (<code>True</code> or <code>False</code>).<br>• <code>NoneType</code>: Represents absence of value (<code>None</code>).</p>
+        
+        <h2>3. Type Inspection and Explicit Type Casting</h2>
+        <p>You can inspect the type of any object at runtime using <code>type(object)</code> or test inheritance with <code>isinstance(object, expected_type)</code>.</p>
+        <p>To convert between types, Python provides constructor functions: <code>int('42')</code>, <code>float(10)</code>, <code>str(3.14)</code>, and <code>bool(val)</code>.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Declaring Variables and Inspecting Memory Identity with id()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">a = [1, 2, 3]
+b = a  # Both point to the exact same memory address!
+
+print(f'Memory Address of a: {id(a)}')
+print(f'Memory Address of b: {id(b)}')
+print(f'Are they identical objects? {a is b}')  # True
+
+# Modifying via b affects a because they share the object
+b.append(4)
+print(f'List a after modifying b: {a}')  # [1, 2, 3, 4]</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>id()</code> returns the unique memory address of an object. The <code>is</code> operator compares memory identity (address), whereas <code>==</code> compares equality of values.
+        </div>
+        
+        <h3>Code Example 2: The CPython Small Integer Caching Mystery (-5 to 256)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Small integers are pre-cached singletons
+x = 100
+y = 100
+print(f'x is y (100): {x is y}')  # True! Same memory address
+
+# Large integers outside the cache create distinct objects
+m = 1000
+n = 1000
+print(f'm == n (values equal): {m == n}')  # True
+print(f'm is n (same address): {m is n}')  # False! Different memory allocations</code></pre>
+        </div>
+        <div class="code-explanation">
+          • A classic Python interview trick: CPython caches small integers -5 through 256 for performance optimization.
+        </div>
+        
+        <h3>Code Example 3: Explicit Type Casting & Conversion Errors</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">raw_input_age = '24'
+user_age = int(raw_input_age)
+print(f'Age next year: {user_age + 1}')
+
+# String to float
+price_str = '49.99'
+price_val = float(price_str)
+
+# What fails:
+try:
+    invalid = int('forty-two')
+except ValueError as err:
+    print(f'Conversion error caught: {err}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Passing non-numeric strings to <code>int()</code> raises a <code>ValueError</code>.
+        </div>
+        
+        <h3>Code Example 4: Understanding Truthy and Falsy Values in Python</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Falsy values in Python evaluate to False in boolean context
+falsy_samples = [0, 0.0, '', [], {}, set(), None, False]
+
+for item in falsy_samples:
+    print(f'{repr(item):&lt;10} -&gt; bool is: {bool(item)}')
+
+# Idiomatic Python check: test emptiness directly
+shopping_cart = []
+if not shopping_cart:
+    print('Your shopping cart is currently empty!')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • In idiomatic Python, write <code>if not shopping_cart:</code> instead of <code>if len(shopping_cart) == 0:</code>.
+        </div>
+        
+        <h3>Code Example 5: Multiple Assignment and Tuple Unpacking</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Assign multiple variables in a single elegant line
+first_name, last_name, role = 'Aditi', 'Sen', 'Staff Engineer'
+print(f'{first_name} {last_name} works as {role}')
+
+# Pythonic variable swap (no temp variable needed!)
+x = 10
+y = 20
+x, y = y, x  # Swaps x and y instantaneously!
+print(f'After swap: x={x}, y={y}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Variable swapping in Python uses tuple packing and unpacking under the hood.
+        </div>
+        
+        <h3>Code Example 6: The Arbitrary Precision of Python Integers</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># In languages like C / Java, large integers overflow past 2^63 - 1
+# In Python 3, integers have arbitrary precision (limited only by RAM!)
+huge_number = 2 ** 100
+print(f'2 to the power of 100 is:\n{huge_number}')
+print(f'Number of digits: {len(str(huge_number))}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Python automatically expands integer byte representations as numbers grow, preventing integer overflow bugs.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Variables, Dynamic Typing & Primitive Data Types</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Variables Sandbox
+product_name = 'Wireless Headphones'
+unit_price = 79.95
+quantity = 3
+in_stock = True
+
+total_cost = unit_price * quantity
+print(f'Product: {product_name}')
+print(f'Total Bill: ${total_cost:.2f}')
+print(f'Is In Stock: {in_stock}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using 'is' instead of '==' for value comparison:</strong> <code>==</code> checks if values are equal. <code>is</code> checks if both variables point to the exact same physical memory address. Never write <code>if name is 'Admin':</code> &mdash; write <code>if name == 'Admin':</code>!</li><li><strong>Comparing with None using ==:</strong> Always write <code>if user is None:</code>. <code>is</code> is faster and cannot be overridden by custom class <code>__eq__</code> methods.</li><li><strong>Overwriting built-in type names:</strong> Writing <code>str = 'hello'</code> or <code>list = [1, 2]</code> overwrites the global type constructors, causing subsequent calls like <code>str(10)</code> to crash!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use underscores in large numeric literals:</strong> Python allows underscores as visual separators in numbers: <code>salary = 1_000_000</code> or <code>credit_card = 4111_2222_3333_4444</code>. The interpreter ignores underscores, but it dramatically boosts human readability!</li><li><strong>Use isinstance() instead of type() ==:</strong> Always write <code>if isinstance(x, int):</code> instead of <code>if type(x) == int:</code> because <code>isinstance()</code> supports subclasses and inheritance trees.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Variables in Python are named reference labels pointing to objects on the heap.</li><li>The 5 core primitives are int, float, str, bool, and NoneType.</li><li>Python integers have arbitrary precision and never suffer from 32-bit/64-bit integer overflows.</li><li>Use == to compare value equality; use 'is' to compare memory identity.</li><li>Falsy values include 0, empty strings, empty collections, and None.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python script that swaps the values of two variables <code>a = 5</code> and <code>b = 10</code> without using a third temporary variable, and print their new values.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use tuple unpacking: a, b = b, a.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">a = 5
+b = 10
+a, b = b, a
+print(f'a = {a}, b = {b}')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a function <code>describe_value(val)</code> that prints the type name of <code>val</code> and whether it is considered 'Truthy' or 'Falsy'.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use type(val).__name__ and bool(val).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def describe_value(val):
+    type_name = type(val).__name__
+    status = 'Truthy' if bool(val) else 'Falsy'
+    print(f'Value {repr(val)} is of type {type_name} and is {status}.')
+
+describe_value('')
+describe_value(42)
+describe_value([])</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain why <code>a = 256; b = 256; print(a is b)</code> prints True, but <code>x = 257; y = 257; print(x is y)</code> may print False in standard CPython interactive shell.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain CPython's small integer cache array.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># CPython pre-allocates an internal array of integer objects for values between -5 and 256 inclusive.
+# Any assignment within that range binds to the existing singleton object in memory (a is b is True).
+# Numbers outside this range (like 257) are allocated as separate, distinct memory objects on heap.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>==</code> checks if two objects hold equivalent values, while <code>is</code> checks if they are the exact same memory object.">
+          <div class="quiz-question-text">1. What is the fundamental difference between '==' and 'is' in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> They are identical synonyms</div><div class="quiz-option"><span>B)</span> '==' compares value equality; 'is' compares memory object identity (address)</div><div class="quiz-option"><span>C)</span> 'is' works on strings; '==' works on numbers</div><div class="quiz-option"><span>D)</span> '==' is deprecated in Python 3</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="Empty collections like <code>[]</code>, empty strings <code>''</code>, <code>0</code>, and <code>None</code> are Falsy.">
+          <div class="quiz-question-text">2. Which of the following values evaluates to False when passed to bool()?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 'False'</div><div class="quiz-option"><span>B)</span> -1</div><div class="quiz-option"><span>C)</span> [] (empty list)</div><div class="quiz-option"><span>D)</span> [0]</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="In Python 3, integers have arbitrary precision and seamlessly allocate more memory as numbers grow.">
+          <div class="quiz-question-text">3. What is the maximum value a standard Python 3 integer can store before overflowing?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 2,147,483,647 (32-bit limit)</div><div class="quiz-option"><span>B)</span> 9,223,372,036,854,775,807 (64-bit limit)</div><div class="quiz-option"><span>C)</span> There is no fixed limit; Python integers have arbitrary precision limited only by available system RAM</div><div class="quiz-option"><span>D)</span> 10^12</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="PEP 8 strongly dictates using <code>if res is None:</code> because None is a singleton.">
+          <div class="quiz-question-text">4. What is the correct and idiomatic way to check if a variable 'res' is None?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> if res == None:</div><div class="quiz-option"><span>B)</span> if res is None:</div><div class="quiz-option"><span>C)</span> if res.isNull():</div><div class="quiz-option"><span>D)</span> if None in res:</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Underscores in numeric literals are allowed since Python 3.6 to improve readability without affecting value.">
+          <div class="quiz-question-text">5. What happens if you write: 1_000_000 in Python 3?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SyntaxError: invalid token</div><div class="quiz-option"><span>B)</span> Python treats it as the exact integer 1000000, ignoring underscores as visual separators</div><div class="quiz-option"><span>C)</span> It creates a list of numbers</div><div class="quiz-option"><span>D)</span> It converts to a string</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change unit_price to 100_000 and calculate the total cost for 5 units, observing how underscores format cleanly!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#dynamic-typing" class="ref-pill">Glossary: Dynamic Typing</a><a href="../reference/glossary.html#garbage-collection" class="ref-pill">Glossary: Garbage Collection</a><a href="03-numbers-booleans-operators.html" class="ref-pill">Lesson 03: Numbers & Operators</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-introduction-setup.html" class="btn btn-outline">&larr; 01. Introduction & Setup</a>
+          <button class="mark-complete-btn" data-lesson-id="python-02">Mark as Complete</button>
+          <a href="03-numbers-booleans-operators.html" class="btn btn-primary">03. Numbers & Operators &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

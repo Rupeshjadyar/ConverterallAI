@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Functions, *args, **kwargs, Closures & Lambda Expressions — WebDev Academy</title>
+  <meta name="description" content="Master first-class citizen functions in Python. Learn positional vs keyword parameters, arbitrary arguments (*args and **kwargs), the dangerous mutable default argument trap, closures, and anonymous lambda expressions.">
+  <meta name="keywords" content="Python functions, *args **kwargs, lambda functions, closures Python, mutable default arguments trap, Python intermediate">
+  <meta property="og:title" content="Functions, *args, **kwargs, Closures & Lambda Expressions">
+  <meta property="og:description" content="Master first-class citizen functions in Python. Learn positional vs keyword parameters, arbitrary arguments (*args and **kwargs), the dangerous mutable default argument trap, closures, and anonymous lambda expressions.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="08-functions-args-kwargs-lambda.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 08</span>
+          </div>
+          <h1 class="lesson-title">Functions, *args, **kwargs, Closures & Lambda Expressions</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master first-class citizen functions in Python. Learn positional vs keyword parameters, arbitrary arguments (*args and **kwargs), the dangerous mutable default argument trap, closures, and anonymous lambda expressions.</span>
+            <span class="lang-hi">Python Functions seekhein: *args aur **kwargs, mutable default arguments ka trap, Closures aur Lambda functions ka use.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Defining reusable functions with def, return values, and type hints.</li><li>Positional vs Keyword arguments and Keyword-Only parameters (*).</li><li>Handling arbitrary arguments: *args (tuple) and **kwargs (dictionary).</li><li>The infamous Python Mutable Default Argument trap (def f(lst=[])) and why it happens.</li><li>First-Class Functions & Closures: Passing functions as arguments and returning inner functions.</li><li>Lambda anonymous functions and functional programming with map(), filter(), and sorted().</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 07: Control Flow: Conditionals & Loops.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a coffee vending machine. <strong>A function is the machine</strong>: you press a button (function call), drop in coins and coffee beans (parameters), and the machine pours a warm cup of coffee (return value). <strong>Positional arguments are dropping coins into the exact coin slot</strong>; <strong>Keyword arguments are pressing labeled buttons: 'sugar=2', 'milk=low'</strong>. <strong>*args is like bringing a bag of extra coins</strong> of any size (unpacked as a tuple), and <strong>**kwargs is handing the barista a custom checklist of special preferences</strong> (unpacked as a dictionary)! <strong>A Lambda function is an espresso shot paper cup</strong>: a quick, single-use, 1-line drink you toss in the bin when done!</span>
+            <span class="lang-hi">Coffee machine ki misaal lein: <strong>Function machine hai</strong> jisme buttons dabakar (parameters) coffee milti hai (return value). <strong>*args khulla paisa jaisa hai</strong> (kitne bhi extra sikke de do, tuple ban jaayega). <strong>**kwargs ek custom order parchi hai</strong> jisme 'sugar=kam, milk=zyada' likha hai (dictionary ban jaayegi). <strong>Lambda function ek chhota sa paper cup hai</strong>: 1 line me kaam khatam karne ke liye!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>First-Class Functions:</strong> In Python, functions are first-class citizens. They can be assigned to variables, passed as arguments to other functions, returned from other functions, and stored in data structures.</li><li><strong>What is *args and **kwargs?</strong><br>• <code>*args</code> collects arbitrary positional arguments into a <strong>tuple</strong>.<br>• <code>**kwargs</code> collects arbitrary keyword arguments into a <strong>dictionary</strong>.</li><li><strong>The Mutable Default Argument Trap (Top #1 Python Interview Question!):</strong><br>In Python, default parameter expressions are evaluated ONCE at function definition time, NOT at function call time! If you use a mutable default like <code>def add(x, lst=[])</code>, all invocations share the EXACT same list in memory! Fix: Always use <code>def add(x, lst=None): if lst is None: lst = []</code>.</li><li><strong>What is a Closure?</strong> An inner function that retains access to variables from its enclosing lexical scope, even after the outer function has finished executing.</li><li><strong>Keyword-Only Arguments (*):</strong> Placing a bare <code>*</code> in parameter lists forces all subsequent parameters to be passed strictly as keyword arguments (e.g. <code>def connect(host, port, *, timeout=30):</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Anatomy of a Python Function</h2>
+        <p>Functions are declared using the <code>def</code> keyword. Unlike languages that require return type declarations, Python functions return <code>None</code> by default if no explicit <code>return</code> statement is encountered.</p>
+        <p>Modern Python code uses type hints (PEP 484) to declare expected argument types and return types: <code>def calculate_tax(income: float) -&gt; float:</code>.</p>
+        
+        <h2>2. Arbitrary Arguments: *args and **kwargs</h2>
+        <p>When building generic utilities, decorators, or API wrappers, you often do not know in advance how many arguments a caller will supply.</p>
+        <p>Python allows unpacking variable-length arguments: <code>*args</code> packages extra positional values into a tuple, while <code>**kwargs</code> packages extra named values into a dictionary.</p>
+        
+        <h2>3. The Infamous Mutable Default Argument Trap</h2>
+        <p>Every Python interview tests this bug. Consider: <code>def append_item(val, items=[]): items.append(val); return items</code>.</p>
+        <p>Because the function definition executes once when the module loads, the list <code>[]</code> is created once. Calling <code>append_item(1)</code> followed by <code>append_item(2)</code> returns <code>[1, 2]</code> because both calls share the same list!</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Defining Clean Functions with Type Hints & Docstrings</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def calculate_discount(price: float, discount_percent: float = 10.0) -&gt; float:
+    """Calculate the final price after applying a percentage discount.
+    
+    Args:
+        price: Original item cost.
+        discount_percent: Percentage to deduct (default 10.0%).
+    Returns:
+        Final discounted price rounded to 2 decimal places.
+    """
+    discount_amount = price * (discount_percent / 100.0)
+    return round(price - discount_amount, 2)
+
+print(f'Standard 10% off $100: ${calculate_discount(100.0)}')
+print(f'Special 25% off $200: ${calculate_discount(200.0, 25.0)}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Type hints and docstrings turn functions into clear, professional documentation.
+        </div>
+        
+        <h3>Code Example 2: Arbitrary Arguments with *args and **kwargs</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def build_user_profile(user_id, *roles, **metadata):
+    print(f'User ID: {user_id}')
+    print(f'Roles Tuple (*args): {roles}')
+    print(f'Metadata Dict (**kwargs): {metadata}')
+
+# Call with variable positional and keyword arguments
+build_user_profile(
+    1042,
+    'Developer', 'Team Lead', 'Admin',          # *args
+    email='aarav@work.com', location='Bengaluru' # **kwargs
+)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>*roles</code> receives a tuple of strings; <code>**metadata</code> receives a dictionary of keyword parameters.
+        </div>
+        
+        <h3>Code Example 3: The Mutable Default Argument Bug & The Correct Fix</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># THE BUG:
+def buggy_append(item, storage=[]):
+    storage.append(item)
+    return storage
+
+print(buggy_append('A'))  # ['A']
+print(buggy_append('B'))  # ['A', 'B']  &lt;-- Shared state contamination!
+
+# THE FIX (Sentinel None pattern):
+def safe_append(item, storage=None):
+    if storage is None:
+        storage = []  # Fresh list allocated on each call!
+    storage.append(item)
+    return storage
+
+print(safe_append('A'))   # ['A']
+print(safe_append('B'))   # ['B']  &lt;-- Clean and independent!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Always use <code>storage=None</code> as the default parameter for mutable objects (lists, dicts, sets).
+        </div>
+        
+        <h3>Code Example 4: Closures: Functions Retaining Enclosing State</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def create_multiplier(factor: int):
+    """Outer function that creates and returns an inner multiplier function."""
+    def multiplier(number: int) -&gt; int:
+        # Inner function remembers 'factor' even after outer function exits!
+        return number * factor
+    return multiplier
+
+double = create_multiplier(2)
+triple = create_multiplier(3)
+
+print(f'Double 10: {double(10)}')  # 20
+print(f'Triple 10: {triple(10)}')  # 30</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Closures form the foundational mechanism behind Python <strong>Decorators</strong>.
+        </div>
+        
+        <h3>Code Example 5: Lambda Anonymous Functions with map(), filter(), and sorted()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">products = [
+    ('Keyboard', 45.00),
+    ('Mouse', 25.00),
+    ('Monitor', 180.00),
+    ('Cable', 12.00)
+]
+
+# 1. Sort by price ascending using lambda
+sorted_by_price = sorted(products, key=lambda item: item[1])
+print(f'Cheapest item: {sorted_by_price[0]}')
+
+# 2. Filter high-value products
+expensive = list(filter(lambda p: p[1] &gt; 40.00, products))
+print(f'Expensive products: {expensive}')
+
+# 3. Map to uppercase names
+names = list(map(lambda p: p[0].upper(), products))
+print(f'Upper names: {names}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Lambdas are quick, 1-line anonymous functions with syntax: <code>lambda args: expression</code>.
+        </div>
+        
+        <h3>Code Example 6: Keyword-Only Arguments using Bare Asterisk (*)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Bare asterisk forces caller to explicitly name parameters after it
+def connect_db(host, port, *, secure=True, timeout=30):
+    return f'Connecting to {host}:{port} (SSL={secure}, Timeout={timeout}s)'
+
+# Valid: keyword specified explicitly
+print(connect_db('localhost', 5432, secure=False))
+
+# Invalid: connect_db('localhost', 5432, False) -&gt; Raises TypeError!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Keyword-only arguments prevent confusing boolean flag calls like <code>f(True, False, True)</code> by forcing self-documenting code.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Functions, *args, **kwargs, Closures & Lambda Expressions</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Functions Sandbox
+def compute_bill(*items, tip_percentage=15):
+    subtotal = sum(items)
+    tip = subtotal * (tip_percentage / 100)
+    total = subtotal + tip
+    return subtotal, round(total, 2)
+
+sub, final_bill = compute_bill(25, 40, 15, tip_percentage=18)
+print(f'Subtotal: ${sub}, Final Bill with tip: ${final_bill}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using mutable defaults (lst=[]):</strong> Causes subtle cross-request state contamination in web applications.</li><li><strong>Forgetting return in functions:</strong> Omitting <code>return</code> causes the function to implicitly return <code>None</code>.</li><li><strong>Overusing complex Lambdas:</strong> If a lambda requires complex logic, loops, or multiple lines, write a regular named <code>def</code> function instead. PEP 8 prioritizes readability!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use functools.lru_cache for memoization:</strong> Add <code>@functools.lru_cache(maxsize=128)</code> over expensive recursive or computational functions to cache inputs and outputs in memory automatically!</li><li><strong>Unpacking dictionaries into function calls:</strong> You can pass a dictionary to a function using <code>func(**config_dict)</code> to unpack named arguments dynamically.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Functions are first-class citizens in Python.</li><li>*args packs positional arguments into a tuple; **kwargs packs keyword arguments into a dict.</li><li>Never use mutable default arguments (use None sentinel pattern instead).</li><li>Closures remember variables from outer enclosing scopes.</li><li>Lambda functions provide concise 1-line anonymous functions.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python function <code>sum_all(*numbers)</code> that accepts any number of numeric arguments and returns their sum.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use sum(numbers) inside the function.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def sum_all(*numbers):
+    return sum(numbers)
+
+print(sum_all(1, 2, 3, 4, 5))  # 15
+print(sum_all(10, 20))         # 30</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Fix the following buggy function so that each invocation gets a fresh independent list: <code>def register_student(name, students=[]): students.append(name); return students</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Change students=[] to students=None and check if students is None.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def register_student(name, students=None):
+    if students is None:
+        students = []
+    students.append(name)
+    return students
+
+print(register_student('Aarav'))  # ['Aarav']
+print(register_student('Priya'))  # ['Priya']</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Write a higher-order function <code>time_it(func)</code> that takes any function <code>func</code> as an argument, executes it, and prints the time taken in seconds using <code>time.perf_counter()</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Create an inner wrapper(*args, **kwargs) that measures start and end time.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">import time
+
+def time_it(func):
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        elapsed = time.perf_counter() - start
+        print(f'{func.__name__} executed in {elapsed:.6f} seconds')
+        return result
+    return wrapper
+
+@time_it
+def compute_squares():
+    return [x**2 for x in range(100000)]
+
+compute_squares()</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>*args</code> collects variable-length positional arguments into a single tuple.">
+          <div class="quiz-question-text">1. What does *args represent in a Python function definition?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A mandatory keyword argument</div><div class="quiz-option"><span>B)</span> A tuple that captures any arbitrary positional arguments passed to the function</div><div class="quiz-option"><span>C)</span> A pointer to memory</div><div class="quiz-option"><span>D)</span> A multiplication symbol</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Default argument expressions are evaluated once when the function is defined, causing all calls to share the mutable list.">
+          <div class="quiz-question-text">2. What happens if you define a function with: def add_item(x, items=[]):?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A syntax error is thrown</div><div class="quiz-option"><span>B)</span> The empty list [] is evaluated only once at definition time, sharing the same list across all function calls</div><div class="quiz-option"><span>C)</span> Python creates a fresh new list on every call</div><div class="quiz-option"><span>D)</span> items becomes an immutable tuple</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Closures capture and remember variables from their surrounding lexical scope.">
+          <div class="quiz-question-text">3. What is a 'Closure' in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A function that shuts down the computer</div><div class="quiz-option"><span>B)</span> An inner function that retains access to variables from its enclosing outer scope even after the outer function finishes</div><div class="quiz-option"><span>C)</span> A closed database connection</div><div class="quiz-option"><span>D)</span> A function without a return statement</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="<code>**kwargs</code> captures arbitrary keyword arguments as a dictionary.">
+          <div class="quiz-question-text">4. What does **kwargs unpack into inside a function?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A list</div><div class="quiz-option"><span>B)</span> A tuple</div><div class="quiz-option"><span>C)</span> A dictionary of keyword arguments</div><div class="quiz-option"><span>D)</span> A set</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="Functions without an explicit return statement implicitly return <code>None</code>.">
+          <div class="quiz-question-text">5. What is the return value of a Python function that does not include a return statement?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 0</div><div class="quiz-option"><span>B)</span> False</div><div class="quiz-option"><span>C)</span> None</div><div class="quiz-option"><span>D)</span> undefined</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, call compute_bill with 4 different item costs and set tip_percentage to 20, verifying the calculated tip!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#function" class="ref-pill">Glossary: Function</a><a href="../reference/glossary.html#closure" class="ref-pill">Glossary: Closure</a><a href="09-oop-classes-objects.html" class="ref-pill">Lesson 09: OOP: Classes & Objects</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="07-conditionals-and-loops.html" class="btn btn-outline">&larr; 07. Conditionals & Loops</a>
+          <button class="mark-complete-btn" data-lesson-id="python-08">Mark as Complete</button>
+          <a href="09-oop-classes-objects.html" class="btn btn-primary">09. OOP: Classes & Objects &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

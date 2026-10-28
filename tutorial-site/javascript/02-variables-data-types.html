@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Variables &amp; Data Types — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="02-variables-data-types.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 02</span>
+          </div>
+          <h1 class="lesson-title">Variables &amp; Data Types</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Learn how computers remember information in memory. Master let vs const and the 7 fundamental primitives.</span>
+            <span class="lang-hi">Variables aur Data Types: let vs const vs var, 7 Primitives (string, number, boolean...), aur memory storage seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What a variable physically represents in RAM memory.</li>
+            <li>The decisive battle: <code>var</code> vs <code>let</code> vs <code>const</code>.</li>
+            <li>The 7 Primitive Data Types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>, <code>symbol</code>, and <code>bigint</code>.</li>
+            <li>The <code>typeof</code> inspection operator and the famous historic <code>typeof null === "object"</code> bug.</li>
+            <li>Primitives (Pass-by-Value on Stack) vs Reference Types (Pass-by-Reference on Heap).</li>
+            <li>Why mutating a <code>const</code> object or array is completely legal in JavaScript!</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="01-introduction-console.html">01. JS Introduction &amp; The Console</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: Storage Cardboard Boxes with Labels</div>
+          <p>
+            <span class="lang-en">Imagine moving into a new apartment:
+            <br>&bull; A <strong>variable</strong> is a cardboard box in your room.
+            <br>&bull; The <strong>variable name</strong> is the sticky label you write on the box with a marker (e.g. <code>userAge</code>).
+            <br>&bull; The <strong>value</strong> is what you put inside the box (e.g. the number <code>25</code>).
+            <br>&bull; <strong><code>let</code>:</strong> A box with an open flap. You can replace the contents anytime (e.g. on your next birthday, you throw out 25 and put in 26).
+            <br>&bull; <strong><code>const</code>:</strong> A heavy steel safe welded shut. Once you put your birth year (<code>1999</code>) inside, nobody can ever change the lock!</span>
+            <span class="lang-hi">Storage box ki tarah sochiye: Variable ek dabba hai, variable ka naam dabbe par laga label hai, aur value dabbe ke andar rakha samaan hai. <code>let</code> khula dabba hai jiska samaan aap kabhi bhi badal sakte hain. <code>const</code> ek band tijori hai jisme rakhi value ko kabhi reassign nahi kiya ja sakta!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Declaring Variables: let vs const vs var</h2>
+        <p>
+          Before ES6 (2015), JavaScript only had the <code>var</code> keyword. Today, modern senior developers follow a strict rule:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-js); border-radius:var(--radius-sm); font-weight:600;">
+          The Senior Standard: Default to <code>const</code> for 90% of your code. Use <code>let</code> only when you know a value must be reassigned (like loop counters). NEVER use legacy <code>var</code>.
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: `const` vs `let` in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. const: Cannot be reassigned
+const birthYear = 2000;
+// birthYear = 2001; // ERROR: TypeError: Assignment to constant variable.
+
+// 2. let: Can be reassigned smoothly
+let score = 0;
+score = 10; // Perfectly valid!
+score = score + 5; // Now 15
+
+// 3. var (LEGACY): Has dangerous function scope and allows duplicate declarations
+var city = "New York";
+var city = "London"; // No warning! Silently overwrites previous data.</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The 7 Primitive Data Types</h2>
+        <p>
+          In JavaScript, a <strong>primitive</strong> is data that is not an object and has no methods of its own. Primitives are immutable:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The 7 Primitives Declared</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. String: Text wrapped in single, double, or backtick quotes
+const name = "Alice";
+const greeting = `Hello, ${name}!`; // Template literal
+
+// 2. Number: Both integers and floating-point decimals
+const age = 28;
+const price = 19.99;
+const invalidMath = 0 / 0; // NaN (Not a Number - but type is 'number'!)
+
+// 3. Boolean: Logical truth values
+const isLoggedIn = true;
+const hasSubscription = false;
+
+// 4. Undefined: A variable that was declared but never assigned a value
+let unassignedBox;
+console.log(unassignedBox); // undefined
+
+// 5. Null: Intentional absence of any object value (empty on purpose)
+const selectedProduct = null;
+
+// 6. BigInt: Whole numbers larger than (2^53 - 1)
+const nationalDebt = 9007199254740995n; // Notice trailing 'n'
+
+// 7. Symbol: Guaranteed unique, immutable identifier
+const idA = Symbol("apiKey");
+const idB = Symbol("apiKey");
+console.log(idA === idB); // false! Always unique.</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Type Inspection with <code>typeof</code></h2>
+        <p>
+          The <code>typeof</code> operator evaluates the data type of an expression:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Inspecting Types and the Historic Null Bug</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">console.log(typeof "Hello");     // "string"
+console.log(typeof 42);          // "number"
+console.log(typeof true);        // "boolean"
+console.log(typeof undefined);   // "undefined"
+console.log(typeof 100n);        // "bigint"
+console.log(typeof Symbol());    // "symbol"
+console.log(typeof { a: 1 });    // "object"
+
+// THE FAMOUS 1995 HISTORIC BUG:
+console.log(typeof null);        // "object"! 
+// In the first version of JS, values were stored with a 32-bit type tag.
+// The type tag for objects was 0. Null was a null pointer (0x00).
+// Therefore, typeof null returned "object". It is never fixed to avoid breaking legacy web code!</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Primitives (Values) vs Objects (References)</h2>
+        <p>
+          Understanding how memory allocates data is the dividing line between junior and senior engineers:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Value Copy vs Reference Sharing</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// PRIMITIVES (Stored by VALUE on the Call Stack):
+let a = 10;
+let b = a; // Makes an independent copy of the value 10
+b = 20;
+console.log(a); // 10 (Remains completely unaffected!)
+
+// REFERENCE TYPES (Stored by REFERENCE on the Memory Heap):
+const user1 = { name: "Bob" };
+const user2 = user1; // Copies the MEMORY ADDRESS pointer, NOT the object!
+user2.name = "Charlie";
+
+console.log(user1.name); // "Charlie"! Both variables point to the exact same memory box!</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The `const` Mutation Secret</h2>
+        <p>
+          Beginners are often terrified of using <code>const</code> with arrays or objects because they think the data can never be modified.
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-warning); border-radius:var(--radius-sm);">
+          <strong>Crucial Insight:</strong> <code>const</code> protects the <em>variable binding</em> (the pointer memory address). It does NOT freeze the internal contents of an object or array!
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Mutating const Objects &amp; Arrays</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const cart = ["Apple", "Banana"];
+
+// 1. Mutating contents is 100% legal:
+cart.push("Orange");
+cart[0] = "Avocado";
+console.log(cart); // ["Avocado", "Banana", "Orange"]
+
+// 2. Reassigning the pointer is ILLEGAL:
+// cart = ["New", "Array"]; // ERROR: TypeError: Assignment to constant variable.</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Experiment with Variables and Types</h2>
+        <p>
+          Test assignments and inspect <code>typeof</code> in real-time below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Type &amp; Variable Inspector</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h3>Variables &amp; Types Output</h3>
+  <div id="output" style="font-family:monospace; background:#f1f5f9; padding:16px; border-radius:8px;"></div>
+
+  <script>
+    const outputEl = document.getElementById("output");
+    
+    // Testing variables
+    const siteTitle = "WebDev Academy";
+    let activeUsers = 1420;
+    const isOnline = true;
+    const emptyBox = null;
+
+    console.log("Site Title Type:", typeof siteTitle);
+    console.log("Active Users Type:", typeof activeUsers);
+    console.log("Is Online Type:", typeof isOnline);
+    console.log("Empty Box Type:", typeof emptyBox);
+
+    outputEl.innerHTML = `
+      <strong>${siteTitle}</strong><br>
+      Active Users: ${activeUsers} (${typeof activeUsers})<br>
+      Is Online: ${isOnline} (${typeof isOnline})<br>
+      Empty Box: ${emptyBox} (${typeof emptyBox})
+    `;
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Reassigning a <code>const</code> variable:</strong> <code>const x = 5; x = 6;</code> throws a fatal <code>TypeError</code> that halts your program. Use <code>let</code> when reassignment is expected.</li>
+            <li><strong>Using variables before declaration (TDZ):</strong> Accessing a <code>let</code> or <code>const</code> variable before its line of declaration throws a <code>ReferenceError</code> because it sits in the Temporal Dead Zone.</li>
+            <li><strong>Confusing <code>null</code> and <code>undefined</code>:</strong> <code>undefined</code> means the variable was declared but no one set a value. <code>null</code> is an intentional assignment representing "no value".</li>
+            <li><strong>Assuming <code>typeof NaN</code> is not a number:</strong> Ironically, <code>typeof NaN === "number"</code> in JavaScript! <code>NaN</code> stands for a numerical computation that failed to yield a valid number (like <code>"cat" * 5</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>CamelCase naming convention:</strong> Always name JavaScript variables in lowerCamelCase (e.g. <code>userProfileImage</code>, <code>totalCartPrice</code>). Reserve PascalCase (<code>UserCard</code>) for classes.</li>
+            <li><strong>Freeze objects with <code>Object.freeze()</code>:</strong> If you truly want an object's internal properties to be immutable, wrap it: <code>const config = Object.freeze({ api: "https://api.com" });</code>.</li>
+            <li><strong>Verify arrays with <code>Array.isArray()</code>:</strong> Because <code>typeof []</code> returns <code>"object"</code>, use <code>Array.isArray(myVar)</code> to accurately test if a variable is an array!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Default to <code>const</code>; use <code>let</code> only when reassigning; avoid <code>var</code>.</li>
+            <li>7 Primitives: string, number, boolean, null, undefined, symbol, bigint.</li>
+            <li>Primitives are copied by value; Objects/Arrays are copied by memory reference pointer.</li>
+            <li><code>typeof null</code> returns <code>"object"</code> due to a historic 1995 legacy bug.</li>
+            <li><code>const</code> prevents rebinding, but object properties and array elements can still be mutated.</li>
+            <li>Use <code>Array.isArray(x)</code> to accurately identify arrays.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Choose the Correct Keyword</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Declare a variable named <code>userScore</code> with initial value <code>0</code> that will increment as the user plays a game. Which keyword (let or const) should you use?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: The value changes over time.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>let userScore = 0;</code> (Use let because the score will be reassigned).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Check for Array Type</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Why is <code>typeof items === "array"</code> invalid, and what is the correct standard JavaScript method to test if <code>items</code> is an array?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Array.isArray().</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>typeof []</code> returns <code>"object"</code>, not "array". The correct check is: <code>Array.isArray(items)</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Predict the Reference Output</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>What will be logged to the console?<br>
+          <code>const a = { val: 5 }; const b = a; b.val = 10; console.log(a.val);</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Objects are copied by memory reference, not by value.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>10</code>. Because objects are stored by reference, variable <code>b</code> points to the exact same object in memory as <code>a</code>.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 02 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="const prevents reassignment of the variable binding, but object properties can still be modified.">
+            <div class="quiz-question-text">1. Can you add a new property to an object declared with 'const user = {};'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> No, const freezes all properties forever</div>
+              <div class="quiz-option"><span>B)</span> Yes, const only prevents reassigning the variable identifier to a different object</div>
+              <div class="quiz-option"><span>C)</span> Only if strict mode is disabled</div>
+              <div class="quiz-option"><span>D)</span> Only in Node.js</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="typeof null returning 'object' is a historic 1995 bug preserved for backward compatibility.">
+            <div class="quiz-question-text">2. What does 'typeof null' return in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 'null'</div>
+              <div class="quiz-option"><span>B)</span> 'undefined'</div>
+              <div class="quiz-option"><span>C)</span> 'object'</div>
+              <div class="quiz-option"><span>D)</span> 'number'</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="JavaScript primitives: string, number, boolean, null, undefined, symbol, bigint.">
+            <div class="quiz-question-text">3. Which of the following is NOT a primitive data type?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Array</div>
+              <div class="quiz-option"><span>B)</span> BigInt</div>
+              <div class="quiz-option"><span>C)</span> Boolean</div>
+              <div class="quiz-option"><span>D)</span> Symbol</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Primitives are stored directly by value; copying a primitive creates an independent duplicate.">
+            <div class="quiz-question-text">4. When you assign primitive variable 'x' to 'y' (e.g. let y = x;), what happens?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Both share the same memory pointer</div>
+              <div class="quiz-option"><span>B)</span> Variable x is destroyed</div>
+              <div class="quiz-option"><span>C)</span> Variable y becomes a pointer</div>
+              <div class="quiz-option"><span>D)</span> An independent, separate copy of the value is stored in y</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="In JavaScript, NaN (Not-a-Number) is technically of the 'number' type.">
+            <div class="quiz-question-text">5. What is the result of 'typeof NaN'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 'NaN'</div>
+              <div class="quiz-option"><span>B)</span> 'number'</div>
+              <div class="quiz-option"><span>C)</span> 'undefined'</div>
+              <div class="quiz-option"><span>D)</span> 'boolean'</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a User Profile Object</h3>
+          <p>
+            In the live editor, declare a <code>const userProfile</code> object with properties: <code>username</code> (string), <code>age</code> (number), and <code>isVerified</code> (boolean). Modify the <code>age</code> property and log the object to the console using <code>console.table(userProfile)</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#variables" class="ref-pill">Variables &amp; Types Reference</a>
+            <a href="../reference/glossary.html#variable" class="ref-pill">Glossary: Variable</a>
+            <a href="../reference/glossary.html#primitive" class="ref-pill">Glossary: Primitive Data Types</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Types Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-introduction-console.html" class="btn btn-outline">&larr; Previous: Introduction &amp; The Console</a>
+          <button class="mark-complete-btn" data-lesson-id="js-02">Mark as Complete</button>
+          <a href="03-operators-type-conversion.html" class="btn btn-primary">Next: Operators &amp; Type Coercion &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

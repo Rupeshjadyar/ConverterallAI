@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML5 Mastery Course — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .course-hero {
+      background: linear-gradient(135deg, var(--c-html-light), var(--bg-surface));
+      border: 1px solid var(--c-html-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+    .lesson-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .lesson-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--c-html);
+    }
+    .lesson-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+    .lesson-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body data-course="html" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner" style="max-width: 960px;">
+
+        <div class="course-hero">
+          <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.25rem 0.65rem; background:var(--c-html); color:white; border-radius:var(--radius-full); font-size:0.75rem; font-weight:700; margin-bottom:1rem;">
+            HTML5 SPECIALIZATION
+          </div>
+          <h1 style="font-size: 2.5rem; color: var(--text-primary); margin-bottom: 0.75rem;">HTML5 Mastery: The Architecture of the Web</h1>
+          <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 720px; line-height: 1.6;">
+            HTML (HyperText Markup Language) is the backbone of every website on Earth. Master 14 comprehensive lessons covering everything from fundamental tags to semantic architecture, accessible ARIA roles, modern forms, and search engine optimization.
+          </p>
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="01-introduction-structure.html" class="btn btn-primary" style="background:var(--c-html); border-color:var(--c-html); padding:0.6rem 1.4rem;">Start Lesson 1 &rarr;</a>
+            <a href="#final-exam" class="btn btn-outline" style="padding:0.6rem 1.2rem;">Take Course Final Exam</a>
+          </div>
+        </div>
+
+        <!-- Roadmap -->
+        <h2>Course Roadmap</h2>
+        <div style="display:flex; flex-direction:column; gap:1rem; margin:1.5rem 0 2.5rem 0;">
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-success); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 1: Foundations (Lessons 01 &ndash; 05)</strong> &mdash; Document structure, tags, attributes, text hierarchy, links, and media.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-warning); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 2: Data &amp; Interactive Forms (Lessons 06 &ndash; 09)</strong> &mdash; Lists, data tables, inputs, form validation, and constraint APIs.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-danger); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 3: Professional Architecture (Lessons 10 &ndash; 14)</strong> &mdash; Semantic HTML5, multimedia embeds, SEO meta tags, ARIA accessibility, and clean code standards.
+          </div>
+        </div>
+
+        <!-- Lessons Directory -->
+        <h2>All 14 Lessons</h2>
+        <div class="lesson-grid">
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 01</span>
+            <h4>01. Intro &amp; Document Structure</h4>
+            <p>Anatomy of HTML5, DOCTYPE declaration, html, head, title, and body elements.</p>
+            <a href="01-introduction-structure.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 02</span>
+            <h4>02. Elements &amp; Attributes</h4>
+            <p>Tags vs elements, void self-closing tags, universal attributes (id, class, title, hidden).</p>
+            <a href="02-elements-attributes.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 03</span>
+            <h4>03. Headings &amp; Text Formatting</h4>
+            <p>h1 through h6 hierarchy, paragraphs, strong, em, mark, code, blockquotes, and hr.</p>
+            <a href="03-headings-paragraphs-text-formatting.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 04</span>
+            <h4>04. Links &amp; Navigation</h4>
+            <p>Hyperlinks with &lt;a&gt;, absolute vs relative paths, target="_blank", anchor jumps.</p>
+            <a href="04-links-and-navigation.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 05</span>
+            <h4>05. Images &amp; Figures</h4>
+            <p>Responsive images, alt descriptions, src attributes, &lt;figure&gt;, and &lt;figcaption&gt;.</p>
+            <a href="05-images-and-figures.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 06</span>
+            <h4>06. Lists (ul, ol, dl)</h4>
+            <p>Bulleted lists, numbered sequences, and definition terms with description lists.</p>
+            <a href="06-lists.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 07</span>
+            <h4>07. Tables &amp; Data Grids</h4>
+            <p>Organizing data with table, thead, tbody, tr, th, td, colspan, and rowspan.</p>
+            <a href="07-tables.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 08</span>
+            <h4>08. Forms &amp; Inputs</h4>
+            <p>Text, email, password, radio, checkboxes, dropdowns, textarea, and submit buttons.</p>
+            <a href="08-forms-and-inputs.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 09</span>
+            <h4>09. Form Validation</h4>
+            <p>Native client-side validation with required, min, max, pattern regex, and type rules.</p>
+            <a href="09-form-validation.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 10</span>
+            <h4>10. Semantic HTML</h4>
+            <p>Replace div soup with header, nav, main, article, section, aside, and footer.</p>
+            <a href="10-semantic-html.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 11</span>
+            <h4>11. Audio, Video &amp; Iframes</h4>
+            <p>Embedding multimedia natively with playback controls and sandboxed embeds.</p>
+            <a href="11-audio-video-iframe.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 12</span>
+            <h4>12. Meta Tags &amp; SEO</h4>
+            <p>Mobile viewport, social Open Graph tags, canonical URLs, and search optimization.</p>
+            <a href="12-meta-tags-seo.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 13</span>
+            <h4>13. Accessibility &amp; ARIA</h4>
+            <p>Screen reader accessibility, ARIA labels, semantic roles, keyboard navigable focus.</p>
+            <a href="13-accessibility-aria.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 14</span>
+            <h4>14. HTML Best Practices</h4>
+            <p>Clean indentation, self-closing standards, validation tools, and production checklist.</p>
+            <a href="14-html-best-practices.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Final Course Exam -->
+        <div id="final-exam" class="quiz-section" style="margin-top: 4rem;">
+          <div class="quiz-header">
+            <div>
+              <h2 style="margin:0; font-size:1.6rem; color:var(--text-primary);">&#127941; HTML5 Comprehensive Certification Exam</h2>
+              <p style="color:var(--text-muted); margin:0.25rem 0 0 0; font-size:0.9rem;">20 Questions across all 14 lessons &bull; Pass with 80% to earn your Certificate</p>
+            </div>
+          </div>
+
+          <!-- Exam Questions 1-20 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="<!DOCTYPE html> is the single standardized doctype declaration for HTML5.">
+            <div class="quiz-question-text">1. What is the correct doctype declaration for modern HTML5?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;!DOCTYPE html&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;doctype html5&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;html doctype="5"&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="<meta charset='UTF-8'> ensures standard Unicode character encoding across all languages and emojis.">
+            <div class="quiz-question-text">2. Which meta tag specifies the standard Unicode character encoding of a page?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;meta lang="utf-8"&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;meta charset="UTF-8"&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;meta encoding="unicode"&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;charset utf="8"&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="There should be only one <h1> element per page representing the principal page title.">
+            <div class="quiz-question-text">3. How many &lt;h1&gt; tags should a well-structured semantic HTML page ideally contain?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> As many as you want for every paragraph</div>
+              <div class="quiz-option"><span>B)</span> Exactly two</div>
+              <div class="quiz-option"><span>C)</span> Exactly one, representing the main topic of the page</div>
+              <div class="quiz-option"><span>D)</span> Zero; h1 is deprecated</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="target='_blank' tells the browser to open the hyperlink in a new browser tab or window.">
+            <div class="quiz-question-text">4. Which attribute configures an &lt;a&gt; anchor link to open in a new tab?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> window="new"</div>
+              <div class="quiz-option"><span>B)</span> rel="newtab"</div>
+              <div class="quiz-option"><span>C)</span> href="_blank"</div>
+              <div class="quiz-option"><span>D)</span> target="_blank"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="The alt attribute provides alternative text descriptions for accessibility and when images fail to load.">
+            <div class="quiz-question-text">5. What is the essential attribute on &lt;img&gt; required for screen reader accessibility?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> title</div>
+              <div class="quiz-option"><span>B)</span> alt</div>
+              <div class="quiz-option"><span>C)</span> desc</div>
+              <div class="quiz-option"><span>D)</span> caption</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="<ol> stands for ordered list and numbers each <li> item sequentially.">
+            <div class="quiz-question-text">6. Which element creates a numbered sequence of list items?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;ol&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;ul&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;dl&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;list&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="<th> represents a table header cell and is bold/centered by default.">
+            <div class="quiz-question-text">7. In an HTML &lt;table&gt;, which tag denotes a header cell?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;td&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;head&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;th&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;tr&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="colspan merges multiple table columns horizontally across a single row.">
+            <div class="quiz-question-text">8. Which attribute allows a table cell to span horizontally across 3 columns?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> rowspan="3"</div>
+              <div class="quiz-option"><span>B)</span> width="3cols"</div>
+              <div class="quiz-option"><span>C)</span> span="3"</div>
+              <div class="quiz-option"><span>D)</span> colspan="3"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Linking label's 'for' attribute to the input's 'id' makes clicking the text focus the input.">
+            <div class="quiz-question-text">9. How do you correctly associate a &lt;label&gt; with an &lt;input&gt; element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> By matching label name with input value</div>
+              <div class="quiz-option"><span>B)</span> By setting label's for attribute equal to input's id</div>
+              <div class="quiz-option"><span>C)</span> By placing them on the same line without attributes</div>
+              <div class="quiz-option"><span>D)</span> Using class="connected"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="type='email' triggers automatic browser email syntax validation.">
+            <div class="quiz-question-text">10. Which input type natively validates that the user typed an email address?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;input type="email"&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;input type="mail"&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;input type="text" validate="email"&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;input format="email"&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="The required boolean attribute stops form submission if the field is empty.">
+            <div class="quiz-question-text">11. What attribute prevents a form from being submitted if a specific input is left blank?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> validate</div>
+              <div class="quiz-option"><span>B)</span> compulsory="true"</div>
+              <div class="quiz-option"><span>C)</span> required</div>
+              <div class="quiz-option"><span>D)</span> locked</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="<main> represents the dominant, unique content of the body for that specific document.">
+            <div class="quiz-question-text">12. Which semantic tag encapsulates the central, unique content of the webpage?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;body&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;section&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;article&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;main&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="<nav> defines major navigation link sections like menus, breadcrumbs, and pagination.">
+            <div class="quiz-question-text">13. Which HTML5 semantic tag is designated specifically for navigation links?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;menu-bar&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;nav&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;links&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;navigation&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="controls attribute displays the native play, pause, and volume bar.">
+            <div class="quiz-question-text">14. What attribute must be added to &lt;video&gt; so the user can play, pause, and adjust volume?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> controls</div>
+              <div class="quiz-option"><span>B)</span> buttons="true"</div>
+              <div class="quiz-option"><span>C)</span> player="standard"</div>
+              <div class="quiz-option"><span>D)</span> ui</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="The sandbox attribute restricts scripts, popups, and parent frame modification from embedded iframes.">
+            <div class="quiz-question-text">15. Which attribute increases security when embedding third-party content in an &lt;iframe&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> secure</div>
+              <div class="quiz-option"><span>B)</span> lock="strict"</div>
+              <div class="quiz-option"><span>C)</span> sandbox</div>
+              <div class="quiz-option"><span>D)</span> no-hack</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="The viewport meta tag ensures proper responsive scaling on mobile phone screens.">
+            <div class="quiz-question-text">16. What is the primary purpose of &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It adjusts screen brightness</div>
+              <div class="quiz-option"><span>B)</span> It tells mobile browsers to scale the page to the device width rather than zooming out</div>
+              <div class="quiz-option"><span>C)</span> It connects the page to the camera viewport</div>
+              <div class="quiz-option"><span>D)</span> It allows 3D graphics rendering</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="Open Graph (og:) meta tags control image, title, and description previews when links are shared on social platforms.">
+            <div class="quiz-question-text">17. Which protocol uses meta tags like og:title and og:image for rich social sharing cards?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> XML Schema</div>
+              <div class="quiz-option"><span>B)</span> JSON-LD</div>
+              <div class="quiz-option"><span>C)</span> WebSockets</div>
+              <div class="quiz-option"><span>D)</span> Open Graph protocol</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="aria-label provides an accessible name for interactive elements lacking visible text like icon buttons.">
+            <div class="quiz-question-text">18. What ARIA attribute provides an accessible screen reader label for an icon-only button?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> aria-label="Search site"</div>
+              <div class="quiz-option"><span>B)</span> screen-text="Search site"</div>
+              <div class="quiz-option"><span>C)</span> reader="Search site"</div>
+              <div class="quiz-option"><span>D)</span> voice="Search site"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="Void elements have no content or closing tag (e.g. <img>, <br>, <hr>, <input>, <link>, <meta>).">
+            <div class="quiz-question-text">19. Which of the following is a void (self-closing) element that never has a closing tag?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;p&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;div&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;br&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;span&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Always use semantic interactive tags like <button> for actions; do not use <div onclick>.">
+            <div class="quiz-question-text">20. What is an essential accessible best practice for clickable action controls?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Use &lt;div onclick="..."&gt; for all buttons</div>
+              <div class="quiz-option"><span>B)</span> Always use native &lt;button&gt; tags because they include built-in keyboard focus and click events</div>
+              <div class="quiz-option"><span>C)</span> Wrap every button in an &lt;h1&gt;</div>
+              <div class="quiz-option"><span>D)</span> Remove outline focus rings with outline:none without replacement</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Certificate Prompt -->
+        <div style="background:var(--bg-surface); border:2px dashed var(--state-success); border-radius:var(--radius-md); padding:2rem; text-align:center; margin:3rem 0;">
+          <h3 style="color:var(--state-success); margin-top:0;">&#127881; Claim Your Course Certificate</h3>
+          <p style="color:var(--text-secondary); max-width:600px; margin:0.5rem auto 1.5rem auto;">
+            Score 80% or higher on the exam above, or complete all 14 lessons to unlock your custom personalized Certificate of Completion.
+          </p>
+          <a href="../certificate/index.html?course=HTML5" class="btn btn-success" style="padding:0.75rem 1.75rem; font-size:1rem;">Generate My HTML5 Certificate &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

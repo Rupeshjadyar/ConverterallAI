@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Accessibility & ARIA — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="13-accessibility-aria.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 13</span>
+          </div>
+          <h1 class="lesson-title">Accessibility (a11y) &amp; ARIA Fundamentals</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build inclusive web interfaces accessible to every human being, including users navigating via screen readers and keyboards.</span>
+            <span class="lang-hi">Web accessibility (a11y) aur ARIA seekhein: screen readers, keyboard navigation aur <code>aria-label</code> ka sahi istemal.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What web accessibility (a11y) means and why it is a legal and moral imperative.</li>
+            <li>How screen readers (NVDA, VoiceOver, JAWS) translate HTML into speech and braille.</li>
+            <li>The <strong>First Rule of ARIA</strong>: "Use native HTML instead of ARIA whenever possible".</li>
+            <li>Mastering essential ARIA attributes: <code>aria-label</code>, <code>aria-labelledby</code>, and <code>aria-hidden</code>.</li>
+            <li>Keyboard focus navigation with <code>tabindex="0"</code> and <code>tabindex="-1"</code>.</li>
+            <li>Building an accessible "Skip to Content" bypass link.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="12-meta-tags-seo.html">12. Meta Tags &amp; SEO</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Public Library Wheelchair Ramp and Braille Signage</div>
+          <p>
+            <span class="lang-en">Imagine an architect builds a magnificent modern public library, but the only entrance has 30 steep stone steps without an elevator or ramp. A student in a wheelchair is locked out from learning simply because of poor design. <strong>Web accessibility (a11y) is installing the smooth concrete ramp, automatic doors, and tactile braille elevator buttons in your code.</strong> When you add an <code>aria-label</code> or make a button keyboard-focusable, you open the front doors of your website to everyone regardless of ability.</span>
+            <span class="lang-hi">Ek aisi public library ki tarah sochiye jisme sirf seedhiyan hain aur wheelchair ke liye rasta nahi hai. Web accessibility (a11y) ka matlab hai ki hum apne code mein har kisi ke liye rasta banayein &mdash; chahe woh blind user ho jo screen reader use kar raha ho ya keyboard se navigate karne wala user.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Four Principles of WCAG (POUR)</h2>
+        <p>
+          The internationally recognized standard for digital accessibility is the <strong>Web Content Accessibility Guidelines (WCAG)</strong>. It is built upon four foundational pillars known as <strong>POUR</strong>:
+        </p>
+        <ul>
+          <li><strong>Perceivable:</strong> Users must be able to comprehend the information (e.g. text alternatives for images, subtitles for video, high color contrast).</li>
+          <li><strong>Operable:</strong> Every button, link, and input must be usable via keyboard alone without requiring a physical mouse.</li>
+          <li><strong>Understandable:</strong> Clear error messages, logical reading order, and predictable navigation patterns.</li>
+          <li><strong>Robust:</strong> Code must follow standard semantic syntax so assistive devices (screen readers, braille displays) parse it reliably.</li>
+        </ul>
+
+        <!-- Section 2 -->
+        <h2>2. The First Rule of ARIA</h2>
+        <p>
+          <strong>ARIA</strong> stands for <em>Accessible Rich Internet Applications</em>. It is a set of special HTML attributes that communicate additional semantics to screen readers.
+        </p>
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; W3C Official Golden Rule of ARIA</div>
+          <p>
+            <strong>"If you can use a native HTML5 element or attribute with the semantics and behavior you require already built in, then do so instead of re-purposing an element and adding ARIA."</strong>
+          </p>
+        </div>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Native HTML vs Fake ARIA Buttons</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- TERRIBLE: Overengineered fake button (requires 10 lines of JS to fix tabindex, Enter key, Spacebar!) --&gt;
+&lt;div role="button" tabindex="0" onclick="pay()"&gt;Pay Now&lt;/div&gt;
+
+&lt;!-- PERFECT: Native HTML button has all keyboard and screen reader accessibility built-in for free! --&gt;
+&lt;button type="button" onclick="pay()"&gt;Pay Now&lt;/button&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Insight:</strong> Native <code>&lt;button&gt;</code> elements automatically handle focus states, click events, Spacebar presses, and Enter key submissions with zero extra code. Never use <code>&lt;div role="button"&gt;</code> when <code>&lt;button&gt;</code> exists!
+        </div>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Accessible Icon Button (<code>aria-label</code>)</h3>
+        <p>Icon-only buttons (like a magnifying glass for search or an "X" for close) have no visible text. A screen reader reading <code>&lt;button&gt;&#128269;&lt;/button&gt;</code> would announce: <em>"Button: Unlabeled"</em>. Use <code>aria-label</code> to give it an accessible voice:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Search Icon Button --&gt;
+&lt;button type="button" class="btn-icon" aria-label="Search all lessons"&gt;
+  &lt;svg aria-hidden="true" width="20" height="20"&gt;...&lt;/svg&gt;
+&lt;/button&gt;
+
+&lt;!-- 2. Modal Close Button --&gt;
+&lt;button type="button" class="btn-close" aria-label="Close dialog modal"&gt;
+  &lt;span aria-hidden="true"&gt;&amp;times;&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why <code>aria-hidden="true"</code> is used here:</strong> The visual "X" symbol (<code>&amp;times;</code>) or decorative SVG icon would sound confusing if spoken aloud. <code>aria-hidden="true"</code> tells the screen reader to ignore the icon graphic and speak the friendly <code>aria-label</code> instead!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Keyboard Focus &amp; Skip Links</h2>
+        <p>Try pressing the <strong>Tab key</strong> on your keyboard to navigate between the controls below:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Keyboard Focus &amp; Accessible Controls</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; line-height: 1.6; color: #1e293b; }
+    /* Visible high-contrast focus rings for keyboard users */
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .btn { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .icon-btn { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h3>Press the TAB key to navigate!</h3>
+  <p>Notice the prominent blue focus outline surrounding each active element:</p>
+
+  <a href="#main" style="color: #2563eb; margin-right: 12px;">Link One</a>
+  <button class="btn">Standard Button</button>
+  <button class="icon-btn" aria-label="Settings and Preferences">&#9881;</button>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The <code>tabindex</code> Rules</h2>
+        <p>
+          The <code>tabindex</code> attribute controls how an element participates in keyboard Tab navigation:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Tabindex Values Demystified</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. tabindex="0": Inserts a custom element into the natural keyboard tab order --&gt;
+&lt;div class="custom-card" tabindex="0"&gt;
+  Keyboard accessible focusable card
+&lt;/div&gt;
+
+&lt;!-- 2. tabindex="-1": Removes element from tab order, but allows programmatic focus in JS --&gt;
+&lt;div id="modal-heading" tabindex="-1"&gt;
+  Dialog Title (JavaScript calls .focus() when modal opens)
+&lt;/div&gt;
+
+&lt;!-- 3. NEVER USE POSITIVE TABINDEX (tabindex="1", "2", "3")!
+     Positive tabindex destroys the natural logical reading flow of the page! --&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Golden Tabindex Rule:</strong> Only ever use <code>tabindex="0"</code> (to make something focusable) or <code>tabindex="-1"</code> (for programmatic JavaScript focus). <strong>Never use positive numbers!</strong>
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The "Skip to Main Content" Bypass Link</h3>
+        <p>Keyboard users should never be forced to Tab through 40 navigation menu links on every page:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Place as the VERY FIRST element inside &lt;body&gt; --&gt;
+&lt;a href="#main-content" class="skip-link"&gt;
+  Skip to Main Content
+&lt;/a&gt;
+
+&lt;style&gt;
+  /* Hidden off-screen by default, slides into view when focused via Tab! */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 1000;
+  }
+  .skip-link:focus {
+    top: 10px;
+  }
+&lt;/style&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How it works:</strong> When a sighted user visits the page, the link is invisible. But when a keyboard-only user presses <code>Tab</code>, the skip button slides into view, allowing them to jump straight past the navigation bar into the main article!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Live Regions with <code>aria-live</code></h3>
+        <p>When content on the page updates dynamically via JavaScript (e.g., shopping cart total or live search count), screen readers must be informed:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- aria-live="polite": Announces changes as soon as the user finishes current speech --&gt;
+&lt;div id="cart-status" aria-live="polite" role="status"&gt;
+  Shopping Cart: 2 items ($45.00)
+&lt;/div&gt;
+
+&lt;!-- aria-live="assertive": Interrupts the user immediately (strictly for critical alerts) --&gt;
+&lt;div id="network-alert" aria-live="assertive" role="alert"&gt;
+  Internet connection lost. Reconnecting...
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Rule of Thumb:</strong> 99% of the time, use <code>aria-live="polite"</code> so you don't rudely interrupt the user mid-sentence. Reserve <code>assertive</code> for emergency warnings.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Testing Accessible Name Computation in JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Check what name a screen reader calculates for a button
+const btn = document.querySelector("button");
+
+// Accessible name calculation order: aria-labelledby > aria-label > inner text
+const accessibleName = btn.getAttribute("aria-label") || btn.innerText;
+
+console.log("Calculated Screen Reader Name:", accessibleName);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Accessibility Tree Priority:</strong> Browsers evaluate <code>aria-labelledby</code> first, followed by <code>aria-label</code>, and finally fall back to the visible text inside the element.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Removing focus rings with <code>outline: none;</code>:</strong> Never write <code>*:focus { outline: none; }</code> without providing a custom alternative focus style! Doing so completely blinds keyboard-only users who can no longer see where they are on the page.</li>
+            <li><strong>Overusing ARIA roles:</strong> Writing <code>&lt;nav role="navigation"&gt;</code> or <code>&lt;button role="button"&gt;</code> is redundant noise. HTML5 tags already have these roles baked in.</li>
+            <li><strong>Low contrast text:</strong> Gray text on a white background (like light gray <code>#bbb</code> on white) violates WCAG contrast minimums (4.5:1 ratio for normal text). Always check contrast!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Unplug your mouse for 15 minutes and navigate your website using only the <strong>Tab key</strong>, <strong>Enter key</strong>, and <strong>Spacebar</strong>. If you get stuck anywhere or can't see which link is highlighted, you have an accessibility bug to fix!</li>
+            <li>Test your pages with free built-in screen readers: <strong>Windows Narrator</strong> (press <code>Win + Ctrl + Enter</code>) or <strong>macOS VoiceOver</strong> (press <code>Cmd + F5</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Follow the WCAG POUR principles: Perceivable, Operable, Understandable, Robust.</li>
+            <li>Use native semantic elements (<code>&lt;button&gt;</code>, <code>&lt;a&gt;</code>) instead of fake ARIA divs.</li>
+            <li>Use <code>aria-label</code> for icon-only buttons with no visible text.</li>
+            <li>Hide purely decorative graphics with <code>aria-hidden="true"</code>.</li>
+            <li>Only use <code>tabindex="0"</code> or <code>tabindex="-1"</code>; avoid positive tabindex.</li>
+            <li>Never remove focus outlines with <code>outline: none</code> without replacing them.</li>
+            <li>Use <code>aria-live="polite"</code> for dynamic UI notifications.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Add an Accessible Name to an Icon</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Make this icon button fully accessible to screen reader users: <code>&lt;button class="icon-trash"&gt;&#128465;&lt;/button&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Add an aria-label attribute.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;button class="icon-trash" aria-label="Delete this item"&gt;&#128465;&lt;/button&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Decorative Image Masking</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>How do you mark an SVG background pattern graphic so that screen readers skip it without announcing confusing garbage symbols?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the aria-hidden attribute.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Add <code>aria-hidden="true"</code> to the element:<br>
+              <code>&lt;svg aria-hidden="true" focusable="false"&gt;...&lt;/svg&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Announcing Live Cart Updates</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>You have a shopping cart badge reading "3 items". What ARIA attribute and value should you add to the badge element so that when a user clicks "Add to Cart", the new item count is announced politely by screen readers?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look at aria-live.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Add <code>aria-live="polite"</code>:<br>
+              <code>&lt;span id="cart-counter" aria-live="polite" role="status"&gt;3 items&lt;/span&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 13 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The first rule of ARIA is to always prefer native semantic HTML elements over ARIA when available.">
+            <div class="quiz-question-text">1. What is the fundamental First Rule of ARIA according to the W3C?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Every HTML element must have an ARIA role</div>
+              <div class="quiz-option"><span>B)</span> Use native HTML elements instead of ARIA whenever a native tag exists</div>
+              <div class="quiz-option"><span>C)</span> Always use tabindex=1 on all links</div>
+              <div class="quiz-option"><span>D)</span> ARIA is only required for audio and video</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="aria-label provides an accessible name for interactive controls lacking visible text.">
+            <div class="quiz-question-text">2. Which attribute gives an accessible name to an icon-only button?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> aria-label</div>
+              <div class="quiz-option"><span>B)</span> role</div>
+              <div class="quiz-option"><span>C)</span> tabindex</div>
+              <div class="quiz-option"><span>D)</span> aria-hidden</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="aria-hidden='true' removes an element from the accessibility tree so screen readers ignore it.">
+            <div class="quiz-question-text">3. What does aria-hidden="true" instruct screen readers to do?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Hide the element visually from sighted users</div>
+              <div class="quiz-option"><span>B)</span> Delete the element from the DOM</div>
+              <div class="quiz-option"><span>C)</span> Completely ignore the element and its children in speech/braille output</div>
+              <div class="quiz-option"><span>D)</span> Encrypt the element's text</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Removing focus outlines completely blinds keyboard-only users who rely on the visible ring.">
+            <div class="quiz-question-text">4. Why is writing '*:focus { outline: none; }' considered a serious accessibility violation?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It slows down browser rendering</div>
+              <div class="quiz-option"><span>B)</span> It triggers a browser crash</div>
+              <div class="quiz-option"><span>C)</span> It prevents users from typing text</div>
+              <div class="quiz-option"><span>D)</span> It removes the visible focus indicator needed by keyboard-only users to see where they are</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="tabindex='0' inserts an element into the natural keyboard tab navigation order.">
+            <div class="quiz-question-text">5. What does setting tabindex="0" on an element do?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Removes it from the keyboard tab sequence</div>
+              <div class="quiz-option"><span>B)</span> Makes it focusable in the natural keyboard tab navigation order</div>
+              <div class="quiz-option"><span>C)</span> Forces it to be the very first element focused on page load</div>
+              <div class="quiz-option"><span>D)</span> Disables all click events</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create an Accessible Theme Toggle Button</h3>
+          <p>
+            In the live editor above, add a new button that displays the sun icon (<code>&#9728;</code>). Give it an <code>aria-label="Switch between dark and light themes"</code>. Run the code and use your keyboard Tab key to verify it receives a crisp blue focus ring!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#accessibility" class="ref-pill">Glossary: Accessibility (a11y)</a>
+            <a href="../reference/glossary.html#aria" class="ref-pill">Glossary: ARIA</a>
+            <a href="../reference/glossary.html#screen-reader" class="ref-pill">Glossary: Screen Reader</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">Accessibility Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="12-meta-tags-seo.html" class="btn btn-outline">&larr; Previous: Meta Tags &amp; SEO</a>
+          <button class="mark-complete-btn" data-lesson-id="html-13">Mark as Complete</button>
+          <a href="14-html-best-practices.html" class="btn btn-primary">Next: HTML Best Practices &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

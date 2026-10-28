@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Full-Stack Web Development with Django & The MVT Architecture — WebDev Academy</title>
+  <meta name="description" content="Master Python's batteries-included web framework: Django. Learn the MVT (Model-View-Template) pattern, Django ORM, Models, Migrations (makemigrations and migrate), the auto-generated Admin panel, and Django REST Framework (DRF).">
+  <meta name="keywords" content="Django tutorial, Django MVT, Django ORM, Django migrations, Django admin, Django models, Django REST framework DRF">
+  <meta property="og:title" content="Full-Stack Web Development with Django & The MVT Architecture">
+  <meta property="og:description" content="Master Python's batteries-included web framework: Django. Learn the MVT (Model-View-Template) pattern, Django ORM, Models, Migrations (makemigrations and migrate), the auto-generated Admin panel, and Django REST Framework (DRF).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="15-django-fundamentals.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 20 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 15</span>
+          </div>
+          <h1 class="lesson-title">Full-Stack Web Development with Django & The MVT Architecture</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Python's batteries-included web framework: Django. Learn the MVT (Model-View-Template) pattern, Django ORM, Models, Migrations (makemigrations and migrate), the auto-generated Admin panel, and Django REST Framework (DRF).</span>
+            <span class="lang-hi">Full-stack Django seekhein: MVT architecture, Django ORM, Models aur Migrations, auto-generated Admin panel aur Django REST Framework (DRF).</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 'Batteries-Included' philosophy of Django: Security, ORM, Auth, and Admin out-of-the-box.</li><li>The MVT Architecture: Models (Data), Views (Business Logic), and Templates (HTML Presentation).</li><li>Defining Database Models with Django ORM field types and constraints.</li><li>Managing Schema Evolution with makemigrations and migrate.</li><li>The Django Admin Dashboard: Instant production-ready CRUD management.</li><li>Building RESTful APIs with Django REST Framework (DRF) Serializers and ViewSets.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 14: Web APIs: Flask vs FastAPI + SQL Fundamentals.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of opening a restaurant. If you use Flask or FastAPI, you are rented an empty warehouse &mdash; you have to personally shop for stoves, hire a security guard, install toilets, and build your own register. <strong>Django is like walking into a fully equipped, 5-star turnkey luxury restaurant</strong>: the professional kitchen is already installed (Django ORM), armed security guards stand at the doors protecting against hackers (CSRF, XSS, and SQL Injection security middleware), a computerized cash register is running (Django Authentication & Sessions), and there is an executive manager's back-office suite with glass windows (the Django Admin Panel) ready on Day 1!</span>
+            <span class="lang-hi">Restaurant kholne ki misaal lein: Flask ek khaali dukan jaisa hai jahan chulha, bartan aur security sab khud lagani padti hai. <strong>Django ek 5-star readymade restaurant hai</strong>: kitchen pehle se tayyar hai (ORM), bouncer darwaze par khade hain (Security Middleware), cash counter chal raha hai (Auth system) aur manager ka luxury office bana hua hai (Django Admin Panel)! Pehle din se business chalu!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>MVC vs Django's MVT Architecture:</strong><br>• In standard MVC: Model (Data), View (UI / HTML), Controller (Routing &amp; Logic).<br>• In Django MVT: <strong>Model</strong> (Data / ORM), <strong>View</strong> (Business Logic / Controller), <strong>Template</strong> (HTML Presentation / View). Django itself acts as the overall Controller by matching URLs.</li><li><strong>makemigrations vs migrate (Top Interview Question!):</strong><br>• <code>python manage.py makemigrations</code>: Inspects your <code>models.py</code>, detects schema changes, and writes Python migration blueprint files in the <code>migrations/</code> folder.<br>• <code>python manage.py migrate</code>: Executes those migration blueprints against the actual PostgreSQL/MySQL/SQLite database, creating or altering tables.</li><li><strong>Django ORM QuerySet Lazy Evaluation:</strong> QuerySets are lazy! Writing <code>users = User.objects.filter(is_active=True)</code> does NOT hit the database. The database query is executed only when the QuerySet is evaluated (e.g. iterating over it in a loop, slicing, or calling <code>list()</code> or <code>len()</code>).</li><li><strong>The N+1 Query Problem in Django:</strong> Iterating over 100 books and accessing <code>book.author.name</code> runs 1 query for books + 100 queries for authors (101 queries!). Fix: Use <code>select_related('author')</code> for foreign keys (JOIN) or <code>prefetch_related('tags')</code> for many-to-many relationships.</li><li><strong>Django Built-in Security:</strong> Django automatically protects against CSRF (Cross-Site Request Forgery tokens), XSS (automatic template HTML escaping), SQL Injection (parameterized ORM), and Clickjacking.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Django and The 'Batteries-Included' Philosophy?</h2>
+        <p>Created in 2003 by web developers at the Lawrence Journal-World newspaper, <strong>Django</strong> was designed to help developers build complete, bulletproof web applications from concept to launch in hours.</p>
+        <p>Django follows the <em>'Don't Repeat Yourself' (DRY)</em> principle and bundles an ORM, an authentication system, session handling, an admin interface, and security middleware out of the box.</p>
+        
+        <h2>2. The MVT (Model-View-Template) Pattern</h2>
+        <p>Django structures applications around three distinct components:</p>
+        <p>• <strong>Model:</strong> Python classes in <code>models.py</code> that define database tables and business logic.<br>• <strong>View:</strong> Python functions or classes in <code>views.py</code> that handle requests and return responses.<br>• <strong>Template:</strong> HTML files containing Django Template Language (DTL) tags (<code>{{ variable }}</code>, <code>{% for item in items %}</code>) to render user interfaces.</p>
+        
+        <h2>3. The Auto-Generated Django Admin Dashboard</h2>
+        <p>One of Django's most celebrated features is the automatic <strong>Admin Interface</strong>.</p>
+        <p>By registering your models in <code>admin.py</code>, Django dynamically generates a full-featured, secure, permission-controlled web dashboard where non-technical staff can add, edit, search, and delete database records.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Defining Django ORM Models with Relationships (models.py)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: blog/models.py
+# from django.db import models
+# from django.contrib.auth.models import User
+# 
+# class Category(models.Model):
+#     name = models.CharField(max_length=50, unique=True)
+#     slug = models.SlugField(max_length=50, unique=True)
+#     
+#     def __str__(self):
+#         return self.name
+# 
+# class Post(models.Model):
+#     STATUS_CHOICES = (
+#         ('draft', 'Draft'),
+#         ('published', 'Published')
+#     )
+#     title = models.CharField(max_length=200)
+#     content = models.TextField()
+#     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+#     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     
+#     def __str__(self):
+#         return self.title</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Django models define schema fields, relationships (<code>ForeignKey</code>, <code>ManyToManyField</code>), and cascading rules in pure Python.
+        </div>
+        
+        <h3>Code Example 2: Django Migrations Workflow (CLI)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Step 1: Detect model changes and generate migration files
+# Terminal: python manage.py makemigrations
+# Output: Migrations for 'blog':
+#   blog/migrations/0001_initial.py
+#     - Create model Category
+#     - Create model Post
+
+# Step 2: Apply migrations to the actual database
+# Terminal: python manage.py migrate
+# Output: Running migrations:
+#   Applying blog.0001_initial... OK</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Migrations version-control your database schema so all developers and production servers stay synchronized.
+        </div>
+        
+        <h3>Code Example 3: Writing Views and URL Routing (views.py & urls.py)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: blog/views.py
+# from django.shortcuts import render, get_object_or_404
+# from .models import Post
+# 
+# def post_list(request):
+#     # QuerySet is evaluated only when template renders
+#     posts = Post.objects.filter(status='published').order_by('-created_at')
+#     return render(request, 'blog/post_list.html', {'posts': posts})
+# 
+# def post_detail(request, pk):
+#     post = get_object_or_404(Post, pk=pk, status='published')
+#     return render(request, 'blog/post_detail.html', {'post': post})
+# 
+# # File: blog/urls.py
+# from django.urls import path
+# from . import views
+# urlpatterns = [
+#     path('', views.post_list, name='post_list'),
+#     path('post/&lt;int:pk&gt;/', views.post_detail, name='post_detail'),
+# ]</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>get_object_or_404()</code> automatically raises a clean 404 page if a record does not exist.
+        </div>
+        
+        <h3>Code Example 4: Registering Models in Django Admin (admin.py)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: blog/admin.py
+# from django.contrib import admin
+# from .models import Category, Post
+# 
+# @admin.register(Post)
+# class PostAdmin(admin.ModelAdmin):
+#     list_display = ('title', 'author', 'status', 'created_at')
+#     list_filter = ('status', 'created_at', 'category')
+#     search_fields = ('title', 'content')
+#     prepopulated_fields = {'slug': ('title',)}
+# 
+# admin.site.register(Category)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • With just 6 lines of code, Django gives you a full-featured admin UI with search bars, filters, and pagination!
+        </div>
+        
+        <h3>Code Example 5: Solving the N+1 Query Problem with select_related</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># SLOW ANTI-PATTERN (N+1 queries: 1 query for posts + 100 queries for authors):
+# posts = Post.objects.all()
+# for p in posts:
+#     print(p.author.username)  # Hits database on EVERY loop iteration!
+
+# OPTIMIZED SOLUTION (1 single SQL JOIN query):
+# posts = Post.objects.select_related('author').all()
+# for p in posts:
+#     print(p.author.username)  # Instant: author data was pre-fetched in the JOIN!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>select_related()</code> performs an SQL JOIN, eliminating the notorious N+1 query performance bottleneck.
+        </div>
+        
+        <h3>Code Example 6: Django REST Framework (DRF) Serializer & API ViewSet</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># File: blog/serializers.py
+# from rest_framework import serializers
+# from .models import Post
+# 
+# class PostSerializer(serializers.ModelSerializer):
+#     author_name = serializers.ReadOnlyField(source='author.username')
+#     class Meta:
+#         model = Post
+#         fields = ['id', 'title', 'content', 'author_name', 'created_at']
+# 
+# # File: blog/api_views.py
+# from rest_framework import viewsets
+# class PostViewSet(viewsets.ModelViewSet):
+#     queryset = Post.objects.filter(status='published')
+#     serializer_class = PostSerializer</code></pre>
+        </div>
+        <div class="code-explanation">
+          • DRF generates complete RESTful CRUD APIs (GET, POST, PUT, DELETE) from existing Django models in minutes.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Full-Stack Web Development with Django & The MVT Architecture</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Django Concept Sandbox
+class MockQuerySet:
+    def __init__(self, data):
+        self.data = data
+    def filter(self, **kwargs):
+        return MockQuerySet([item for item in self.data if all(item.get(k) == v for k, v in kwargs.items())])
+    def count(self):
+        return len(self.data)
+
+articles_db = MockQuerySet([
+    {'id': 1, 'title': 'Intro to Django', 'published': True},
+    {'id': 2, 'title': 'Draft Article', 'published': False},
+    {'id': 3, 'title': 'Django ORM Secrets', 'published': True}
+])
+
+published_articles = articles_db.filter(published=True)
+print(f'Published articles found: {published_articles.count()}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Editing migration files manually:</strong> Manually modifying auto-generated files in <code>migrations/</code> corrupts migration state. Always make changes in <code>models.py</code> and run <code>makemigrations</code>.</li><li><strong>Forgetting select_related on ForeignKeys:</strong> Causes severe N+1 database queries that slow down page loads from 20ms to 5 seconds.</li><li><strong>Storing uploaded user media in Git:</strong> User uploads (avatars, images) must be stored in external object storage (AWS S3, Cloudflare R2), never in the application code repository.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use django-debug-toolbar:</strong> Install <code>django-debug-toolbar</code> in development to inspect exact SQL queries, execution times, and catch N+1 query leaks instantly.</li><li><strong>Custom User Model:</strong> Always create a custom user model (inheriting from <code>AbstractUser</code>) at the VERY START of any Django project before running your first migration!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Django follows the MVT (Model-View-Template) architectural pattern.</li><li>makemigrations creates migration blueprints; migrate applies them to the database.</li><li>Django QuerySets are lazy: queries execute only when results are evaluated.</li><li>select_related (JOIN) and prefetch_related solve the N+1 query problem.</li><li>Django Admin provides a full-featured production back-office dashboard out-of-the-box.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What is the difference between running <code>python manage.py makemigrations</code> and <code>python manage.py migrate</code> in Django?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> One generates Python files; the other applies changes to the database.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># makemigrations: Scans models.py, detects changes, and creates new migration script files in migrations/.
+# migrate: Executes the unapplied migration scripts against the actual database to update the table schemas.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Given a Django model <code>Order</code> with a ForeignKey to <code>Customer</code>, write an optimized QuerySet to fetch all completed orders and print the customer's email without causing N+1 database queries.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use Order.objects.filter(status='completed').select_related('customer').</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Optimized QuerySet using select_related:
+# orders = Order.objects.filter(status='completed').select_related('customer')
+# for order in orders:
+#     print(order.customer.email)  # Zero extra queries!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain how Django's MVT pattern maps to the traditional MVC pattern, identifying what plays the role of the Controller.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Model is Model, View is Controller, Template is View.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Traditional MVC vs Django MVT:
+# 1. Model -&gt; Model (Handles database data and business logic)
+# 2. View -&gt; Template (Handles presentation and HTML rendering)
+# 3. Controller -&gt; View (Django Views handle HTTP requests, call models, and choose templates)
+# Django's URL dispatcher + framework core acts as the master Controller.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Django architecture is based on Model (Data), View (Logic), and Template (Presentation).">
+          <div class="quiz-question-text">1. What does MVT stand for in Django architecture?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Main View Transition</div><div class="quiz-option"><span>B)</span> Model - View - Template</div><div class="quiz-option"><span>C)</span> Method - Variable - Type</div><div class="quiz-option"><span>D)</span> Manage - Verify - Test</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>python manage.py migrate</code> executes migration files against the database.">
+          <div class="quiz-question-text">2. What command applies unapplied migrations to the actual database?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> python manage.py makemigrations</div><div class="quiz-option"><span>B)</span> python manage.py migrate</div><div class="quiz-option"><span>C)</span> python manage.py syncdb</div><div class="quiz-option"><span>D)</span> python manage.py runserver</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="N+1 queries occur when accessing foreign keys in a loop without <code>select_related()</code>.">
+          <div class="quiz-question-text">3. What is the N+1 query problem in Django ORM?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A mathematical equation</div><div class="quiz-option"><span>B)</span> Executing 1 initial query to get parent rows, followed by N separate queries to fetch related child rows in a loop</div><div class="quiz-option"><span>C)</span> A server timeout error</div><div class="quiz-option"><span>D)</span> Having N+1 tables in a database</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="0" data-explanation="<code>select_related()</code> performs an SQL JOIN to pre-fetch related foreign key rows in a single query.">
+          <div class="quiz-question-text">4. How do you solve the N+1 query problem for ForeignKey relationships in Django?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Use select_related()</div><div class="quiz-option"><span>B)</span> Use raw SQL only</div><div class="quiz-option"><span>C)</span> Disable database indexing</div><div class="quiz-option"><span>D)</span> Use while loops</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Django Admin is an auto-generated administrative dashboard for database content management.">
+          <div class="quiz-question-text">5. What is the primary purpose of the Django Admin interface?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To write Python code</div><div class="quiz-option"><span>B)</span> To provide an auto-generated, secure web dashboard for managing and editing database records</div><div class="quiz-option"><span>C)</span> To monitor server CPU temperature</div><div class="quiz-option"><span>D)</span> To replace GitHub</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, filter articles_db for published=False and verify that 1 draft article is found!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#django" class="ref-pill">Glossary: Django</a><a href="../reference/glossary.html#orm" class="ref-pill">Glossary: ORM</a><a href="16-numpy-and-pandas.html" class="ref-pill">Lesson 16: Data Science: NumPy & Pandas</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="14-flask-and-fastapi.html" class="btn btn-outline">&larr; 14. Web APIs: Flask & FastAPI</a>
+          <button class="mark-complete-btn" data-lesson-id="python-15">Mark as Complete</button>
+          <a href="16-numpy-and-pandas.html" class="btn btn-primary">16. Data Science: NumPy & Pandas &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

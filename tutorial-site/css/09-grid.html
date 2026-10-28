@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Grid Layout — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="09-grid.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 09</span>
+          </div>
+          <h1 class="lesson-title">CSS Grid: 2-Dimensional Layout Architecture</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Orchestrate rows and columns simultaneously. Master fr units, repeat, minmax, and responsive auto-fit grids.</span>
+            <span class="lang-hi">CSS Grid ke sath 2D layouts (rows aur columns ek sath) design karein. Fr units, repeat, minmax aur auto-fit seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 2D paradigm shift: Rows and Columns working simultaneously in harmony.</li>
+            <li>Core terminology: Grid Lines, Tracks, Cells, and Areas.</li>
+            <li>The flexible fraction unit (<code>fr</code>) and how it distributes space.</li>
+            <li>The Holy Grail of responsive cards: <code>repeat(auto-fit, minmax(280px, 1fr))</code> without a single media query!</li>
+            <li>Item placement and spanning using <code>grid-column: span 2</code> and grid lines.</li>
+            <li>Visual page layouts using <code>grid-template-areas</code>.</li>
+            <li>When to choose Flexbox vs when to choose CSS Grid.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="08-flexbox.html">08. Mastering Flexbox</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Architect's City Grid vs Train Track</div>
+          <p>
+            <span class="lang-en">Compare building a city street plan to boarding a train:
+            <br>&bull; <strong>Flexbox (1D):</strong> A train where cars link together sequentially. It excels at lining up buttons in a navbar or arranging an icon next to text in a single direction.
+            <br>&bull; <strong>CSS Grid (2D):</strong> The Manhattan city grid plan! A 2-dimensional matrix with numbered Avenues (columns) and Streets (rows). You can reserve an entire city block (e.g. 2 avenues wide by 3 streets long) for a skyscraper (<code>grid-column: span 2</code>).</span>
+            <span class="lang-hi">Manhattan city map ki tarah sochiye: Flexbox 1-dimensional train compartment hai (ek direction), jabki CSS Grid 2-dimensional shahar ka blueprint hai jisme rows aur columns ek sath banaye jaate hain. Aap kisi bhi card ko 2 columns ya 3 rows me span kar sakte hain!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Defining Columns, Rows &amp; The Fraction Unit (<code>fr</code>)</h2>
+        <p>
+          Applying <code>display: grid</code> activates the CSS Grid formatting engine. You establish the column tracks using <code>grid-template-columns</code>.
+        </p>
+        <p>
+          CSS Grid introduced the revolutionary <strong>fraction unit (<code>fr</code>)</strong>, which represents a fraction of the available free space remaining in the container:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Basic 3-Column Grid</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.dashboard-grid {
+  display: grid;
+  /* 3 columns: Left sidebar 260px, Main center takes 3 parts, Right takes 1 part */
+  grid-template-columns: 260px 3fr 1fr;
+  grid-template-rows: auto;
+  gap: 24px;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          The browser subtracts the fixed 260px sidebar and the two 24px gaps from total container width, then divides the remaining pixels into 4 equal slices: 3 slices go to the center column, and 1 slice goes to the right column!
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Clean Syntax with <code>repeat()</code> and <code>minmax()</code></h2>
+        <p>
+          Instead of writing <code>1fr 1fr 1fr 1fr</code>, use the <code>repeat()</code> function. Combine it with <code>minmax(min, max)</code> to enforce lower and upper bounds:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Repeat and Minmax Functions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 4 equal columns */
+.four-cols {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 3 columns where each column never shrinks below 200px */
+.responsive-cols {
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Ultimate Responsive Card Grid (Zero Media Queries!)</h2>
+        <p>
+          This is arguably the most famous single line of modern CSS code. It automatically creates as many columns as will fit on any screen size, wrapping gracefully from mobile to 4K monitors without writing a single <code>@media</code> query:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Magic Responsive Auto-Fit Grid</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.product-grid {
+  display: grid;
+  /* The Magic Formula: */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How It Works:</strong><br>
+          &bull; <code>auto-fit</code>: Tells the browser to cram as many columns as possible into each row.<br>
+          &bull; <code>minmax(280px, 1fr)</code>: Each column must be at least 280px wide. If extra space remains on the row, they stretch equally (<code>1fr</code>) to fill the width edge-to-edge.
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Spanning Rows and Columns</h2>
+        <p>
+          Individual grid items can span across multiple rows or columns. You can specify exact grid line numbers (1-indexed) or use the intuitive <code>span</code> keyword:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Hero Feature Card Spanning</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* The first featured article spans 2 columns wide */
+.featured-article {
+  grid-column: span 2; /* Occupies 2 columns */
+}
+
+/* Or using grid line indices (Line 1 to Line 3) */
+.featured-hero {
+  grid-column: 1 / 3;
+  grid-row: 1 / 3; /* Spans 2 rows deep as well! */
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Visual Layout with <code>grid-template-areas</code></h2>
+        <p>
+          CSS Grid allows you to literally "draw" your page layout directly in CSS using named text strings. It is remarkably self-documenting and easy to read:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Visual Page Layout via Named Areas</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.page-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 200px;
+  grid-template-rows: 60px 1fr 60px;
+  grid-template-areas:
+    "header  header  header"
+    "sidebar main    ads"
+    "footer  footer  footer";
+  min-height: 100vh;
+  gap: 12px;
+}
+
+header  { grid-area: header; }
+aside   { grid-area: sidebar; }
+main    { grid-area: main; }
+.ads    { grid-area: ads; }
+footer  { grid-area: footer; }</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Flexbox vs Grid: Which One to Choose?</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Criterion</th>
+              <th style="padding:10px;">Use Flexbox</th>
+              <th style="padding:10px;">Use CSS Grid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><strong>Dimension</strong></td>
+              <td style="padding:10px;">1-Dimensional (Row OR Column)</td>
+              <td style="padding:10px;">2-Dimensional (Rows AND Columns simultaneously)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><strong>Design Mindset</strong></td>
+              <td style="padding:10px;"><strong>Content-first:</strong> Items determine size; container flows around them</td>
+              <td style="padding:10px;"><strong>Layout-first:</strong> Rigorous blueprint grid is defined; items drop into cells</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><strong>Best Applications</strong></td>
+              <td style="padding:10px;">Navbars, button groups, icon+label alignment, form field controls</td>
+              <td style="padding:10px;">Page shell layouts, product card galleries, photo mosaics, dashboard metrics</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Experiment with CSS Grid</h2>
+        <p>
+          Change column definitions and spanning in real-time below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: 2D Grid Laboratory</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, sans-serif; padding: 20px; background: #f8fafc; }
+  
+  .gallery {
+    display: grid;
+    /* Try: repeat(auto-fit, minmax(140px, 1fr)) */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .card {
+    background: #3b82f6;
+    color: white;
+    padding: 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  /* Try removing or changing this span */
+  .featured {
+    grid-column: span 2;
+    background: #10b981;
+  }
+  
+  .tall {
+    grid-row: span 2;
+    background: #8b5cf6;
+  }
+</style>
+</head>
+<body>
+  <div class="gallery">
+    <div class="card featured">1. Hero (span 2 cols)</div>
+    <div class="card tall">2. Tall (span 2 rows)</div>
+    <div class="card">3. Normal</div>
+    <div class="card">4. Normal</div>
+    <div class="card">5. Normal</div>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting that Grid Line numbers start at 1:</strong> In CSS Grid, lines start at <code>1</code>, not <code>0</code>. A 3-column grid has 4 vertical grid lines (1, 2, 3, 4).</li>
+            <li><strong>Confusing <code>auto-fill</code> and <code>auto-fit</code>:</strong> <code>auto-fill</code> creates empty ghost tracks if there aren't enough items, whereas <code>auto-fit</code> collapses empty tracks to allow existing items to expand.</li>
+            <li><strong>Using fixed pixel widths inside grids:</strong> Setting <code>width: 300px</code> on grid items fights against <code>1fr</code> sizing and destroys responsiveness. Let the grid tracks manage item widths!</li>
+            <li><strong>Writing media queries for basic card decks:</strong> Don't write 5 breakpoint queries when <code>repeat(auto-fit, minmax(280px, 1fr))</code> handles all screen sizes automatically.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Chrome DevTools Grid Overlay:</strong> Open DevTools &rarr; Elements tab &rarr; click the tiny <code>grid</code> badge next to your container. DevTools will render dotted grid lines with exact line numbers on your screen!</li>
+            <li><strong>Place items in the same cell for overlapping hero banners:</strong> You can place both a background image and text on <code>grid-column: 1 / -1; grid-row: 1 / -1;</code> to create clean layered hero banners without absolute positioning.</li>
+            <li><strong>Combine Flexbox AND Grid:</strong> Senior developers use CSS Grid for the master page shell and card arrays, and Flexbox for micro-alignments inside the individual cards (buttons, badges, icons).</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>CSS Grid handles 2D layouts (rows and columns) simultaneously.</li>
+            <li><code>fr</code> represents a fraction of remaining free space.</li>
+            <li><code>repeat(auto-fit, minmax(280px, 1fr))</code> creates responsive card galleries without media queries.</li>
+            <li>Grid lines are 1-indexed; <code>grid-column: 1 / 3</code> spans across columns 1 and 2.</li>
+            <li><code>grid-template-areas</code> visualizes complete layouts using ASCII text templates.</li>
+            <li>Use Grid for macro page structures; use Flexbox for micro UI components.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): 3 Equal-Width Columns</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the CSS rule for a <code>.gallery</code> container that displays 3 identical flexible columns with a 20px gap using the <code>repeat()</code> function.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Combine display: grid, repeat(3, 1fr), and gap: 20px.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Responsive Magazine Layout</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>In a 4-column article grid, write the CSS to make the leading <code>.hero-card</code> occupy the first 3 columns wide and the first 2 rows high.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use grid-column: span 3 and grid-row: span 2.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.hero-card {
+  grid-column: span 3;
+  grid-row: span 2;
+}
+/* Or line syntax: grid-column: 1 / 4; grid-row: 1 / 3; */</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): The Zero-Query Grid Recipe</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the exact CSS property and value that automatically fills a grid with columns that never shrink below 220px, but stretch equally to consume all remaining row width.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: repeat(auto-fit, minmax(...)).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 09 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Grid operates across 2 dimensions simultaneously (rows and columns); Flexbox operates in 1 dimension.">
+            <div class="quiz-question-text">1. What is the fundamental architectural difference between CSS Grid and Flexbox?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> CSS Grid only works on mobile phones</div>
+              <div class="quiz-option"><span>B)</span> CSS Grid is 2-dimensional (controls rows and columns together), whereas Flexbox is 1-dimensional</div>
+              <div class="quiz-option"><span>C)</span> Flexbox is faster because it compiles to C++</div>
+              <div class="quiz-option"><span>D)</span> CSS Grid cannot use the gap property</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="1fr means 1 fraction of the available leftover space after fixed tracks and gaps are subtracted.">
+            <div class="quiz-question-text">2. What does '1fr' represent in a grid template?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 1 fraction of the available free space in the container</div>
+              <div class="quiz-option"><span>B)</span> Exactly 1 frame per second</div>
+              <div class="quiz-option"><span>C)</span> 100 pixels</div>
+              <div class="quiz-option"><span>D)</span> 1% of the viewport width</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="auto-fit collapses unoccupied tracks to let existing items expand to fill row width.">
+            <div class="quiz-question-text">3. In responsive grid definitions, what does 'auto-fit' do when extra space remains on a row?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It crops overflowing images</div>
+              <div class="quiz-option"><span>B)</span> It leaves empty ghost columns taking up space</div>
+              <div class="quiz-option"><span>C)</span> It stretches the existing items to fill the entire row width</div>
+              <div class="quiz-option"><span>D)</span> It converts the layout into a table</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Grid lines start at 1; line 1 to line 3 encompasses columns 1 and 2 (2 columns total).">
+            <div class="quiz-question-text">4. How many columns does an item span if it has 'grid-column: 1 / 3;'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 3 columns</div>
+              <div class="quiz-option"><span>B)</span> 1 column</div>
+              <div class="quiz-option"><span>C)</span> 0 columns</div>
+              <div class="quiz-option"><span>D)</span> 2 columns (from line 1 to line 3)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="grid-template-areas defines visual named layout templates using ASCII string rows.">
+            <div class="quiz-question-text">5. Which CSS Grid feature lets you sketch visual page regions using named text strings?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> grid-flow-matrix</div>
+              <div class="quiz-option"><span>B)</span> grid-template-areas</div>
+              <div class="quiz-option"><span>C)</span> grid-canvas</div>
+              <div class="quiz-option"><span>D)</span> grid-ascii-table</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a Bento-Grid Portfolio Showcase</h3>
+          <p>
+            In the live editor above, change the grid to 4 columns and assign one card <code>grid-column: span 2; grid-row: span 2;</code> with a gradient background to create an Apple-style "Bento Box" feature showcase!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#grid" class="ref-pill">CSS Grid Properties Reference</a>
+            <a href="../reference/glossary.html#grid" class="ref-pill">Glossary: CSS Grid</a>
+            <a href="../reference/glossary.html#fraction-unit" class="ref-pill">Glossary: Fraction Unit (fr)</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Grid Visual Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="08-flexbox.html" class="btn btn-outline">&larr; Previous: Mastering Flexbox</a>
+          <button class="mark-complete-btn" data-lesson-id="css-09">Mark as Complete</button>
+          <a href="10-responsive-design-media-queries.html" class="btn btn-primary">Next: Responsive Design &amp; Media Queries &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

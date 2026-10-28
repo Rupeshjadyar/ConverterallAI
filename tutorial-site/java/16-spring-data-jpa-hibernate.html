@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="16">
+  <title>Spring Data JPA & Hibernate ORM (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Spring Data JPA & Hibernate: @Entity, @Table, @Id, JpaRepository derived queries, JPQL, Entity Relationships (@OneToMany, @ManyToOne), Lazy vs Eager loading, and the N+1 problem.">
+  <meta name="keywords" content="Spring Data JPA, Hibernate ORM, JpaRepository, JPQL, @Entity @OneToMany @ManyToOne, N+1 query problem, FetchType LAZY">
+  <meta property="og:title" content="Spring Data JPA & Hibernate ORM (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Master Spring Data JPA & Hibernate: @Entity, @Table, @Id, JpaRepository derived queries, JPQL, Entity Relationships (@OneToMany, @ManyToOne), Lazy vs Eager loading, and the N+1 problem.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 22 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">16. Spring Data JPA, Hibernate ORM & Entity Relationships</h1>
+          <p class="lesson-subtitle">Bridging the Object-Relational Impedance Mismatch: Entities, automatic repository queries, table relationships, Lazy loading, and solving the infamous N+1 query problem.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 13 (JDBC) & Lesson 15 (Spring Boot REST).</p>
+            <ul>
+              <li>Understand ORM (Object-Relational Mapping) and the role of JPA specification vs Hibernate implementation.</li><li>Map database tables to Java classes using `@Entity`, `@Table`, `@Id`, `@GeneratedValue`.</li><li>Leverage `JpaRepository` and Spring Data derived query methods (zero SQL boilerplate).</li><li>Model relational associations: `@OneToMany`, `@ManyToOne`, `@JoinColumn`, and `@ManyToMany`.</li><li>Diagnose and solve the infamous **N+1 Query Problem** using `JOIN FETCH` and `@EntityGraph`.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Universal Translator & The Lazy Roommate Analogy</h3>
+      <p><strong>Hibernate ORM:</strong> Java thinks in rich, interconnected objects in memory (trees and graphs). SQL thinks in flat, two-dimensional tables of numbers and strings. Hibernate acts like an invisible diplomatic interpreter standing between them, automatically turning SQL rows into Java objects and saving Java objects back to SQL tables!</p>
+      <p><strong>FetchType.LAZY vs EAGER (The Lazy Roommate):</strong></p>
+      <ul>
+        <li><strong>EAGER (Over-enthusiastic):</strong> You ask your roommate to bring your backpack. They bring your backpack, PLUS all 50 notebooks inside, PLUS the entire desk, PLUS the bookshelf! (Massive memory waste and slow queries).</li>
+        <li><strong>LAZY (Smart on Demand):</strong> Your roommate brings ONLY the backpack. Only when you specifically unzip the backpack and ask for a notebook (<code>student.getCourses()</code>) do they walk back to fetch the notebooks!</li>
+      </ul>
+      <p><strong>The N+1 Problem:</strong> You ask the waiter for 10 orders of burger. The waiter makes 1 trip to tell the kitchen (1 query). Then, the waiter makes <strong>10 separate round-trips</strong> to the fridge, one by one, to get 1 bottle of ketchup for each burger! (1 + 10 queries = 11 queries!). A smart waiter brings all 10 burgers and ketchup bottles together in 1 single tray (<code>JOIN FETCH</code>)!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (जादुई अनुवादक और N+1 की बीमारी)</h3>
+      <p><strong>Hibernate ORM क्या है:</strong> जावा में हम <code>User</code> ऑब्जेक्ट बनाते हैं, लेकिन डेटाबेस में सिर्फ टेबल होती हैं। Hibernate एक जादुई अनुवादक है जो आपके जावा ऑब्जेक्ट को डेटाबेस की टेबल में अपने आप सेव कर देता है, आपको बार-बार <code>INSERT INTO</code> लिखने की जरूरत नहीं पड़ती!</p>
+      <p><strong>N+1 Query Problem (वेटर की नासमझी):</strong> मान लीजिए होटल में 100 ग्राहक बैठे हैं। वेटर पहले 1 चक्कर लगाकर 100 ग्राहकों की लिस्ट लाता है (1 Query)। फिर वह 100 बार अलग-अलग रसोई में जाकर हर ग्राहक का ऑर्डर पूछता है (100 Queries)! कुल 101 चक्कर लग गए! <code>JOIN FETCH</code> लगाकर वेटर 1 ही चक्कर में सारा सामान ले आता है, जिससे डेटाबेस सुपरफास्ट हो जाता है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. JPA Entity Mapping Standard</h3>
+      <div class="code-box">
+        <pre><code class="language-java">@Entity
+@Table(name = "customers")
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
+    // Always use FetchType.LAZY on collections!
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
+    // Helper methods for bidirectional synchronization
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setCustomer(this);
+    }
+}</code></pre>
+      </div>
+
+      <h3>2. Spring Data JpaRepository Magic</h3>
+      <p>By simply declaring an interface extending <code>JpaRepository</code>, Spring Data synthesizes the implementation at runtime:</p>
+      <div class="code-box">
+        <pre><code class="language-java">public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    // Derived query methods parsed automatically from method names!
+    Optional<Customer> findByEmail(String email);
+    List<Customer> findByLastNameStartingWithIgnoreCase(String prefix);
+    boolean existsByEmail(String email);
+
+    // Custom JPQL query solving N+1 with JOIN FETCH!
+    @Query("SELECT c FROM Customer c JOIN FETCH c.orders WHERE c.id = :id")
+    Optional<Customer> findByIdWithOrders(@Param("id") Long id);
+}</code></pre>
+      </div>
+
+      <h3>3. The N+1 Problem & Solution</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>Queries Executed</th>
+            <th>Performance Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Default Lazy Loading in a Loop (N+1)</td>
+            <td>1 query for customers + N queries for orders (101 queries for 100 customers)</td>
+            <td>Database network round-trip bottleneck; server slows to a crawl</td>
+          </tr>
+          <tr>
+            <td>Solved via <code>JOIN FETCH</code> or <code>@EntityGraph</code></td>
+            <td><strong>Exactly 1 single SQL JOIN query</strong></td>
+            <td>Blazing fast; entire graph fetched in a single round-trip</td>
+          </tr>
+        </tbody>
+      </table>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is the N+1 Query Problem in Hibernate, and how do you resolve it? Explain FetchType.LAZY vs EAGER."</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>N+1 Problem Explanation:</strong> Occurs when an application loads N parent entities in 1 query, and then lazily fetches child associations inside a loop, triggering N additional queries (1 + N total queries), degrading database performance exponentially.</li><li><strong>Solutions for N+1:</strong> 1) JPQL with `JOIN FETCH` (e.g. `SELECT u FROM User u JOIN FETCH u.roles`); 2) `@EntityGraph(attributePaths = {"roles"})` over repository methods; 3) Hibernate `@BatchSize(size = 25)` to fetch children in batches via SQL `IN` clauses.</li><li><strong>FetchType.LAZY vs EAGER:</strong> `LAZY` defers loading associated data until explicitly accessed, using CGLIB/ByteBuddy dynamic proxy objects. `EAGER` loads associated entities immediately upon querying the parent. Rule: Always default to `FetchType.LAZY` for all `@OneToMany` and `@ManyToMany` collections to prevent accidental memory blowups.</li><li><strong>Transactional Requirement for Lazy Loading:</strong> Lazy collections can only be initialized while the Hibernate `Session` is open. Accessing an uninitialized lazy collection outside a `@Transactional` boundary throws `LazyInitializationException`.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always state: "Always use FetchType.LAZY on collection associations to prevent memory bloat, and resolve the N+1 problem explicitly using JOIN FETCH or @EntityGraph."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Solving N+1 with @EntityGraph in JpaRepository</h4>
+        <div class="code-box">
+          <pre><code class="language-java">package com.academy.repository;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    // Overrides default fetch plan to fetch customer and orderItems in 1 single SQL query!
+    @EntityGraph(attributePaths = {"customer", "orderItems"})
+    List<Order> findAllByStatus(String status);
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Complete Transactional Service Layer</h4>
+        <div class="code-box">
+          <pre><code class="language-java">@Service
+@Transactional(readOnly = true) // Read-only optimization for all methods by default
+public class OrderService {
+    private final OrderRepository orderRepository;
+
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Transactional // Writable transaction with dirty checking
+    public Order placeOrder(CreateOrderDTO dto) {
+        Order order = new Order();
+        // Set properties...
+        return orderRepository.save(order);
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('16')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-16" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class JpaSandbox {
+    public static void main(String[] args) {
+        System.out.println("Hibernate SQL Generated:");
+        System.out.println("Hibernate: select c1_0.id,c1_0.email,o1_0.id,o1_0.amount from customers c1_0");
+        System.out.println("           inner join orders o1_0 on c1_0.id=o1_0.customer_id");
+        System.out.println("           where c1_0.id=?");
+        System.out.println("Single JOIN FETCH query executed: 0 N+1 issues detected!");
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-16" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Using `FetchType.EAGER` on Collections:</strong> Causes entire database tables to be queried recursively into memory on simple findById calls.</li><li><strong>Triggering `LazyInitializationException`:</strong> Accessing lazy-loaded collections inside controller views after the `@Transactional` persistence context has closed. Solve using DTO projections or `@EntityGraph`.</li><li><strong>Calling `repository.save()` inside Loops:</strong> Triggers multiple round-trips. Always use `repository.saveAll(entitiesList)` for bulk inserts.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Enable SQL Logging in Development:</strong> Set `spring.jpa.show-sql=true` and `spring.jpa.properties.hibernate.format_sql=true` in `application.properties` to inspect generated SQL queries.</li><li><strong>Use `@Transactional(readOnly = true)`:</strong> On read queries, instructs Hibernate to skip dirty checking snapshot generation, slashing memory overhead by 50%.</li><li><strong>Leverage Interface Projections:</strong> When you only need 3 columns instead of a 40-column entity, define a Spring Data interface projection to generate lean `SELECT col1, col2` queries.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Spring Data JPA generates repository implementations automatically.:</strong> Zero boilerplate SQL.</li><li><strong>Always use `FetchType.LAZY` for `@OneToMany` and `@ManyToMany`.:</strong> Prevents memory blowups.</li><li><strong>N+1 Query Problem::</strong> Loading 1 parent triggers N queries for children; solve using `JOIN FETCH` or `@EntityGraph`.</li><li><strong>`@Transactional(readOnly = true)`:</strong> optimizes read performance by disabling Hibernate dirty-check caching.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Create a Spring Data Derived Query</h4>
+        <p>Declare a repository method that finds all active users with age greater than a given parameter.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">List<User> findByActiveTrueAndAgeGreaterThan(int minAge);</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Write a JOIN FETCH Query</h4>
+        <p>Write a JPQL query in <code>@Query</code> to load a Department and eagerly fetch all its Employees in 1 query.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">@Query("SELECT d FROM Department d JOIN FETCH d.employees WHERE d.id = :id")
+Optional<Department> findByIdWithEmployees(@Param("id") Long id);</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Prevent LazyInitializationException</h4>
+        <p>Why does <code>user.getRoles().size()</code> fail in a Controller if the service method is marked <code>@Transactional</code>?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The Hibernate persistence session closes as soon as the service method completes. In the controller, the session is detached. Calling <code>.size()</code> on the uninitialized proxy throws <code>LazyInitializationException</code>. <em>Fix:</em> Initialize the collection inside the service or fetch it via <code>JOIN FETCH</code> / `@EntityGraph`.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What is the primary cause of the N+1 query problem in Hibernate?</strong></p>
+        <label><input type="radio" name="q1" value="0"> Database server connection timeouts</label><br>
+        <label><input type="radio" name="q1" value="1"> Lazily fetching child associations individually for each parent row in a loop</label><br>
+        <label><input type="radio" name="q1" value="0"> Missing PRIMARY KEY constraints</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: How can you solve the N+1 query problem in a Spring Data query?</strong></p>
+        <label><input type="radio" name="q2" value="1"> Using JOIN FETCH in JPQL or @EntityGraph</label><br>
+        <label><input type="radio" name="q2" value="0"> Using System.gc()</label><br>
+        <label><input type="radio" name="q2" value="0"> Setting FetchType.EAGER everywhere</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What exception is thrown when accessing an uninitialized lazy collection outside a transaction?</strong></p>
+        <label><input type="radio" name="q3" value="0"> NullPointerException</label><br>
+        <label><input type="radio" name="q3" value="1"> LazyInitializationException</label><br>
+        <label><input type="radio" name="q3" value="0"> EntityNotFoundException</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: What performance optimization does `@Transactional(readOnly = true)` provide?</strong></p>
+        <label><input type="radio" name="q4" value="1"> Disables Hibernate dirty checking snapshots to conserve memory</label><br>
+        <label><input type="radio" name="q4" value="0"> Compiles Java to C++ native code</label><br>
+        <label><input type="radio" name="q4" value="0"> Prevents any read operations</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What is the recommended default FetchType for `@OneToMany` relationships?</strong></p>
+        <label><input type="radio" name="q5" value="0"> FetchType.EAGER</label><br>
+        <label><input type="radio" name="q5" value="1"> FetchType.LAZY</label><br>
+        <label><input type="radio" name="q5" value="0"> FetchType.IMMEDIATE</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Model an E-Commerce Schema with JPA</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create User and Order entities with bidirectional @OneToMany relationship, CascadeType.ALL, and write a JpaRepository with an @EntityGraph query.</p>
+              <div class="code-box">
+                <pre><code class="language-java">// TODO: Model User and Order JPA entities with bidirectional relationship</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="15-spring-boot-and-rest-apis.html" class="btn btn-outline">&larr; Prev: Spring Boot & REST</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-16')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="17-microservices-architecture.html" class="btn btn-primary">Next: Microservices Architecture &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Hibernate SQL Generated:\nHibernate: select c1_0.id,c1_0.email,o1_0.id,o1_0.amount from customers c1_0\n           inner join orders o1_0 on c1_0.id=o1_0.customer_id\n           where c1_0.id=?\nSingle JOIN FETCH query executed: 0 N+1 issues detected!";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>DQL Mastery: SELECT, WHERE, Operators & Execution Order — WebDev Academy</title>
+  <meta name="description" content="Master Data Query Language (DQL) from basic SELECT projections to complex WHERE filters (LIKE, IN, BETWEEN, IS NULL), sorting with ORDER BY, pagination with LIMIT/OFFSET, and the true internal order of SQL execution.">
+  <meta name="keywords" content="SQL DQL, SELECT query, WHERE clause, SQL LIKE wildcards, IN operator, BETWEEN, ORDER BY, LIMIT OFFSET, SQL execution order">
+  <meta property="og:title" content="DQL Mastery: SELECT, WHERE, Operators & Execution Order">
+  <meta property="og:description" content="Master Data Query Language (DQL) from basic SELECT projections to complex WHERE filters (LIKE, IN, BETWEEN, IS NULL), sorting with ORDER BY, pagination with LIMIT/OFFSET, and the true internal order of SQL execution.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="04-dql-select-where-operators.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 04</span>
+          </div>
+          <h1 class="lesson-title">DQL Mastery: SELECT, WHERE, Operators & Execution Order</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Data Query Language (DQL) from basic SELECT projections to complex WHERE filters (LIKE, IN, BETWEEN, IS NULL), sorting with ORDER BY, pagination with LIMIT/OFFSET, and the true internal order of SQL execution.</span>
+            <span class="lang-hi">Data Query Language (DQL) seekhein: SELECT se data nikalna, WHERE se filter karna, LIKE, IN, BETWEEN aur SQL ka internal execution order.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The anatomy of a SELECT query: Projections, aliases (AS), and DISTINCT.</li><li>Filtering with comparison and logical operators (AND, OR, NOT).</li><li>Pattern matching with LIKE (% and _) and range filtering with BETWEEN and IN.</li><li>The Three-Valued Logic of SQL (TRUE, FALSE, UNKNOWN) and why col = NULL always fails.</li><li>Sorting with ORDER BY (ASC/DESC, NULLS FIRST/LAST) and Pagination (LIMIT, OFFSET).</li><li>The True Internal Execution Order of SQL queries (FROM &rarr; WHERE &rarr; GROUP BY &rarr; HAVING &rarr; SELECT &rarr; ORDER BY &rarr; LIMIT).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 03: DML Commands & Data Persistence.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of ordering food at a restaurant. <strong>FROM is telling the waiter which kitchen or menu you are choosing from</strong>. <strong>WHERE is filtering out items you don't like (e.g. No dairy, No nuts)</strong>. <strong>SELECT is picking the exact dishes you want placed on your table</strong>. And <strong>ORDER BY is deciding what gets served first (Starters first, Dessert last)</strong>. Notice that even though you write SELECT first on the page, the restaurant must go to the kitchen (FROM) and filter the ingredients (WHERE) long before they can serve your plate (SELECT)!</span>
+            <span class="lang-hi">Restaurant me khana order karne ki misaal lein: <strong>FROM kitchen chunnna hai</strong>. <strong>WHERE filter lagana hai</strong> (jaise non-veg nahi chahiye). <strong>SELECT plate me parosna hai</strong>. Aur <strong>ORDER BY decide karna hai</strong> ki pehle starter aayega ya dessert. Halanki hum SELECT pehle likhte hain, lekin database pehle kitchen (FROM) me jaata hai, filter (WHERE) karta hai, aur baad me plate (SELECT) banata hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>True Order of Execution of SQL (Critical Interview Question!):</strong><br>1. <code>FROM &amp; JOIN</code> (Identify tables)<br>2. <code>WHERE</code> (Filter individual rows)<br>3. <code>GROUP BY</code> (Aggregate rows)<br>4. <code>HAVING</code> (Filter groups)<br>5. <code>SELECT</code> (Compute expressions &amp; column projections)<br>6. <code>DISTINCT</code> (Remove duplicate projection rows)<br>7. <code>ORDER BY</code> (Sort the result set)<br>8. <code>LIMIT / OFFSET</code> (Slice output window)</li><li><strong>Why can't you use column aliases in the WHERE clause?</strong> Because <code>WHERE</code> is executed at Step 2, while <code>SELECT</code> (which creates the alias) is not executed until Step 5!</li><li><strong>Why does <code>salary = NULL</code> return zero rows?</strong> In SQL, NULL represents an 'unknown' value, not zero or empty string. Any comparison with NULL using <code>=</code> or <code>!=</code> evaluates to UNKNOWN. You must always use <code>IS NULL</code> or <code>IS NOT NULL</code>.</li><li><strong>LIKE Wildcards:</strong> <code>%</code> matches zero or more characters; <code>_</code> matches exactly one character.</li><li><strong>Pagination Pitfall with OFFSET:</strong> <code>OFFSET 1000000 LIMIT 20</code> forces the database to read and discard 1,000,000 rows. In high-performance systems, prefer Keyset Pagination (Cursor Pagination: <code>WHERE id &gt; last_seen_id LIMIT 20</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Anatomy of the SELECT Query</h2>
+        <p>The <code>SELECT</code> statement is the heart of SQL. It retrieves specified columns from one or more tables. Instead of writing <code>SELECT *</code> (which pulls every single column and wastes network bandwidth), production applications specify the exact columns required.</p>
+        <p>We can rename columns in the output using the <code>AS</code> keyword (aliasing), and eliminate duplicate rows from the final result set using <code>DISTINCT</code>.</p>
+        
+        <h2>2. Filtering Data: Comparison, Logical, and Set Operators</h2>
+        <p>The <code>WHERE</code> clause extracts only those records that fulfill a specified condition. We combine conditions using boolean logic:</p>
+        <p>• <code>AND</code>: All conditions must be true.<br>• <code>OR</code>: At least one condition must be true.<br>• <code>NOT</code>: Inverts a condition.<br>• <code>IN (val1, val2...)</code>: Replaces messy chains of multiple OR statements.<br>• <code>BETWEEN low AND high</code>: Inclusive range check (equivalent to <code>col &gt;= low AND col &lt;= high</code>).</p>
+        
+        <h2>3. The Three-Valued Logic of SQL & NULL Handling</h2>
+        <p>Unlike programming languages where boolean expressions are either TRUE or FALSE, SQL operates on <strong>Three-Valued Logic: TRUE, FALSE, and UNKNOWN</strong>.</p>
+        <p>Because NULL signifies missing or unknown information, comparing two unknowns (<code>NULL = NULL</code>) is logically UNKNOWN (treated as false in a WHERE clause). To safely handle NULLs, SQL provides <code>IS NULL</code>, <code>IS NOT NULL</code>, and the <code>COALESCE(col, fallback)</code> function.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Basic SELECT with Expressions and Aliases</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    emp_id AS employee_identifier,
+    CONCAT(first_name, ' ', last_name) AS full_name,
+    salary,
+    salary * 12 AS annual_package,
+    ROUND(salary * 0.18, 2) AS estimated_tax
+FROM employees
+WHERE is_active = TRUE;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Computations like <code>salary * 12</code> happen on the fly in memory during query execution.
+        </div>
+        
+        <h3>Code Example 2: Complex Filtering with AND, OR, and Parentheses</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Find high earners in Engineering OR managers in any department
+SELECT emp_name, department, job_title, salary
+FROM employees
+WHERE (department = 'Engineering' AND salary &gt;= 90000)
+   OR (job_title LIKE '%Manager%');</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Always use parentheses around <code>AND</code> and <code>OR</code> blocks to avoid unexpected operator precedence bugs!
+        </div>
+        
+        <h3>Code Example 3: Pattern Matching with LIKE and Wildcards</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- 1. Names starting with 'A'
+SELECT * FROM customers WHERE customer_name LIKE 'A%';
+
+-- 2. Email addresses from gmail.com
+SELECT * FROM customers WHERE email LIKE '%@gmail.com';
+
+-- 3. Four-letter names where second letter is 'o' (e.g. John, Tony)
+SELECT * FROM customers WHERE customer_name LIKE '_o__';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>%</code> matches any length of characters; <code>_</code> matches exactly one character.
+        </div>
+        
+        <h3>Code Example 4: The IN, NOT IN, and BETWEEN Operators</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Orders placed in Q1 between Jan 1 and March 31
+SELECT order_id, order_date, amount, status
+FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2024-03-31'
+  AND status IN ('DELIVERED', 'SHIPPED')
+  AND payment_method NOT IN ('CASH_ON_DELIVERY');</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>IN ('DELIVERED', 'SHIPPED')</code> is much cleaner and faster than writing <code>status = 'DELIVERED' OR status = 'SHIPPED'</code>.
+        </div>
+        
+        <h3>Code Example 5: Handling NULLs with IS NULL and COALESCE</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Replace NULL phone numbers with a friendly placeholder
+SELECT 
+    customer_id,
+    customer_name,
+    COALESCE(phone_number, 'No Phone Provided') AS contact_phone,
+    COALESCE(referrer_id, 0) AS referral_code
+FROM customers
+WHERE phone_number IS NULL;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>COALESCE</code> returns the first non-null argument in its list.
+        </div>
+        
+        <h3>Code Example 6: Sorting and Pagination with ORDER BY, LIMIT, and OFFSET</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Fetch Page 2 of top-earning employees (10 records per page)
+SELECT emp_id, emp_name, department, salary
+FROM employees
+ORDER BY salary DESC, emp_name ASC
+LIMIT 10 OFFSET 10;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>LIMIT 10 OFFSET 10</code> skips the first 10 rows and returns the next 10 (rows 11-20).
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: DQL Mastery: SELECT, WHERE, Operators & Execution Order</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive DQL Sandbox: Filter and Sort
+CREATE TABLE books (
+    id INT PRIMARY KEY,
+    title VARCHAR(100),
+    genre VARCHAR(50),
+    price DECIMAL(6,2),
+    rating DECIMAL(2,1)
+);
+
+INSERT INTO books VALUES
+(1, 'Database Internals', 'Tech', 48.00, 4.8),
+(2, 'Designing Data-Intensive Apps', 'Tech', 52.50, 4.9),
+(3, 'The Hobbit', 'Fantasy', 12.00, 4.7),
+(4, 'Clean Architecture', 'Tech', 39.99, 4.5),
+(5, 'Harry Potter', 'Fantasy', 18.50, 4.8);
+
+-- Find Tech books with rating >= 4.7 sorted by price
+SELECT title, price, rating
+FROM books
+WHERE genre = 'Tech' AND rating >= 4.7
+ORDER BY price DESC;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Writing <code>WHERE column = NULL</code>:</strong> This will never return any rows! Always write <code>WHERE column IS NULL</code>.</li><li><strong>Referencing a SELECT alias in the WHERE clause:</strong> Writing <code>SELECT salary * 12 AS annual FROM emp WHERE annual &gt; 50000;</code> causes a syntax error because WHERE runs before SELECT assigns the alias.</li><li><strong>Forgetting parentheses with mixed AND/OR:</strong> <code>AND</code> has higher precedence than <code>OR</code>, which can lead to severe security leaks (e.g. leaking admin accounts).</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Leading Wildcard Performance Warning:</strong> <code>LIKE '%abc'</code> cannot use standard B-Tree indexes and forces a full table scan. If you need suffix searching, use reverse indexing or trigram indexes (pg_trgm).</li><li><strong>Keyset (Cursor) Pagination over OFFSET:</strong> Instead of <code>OFFSET 10000</code>, store the last seen <code>id</code> and write <code>WHERE id &gt; 10000 ORDER BY id ASC LIMIT 20</code>. This executes in constant time O(1) instead of linear scan O(N)!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>SQL execution order: FROM &rarr; WHERE &rarr; GROUP BY &rarr; HAVING &rarr; SELECT &rarr; ORDER BY &rarr; LIMIT.</li><li>Always use IS NULL and IS NOT NULL to check for missing values.</li><li>COALESCE provides graceful default values when encountering NULL.</li><li>LIKE uses <code>%</code> for multi-character wildcards and <code>_</code> for single-character wildcards.</li><li>Use parentheses to group logical expressions explicitly when combining AND and OR.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a query to retrieve all customers from the <code>customers</code> table whose <code>country</code> is either 'India', 'Canada', or 'Germany', sorted alphabetically by <code>city</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use the IN operator and ORDER BY city ASC.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT * 
+FROM customers
+WHERE country IN ('India', 'Canada', 'Germany')
+ORDER BY city ASC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Retrieve the <code>product_name</code>, <code>price</code>, and a calculated column <code>discounted_price</code> (10% off) for all products with price between 50 and 200, excluding products where <code>is_discontinued = TRUE</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use BETWEEN 50.00 AND 200.00 and is_discontinued = FALSE.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    product_name,
+    price,
+    ROUND(price * 0.90, 2) AS discounted_price
+FROM products
+WHERE price BETWEEN 50.00 AND 200.00
+  AND is_discontinued = FALSE;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain why <code>SELECT emp_name, salary * 12 AS annual_sal FROM employees WHERE annual_sal &gt; 60000;</code> fails with an 'unknown column' error in SQL, and how to fix it.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about the order of query execution.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- Reason: The SQL engine processes the WHERE clause BEFORE the SELECT clause.
+-- At the moment WHERE executes, the alias 'annual_sal' does not exist yet!
+-- Fix Option 1 (Repeat expression in WHERE):
+SELECT emp_name, salary * 12 AS annual_sal
+FROM employees
+WHERE (salary * 12) &gt; 60000;
+
+-- Fix Option 2 (Use CTE / Subquery):
+WITH emp_annual AS (
+    SELECT emp_name, salary * 12 AS annual_sal FROM employees
+)
+SELECT * FROM emp_annual WHERE annual_sal &gt; 60000;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="FROM and WHERE execute first to filter base rows; SELECT evaluates expressions; ORDER BY and LIMIT sort and slice at the very end.">
+          <div class="quiz-question-text">1. In what order does the database engine evaluate SQL query clauses?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SELECT -> FROM -> WHERE -> ORDER BY</div><div class="quiz-option"><span>B)</span> FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT</div><div class="quiz-option"><span>C)</span> WHERE -> FROM -> SELECT -> LIMIT</div><div class="quiz-option"><span>D)</span> SELECT -> ORDER BY -> FROM -> WHERE</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="In SQL three-valued logic, comparing two NULL values results in UNKNOWN, not TRUE.">
+          <div class="quiz-question-text">2. What is the result of evaluating: NULL = NULL in standard SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> TRUE</div><div class="quiz-option"><span>B)</span> FALSE</div><div class="quiz-option"><span>C)</span> UNKNOWN</div><div class="quiz-option"><span>D)</span> Syntax Error</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The wildcard <code>%tech</code> matches any sequence of leading characters followed by 'tech'.">
+          <div class="quiz-question-text">3. Which operator matches strings ending with 'tech'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> LIKE 'tech%'</div><div class="quiz-option"><span>B)</span> LIKE '%tech'</div><div class="quiz-option"><span>C)</span> LIKE '_tech'</div><div class="quiz-option"><span>D)</span> MATCH 'tech'</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="COALESCE iterates through its arguments and returns the very first one that is not NULL.">
+          <div class="quiz-question-text">4. What does the COALESCE(col1, col2, 'Default') function do?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Combines the strings together with spaces</div><div class="quiz-option"><span>B)</span> Returns the first non-null value among its arguments</div><div class="quiz-option"><span>C)</span> Checks if all arguments are equal</div><div class="quiz-option"><span>D)</span> Converts text into lowercase</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="High OFFSET values require the query engine to scan and discard all prior rows, causing heavy disk and CPU waste.">
+          <div class="quiz-question-text">5. Why is 'OFFSET 500000 LIMIT 10' slow on large tables?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Because the computer runs out of RAM</div><div class="quiz-option"><span>B)</span> Because the engine must read and discard 500,000 rows before returning the 10 rows</div><div class="quiz-option"><span>C)</span> Because OFFSET is only supported in SQLite</div><div class="quiz-option"><span>D)</span> Because LIMIT disables index usage</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write a query that selects only Fantasy books with rating higher than 4.7, and orders them by title ascending!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#dql" class="ref-pill">Glossary: DQL</a><a href="../reference/glossary.html#where" class="ref-pill">Glossary: WHERE Clause</a><a href="05-aggregations-group-by-having.html" class="ref-pill">Lesson 05: Aggregations & GROUP BY</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-dml-insert-update-delete.html" class="btn btn-outline">&larr; 03. DML Commands</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-04">Mark as Complete</button>
+          <a href="05-aggregations-group-by-having.html" class="btn btn-primary">05. Aggregations & GROUP BY &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

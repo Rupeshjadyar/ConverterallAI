@@ -387,7 +387,16 @@ export const routes: Routes = [
     },
     {
         path: 'games/typing-test',
-        redirectTo: 'typing-master',
+        redirectTo: 'typing-speed-test',
+        pathMatch: 'full'
+    },
+    {
+        path: 'typing-speed-test',
+        loadComponent: () => import('./pages/typing-speed-test/typing-speed-test.component').then(m => m.TypingSpeedTestComponent)
+    },
+    {
+        path: 'typing-test',
+        redirectTo: 'typing-speed-test',
         pathMatch: 'full'
     },
     {
@@ -396,11 +405,6 @@ export const routes: Routes = [
     },
     {
         path: 'typing-tutor',
-        redirectTo: 'typing-master',
-        pathMatch: 'full'
-    },
-    {
-        path: 'typing-test',
         redirectTo: 'typing-master',
         pathMatch: 'full'
     },
@@ -569,12 +573,35 @@ export const routes: Routes = [
                         loadComponent: () => import('./pages/developer-tools/sql/chapters/sql-playground.component').then(m => m.SqlPlaygroundComponent)
                     }
                 ]
+            },
+            {
+                path: 'web-tutorials',
+                loadComponent: () => import('./pages/developer-tools/web-tutorials/web-tutorials.component').then(m => m.WebTutorialsComponent)
+            },
+            {
+                path: 'tutorials',
+                redirectTo: 'web-tutorials',
+                pathMatch: 'full'
             }
         ]
     },
     {
         path: 'sql',
         redirectTo: 'developer-tools/sql',
+        pathMatch: 'full'
+    },
+    {
+        path: 'ai-chat',
+        loadComponent: () => import('./pages/ai-chat/ai-chat.component').then(m => m.AiChatComponent)
+    },
+    {
+        path: 'ai-playground',
+        redirectTo: 'ai-chat',
+        pathMatch: 'full'
+    },
+    {
+        path: 'developer-tools/ai-chat',
+        redirectTo: 'ai-chat',
         pathMatch: 'full'
     },
     {

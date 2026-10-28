@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 06: Digital Clock &amp; Stopwatch — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="06-digital-clock-stopwatch.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 25 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 06</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Digital Clock &amp; High-Precision Stopwatch</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Harness JavaScript timing mechanics. Build an accurate 12/24 hour digital clock and a drift-free millisecond stopwatch with lap splits.</span>
+            <span class="lang-hi">Digital Clock aur High-Precision Stopwatch banayein: Date object, delta timing calculations, aur lap history recording.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Technical Concepts</div>
+          <ul>
+            <li><strong>Preventing Timer Drift:</strong> Why <code>setInterval(..., 10)</code> slips over time due to task queue delay, and how measuring real elapsed time with <code>Date.now() - startTime</code> guarantees 100% precision.</li>
+            <li><strong>Zero-Padding Utilities:</strong> Using <code>String.prototype.padStart(2, '0')</code> for clean double-digit formatting.</li>
+            <li><strong>Lap Split Calculation:</strong> Subtracting prior lap timestamps to record individual lap durations.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Clock &amp; Stopwatch</h2>
+          <p>
+            <span class="lang-en">Switch between the real-time clock and high-precision stopwatch:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me clock aur stopwatch test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-clock">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Clock &amp; Stopwatch Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-clock')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-clock')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .timer-app { width: 100%; max-width: 380px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 22px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+    .tab-btn { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; }
+    .tab-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+    .display-time { font-size: 38px; font-family: monospace; font-weight: bold; color: #38bdf8; margin: 15px 0; letter-spacing: 1px; }
+    .date-str { font-size: 13px; color: #94a3b8; margin-bottom: 15px; }
+    .btn-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; }
+    button.action-btn { padding: 8px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; }
+    .btn-start { background: #10b981; color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    .btn-lap { background: #38bdf8; color: #0f172a; }
+    .btn-reset { background: #475569; color: white; }
+    .laps-box { max-height: 140px; overflow-y: auto; text-align: left; font-size: 12px; font-family: monospace; border-top: 1px solid #334155; padding-top: 10px; }
+    .lap-row { display: flex; justify-content: space-between; padding: 4px 6px; border-bottom: 1px solid #334155; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="timer-app"&gt;
+    &lt;div class="tabs"&gt;
+      &lt;button class="tab-btn active" onclick="switchView('clock', this)"&gt;Live Clock&lt;/button&gt;
+      &lt;button class="tab-btn" onclick="switchView('stopwatch', this)"&gt;Stopwatch&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Clock View --&gt;
+    &lt;div id="clock-view"&gt;
+      &lt;div class="display-time" id="clock-display"&gt;00:00:00&lt;/div&gt;
+      &lt;div class="date-str" id="clock-date"&gt;Loading date...&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Stopwatch View --&gt;
+    &lt;div id="stopwatch-view" style="display:none;"&gt;
+      &lt;div class="display-time" id="sw-display"&gt;00:00.00&lt;/div&gt;
+      &lt;div class="btn-row"&gt;
+        &lt;button class="action-btn btn-start" id="sw-start-btn" onclick="toggleStopwatch()"&gt;Start&lt;/button&gt;
+        &lt;button class="action-btn btn-lap" id="sw-lap-btn" onclick="recordLap()" disabled&gt;Lap&lt;/button&gt;
+        &lt;button class="action-btn btn-reset" onclick="resetStopwatch()"&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class="laps-box" id="laps-list"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    // 1. Clock Logic
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      const secs = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('clock-display').textContent = `${hrs}:${mins}:${secs}`;
+      document.getElementById('clock-date').textContent = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // 2. Stopwatch Logic (Drift-free Date.now() delta)
+    let swRunning = false;
+    let startTime = 0;
+    let elapsedTime = 0;
+    let swInterval = null;
+    let lapCount = 0;
+
+    function formatSwTime(ms) {
+      const minutes = String(Math.floor(ms / 60000)).padStart(2, '0');
+      const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+      const centis = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+      return `${minutes}:${seconds}.${centis}`;
+    }
+
+    function toggleStopwatch() {
+      const btn = document.getElementById('sw-start-btn');
+      const lapBtn = document.getElementById('sw-lap-btn');
+
+      if (!swRunning) {
+        // Start
+        startTime = Date.now() - elapsedTime;
+        swInterval = setInterval(() =&gt; {
+          elapsedTime = Date.now() - startTime;
+          document.getElementById('sw-display').textContent = formatSwTime(elapsedTime);
+        }, 10);
+        swRunning = true;
+        btn.textContent = 'Pause';
+        btn.className = 'action-btn btn-stop';
+        lapBtn.disabled = false;
+      } else {
+        // Pause
+        clearInterval(swInterval);
+        swRunning = false;
+        btn.textContent = 'Resume';
+        btn.className = 'action-btn btn-start';
+        lapBtn.disabled = true;
+      }
+    }
+
+    function recordLap() {
+      if (!swRunning) return;
+      lapCount++;
+      const list = document.getElementById('laps-list');
+      const row = document.createElement('div');
+      row.className = 'lap-row';
+      row.innerHTML = `&lt;span&gt;Lap ${lapCount}&lt;/span&gt;&lt;span&gt;${formatSwTime(elapsedTime)}&lt;/span&gt;`;
+      list.prepend(row);
+    }
+
+    function resetStopwatch() {
+      clearInterval(swInterval);
+      swRunning = false;
+      elapsedTime = 0;
+      lapCount = 0;
+      document.getElementById('sw-display').textContent = '00:00.00';
+      const btn = document.getElementById('sw-start-btn');
+      btn.textContent = 'Start';
+      btn.className = 'action-btn btn-start';
+      document.getElementById('sw-lap-btn').disabled = true;
+      document.getElementById('laps-list').innerHTML = '';
+    }
+
+    function switchView(view, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b =&gt; b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('clock-view').style.display = view === 'clock' ? 'block' : 'none';
+      document.getElementById('stopwatch-view').style.display = view === 'stopwatch' ? 'block' : 'none';
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="05-quiz-app.html" class="nav-btn prev-btn">&larr; Project 05: Quiz App</a>
+          <button class="btn-complete" onclick="markLessonComplete('06-digital-clock-stopwatch.html')">&#10003; Mark as Complete</button>
+          <a href="07-image-gallery-lightbox.html" class="nav-btn next-btn">Project 07: Image Gallery &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

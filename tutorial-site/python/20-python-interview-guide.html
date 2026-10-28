@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Top 100 Python Interview Questions, GIL Deep-Dive & LeetCode Coding Patterns — WebDev Academy</title>
+  <meta name="description" content="Ace your technical Python interviews. Master the top 100 most frequently asked Python interview questions: the Global Interpreter Lock (GIL), memory management & garbage collection, metaclasses, generator internals, and must-know LeetCode algorithmic patterns.">
+  <meta name="keywords" content="Python interview questions, top Python interview, Python GIL explained, Python memory management, metaclasses Python, LeetCode Python, Python coding interview">
+  <meta property="og:title" content="Top 100 Python Interview Questions, GIL Deep-Dive & LeetCode Coding Patterns">
+  <meta property="og:description" content="Ace your technical Python interviews. Master the top 100 most frequently asked Python interview questions: the Global Interpreter Lock (GIL), memory management & garbage collection, metaclasses, generator internals, and must-know LeetCode algorithmic patterns.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="20-python-interview-guide.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 25 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 20</span>
+          </div>
+          <h1 class="lesson-title">Top 100 Python Interview Questions, GIL Deep-Dive & LeetCode Coding Patterns</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Ace your technical Python interviews. Master the top 100 most frequently asked Python interview questions: the Global Interpreter Lock (GIL), memory management & garbage collection, metaclasses, generator internals, and must-know LeetCode algorithmic patterns.</span>
+            <span class="lang-hi">Top 100 Python interview questions aur solutions: Python GIL (Global Interpreter Lock) in-depth, Memory management, Metaclasses, Generators aur LeetCode patterns.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The Top 100 Most Frequently Asked Python Technical Interview Questions with model answers.</li><li>The Global Interpreter Lock (GIL): What it is, why it exists, and how to achieve true CPU parallelism.</li><li>Python Memory Architecture: Reference counting, garbage collection cycles, and memory leaks.</li><li>Generators vs Iterators: The yield keyword and O(1) memory streaming.</li><li>Metaclasses: The classes of classes (__new__ vs __init__).</li><li>High-frequency LeetCode algorithmic patterns: Two Sum, LRU Cache, Anagrams, and Flattening.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lessons 01 through 19 of the Python Track.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of auditioning for an elite orchestra. They don't just ask if you know how to hold a violin; they ask you to play a complex Mozart concerto, tune a string while playing, and explain the acoustic physics of the instrument. <strong>This guide is your master interview dossier</strong>: it explains the deep architectural secrets of Python (the GIL, memory heaps, bytecode, metaclasses) and provides clean, battle-tested solutions to the coding challenges that Google, Amazon, Microsoft, and AI startups use to test Senior Python Engineers!</span>
+            <span class="lang-hi">Top orchestra audition ki misaal lein: wo sirf yeh nahi dekhenge ki violin pakadna aata hai ya nahi, wo aapse complex dhun bajwaenge aur acoustic physics puchenge. <strong>Yeh guide aapka master interview dossier hai</strong> jisme Python ke deep architectural secrets (GIL, memory management, metaclasses) aur LeetCode ke top coding patterns diye gaye hain jo har badi tech company ke interview me puche jaate hain!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is the Python GIL (Global Interpreter Lock)?</strong> A mutex lock in CPython that prevents multiple native OS threads from executing Python bytecode simultaneously. It exists to protect CPython's reference counting memory management from race conditions. For CPU-bound parallel workloads, use <code>multiprocessing</code> (separate processes with separate GILs) or C-extensions (like NumPy) which release the GIL during computation. Python 3.13 introduces experimental free-threaded Python (no-GIL).</li><li><strong>Generators vs Iterators:</strong> An iterator is an object implementing <code>__iter__()</code> and <code>__next__()</code>. A generator is a function containing the <code>yield</code> keyword that generates items lazily on demand, maintaining internal state in constant O(1) memory.</li><li><strong>What are Metaclasses?</strong> In Python, classes are themselves objects instantiated from a metaclass. The default metaclass is <code>type</code>. Metaclasses allow you to intercept class creation (via <code>__new__</code>) to validate, alter, or auto-register classes (the backbone of Django ORM and Pydantic).</li><li><strong>shallow copy vs deepcopy:</strong> <code>copy.copy()</code> creates a new outer collection but inserts references to the original nested objects. <code>copy.deepcopy()</code> recursively duplicates all nested objects.</li><li><strong>How to optimize Python code for production?</strong><br>1. Use built-in functions written in C (map, filter, sorted).<br>2. Use local variables instead of global lookups.<br>3. Use <code>__slots__</code> on classes with millions of instances.<br>4. Leverage NumPy for vectorized math.<br>5. Use <code>collections.deque</code> for queues instead of lists.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. The Global Interpreter Lock (GIL) Demystified</h2>
+        <p>The #1 topic in advanced Python interviews is the <strong>Global Interpreter Lock (GIL)</strong>.</p>
+        <p>In CPython, memory management relies on reference counting. To prevent multiple threads from corrupting reference counts concurrently, the GIL acts as a mutual exclusion lock, allowing only ONE native thread to execute Python bytecode at any given moment.</p>
+        
+        <h2>2. Generators, Iterators & Memory Streaming (yield)</h2>
+        <p>When processing a 50GB dataset or streaming video feeds, loading entire lists into memory causes Out Of Memory crashes.</p>
+        <p><strong>Generators</strong> use the <code>yield</code> keyword to produce values lazily on demand. A generator function pauses execution and preserves its entire execution frame until the next value is requested via <code>next()</code>.</p>
+        
+        <h2>3. Metaclasses: The Architecture Behind Classes</h2>
+        <p>In Python, 'everything is an object' &mdash; including classes themselves! Just as an object is an instance of a Class, a Class is an instance of a <strong>Metaclass</strong>.</p>
+        <p>By overriding <code>__new__</code> in a custom metaclass, you can inspect, modify, and enforce strict rules on class definitions before they are created.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Interview Challenge 1: Two Sum Problem in O(N) Time</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Given an array of integers and a target, return indices of the two numbers that add up to target.
+def two_sum(nums: list[int], target: int) -&gt; list[int]:
+    # Hash map storing: number -&gt; index
+    seen = {}
+    for idx, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], idx]
+        seen[num] = idx
+    return []
+
+print(f'Two Sum indices for [2, 7, 11, 15] (target 9): {two_sum([2, 7, 11, 15], 9)}')  # [0, 1]</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Using a hash map achieves optimal <code>O(N)</code> time complexity instead of brute-force <code>O(N^2)</code>.
+        </div>
+        
+        <h3>Code Example 2: Interview Challenge 2: Generator Memory Streaming (yield vs return)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sys
+
+# Standard list function: Allocates memory for 1,000,000 integers in RAM
+def list_squares(n):
+    return [i ** 2 for i in range(n)]
+
+# Generator function: Generates items lazily in O(1) constant memory!
+def gen_squares(n):
+    for i in range(n):
+        yield i ** 2
+
+lst = list_squares(1000000)
+gen = gen_squares(1000000)
+
+print(f'List Memory Usage:      {sys.getsizeof(lst):,} bytes (~8 MB!)')
+print(f'Generator Memory Usage: {sys.getsizeof(gen):,} bytes (~200 bytes!)')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The generator consumes 200 bytes of RAM regardless of whether you stream 10 numbers or 10 billion numbers!
+        </div>
+        
+        <h3>Code Example 3: Interview Challenge 3: Implementing an LRU (Least Recently Used) Cache</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">from collections import OrderedDict
+
+class LRUCache:
+    """Least Recently Used Cache operating in O(1) time for get and put."""
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = OrderedDict()
+
+    def get(self, key: int) -&gt; int:
+        if key not in self.cache:
+            return -1
+        # Mark as recently used by moving to end
+        self.cache.move_to_end(key)
+        return self.cache[key]
+
+    def put(self, key: int, value: int) -&gt; None:
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) &gt; self.capacity:
+            # Pop the oldest (least recently used) item from front
+            self.cache.popitem(last=False)
+
+lru = LRUCache(2)
+lru.put(1, 100); lru.put(2, 200)
+print(f'Get 1: {lru.get(1)}')  # 100
+lru.put(3, 300)               # Evicts key 2!
+print(f'Get 2 (evicted): {lru.get(2)}')  # -1</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>OrderedDict</code> provides O(1) key lookups alongside O(1) node relocation and eviction.
+        </div>
+        
+        <h3>Code Example 4: Interview Challenge 4: Deep Flattening Nested Data Structures</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def flatten_nested(nested_list):
+    """Recursively flatten arbitrarily deeply nested lists using yield from."""
+    for item in nested_list:
+        if isinstance(item, (list, tuple)):
+            yield from flatten_nested(item)
+        else:
+            yield item
+
+complex_data = [1, [2, [3, 4], 5], [[6]], 7]
+flat_result = list(flatten_nested(complex_data))
+print(f'Flattened: {flat_result}')  # [1, 2, 3, 4, 5, 6, 7]</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>yield from</code> delegates generation to a sub-generator, cleanly solving recursive tree flattening.
+        </div>
+        
+        <h3>Code Example 5: Interview Challenge 5: Writing a Custom Metaclass to Enforce API Standards</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class StrictInterfaceMeta(type):
+    """Metaclass that enforces that all subclasses must define an execute() method."""
+    def __new__(cls, name, bases, attrs):
+        # Exclude the base interface itself
+        if name != 'BaseTask' and 'execute' not in attrs:
+            raise TypeError(f'Class {name} MUST implement an execute() method!')
+        return super().__new__(cls, name, bases, attrs)
+
+class BaseTask(metaclass=StrictInterfaceMeta):
+    pass
+
+# Valid subclass:
+class BackupTask(BaseTask):
+    def execute(self):
+        return 'Backup completed.'
+
+print('BackupTask validated by metaclass successfully.')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Metaclasses intercept class construction at compile time, enforcing architectural invariants.
+        </div>
+        
+        <h3>Code Example 6: Interview Challenge 6: True CPU Parallelism with Multiprocessing</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from multiprocessing import Pool
+# import time
+# 
+# def cpu_heavy_computation(n):
+#     return sum(i * i for i in range(n))
+# 
+# # Bypass the GIL by spawning separate OS processes with separate GILs!
+# if __name__ == '__main__':
+#     with Pool(processes=4) as pool:
+#         results = pool.map(cpu_heavy_computation, [10000000, 10000000, 10000000, 10000000])
+#         print('Parallel CPU computation finished across 4 cores!')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>multiprocessing</code> bypasses the GIL by spawning independent OS processes, unlocking 100% of multi-core CPU power.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Top 100 Python Interview Questions, GIL Deep-Dive & LeetCode Coding Patterns</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Interview Algorithm Sandbox
+# Palindrome Checker
+def is_palindrome(text):
+    clean = [c.lower() for c in text if c.isalnum()]
+    return clean == clean[::-1]
+
+print(f"'A man, a plan, a canal: Panama' -> {is_palindrome('A man, a plan, a canal: Panama')}")
+print(f"'race a car' -> {is_palindrome('race a car')}")</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using threading for CPU-bound tasks:</strong> In Python, due to the GIL, multi-threading CPU-bound tasks is often SLOWER than single-threading due to thread context-switching overhead! Use <code>multiprocessing</code> for CPU-bound tasks.</li><li><strong>Modifying mutable dictionary keys:</strong> While tuples are hashable, a tuple containing a list <code>(1, [2, 3])</code> is unhashable and will crash if used as a dictionary key.</li><li><strong>Not calling next() on generators:</strong> Forgetting that generator functions return a generator object, not the computed value, until iterated over.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Explain the 'Why' before the 'How' in interviews:</strong> When asked about the GIL, explain that it exists because CPython's reference counting is not thread-safe, and removing it historically caused single-threaded Python code to run 30% slower!</li><li><strong>Use collections.Counter for Anagrams:</strong> To check if two strings are anagrams in O(N) time, write <code>Counter(s1) == Counter(s2)</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>The GIL protects CPython's reference counting memory management from multi-thread race conditions.</li><li>Use multiprocessing or C-extensions to achieve true multi-core CPU parallelism.</li><li>Generators (yield) provide lazy streaming in constant O(1) memory.</li><li>Metaclasses intercept and customize class construction.</li><li>Two Sum is solved in O(N) time using a hash map.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a generator function <code>infinite_fibonacci()</code> that yields Fibonacci numbers indefinitely starting with 0, 1, 1, 2, 3, 5...</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use a while True loop with a, b = b, a + b and yield a.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def infinite_fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+fib = infinite_fibonacci()
+print([next(fib) for _ in range(8)])  # [0, 1, 1, 2, 3, 5, 8, 13]</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Python function <code>are_anagrams(s1: str, s2: str) -&gt; bool</code> that determines if two strings are anagrams in O(N) time without using the sorted() function.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use collections.Counter or an array of character counts.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">from collections import Counter
+
+def are_anagrams(s1: str, s2: str) -&gt; bool:
+    return Counter(s1.lower()) == Counter(s2.lower())
+
+print(are_anagrams('anagram', 'nagaram'))  # True
+print(are_anagrams('rat', 'car'))          # False</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain how Python 3.13's experimental 'Free-Threaded Python' (PEP 703) removes the GIL and what architectural trade-offs it introduces.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain biased reference counting and mimalloc memory allocation.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># PEP 703 (Free-Threaded CPython in Python 3.13+):
+# 1. Replaces the global mutex lock with fine-grained per-object locks.
+# 2. Implements Biased Reference Counting (BRC): Thread that creates an object updates its count with fast non-atomic operations, while external threads use atomic operations.
+# 3. Uses mimalloc thread-safe memory allocator.
+# Trade-off: Single-threaded execution experiences a ~5-10% performance overhead, but multi-threaded CPU tasks achieve true linear multi-core scaling!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="The GIL ensures thread-safety for CPython's internal memory management.">
+          <div class="quiz-question-text">1. What is the primary purpose of the Python Global Interpreter Lock (GIL)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To prevent users from editing Python files</div><div class="quiz-option"><span>B)</span> To protect CPython's reference counting memory management from race conditions by allowing only one thread to execute bytecode at a time</div><div class="quiz-option"><span>C)</span> To speed up database connections</div><div class="quiz-option"><span>D)</span> To encrypt code in production</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>multiprocessing</code> spawns separate OS processes with separate GILs, achieving true multi-core parallelism.">
+          <div class="quiz-question-text">2. What module in Python's standard library is recommended to bypass the GIL for CPU-bound tasks?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> threading</div><div class="quiz-option"><span>B)</span> multiprocessing</div><div class="quiz-option"><span>C)</span> asyncio</div><div class="quiz-option"><span>D)</span> socket</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="The <code>yield</code> keyword pauses execution and turns the function into a generator iterator.">
+          <div class="quiz-question-text">3. What keyword transforms a standard Python function into a lazy Generator?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> generate</div><div class="quiz-option"><span>B)</span> stream</div><div class="quiz-option"><span>C)</span> yield</div><div class="quiz-option"><span>D)</span> lazy</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="0" data-explanation="In Python, <code>type</code> is the default built-in metaclass that constructs classes.">
+          <div class="quiz-question-text">4. What is the default metaclass of all standard classes in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> type</div><div class="quiz-option"><span>B)</span> object</div><div class="quiz-option"><span>C)</span> ClassMeta</div><div class="quiz-option"><span>D)</span> BaseMeta</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="A single pass through the array with a hash map lookup solves Two Sum in linear O(N) time.">
+          <div class="quiz-question-text">5. What is the optimal time complexity of solving the Two Sum problem using a hash map?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> O(N^2)</div><div class="quiz-option"><span>B)</span> O(N log N)</div><div class="quiz-option"><span>C)</span> O(N)</div><div class="quiz-option"><span>D)</span> O(1)</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, test whether 'Listen' and 'Silent' are anagrams by adding a call to is_palindrome or are_anagrams!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#gil" class="ref-pill">Glossary: GIL</a><a href="../reference/glossary.html#generator" class="ref-pill">Glossary: Generator</a><a href="index.html" class="ref-pill">Python Course Index</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="19-deep-learning-nlp-cv.html" class="btn btn-outline">&larr; 19. Deep Learning, NLP & CV</a>
+          <button class="mark-complete-btn" data-lesson-id="python-20">Mark as Complete</button>
+          <a href="index.html" class="btn btn-primary">Python Course Index & Exam &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 07: Image Gallery &amp; Lightbox — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="07-image-gallery-lightbox.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 30 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 07</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Filterable Image Gallery &amp; Modal Lightbox</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build an interactive multimedia showroom. Master category filtering transitions, modal overlay backdrops, and keyboard-driven lightbox navigation.</span>
+            <span class="lang-hi">Image Gallery aur Lightbox banayein: Category filters, full-screen modal lightbox, next/prev navigation, aur escape key handling.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Technical Concepts</div>
+          <ul>
+            <li><strong>Responsive CSS Grid:</strong> Auto-wrapping thumbnail grid with smooth hover zoom effects.</li>
+            <li><strong>Category Filtering:</strong> Instant dataset filtering without reloading or layout shifts.</li>
+            <li><strong>Modal Lightbox:</strong> Full-screen overlay with backdrop blur and centered viewport scaling.</li>
+            <li><strong>Keyboard Accessibility:</strong> ArrowLeft/ArrowRight to flip photos and Escape to dismiss modal.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Gallery &amp; Lightbox</h2>
+          <p>
+            <span class="lang-en">Click any gallery item to launch the lightbox, flip through photos, and close using the Escape key:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me gallery test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-gallery">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Gallery &amp; Lightbox Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-gallery')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-gallery')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; }
+    h2 { text-align: center; color: #38bdf8; margin-bottom: 16px; font-size: 20px; }
+    .filters { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+    .btn-f { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; }
+    .btn-f.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; max-width: 460px; margin: 0 auto; }
+    .thumb { height: 95px; border-radius: 6px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #334155; text-align: center; padding: 8px; }
+    .thumb:hover { transform: scale(1.04); box-shadow: 0 6px 15px rgba(0,0,0,0.4); }
+    
+    /* Lightbox Modal */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+    .lightbox.open { display: flex; }
+    .lb-content { width: 85%; max-width: 360px; height: 220px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; border: 2px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+    .lb-caption { margin-top: 14px; font-size: 14px; color: #cbd5e1; }
+    .lb-nav { display: flex; gap: 14px; margin-top: 14px; }
+    .lb-btn { background: #1e293b; border: 1px solid #334155; color: white; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .lb-close { position: absolute; top: 18px; right: 20px; font-size: 28px; color: white; cursor: pointer; border: none; background: transparent; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h2&gt;Curated Design Gallery&lt;/h2&gt;
+  &lt;div class="filters"&gt;
+    &lt;button class="btn-f active" onclick="filterCat('all', this)"&gt;All&lt;/button&gt;
+    &lt;button class="btn-f" onclick="filterCat('nature', this)"&gt;Nature&lt;/button&gt;
+    &lt;button class="btn-f" onclick="filterCat('tech', this)"&gt;Tech&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div class="gallery" id="gal-container"&gt;&lt;/div&gt;
+
+  &lt;!-- Modal Lightbox --&gt;
+  &lt;div class="lightbox" id="modal-lb" onclick="if(event.target===this) closeLb()"&gt;
+    &lt;button class="lb-close" onclick="closeLb()"&gt;&amp;times;&lt;/button&gt;
+    &lt;div class="lb-content" id="lb-view"&gt;&lt;/div&gt;
+    &lt;div class="lb-caption" id="lb-text"&gt;&lt;/div&gt;
+    &lt;div class="lb-nav"&gt;
+      &lt;button class="lb-btn" onclick="stepPhoto(-1)"&gt;&amp;larr; Prev&lt;/button&gt;
+      &lt;button class="lb-btn" onclick="stepPhoto(1)"&gt;Next &amp;rarr;&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const photos = [
+      { id: 0, title: "Mountain Peak", cat: "nature", bg: "linear-gradient(135deg, #059669, #10b981)" },
+      { id: 1, title: "Neural Network", cat: "tech", bg: "linear-gradient(135deg, #0284c7, #38bdf8)" },
+      { id: 2, title: "Deep Forest", cat: "nature", bg: "linear-gradient(135deg, #047857, #065f46)" },
+      { id: 3, title: "Quantum Chip", cat: "tech", bg: "linear-gradient(135deg, #4f46e5, #818cf8)" },
+      { id: 4, title: "Golden Desert", cat: "nature", bg: "linear-gradient(135deg, #d97706, #fbbf24)" },
+      { id: 5, title: "Cyber Terminal", cat: "tech", bg: "linear-gradient(135deg, #7c3aed, #c084fc)" }
+    ];
+
+    let activeIndex = 0;
+    let filteredList = [...photos];
+
+    function renderGallery() {
+      const container = document.getElementById('gal-container');
+      container.innerHTML = '';
+      filteredList.forEach((p, idx) =&gt; {
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        div.style.background = p.bg;
+        div.textContent = p.title;
+        div.onclick = () =&gt; openLb(idx);
+        container.appendChild(div);
+      });
+    }
+
+    function filterCat(category, btn) {
+      document.querySelectorAll('.btn-f').forEach(b =&gt; b.classList.remove('active'));
+      btn.classList.add('active');
+      filteredList = category === 'all' ? [...photos] : photos.filter(p =&gt; p.cat === category);
+      renderGallery();
+    }
+
+    function openLb(idx) {
+      activeIndex = idx;
+      updateLb();
+      document.getElementById('modal-lb').classList.add('open');
+    }
+
+    function closeLb() {
+      document.getElementById('modal-lb').classList.remove('open');
+    }
+
+    function updateLb() {
+      const photo = filteredList[activeIndex];
+      const view = document.getElementById('lb-view');
+      view.style.background = photo.bg;
+      view.textContent = photo.title;
+      document.getElementById('lb-text').textContent = `${photo.title} (${activeIndex + 1} of ${filteredList.length})`;
+    }
+
+    function stepPhoto(delta) {
+      activeIndex = (activeIndex + delta + filteredList.length) % filteredList.length;
+      updateLb();
+    }
+
+    window.addEventListener('keydown', (e) =&gt; {
+      const lb = document.getElementById('modal-lb');
+      if (lb.classList.contains('open')) {
+        if (e.key === 'Escape') closeLb();
+        if (e.key === 'ArrowRight') stepPhoto(1);
+        if (e.key === 'ArrowLeft') stepPhoto(-1);
+      }
+    });
+
+    renderGallery();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="06-digital-clock-stopwatch.html" class="nav-btn prev-btn">&larr; Project 06: Stopwatch</a>
+          <button class="btn-complete" onclick="markLessonComplete('07-image-gallery-lightbox.html')">&#10003; Mark as Complete</button>
+          <a href="08-weather-app-mock-data.html" class="nav-btn next-btn">Project 08: Weather App &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

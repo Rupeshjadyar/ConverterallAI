@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Promises &amp; Async/Await — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="18-promises-async-await.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 20 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 18</span>
+          </div>
+          <h1 class="lesson-title">Asynchronous JavaScript: Promises &amp; Async / Await</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Unlock non-blocking programming. Master the JavaScript Event Loop, escape callback hell with Promises, and write clean, synchronous-looking asynchronous code with async/await.</span>
+            <span class="lang-hi">Non-blocking programming seekhein: Event Loop, Call Stack vs Microtask Queue, Promises (.then, .catch, .all) aur async/await ka complete guide.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Single-threaded vs Asynchronous: How JavaScript performs heavy tasks without freezing the browser UI.</li>
+            <li>The Event Loop engine: Call Stack, Web APIs, Callback (Task) Queue, and Microtask Queue.</li>
+            <li>The agony of "Callback Hell" (Pyramid of Doom) and inversion of control.</li>
+            <li>Promises in-depth: The 3 states (<code>pending</code>, <code>fulfilled</code>, <code>rejected</code>).</li>
+            <li>Chaining promises cleanly with <code>.then()</code>, <code>.catch()</code>, and <code>.finally()</code>.</li>
+            <li>Promise combinators: <code>Promise.all()</code>, <code>Promise.race()</code>, <code>Promise.allSettled()</code>, and <code>Promise.any()</code>.</li>
+            <li>Modern <code>async</code> and <code>await</code> syntax with defensive <code>try...catch</code> blocks.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="06-functions.html">06. Functions</a> and <a href="17-error-handling.html">17. Error Handling</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Coffee Shop Token Buzzer</div>
+          <p>
+            <span class="lang-en">Imagine walking into a busy cafe:
+            <br>&bull; <strong>Synchronous (Blocking):</strong> You order a cappuccino. The barista insists you stand frozen at the front register for 6 minutes while they grind beans and steam milk. Nobody behind you can order, the line stretches out into the rain, and the entire cafe is paralyzed.
+            <br>&bull; <strong>Asynchronous with a Promise:</strong> You place your order and pay immediately. The cashier hands you an electronic buzzing token &mdash; a <strong>Promise</strong> that hot coffee will exist in the future. You step aside to sit comfortably, browse your phone, or chat with a friend. While in your hand, the buzzer is <code>pending</code>. When the coffee is brewed, the buzzer vibrates (<code>fulfilled</code>) and you pick up your drink with <code>.then()</code>. If the espresso machine explodes, the manager informs you and refunds your money (<code>rejected</code>) handled by <code>.catch()</code>!</span>
+            <span class="lang-hi">Cafe ke buzzer ki tarah samjhein: Synchronous me aapko counter par 5 minute khade rehkar wait karna padta hai jisse poori line freeze ho jati hai. Asynchronous me cashier aapko buzzer token (Promise) de deta hai &mdash; aap aaram se baithein, jab coffee tayyar hogi buzzer bajega (.then), aur agar machine kharab hui toh refund (.catch).</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <section id="event-loop-architecture">
+          <h2>1. The Single Thread &amp; The Event Loop</h2>
+          <p>
+            <span class="lang-en">JavaScript is strictly <strong>single-threaded</strong> &mdash; it possesses only one Call Stack and can execute only one instruction at a single moment in time. If you run a loop that computes prime numbers for 10 seconds, the browser tab freezes completely: buttons cannot be clicked, text cannot be selected, and animations stall.</span>
+            <span class="lang-hi">JavaScript single-threaded hai &mdash; iska ek hi Call Stack hota hai jo ek samay me ek hi command run kar sakta hai. Browser ko freeze hone se bachane ke liye Event Loop aur asynchronous architecture use hota hai.</span>
+          </p>
+
+          <p>
+            <span class="lang-en">To handle long-running operations like timers, network requests, disk I/O, or user interactions, the browser environment provides <strong>Web APIs</strong> (external C++ worker threads). When an asynchronous operation finishes, its callback is placed into a waiting queue. The <strong>Event Loop</strong> continuously monitors the Call Stack: the instant the Call Stack becomes empty, it pushes the next waiting queued callback onto the stack to execute.</span>
+            <span class="lang-hi">Browser ke Web APIs background me network ya timer handle karte hain. Jab background kaam poora hota hai, Event Loop callback ko Call Stack me daalta hai jab stack khali ho.</span>
+          </p>
+
+          <!-- Code Example 1 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Synchronous vs Asynchronous Execution Order</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>console.log("1: Synchronous start");
+
+// Web API timer: scheduled in background
+setTimeout(function() {
+  console.log("2: Inside setTimeout callback (Macro-task)");
+}, 0); // Notice: Even with 0ms delay!
+
+// Microtask: Higher priority than setTimeout
+Promise.resolve().then(function() {
+  console.log("3: Inside Promise microtask");
+});
+
+console.log("4: Synchronous end");
+
+/* Output Console Order:
+   1: Synchronous start
+   4: Synchronous end
+   3: Inside Promise microtask
+   2: Inside setTimeout callback (Macro-task)
+*/</code></pre>
+          </div>
+          <div class="code-explanation">
+            <strong>Line-by-Line Execution Analysis:</strong>
+            <ul>
+              <li><strong>Lines 1 &amp; 12:</strong> Synchronous statements run immediately on the Call Stack.</li>
+              <li><strong>Lines 4-6:</strong> <code>setTimeout(..., 0)</code> registers with the browser Web API timer thread, then dispatches its callback to the <strong>Macrotask Queue</strong>.</li>
+              <li><strong>Lines 9-11:</strong> Resolved promises dispatch their callbacks to the high-priority <strong>Microtask Queue</strong>.</li>
+              <li><strong>The Rule:</strong> The Event Loop clears ALL microtasks before running ANY macrotask! Hence output order is <code>1 &rarr; 4 &rarr; 3 &rarr; 2</code>.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="callback-hell">
+          <h2>2. Callback Hell: The Pyramid of Doom</h2>
+          <p>
+            <span class="lang-en">Before ES2015 (ES6) introduced native Promises, developers handled asynchronous sequences using nested callbacks. When operation B depended on operation A, and operation C depended on B, the indentation nested deeper and deeper into an unmaintainable triangular monstrosity nicknamed the "Pyramid of Doom".</span>
+            <span class="lang-hi">Promises se pehle callbacks ko ek dusre ke andar nest kiya jata tha. Isse code aage badhta rehta tha jise "Callback Hell" ya "Pyramid of Doom" kehte hain jisme error handling bohot mushkil hoti hai.</span>
+          </p>
+
+          <!-- Code Example 2 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — The Legacy Nightmare: Callback Hell</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// BAD PRACTICE: Callback Hell (Nested callbacks)
+getUserProfile(userId, function(err, user) {
+  if (err) {
+    handleError(err);
+  } else {
+    getUserOrders(user.id, function(err, orders) {
+      if (err) {
+        handleError(err);
+      } else {
+        getOrderInvoice(orders[0].id, function(err, invoice) {
+          if (err) {
+            handleError(err);
+          } else {
+            sendInvoiceEmail(user.email, invoice, function(err, success) {
+              if (err) handleError(err);
+              else console.log("Invoice emailed successfully!");
+            });
+          }
+        });
+      }
+    });
+  }
+});</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="promises-in-depth">
+          <h2>3. Anatomy of a Promise</h2>
+          <p>
+            <span class="lang-en">A <strong>Promise</strong> is a first-class JavaScript object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. A promise exists in one of three distinct states:</span>
+            <span class="lang-hi">Promise ek special JavaScript object hai jo future me complete hone wale kisi operation ka result represent karta hai. Iske 3 states hote hain:</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Promise State</th>
+                  <th>Meaning</th>
+                  <th>Transition Capability</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>pending</code></td>
+                  <td>Initial state. The operation is still in progress (buzzer in hand).</td>
+                  <td>Can transition to <em>fulfilled</em> or <em>rejected</em>.</td>
+                </tr>
+                <tr>
+                  <td><code>fulfilled</code></td>
+                  <td>The operation completed successfully. Has a resolved value.</td>
+                  <td>Settled permanently. Cannot change state ever again.</td>
+                </tr>
+                <tr>
+                  <td><code>rejected</code></td>
+                  <td>The operation failed. Contains an error reason.</td>
+                  <td>Settled permanently. Cannot change state ever again.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Example 3 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Creating and Consuming a Promise</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// Simulating an asynchronous database query
+function fetchUserFromDB(userId) {
+  return new Promise(function(resolve, reject) {
+    console.log("[DB] Querying database for user ID:", userId);
+
+    setTimeout(function() {
+      if (userId === 42) {
+        // Success: Transition state to 'fulfilled'
+        resolve({ id: 42, username: "dev_priya", plan: "pro" });
+      } else {
+        // Failure: Transition state to 'rejected'
+        reject(new Error("User with ID " + userId + " was not found."));
+      }
+    }, 1000);
+  });
+}
+
+// Consuming the promise with .then(), .catch(), and .finally()
+fetchUserFromDB(42)
+  .then(function(user) {
+    console.log("Success! Welcome back,", user.username);
+    return user.plan; // Returns a new chained promise!
+  })
+  .then(function(planName) {
+    console.log("Active membership plan tier:", planName);
+  })
+  .catch(function(err) {
+    console.error("Query failed:", err.message);
+  })
+  .finally(function() {
+    console.log("Database transaction closed.");
+  });</code></pre>
+          </div>
+          <div class="code-explanation">
+            <strong>Key Architecture Rules:</strong>
+            <ul>
+              <li><code>new Promise((resolve, reject) =&gt; { ... })</code> takes an "executor" function that runs synchronously right away.</li>
+              <li>Calling <code>resolve(value)</code> marks it fulfilled. Calling <code>reject(error)</code> marks it rejected.</li>
+              <li>Every <code>.then()</code> callback automatically returns a <em>new promise</em>. If you return a primitive value, it resolves instantly to that value; if you return another promise, it awaits that promise before continuing down the chain!</li>
+              <li>A single <code>.catch()</code> at the end catches any rejection thrown at ANY prior step in the entire chain.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="promise-combinators">
+          <h2>4. Promise Combinators: Parallel Asynchronous Execution</h2>
+          <p>
+            <span class="lang-en">When you have multiple asynchronous jobs that do not depend on each other (e.g. fetching user data, loading notifications, and fetching weather), running them sequentially is wasteful. ES6+ offers four powerful concurrency methods on the <code>Promise</code> constructor:</span>
+            <span class="lang-hi">Agar aapko multiple independent background tasks ek saath run karne hain, toh Promise ke parallel methods use karein jaise <code>Promise.all</code> aur <code>Promise.allSettled</code>:</span>
+          </p>
+
+          <!-- Code Example 4 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Promise.all() vs Promise.allSettled()</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>const task1 = new Promise(resolve => setTimeout(() => resolve("Profile loaded"), 500));
+const task2 = new Promise(resolve => setTimeout(() => resolve("Cart items (3)"), 300));
+const task3 = new Promise((_, reject) => setTimeout(() => reject(new Error("Ads blocked")), 200));
+
+// 1. Promise.all() — "All or nothing" (Rejects immediately if ANY promise fails)
+Promise.all([task1, task2])
+  .then(results => console.log("All passed:", results)) // ['Profile loaded', 'Cart items (3)']
+  .catch(err => console.error("One failed:", err));
+
+// 2. Promise.allSettled() — Never fails! Waits for all to either fulfill or reject
+Promise.allSettled([task1, task2, task3])
+  .then(reports => {
+    reports.forEach(report => {
+      if (report.status === "fulfilled") {
+        console.log("Success value:", report.value);
+      } else {
+        console.warn("Failed reason:", report.reason.message);
+      }
+    });
+  });
+
+// 3. Promise.race() — Settles as soon as the FASTEST promise settles (wins or fails)
+// 4. Promise.any() — Resolves as soon as ANY promise fulfills (ignores rejections until all fail)</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="async-await">
+          <h2>5. Modern Asynchronous Code with async &amp; await</h2>
+          <p>
+            <span class="lang-en">Introduced in ES2017, <strong><code>async</code> and <code>await</code></strong> is syntactic sugar built directly on top of Promises. It allows you to write non-blocking asynchronous logic with the natural clarity and visual structure of synchronous, line-by-line code.</span>
+            <span class="lang-hi"><code>async</code> aur <code>await</code> Promises ke upar banaya gaya modern syntax hai. Isse asynchronous code bilkul regular synchronous code ki tarah seedha aur aasan dikhta hai bina lambi .then() chains ke.</span>
+          </p>
+
+          <ul>
+            <li><strong><code>async</code> keyword:</strong> Put in front of any function declaration or arrow function. It guarantees that the function <em>always returns a Promise</em>. If you return <code>"hello"</code>, JS automatically wraps it in <code>Promise.resolve("hello")</code>.</li>
+            <li><strong><code>await</code> keyword:</strong> Can only be placed inside an <code>async</code> function. It pauses the function execution until the promised value resolves (or rejects), without freezing the main browser thread!</li>
+          </ul>
+
+          <!-- Code Example 5 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Clean async/await with try...catch</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// Helper that returns a promise after a delay
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function renderUserDashboard(userId) {
+  try {
+    console.log("Step 1: Connecting to cloud server...");
+    await sleep(800); // Wait 800ms non-blockingly
+
+    console.log("Step 2: Authenticating user #" + userId);
+    await sleep(600);
+
+    const user = { id: userId, name: "Aarav Sharma", role: "Software Architect" };
+    console.log("Step 3: User verified successfully:", user.name);
+
+    return user;
+  } catch (error) {
+    console.error("Dashboard error intercepted:", error.message);
+    throw error; // Re-throw if caller needs to handle
+  } finally {
+    console.log("Step 4: Cleanup & Hide loading spinner.");
+  }
+}
+
+// Invoking an async function (it returns a promise!)
+renderUserDashboard(101).then(user => console.log("Final callback:", user));</code></pre>
+          </div>
+        </section>
+
+        <!-- Interactive Playground -->
+        <section id="try-it-live">
+          <h2>6. Interactive Try-It Editor: Live Promise Chain &amp; Timer Lab</h2>
+          <p>
+            <span class="lang-en">Experiment with asynchronous order of execution in real time. Watch how the call stack executes synchronous logs first, followed by microtask promises, followed by timers!</span>
+            <span class="lang-hi">Neeche diye gaye live editor me async code run karke dekhein aur console output ka execution order note karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-promises">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Asynchronous Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-promises')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-promises')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    button { padding: 10px 18px; font-weight: bold; background: #38bdf8; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0ea5e9; }
+    #log-box { margin-top: 15px; padding: 14px; background: #1e293b; border-radius: 6px; font-family: monospace; font-size: 13px; min-height: 120px; white-space: pre-line; border: 1px solid #334155; }
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-right: 8px; font-weight: bold; }
+    .badge-sync { background: #64748b; color: white; }
+    .badge-promise { background: #a855f7; color: white; }
+    .badge-timer { background: #f59e0b; color: black; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Async Event Loop Lab&lt;/h3&gt;
+  &lt;button id="start-btn" onclick="startSim()"&gt;Run Async Sequence&lt;/button&gt;
+  &lt;div id="log-box"&gt;Click the button above to observe the Event Loop in action...&lt;/div&gt;
+
+  &lt;script&gt;
+    const box = document.getElementById('log-box');
+    function log(type, text) {
+      box.innerHTML += `&lt;div&gt;&lt;span class="status-badge badge-${type}"&gt;${type.toUpperCase()}&lt;/span&gt; ${text}&lt;/div&gt;`;
+    }
+
+    async function startSim() {
+      box.innerHTML = '';
+      log('sync', '1. Synchronous script starts');
+
+      setTimeout(() =&gt; {
+        log('timer', '4. Macrotask: setTimeout(..., 400ms) fired');
+      }, 400);
+
+      Promise.resolve().then(() =&gt; {
+        log('promise', '2. Microtask: Promise.resolve() executed before next tick');
+      });
+
+      // Async await delay
+      const wait = ms =&gt; new Promise(res =&gt; setTimeout(res, ms));
+      log('sync', '3. Awaiting 200ms non-blocking promise...');
+      await wait(200);
+      log('promise', '3b. Resumed after await wait(200ms)!');
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Pitfalls</div>
+          <ul>
+            <li><strong>Forgetting to return inside <code>.then()</code>:</strong> If you don't return a value or promise from inside a <code>.then()</code> block, the next <code>.then()</code> in the chain receives <code>undefined</code>.</li>
+            <li><strong>The "Async in forEach" Trap:</strong> <code>array.forEach(async (item) =&gt; { await doSomething(); })</code> does NOT pause the loop! <code>forEach</code> executes all async callbacks concurrently without waiting. Use a standard <code>for (const item of array)</code> loop or <code>Promise.all(array.map(...))</code> instead.</li>
+            <li><strong>Uncaught Rejections:</strong> Forgetting a <code>.catch()</code> on a promise or omitting <code>try...catch</code> around <code>await</code> causes an unhandled promise rejection error that crashes modern node scripts or pollutes browser consoles.</li>
+            <li><strong>Creating Redundant Promises:</strong> Wrapping a function that already returns a promise inside <code>new Promise((res, rej) =&gt; ...)</code> is an antipattern known as the "Promise constructor antipattern". Just return the original promise directly!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Pro Tips</div>
+          <ul>
+            <li><strong>Parallelize Independent Awaits:</strong> Never do <code>const u = await getUser(); const p = await getPosts();</code> if posts don't depend on user! Do <code>const [u, p] = await Promise.all([getUser(), getPosts()]);</code> to cut network waiting time in half.</li>
+            <li><strong>Top-Level Await:</strong> In modern JavaScript ES Modules (<code>&lt;script type="module"&gt;</code>), you can write <code>await</code> directly in the root of the file without wrapping it in an <code>async function</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9989; Quick Recap</div>
+          <ul>
+            <li>JavaScript is single-threaded; asynchronous tasks run off-thread via Web APIs.</li>
+            <li>Microtasks (Promises) always run before Macrotasks (<code>setTimeout</code>, <code>setInterval</code>).</li>
+            <li>A Promise has 3 states: <code>pending</code>, <code>fulfilled</code>, and <code>rejected</code>.</li>
+            <li><code>async</code> functions always return a Promise automatically.</li>
+            <li><code>await</code> pauses execution of the async function until the promise settles.</li>
+            <li>Always protect <code>await</code> statements with <code>try...catch...finally</code> blocks.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <section id="exercises">
+          <h2>Hands-On Practice Exercises</h2>
+
+          <!-- Exercise 1 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-easy">Easy</span>
+              <h4>Exercise 1: Create a Promisified Delay Function</h4>
+            </div>
+            <p>Write a utility function <code>delay(milliseconds)</code> that returns a Promise which resolves with the message <code>"Done waiting!"</code> after the specified time.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function delay(milliseconds) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("Done waiting!");
+    }, milliseconds);
+  });
+}
+
+// Test call:
+delay(1500).then(msg => console.log(msg));</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 2 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-medium">Medium</span>
+              <h4>Exercise 2: Sequential Step-by-Step Baker</h4>
+            </div>
+            <p>Write an <code>async</code> function <code>bakeCake()</code> that executes 3 steps in sequence using <code>await delay(...)</code>: 1. "Mix batter" (500ms), 2. "Bake in oven" (1000ms), 3. "Decorate frosting" (400ms). Print each step along with timestamp, and return <code>"Delicious cake ready!"</code>.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>const delay = ms => new Promise(res => setTimeout(res, ms));
+
+async function bakeCake() {
+  console.log("Step 1: Mixing batter...");
+  await delay(500);
+
+  console.log("Step 2: Baking inside hot oven...");
+  await delay(1000);
+
+  console.log("Step 3: Decorating with chocolate frosting...");
+  await delay(400);
+
+  return "Delicious cake ready!";
+}
+
+bakeCake().then(result => console.log("Final:", result));</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 3 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-hard">Hard</span>
+              <h4>Exercise 3: Promise Timeout Wrapper</h4>
+            </div>
+            <p>Write a higher-order function <code>withTimeout(promise, timeoutMs)</code> that uses <code>Promise.race()</code>. If the given promise does not settle before <code>timeoutMs</code>, reject with <code>new Error("Operation timed out!")</code>.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function withTimeout(promise, timeoutMs) {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Operation timed out after " + timeoutMs + "ms!"));
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeoutPromise]);
+}
+
+// Test with a slow job (3000ms) and 1000ms limit:
+const slowJob = new Promise(res => setTimeout(() => res("Finished!"), 3000));
+
+withTimeout(slowJob, 1000)
+  .then(data => console.log(data))
+  .catch(err => console.error(err.message)); // Logs: "Operation timed out after 1000ms!"</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <!-- 5-Question Interactive Quiz -->
+        <section id="lesson-quiz">
+          <h2>Interactive Quiz: Promises &amp; Async/Await</h2>
+          <div class="quiz-container" id="quiz-js-18">
+            <div class="quiz-question-card" data-q="0">
+              <p class="quiz-q-text">1. Which queue has higher execution priority in the JavaScript Event Loop?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'setTimeout callbacks go to the macrotask queue which has lower priority.')">Macrotask Queue (setTimeout)</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Microtasks (Promises, queueMicrotask) are processed completely before the next macrotask is touched.')">Microtask Queue (Promises)</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'DOM event queue is a macrotask queue.')">DOM Event Queue</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Queues do not execute in random order; microtasks always have strict priority.')">Both have equal round-robin priority</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="1">
+              <p class="quiz-q-text">2. What are the three immutable states a JavaScript Promise can possess?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Waiting and ready are not standard states.')">waiting, ready, done</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! A promise starts as pending, then transitions permanently to either fulfilled or rejected.')">pending, fulfilled, rejected</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'start and finish are not promise states.')">start, running, finished</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'active and complete are not ECMAScript specifications.')">active, completed, failed</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="2">
+              <p class="quiz-q-text">3. What does an <code>async</code> function always return?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not return undefined unless the function explicitly returned undefined, wrapped in a Promise.')">undefined</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! An async function always returns a Promise, wrapping non-promise return values in Promise.resolve().')">A Promise</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It returns a Promise, not a callback function.')">A callback function</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not return a generator.')">A Generator</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="3">
+              <p class="quiz-q-text">4. Which Promise combinator waits for ALL promises to complete without failing, regardless of how many reject?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Promise.all rejects immediately upon the very first rejection.')">Promise.all()</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Promise.allSettled() returns an array with the status and outcome of every promise, never aborting early.')">Promise.allSettled()</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Promise.race settles on the first settled promise.')">Promise.race()</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Promise.any resolves on the first fulfilled promise.')">Promise.any()</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="4">
+              <p class="quiz-q-text">5. What happens if you use <code>await</code> inside a standard <code>Array.prototype.forEach()</code> callback?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It will not pause the loop in serial order.')">Each iteration runs one after another in order</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! forEach ignores the returned promises and fires all iterations immediately without waiting.')">Iterations execute concurrently without awaiting previous ones</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'JavaScript will not throw a SyntaxError if the inner callback is marked async.')">It throws a fatal SyntaxError</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not convert into a worker.')">It automatically spawns Web Workers</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mini-Task -->
+        <div class="callout callout-task">
+          <div class="callout-title">&#128736; Mini-Task: Build an Async Progress Loader</div>
+          <p>
+            Create a small HTML page with a progress bar (<code>&lt;div class="bar"&gt;</code>) and a "Start Installation" button. When clicked, run an <code>async</code> function that loops 10 times, increases the bar width by 10% each second with <code>await sleep(1000)</code>, and displays "Package 1/10 installed...", culminating in "Installation Complete!".
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="callout callout-ref">
+          <div class="callout-title">&#128279; Related Built-in References</div>
+          <p>
+            &bull; Explore promise and event methods in our <a href="../reference/js-reference.html#promises">JavaScript Built-in Reference</a>.<br>
+            &bull; Review asynchronous definitions in our <a href="../reference/glossary.html#event-loop">Technical Glossary</a>.<br>
+            &bull; Next lesson: Learn network calls with <a href="19-fetch-api-and-json.html">19. Fetch API &amp; JSON</a>.
+          </p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="17-error-handling.html" class="nav-btn prev-btn">&larr; Previous: Error Handling</a>
+          <button class="btn-complete" onclick="markLessonComplete('18-promises-async-await.html')">&#10003; Mark as Complete</button>
+          <a href="19-fetch-api-and-json.html" class="nav-btn next-btn">Next: Fetch API &amp; JSON &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

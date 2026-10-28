@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistics & Analytics | TypePulse</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .stats-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .stats-card-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .streak-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .goal-ring-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .goal-ring-svg {
+      transform: rotate(-90deg);
+      width: 120px;
+      height: 120px;
+    }
+    .goal-ring-bg {
+      fill: none;
+      stroke: var(--border-color);
+      stroke-width: 8;
+    }
+    .goal-ring-progress {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+    .goal-ring-text {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    /* Heatmap styling */
+    .kb-heat-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      user-select: none;
+      padding: 1rem 0;
+      overflow-x: auto;
+    }
+    .kb-heat-row {
+      display: flex;
+      gap: 6px;
+    }
+    .kb-heat-key {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+    .kb-heat-space {
+      width: 240px;
+    }
+    .kb-key-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .kb-key-count {
+      font-size: 0.62rem;
+      color: var(--error);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table.stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    table.stats-table th, table.stats-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    table.stats-table th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2.5" ry="2.5"></rect>
+            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path>
+            <path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"></path>
+            <path d="M8 16h8"></path>
+          </svg>
+        </div>
+        <span class="brand-title">Type<span>Pulse</span></span>
+        <span class="brand-badge">Offline</span>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="main-nav">
+        <a href="../index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+          <span>Test</span>
+        </a>
+        <a href="../learn/index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span>Learn</span>
+        </a>
+        <a href="index.html" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+          <span>Stats</span>
+        </a>
+        <a href="../leaderboard/index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path><path d="M14 14.66V17c0 .55.45 1 1 1h2"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          <span>Leaderboard</span>
+        </a>
+        <a href="../settings/index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </a>
+        <a href="../about/index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          <span>About</span>
+        </a>
+      </nav>
+
+      <!-- Theme Switcher Button -->
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-icon" onclick="window.TypeApp.Theme.cycleTheme()" title="Switch color theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+
+    <!-- Overview Cards -->
+    <h2 class="stats-section-title">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+      Typing Profile & Aggregates
+    </h2>
+    <div class="result-metrics-grid">
+      <div class="metric-card">
+        <div id="stat-total-tests" class="metric-card-val">0</div>
+        <div class="metric-card-lbl">Completed Tests</div>
+      </div>
+      <div class="metric-card">
+        <div id="stat-total-time" class="metric-card-val">0m</div>
+        <div class="metric-card-lbl">Total Time Typed</div>
+      </div>
+      <div class="metric-card">
+        <div id="stat-avg-wpm-all" class="metric-card-val">0</div>
+        <div class="metric-card-lbl">Average WPM (All)</div>
+      </div>
+      <div class="metric-card">
+        <div id="stat-avg-wpm-10" class="metric-card-val">0</div>
+        <div class="metric-card-lbl">Avg WPM (Last 10)</div>
+      </div>
+      <div class="metric-card">
+        <div id="stat-avg-acc" class="metric-card-val">0%</div>
+        <div class="metric-card-lbl">Average Accuracy</div>
+      </div>
+    </div>
+
+    <!-- Streak & Daily Goal Section -->
+    <div class="stats-card-box">
+      <h3 class="stats-section-title" style="margin-bottom: 1.5rem;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+        Daily Practice & Streak Progress
+      </h3>
+      <div class="streak-container">
+        <!-- Goal Progress Ring -->
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+          <div class="goal-ring-wrapper">
+            <svg class="goal-ring-svg" viewBox="0 0 120 120">
+              <circle class="goal-ring-bg" cx="60" cy="60" r="50"></circle>
+              <circle id="goal-progress-circle" class="goal-ring-progress" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+            </svg>
+            <div id="goal-pct-text" class="goal-ring-text">0%</div>
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">Daily Goal Progress</div>
+            <div id="goal-today-time" style="font-family: var(--font-mono); color: var(--text-sub); margin-top: 0.25rem;">0 / 10 mins</div>
+            <div id="goal-today-tests" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.2rem;">0 / 5 tests</div>
+          </div>
+        </div>
+
+        <!-- Streak Stats -->
+        <div style="display: flex; gap: 2rem;">
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Current Streak</div>
+            <div id="streak-days" style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: #f59e0b;">0 Days</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Best Streak</div>
+            <div id="best-streak-days" style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: var(--text-main);">0 Days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WPM Over Time Progression Chart -->
+    <div class="chart-container">
+      <div class="chart-title">
+        <span>WPM Over Time (Last 30 Tests)</span>
+        <span style="font-size: 0.75rem; text-transform: none; color: var(--text-sub);">Chronological trend line</span>
+      </div>
+      <canvas id="stats-history-chart" class="chart-canvas" style="height: 250px;"></canvas>
+    </div>
+
+    <!-- Personal Bests Table -->
+    <div class="stats-card-box">
+      <h3 class="stats-section-title">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        Personal Bests by Mode
+      </h3>
+      <div class="table-responsive">
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Best Net WPM</th>
+              <th>Accuracy</th>
+              <th>Achieved On</th>
+            </tr>
+          </thead>
+          <tbody id="pb-table-body">
+            <!-- Rendered by stats.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Keyboard Error Heatmap -->
+    <div class="stats-card-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        <h3 class="stats-section-title" style="margin-bottom: 0;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"></path><path d="M8 16h8"></path></svg>
+          Keyboard Error Heatmap
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; color: var(--text-muted);">
+          <span>Heat Scale:</span>
+          <span style="display: inline-block; width: 14px; height: 14px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 3px;"></span> No errors
+          <span style="display: inline-block; width: 14px; height: 14px; background: rgba(234, 179, 8, 0.4); border-radius: 3px;"></span> Low
+          <span style="display: inline-block; width: 14px; height: 14px; background: rgba(239, 68, 68, 0.6); border-radius: 3px;"></span> High Errors
+        </div>
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Keys shaded in red have registered the highest number of typos across all your sessions.
+      </p>
+      <div id="keyboard-heatmap" class="kb-heat-wrapper">
+        <!-- Rendered by stats.js -->
+      </div>
+    </div>
+
+    <!-- Weak Keys & Practice Generator -->
+    <div class="stats-card-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 class="stats-section-title" style="margin-bottom: 0.5rem;">Weak Keys Analysis</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Most frequently mistyped keys across your lifetime runs:</p>
+        </div>
+        <button id="btn-practice-weak-keys" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Practice My Weak Keys
+        </button>
+      </div>
+      <div id="stats-weak-keys" class="tags-list" style="margin-top: 1rem;">
+        <!-- Rendered by stats.js -->
+      </div>
+    </div>
+
+    <!-- Backup, Export & Reset Section -->
+    <div class="stats-card-box">
+      <h3 class="stats-section-title">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Data Management (100% Local)
+      </h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Your typing stats and preferences live exclusively in your local browser storage. Export them to take them to another machine or browser.
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+        <button id="btn-export-json" class="btn btn-ghost">
+          Export Data (JSON)
+        </button>
+        <label class="btn btn-ghost" style="cursor: pointer; margin: 0;">
+          Import Data (JSON)
+          <input type="file" id="import-json-file" accept=".json" style="display: none;">
+        </label>
+        <button id="btn-clear-data" class="btn btn-ghost" style="color: var(--error); border-color: rgba(247, 118, 142, 0.3);">
+          Clear All History
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="offline-pill">
+        <span class="offline-dot"></span>
+        100% Offline &middot; Local Storage Only
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.8rem;">
+        All statistics computed on-device
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/words.js"></script>
+  <script src="../assets/js/stats.js"></script>
+</body>
+</html>

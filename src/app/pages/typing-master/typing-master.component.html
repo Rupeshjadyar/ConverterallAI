@@ -7,6 +7,16 @@
         <button *ngFor="let ml of mainLessons" class="step-btn" [class.active]="currentMainLesson() === ml.id" (click)="selectMainLesson(ml.id)">{{ml.id}}</button>
       </div>
     </div>
+    <div class="speed-test-prompt-banner" style="background: linear-gradient(90deg, #1e293b, #0f172a); border: 1px solid #38bdf8; border-radius: 8px; padding: 12px 18px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 1.5rem;">⚡</span>
+        <div>
+          <strong style="color: #38bdf8; display: block; font-size: 0.95rem;">Looking for a quick 1-Minute Typing Speed Test?</strong>
+          <span style="color: #94a3b8; font-size: 0.85rem;">Test your real-time Words Per Minute (WPM), accuracy, and download your scorecard.</span>
+        </div>
+      </div>
+      <a routerLink="/typing-speed-test" style="background: #0284c7; color: #fff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem;">Take Speed Test ➔</a>
+    </div>
     <div class="lesson-section">
       <h3>Lesson {{currentMainLesson()}}: {{getMainLesson().title}}</h3>
       <div class="sub-list">
@@ -42,6 +52,37 @@
       <div class="footer-actions">
         <button class="btn-change">? Change course</button>
         <button class="btn-adjust">? Adjust course duration</button>
+      </div>
+    </div>
+
+    <!-- SEO & Touch Typing Guide Section -->
+    <div class="tm-seo-guide" style="margin-top: 35px; border-top: 1px solid #334155; padding-top: 25px; color: #94a3b8; font-size: 0.92rem; line-height: 1.6;">
+      <h2 style="color: #f8fafc; font-size: 1.4rem; margin-bottom: 12px; font-weight: 700;">Learn Touch Typing Online Free – 12 Guided Masterclass Lessons</h2>
+      <p style="margin-bottom: 15px;">
+        Touch typing is the method of typing without looking at the physical keyboard. By practicing the 12 structured modules in this course, you will systematically master the <strong>Home Row (ASDF JKL;)</strong>, <strong>Top Row (QWERTY)</strong>, <strong>Bottom Row (ZXCVBNM)</strong>, and number/symbol keys with designated fingers.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin: 20px 0;">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; padding: 16px; border-radius: 8px;">
+          <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 1rem;">1. Anchor on Home Row</h4>
+          <p style="margin: 0; font-size: 0.85rem;">Position your left index finger on <kbd style="background: #334155; padding: 2px 6px; border-radius: 4px; color: #fff;">F</kbd> and right index finger on <kbd style="background: #334155; padding: 2px 6px; border-radius: 4px; color: #fff;">J</kbd>. Always return your hands to these guide tactile bumps.</p>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; padding: 16px; border-radius: 8px;">
+          <h4 style="color: #4ade80; margin: 0 0 6px 0; font-size: 1rem;">2. 98% Accuracy First</h4>
+          <p style="margin: 0; font-size: 0.85rem;">Typing fast with frequent typos wastes cognitive energy on backspacing. Prioritize hitting the correct key with the designated finger every time.</p>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; padding: 16px; border-radius: 8px;">
+          <h4 style="color: #facc15; margin: 0 0 6px 0; font-size: 1rem;">3. Daily 15-Min Habit</h4>
+          <p style="margin: 0; font-size: 0.85rem;">Just 15 minutes of focused touch typing per day builds permanent neuromuscular pathways, increasing speed from 30 to 80+ WPM within 4 weeks.</p>
+        </div>
+      </div>
+
+      <div style="background: #1e293b; border-radius: 8px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 20px;">
+        <div>
+          <strong style="color: #f8fafc; font-size: 0.95rem; display: block;">Ready to measure your current Words Per Minute (WPM)?</strong>
+          <span style="font-size: 0.85rem; color: #94a3b8;">Take our official 1-minute or 3-minute timed speed test with live graph &amp; certificate.</span>
+        </div>
+        <a routerLink="/typing-speed-test" style="background: #0284c7; color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.88rem;">Start Speed Test ➔</a>
       </div>
     </div>
   </div>

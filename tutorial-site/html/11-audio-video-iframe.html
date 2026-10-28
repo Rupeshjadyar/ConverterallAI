@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Audio, Video & Iframes — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="11-audio-video-iframe.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 11</span>
+          </div>
+          <h1 class="lesson-title">Audio, Video and Embedded Iframes</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Embed native multimedia players, subtitles, and secure sandboxed window frames without third-party plugins.</span>
+            <span class="lang-hi">HTML5 ke native <code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code> aur secure <code>&lt;iframe&gt;</code> sandboxes ka istemal seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Embedding native audio streams with <code>&lt;audio&gt;</code> and <code>controls</code>.</li>
+            <li>Embedding video players with <code>&lt;video&gt;</code>, <code>poster</code>, and fallback formats.</li>
+            <li>Adding multi-language captions and subtitles using the <code>&lt;track&gt;</code> element.</li>
+            <li>Embedding documents and widgets with <code>&lt;iframe&gt;</code>.</li>
+            <li>Locking down iframe security using the <code>sandbox</code> attribute.</li>
+            <li>How offline environments render rich media and HTML previews using <code>srcdoc</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="10-semantic-html.html">10. Semantic HTML</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Living Room Television and The Security Window</div>
+          <p>
+            <span class="lang-en">In the 1990s, playing video on a computer required installing buggy, insecure plugins like Adobe Flash or QuickTime. HTML5 eliminated that nightmare by installing a sleek, modern television directly into the browser wall (<strong><code>&lt;video&gt;</code></strong>). You have play/pause remotes (<strong><code>controls</code></strong>) and subtitle closed-captioning (<strong><code>&lt;track&gt;</code></strong>). An <strong><code>&lt;iframe&gt;</code></strong> is like a cut-out bulletproof window in your wall looking into a neighbor's house. You can watch what's happening through the glass, but the neighbor cannot climb through into your house and tamper with your furniture &mdash; that is what <strong><code>sandbox</code></strong> security guarantees!</span>
+            <span class="lang-hi">Purane zamaane mein video chalane ke liye Adobe Flash jaisi cheezein install karni padti thi. HTML5 ne browser ke andar hi ek TV screen (<strong><code>&lt;video&gt;</code></strong>) laga di jisme remote (<strong><code>controls</code></strong>) aur subtitles (<strong><code>&lt;track&gt;</code></strong>) pehle se hote hain. Aur <strong><code>&lt;iframe&gt;</code></strong> ek aisi surakshit khidki hai jisse hum dusre page ko bina kisi security risk ke dekh sakte hain.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Native <code>&lt;audio&gt;</code> Element</h2>
+        <p>
+          The <code>&lt;audio&gt;</code> element plays audio files directly in the browser with native UI playback controls:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Robust Audio Markup with Fallbacks</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;audio controls preload="metadata"&gt;
+  &lt;!-- Primary format: MP3 (universal compatibility) --&gt;
+  &lt;source src="audio/podcast-ep1.mp3" type="audio/mpeg"&gt;
+
+  &lt;!-- Modern efficient fallback: OGG Vorbis --&gt;
+  &lt;source src="audio/podcast-ep1.ogg" type="audio/ogg"&gt;
+
+  &lt;!-- Fallback message for ancient browsers --&gt;
+  &lt;p&gt;Your browser does not support the audio element. &lt;a href="audio/podcast-ep1.mp3"&gt;Download MP3&lt;/a&gt;.&lt;/p&gt;
+&lt;/audio&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Attributes Explained:</strong><br>
+          &bull; <code>controls</code>: Displays the native play/pause button, scrubber track, and volume slider. <em>If you omit controls, the audio element is completely invisible on screen!</em><br>
+          &bull; <code>preload="metadata"</code>: Tells the browser to only download duration and track info, saving user mobile data.<br>
+          &bull; Multiple <code>&lt;source&gt;</code> tags allow the browser to pick the first format its codec supports.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Native <code>&lt;video&gt;</code> Element</h2>
+        <p>
+          Video embeds follow a similar structure to audio, but include visual attributes like <code>poster</code> and dimensions:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Complete Video Player with Subtitles</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;video controls
+       width="854"
+       height="480"
+       poster="images/video-thumbnail.jpg"
+       playsinline&gt;
+  &lt;source src="videos/tutorial.mp4" type="video/mp4"&gt;
+  &lt;source src="videos/tutorial.webm" type="video/webm"&gt;
+
+  &lt;!-- Accessibility: Closed Captions & Subtitles in WebVTT format --&gt;
+  &lt;track kind="subtitles" src="subtitles/en.vtt" srclang="en" label="English" default&gt;
+  &lt;track kind="subtitles" src="subtitles/es.vtt" srclang="es" label="Espa&ntilde;ol"&gt;
+
+  &lt;p&gt;Your browser cannot play this video. &lt;a href="videos/tutorial.mp4"&gt;Download MP4&lt;/a&gt;.&lt;/p&gt;
+&lt;/video&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Features:</strong><br>
+          &bull; <code>poster="thumbnail.jpg"</code>: Displays a crisp cover image before the user presses Play.<br>
+          &bull; <code>playsinline</code>: Prevents iPhone Safari from violently kicking into full-screen mode automatically.<br>
+          &bull; <code>&lt;track kind="subtitles"&gt;</code>: Native closed captions (CC) powered by standard WebVTT (<code>.vtt</code>) files.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Live Sandboxed Iframe Studio</h2>
+        <p>See how our tutorial site renders live HTML code using an offline <code>&lt;iframe srcdoc="..."&gt;</code>:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Sandboxed Iframe Inspection</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; margin: 0; }
+    .embed-card {
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    iframe {
+      width: 100%;
+      height: 180px;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h3>Parent Application Container</h3>
+  <div class="embed-card">
+    <!-- Notice srcdoc allows embedding entire HTML pages inline! -->
+    <iframe sandbox="allow-scripts" srcdoc="
+      &lt;body style='background:#f0fdf4; color:#166534; font-family:sans-serif; padding:20px;'&gt;
+        &lt;h4 style='margin:0 0 8px 0;'&gt;&#128274; Sandboxed Secure Iframe&lt;/h4&gt;
+        &lt;p style='margin:0; font-size:14px;'&gt;This isolated frame runs its own isolated DOM without accessing the parent window.&lt;/p&gt;
+      &lt;/body&gt;
+    "></iframe>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The <code>&lt;iframe&gt;</code> and the <code>sandbox</code> Security Shield</h2>
+        <p>
+          An <strong>iframe (Inline Frame)</strong> embeds another independent HTML document inside the current webpage. Because iframes can display external third-party content, they represent a significant security surface:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Hardened Sandbox Attribute</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Completely locked down iframe (Scripts, forms, and popups disabled) --&gt;
+&lt;iframe src="untrusted-preview.html" sandbox&gt;&lt;/iframe&gt;
+
+&lt;!-- Selectively granting only safe permissions: --&gt;
+&lt;iframe src="live-chart.html"
+        sandbox="allow-scripts allow-same-origin"
+        title="Interactive Financial Chart"
+        width="100%"
+        height="400"
+        loading="lazy"&gt;
+&lt;/iframe&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Sandbox Flags:</strong><br>
+          &bull; Plain <code>sandbox</code>: Maximum lockdown (no JS execution, no form submit, no cookies, no popups).<br>
+          &bull; <code>allow-scripts</code>: Permits JavaScript execution inside the iframe.<br>
+          &bull; <code>allow-same-origin</code>: Allows the iframe to access its own local cookies/storage.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Preventing Clickjacking with CSP Headers</h3>
+        <p>How websites prevent malicious sites from embedding them inside invisible iframes:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">http</span></div>
+          <pre class="code-content"><code data-lang="html"># Modern HTTP Header to prevent unwanted iframe embedding
+Content-Security-Policy: frame-ancestors 'self'
+
+# Legacy HTTP Header
+X-Frame-Options: SAMEORIGIN</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why large sites block iframes:</strong> Banks, Google, and Amazon send these headers so malicious hackers cannot place their login screens inside a transparent iframe to steal user clicks (Clickjacking attack).
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Video Autoplay Policy</h3>
+        <p>Modern browsers strictly prohibit video autoplay with sound to protect users from jarring ads:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- BLOCKED: Browsers block unmuted autoplay on initial page load --&gt;
+&lt;video src="intro.mp4" autoplay&gt;&lt;/video&gt;  &lt;!-- FAILS TO AUTOPLAY --&gt;
+
+&lt;!-- ALLOWED: Background hero videos MUST have muted and playsinline --&gt;
+&lt;video src="ambient-loop.mp4" autoplay muted loop playsinline&gt;&lt;/video&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Golden Rule of Autoplay:</strong> If you want a background ambient video to autoplay automatically when the page opens, it MUST include the <code>muted</code> attribute!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Controlling Media via the JavaScript HTMLMediaElement API</h3>
+        <p>JavaScript has full programmatic control over media playback:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const video = document.querySelector("video");
+
+// Programmatic Playback
+function togglePlay() {
+  if (video.paused) {
+    video.play();
+  } else {
+    video.pause();
+  }
+}
+
+// Monitoring playback progress
+video.addEventListener("timeupdate", () => {
+  const percent = (video.currentTime / video.duration) * 100;
+  console.log("Current playback progress: " + Math.round(percent) + "%");
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>API Controls:</strong> <code>play()</code>, <code>pause()</code>, <code>currentTime</code>, <code>duration</code>, and <code>volume</code> allow you to build completely custom media player controls!
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>controls</code> on audio:</strong> If you write <code>&lt;audio src="song.mp3"&gt;&lt;/audio&gt;</code> without <code>controls</code>, the browser renders an invisible element with zero buttons. The user has no way to play it!</li>
+            <li><strong>Omitting <code>title</code> on iframes:</strong> WCAG accessibility requires every <code>&lt;iframe&gt;</code> to possess a descriptive <code>title</code> attribute (e.g. <code>title="Google Map location"</code>) so screen reader users know what is inside.</li>
+            <li><strong>Assuming video formats are universal:</strong> Always provide at least MP4 (H.264) and WebM to guarantee smooth playback across all mobile and desktop browsers.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Use the <code>srcdoc</code> attribute when rendering temporary HTML previews &mdash; it avoids making network requests and works 100% offline!</li>
+            <li>Always specify explicit <code>width</code> and <code>height</code> on video elements to prevent layout jumping as the video metadata downloads.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;audio controls&gt;</code> embeds audio natively with playback buttons.</li>
+            <li><code>&lt;video controls poster="thumb.jpg"&gt;</code> embeds video players with cover graphics.</li>
+            <li>Use <code>&lt;track kind="subtitles"&gt;</code> for accessible closed captions.</li>
+            <li>Autoplay videos MUST have the <code>muted</code> attribute or browsers will block them.</li>
+            <li><code>&lt;iframe sandbox&gt;</code> embeds external content securely with permission lockdown.</li>
+            <li><code>srcdoc</code> renders inline HTML documents inside an iframe offline.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Create an Audio Player</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the markup to embed an audio file <code>podcast.mp3</code> with native controls visible on screen.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Don't forget the controls attribute.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;audio src="podcast.mp3" controls&gt;&lt;/audio&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Silent Background Video Loop</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write a video tag that plays <code>sky.mp4</code> automatically, repeats continuously in a loop, and plays silently without user interaction.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Combine autoplay, muted, and loop.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;video src="sky.mp4" autoplay muted loop playsinline&gt;&lt;/video&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Secure Sandboxed Widget</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write an accessible iframe embedding <code>calculator.html</code>: lock down all permissions except running JavaScript scripts, and include an accessible title.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use sandbox="allow-scripts" and title.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;iframe src="calculator.html"
+        sandbox="allow-scripts"
+        title="Interactive Financial Calculator"
+        width="400"
+        height="300"&gt;
+&lt;/iframe&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 11 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Without the controls attribute, the browser renders audio as an invisible element with no playback UI.">
+            <div class="quiz-question-text">1. What happens if you omit the controls attribute on an &lt;audio&gt; element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The audio plays at maximum volume immediately</div>
+              <div class="quiz-option"><span>B)</span> The element is completely invisible with no buttons on screen</div>
+              <div class="quiz-option"><span>C)</span> The browser shows an error alert</div>
+              <div class="quiz-option"><span>D)</span> The audio plays in reverse</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Modern browsers strictly require autoplay videos to be muted to avoid disruptive noise.">
+            <div class="quiz-question-text">2. Which attribute is strictly required for modern browsers to allow video autoplay?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> loop</div>
+              <div class="quiz-option"><span>B)</span> preload</div>
+              <div class="quiz-option"><span>C)</span> muted</div>
+              <div class="quiz-option"><span>D)</span> poster</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The poster attribute provides a cover image before video playback begins.">
+            <div class="quiz-question-text">3. Which attribute specifies an image thumbnail shown before a video begins playing?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> poster</div>
+              <div class="quiz-option"><span>B)</span> thumbnail</div>
+              <div class="quiz-option"><span>C)</span> cover</div>
+              <div class="quiz-option"><span>D)</span> preview</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The sandbox attribute restricts scripts, navigation, forms, and popups inside an iframe.">
+            <div class="quiz-question-text">4. Which attribute secures an &lt;iframe&gt; by restricting scripts and untrusted actions?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> secure</div>
+              <div class="quiz-option"><span>B)</span> protect</div>
+              <div class="quiz-option"><span>C)</span> firewall</div>
+              <div class="quiz-option"><span>D)</span> sandbox</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="srcdoc allows embedding HTML directly inside the iframe element without fetching a file.">
+            <div class="quiz-question-text">5. Which iframe attribute allows rendering raw HTML code directly inside the frame without an external file?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> srcfile</div>
+              <div class="quiz-option"><span>B)</span> srcdoc</div>
+              <div class="quiz-option"><span>C)</span> htmlcode</div>
+              <div class="quiz-option"><span>D)</span> inline</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Customize the Embedded Sandbox</h3>
+          <p>
+            In the live editor above, change the iframe background color from <code>#f0fdf4</code> (light green) to <code>#eff6ff</code> (light blue), and add a button inside the iframe reading "Click me inside sandbox". Click <strong>Run Code</strong> to inspect your work!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#audio" class="ref-pill">&lt;audio&gt; Tag</a>
+            <a href="../reference/html-tags-reference.html#video" class="ref-pill">&lt;video&gt; &amp; &lt;track&gt;</a>
+            <a href="../reference/html-tags-reference.html#iframe" class="ref-pill">&lt;iframe&gt; &amp; sandbox</a>
+            <a href="../reference/glossary.html#iframe" class="ref-pill">Glossary: Iframe</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="10-semantic-html.html" class="btn btn-outline">&larr; Previous: Semantic HTML</a>
+          <button class="mark-complete-btn" data-lesson-id="html-11">Mark as Complete</button>
+          <a href="12-meta-tags-seo.html" class="btn btn-primary">Next: Meta Tags &amp; SEO &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

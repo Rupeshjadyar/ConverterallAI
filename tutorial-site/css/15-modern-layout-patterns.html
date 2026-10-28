@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Modern Layout Patterns — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="15-modern-layout-patterns.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 15</span>
+          </div>
+          <h1 class="lesson-title">Modern CSS Layout Patterns</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Production-ready structural blueprints: Holy Grail, Sticky Footers, Full-Bleed breakouts, and Aspect Ratios.</span>
+            <span class="lang-hi">Modern CSS architecture: Holy Grail 3-column layout, sticky footers, full-bleed containers aur aspect-ratio seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3-Column <strong>Holy Grail Layout</strong> using CSS Grid.</li>
+            <li>The <strong>Pancake Stack</strong>: Header, flexible content, and sticky footer with <code>grid-template-rows: auto 1fr auto</code>.</li>
+            <li>The 1-line centering magic: <code>display: grid; place-items: center;</code>.</li>
+            <li>The <strong>Full-Bleed Breakout</strong>: Breaking out of a centered container to stretch 100vw edge-to-edge.</li>
+            <li>The modern <strong>Aspect Ratio</strong> lock: No more padding-top hacks for responsive YouTube videos!</li>
+            <li>The <strong>Clamped Content Shell</strong>: <code>width: min(100% - 2rem, 1200px); margin-inline: auto;</code>.</li>
+            <li>Combining Flexbox and Grid into cohesive enterprise UI architectures.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="14-css-variables-calc-clamp.html">14. CSS Variables, Calc &amp; Clamp</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Master Carpenter's Blueprint Templates</div>
+          <p>
+            <span class="lang-en">Imagine building a modern residential house:
+            <br>&bull; A novice carpenter reinvents how a door hinges and how four walls connect for every single room from scratch. They waste weeks fixing squeaky floors and crooked walls.
+            <br>&bull; A master architect pulls proven blueprints from their folder: The "Load-bearing foundation", the "Vaulted living room ceiling", and the "Standard hallway corridor".
+            <br>In CSS, <strong>Layout Patterns</strong> are battle-tested architectural blueprints. Instead of guessing how to position a footer or align a sidebar, you reach for the established pattern with zero guesswork!</span>
+            <span class="lang-hi">Master Architect ke blueprints ki tarah sochiye: Har baar naya layout shuru se invent karne ki zaroorat nahi hoti. Industry ke paas pehle se bane-banaye 5-10 proven architectural patterns hain (jaise Holy Grail layout ya Sticky Footer). Inhein seekhne ke baad aap kisi bhi web app ka structure 5 minute me khada kar sakte hain!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Pattern 1: The 1-Line Ultimate Center</h2>
+        <p>
+          Before CSS Grid, centering an item both horizontally and vertically required complex combinations. In modern CSS, CSS Grid provides the single cleanest centering declaration in existence:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The One-Line Place-Items Center</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.hero-viewport {
+  display: grid;
+  place-items: center; /* Exactly centers child both horizontally and vertically! */
+  min-height: 100vh;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <code>place-items: center</code> is the combined shorthand for <code>align-items: center</code> and <code>justify-items: center</code>.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Pattern 2: The Pancake Stack (Grid Sticky Footer)</h2>
+        <p>
+          Ensures the footer is pinned at the bottom of the screen on short pages, while flowing naturally down when content is long:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Pancake Stack Layout</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.page-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+header {
+  /* Takes natural 'auto' height */
+}
+
+main {
+  /* Takes all remaining '1fr' height, pushing footer down */
+}
+
+footer {
+  /* Takes natural 'auto' height */
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Pattern 3: The 3-Column Holy Grail Layout</h2>
+        <p>
+          The classic documentation/dashboard layout: A fixed top header, a left navigation sidebar, a central reading column, a right table-of-contents sidebar, and a footer:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Holy Grail Grid</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.holy-grail {
+  display: grid;
+  grid-template-columns: 260px 1fr 220px;
+  grid-template-rows: 60px 1fr auto;
+  grid-template-areas:
+    "head head head"
+    "nav  main toc"
+    "foot foot foot";
+  min-height: 100vh;
+}
+
+.holy-grail > header { grid-area: head; }
+.holy-grail > nav    { grid-area: nav; }
+.holy-grail > main   { grid-area: main; }
+.holy-grail > aside  { grid-area: toc; }
+.holy-grail > footer { grid-area: foot; }
+
+/* Responsive mobile collapse */
+@media (max-width: 900px) {
+  .holy-grail {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "head"
+      "nav"
+      "main"
+      "toc"
+      "foot";
+  }
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Pattern 4: The Clamped Content Shell</h2>
+        <p>
+          Modern responsive websites avoid wrapping everything in nested <code>&lt;div class="container"&gt;</code> wrappers. Instead, use this elegant one-line modern formula:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The Clamped Content Shell</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.content-shell {
+  /* On mobile: fills width with 1rem margin on each side.
+     On large desktops: caps perfectly at 1200px wide! */
+  width: min(100% - 2rem, 1200px);
+  margin-inline: auto; /* Centers the shell horizontally */
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Pattern 5: Aspect-Ratio Video &amp; Image Locks</h2>
+        <p>
+          In legacy web development, making an <code>&lt;iframe&gt;</code> video responsive required the notorious <code>padding-top: 56.25%</code> hack. Modern CSS provides the native <code>aspect-ratio</code> property:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Native Responsive Aspect Ratio</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 16:9 widescreen video embed */
+.responsive-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 8px;
+}
+
+/* 1:1 Instagram-style square avatar */
+.avatar-square {
+  width: 80px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+}</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Pattern 6: The Full-Bleed Breakout</h2>
+        <p>
+          Have you ever wanted an image or colored banner inside a centered blog post to break outside and stretch 100% across the full width of the browser viewport?
+        </p>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: The Full-Bleed Viewport Breakout</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* The parent article is centered at 700px */
+article {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* The breakout banner stretches edge-to-edge across the screen! */
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 40px 20px;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Test Modern Layouts Live</h2>
+        <p>
+          Experiment with <code>place-items</code> and <code>aspect-ratio</code> below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Pattern Laboratory</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 20px;
+    background: #f1f5f9;
+  }
+
+  /* Pattern 1: One-line center inside container */
+  .center-stage {
+    display: grid;
+    place-items: center;
+    background: #e2e8f0;
+    min-height: 160px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .badge-centered {
+    background: #3b82f6;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  /* Pattern 5: Aspect ratio lock */
+  .aspect-demo {
+    width: 200px;
+    aspect-ratio: 16 / 9;
+    background: #10b981;
+    color: white;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <h3>Modern CSS Patterns in Action</h3>
+  
+  <p style="margin:10px 0 6px; font-size:0.9rem; color:#64748b;">display: grid; place-items: center;</p>
+  <div class="center-stage">
+    <div class="badge-centered">&#10024; Perfectly Centered</div>
+  </div>
+
+  <p style="margin:10px 0 6px; font-size:0.9rem; color:#64748b;">width: 200px; aspect-ratio: 16 / 9;</p>
+  <div class="aspect-demo">
+    16 : 9 Lock
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Using <code>100vw</code> with standard scrollbars:</strong> On Windows desktop browsers, <code>100vw</code> includes the vertical scrollbar width (~16px), causing accidental horizontal scrollbars! Use <code>100%</code> for standard page containers.</li>
+            <li><strong>Reverting to old padding-bottom hacks:</strong> <code>aspect-ratio: 16 / 9</code> has universal browser support. Never use the legacy <code>padding-top: 56.25%</code> hack in modern projects.</li>
+            <li><strong>Hardcoding heights on layout regions:</strong> Writing <code>height: 600px</code> on main content or footers causes text collisions when content grows. Use <code>min-height</code> or let CSS Grid calculate <code>auto</code> rows.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Use <code>object-fit: cover</code> with <code>aspect-ratio</code>:</strong> When locking image tags to specific aspect ratios (like <code>4 / 3</code>), always add <code>object-fit: cover</code> to prevent the image pixels from being squished or stretched.</li>
+            <li><strong>The Sidebar with <code>flex-basis</code>:</strong> You can create an automatic wrapping sidebar without media queries using <code>flex: 1 1 250px;</code> on the sidebar and <code>flex: 3 1 500px;</code> on the main content!</li>
+            <li><strong>Master CSS subgrid:</strong> Modern CSS Grid supports <code>grid-template-rows: subgrid;</code>, allowing child cards to align their buttons and headers across sibling columns perfectly.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>display: grid; place-items: center;</code> centers anything in a single line.</li>
+            <li>The Pancake Stack (<code>grid-template-rows: auto 1fr auto</code>) creates sticky footers with zero float or margin tricks.</li>
+            <li>The Holy Grail layout organizes Header, Nav, Main, TOC, and Footer via named grid areas.</li>
+            <li><code>width: min(100% - 2rem, 1200px); margin-inline: auto;</code> creates clean responsive containers.</li>
+            <li><code>aspect-ratio: 16 / 9</code> locks responsive media dimensions cleanly.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): One-Line Centering</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>What single CSS property combination on a <code>display: grid</code> container centers all children along both axes simultaneously?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: place-items.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>place-items: center;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Responsive Video Aspect Ratio</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write the CSS rules for an <code>&lt;iframe class="video-frame"&gt;</code> to make it span 100% of container width, maintain a 16:9 widescreen ratio, and have rounded 8px corners.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; border: none;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.video-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  border: none;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): The 3-Row Grid Sticky Footer</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the CSS for a <code>.site-root</code> wrapper that fills the viewport height and establishes a 3-row grid where the header and footer adapt to their content, and the main area expands to push the footer down.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: grid-template-rows: auto 1fr auto; min-height: 100vh;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.site-root {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 15 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="place-items: center is shorthand for align-items: center and justify-items: center in CSS Grid.">
+            <div class="quiz-question-text">1. What two properties are combined inside the 'place-items: center' shorthand?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> margin: 0 and padding: 0</div>
+              <div class="quiz-option"><span>B)</span> align-items: center and justify-items: center</div>
+              <div class="quiz-option"><span>C)</span> top: 50% and left: 50%</div>
+              <div class="quiz-option"><span>D)</span> width: auto and height: auto</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="1fr expands to occupy all remaining free vertical space between the header and footer.">
+            <div class="quiz-question-text">2. In 'grid-template-rows: auto 1fr auto;', what does 1fr do for the middle row?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Locks it to 100 pixels</div>
+              <div class="quiz-option"><span>B)</span> Makes it transparent</div>
+              <div class="quiz-option"><span>C)</span> Hides it on mobile</div>
+              <div class="quiz-option"><span>D)</span> Expands to fill all remaining vertical viewport space, keeping the footer at the bottom</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="aspect-ratio natively manages dimensions without calculating padding percentages.">
+            <div class="quiz-question-text">3. Which modern CSS property replaces the legacy 'padding-top: 56.25%' hack for videos?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> aspect-ratio: 16 / 9;</div>
+              <div class="quiz-option"><span>B)</span> video-scale: 16x9;</div>
+              <div class="quiz-option"><span>C)</span> display: cinema;</div>
+              <div class="quiz-option"><span>D)</span> object-fit: 100%;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="The Holy Grail layout consists of a header, 3 columns (left nav, center content, right TOC/ads), and a footer.">
+            <div class="quiz-question-text">4. What is the traditional definition of the 'Holy Grail Layout' in web design?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A page with zero CSS</div>
+              <div class="quiz-option"><span>B)</span> A full-screen video background</div>
+              <div class="quiz-option"><span>C)</span> A layout with a Header, 3 columns (Sidebar, Main Content, Right Aside), and a Footer</div>
+              <div class="quiz-option"><span>D)</span> A circular photo gallery</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="width: min(100% - 2rem, 1200px) caps at 1200px on desktops while preserving a 1rem gutter on mobile.">
+            <div class="quiz-question-text">5. What is the key advantage of 'width: min(100% - 2rem, 1200px); margin-inline: auto;'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It works only in landscape mode</div>
+              <div class="quiz-option"><span>B)</span> It provides a max width on desktop while automatically maintaining side gutters on mobile without media queries</div>
+              <div class="quiz-option"><span>C)</span> It disables page scrolling</div>
+              <div class="quiz-option"><span>D)</span> It compresses HTML payload</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build an Instagram Square Grid</h3>
+          <p>
+            In the live editor, create a 3-column grid of cards where each card has <code>aspect-ratio: 1 / 1</code> and contains an image with <code>object-fit: cover</code> to mimic a photo gallery!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#layout-patterns" class="ref-pill">Layout Patterns Reference</a>
+            <a href="../reference/glossary.html#holy-grail" class="ref-pill">Glossary: Holy Grail Layout</a>
+            <a href="../reference/glossary.html#aspect-ratio" class="ref-pill">Glossary: Aspect Ratio</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">Modern Layouts Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="14-css-variables-calc-clamp.html" class="btn btn-outline">&larr; Previous: CSS Variables, Calc &amp; Clamp</a>
+          <button class="mark-complete-btn" data-lesson-id="css-15">Mark as Complete</button>
+          <a href="16-css-best-practices-organization.html" class="btn btn-primary">Next: Best Practices &amp; Architecture &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

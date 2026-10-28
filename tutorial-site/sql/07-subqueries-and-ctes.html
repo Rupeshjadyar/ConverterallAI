@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Subqueries, Correlated Subqueries & CTEs (WITH Clause) — WebDev Academy</title>
+  <meta name="description" content="Master nested SQL queries: scalar subqueries, multi-row subqueries, correlated subqueries with EXISTS vs IN, and modern readable Common Table Expressions (CTEs) including Recursive CTEs.">
+  <meta name="keywords" content="SQL subquery, correlated subquery, CTE, WITH clause, recursive CTE, EXISTS vs IN, SQL intermediate interview">
+  <meta property="og:title" content="Subqueries, Correlated Subqueries & CTEs (WITH Clause)">
+  <meta property="og:description" content="Master nested SQL queries: scalar subqueries, multi-row subqueries, correlated subqueries with EXISTS vs IN, and modern readable Common Table Expressions (CTEs) including Recursive CTEs.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="07-subqueries-and-ctes.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 07</span>
+          </div>
+          <h1 class="lesson-title">Subqueries, Correlated Subqueries & CTEs (WITH Clause)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master nested SQL queries: scalar subqueries, multi-row subqueries, correlated subqueries with EXISTS vs IN, and modern readable Common Table Expressions (CTEs) including Recursive CTEs.</span>
+            <span class="lang-hi">Nested queries seekhein: Subqueries, Correlated Subqueries, EXISTS vs IN ka farak aur Common Table Expressions (WITH clause).</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3 types of subqueries: Scalar (single value), Multi-row (IN/ANY/ALL), and Table subqueries.</li><li>Independent subqueries vs Correlated subqueries (row-by-row execution).</li><li>Performance and NULL safety: EXISTS vs IN.</li><li>Common Table Expressions (CTEs): Declaring readable named temporary result sets using WITH.</li><li>Recursive CTEs: Traversing organizational charts and graphs step-by-step.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 06: SQL Joins In-Depth.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of solving a complex math problem: <code>x = (5 * 4) + 10</code>. You solve the inner parentheses first (5 * 4 = 20) and plug that result into the outer calculation (20 + 10 = 30). <strong>A Subquery is an inner question inside parentheses</strong>: 'Who earns more than the average salary?' The inner subquery calculates the average salary once, and the outer query finds employees earning above that number. <strong>A CTE (WITH clause) is like assigning that inner answer to a clean named variable first</strong>: 'LET avg_salary = 50,000; NOW find employees with salary &gt; avg_salary' &mdash; clean, elegant, and readable!</span>
+            <span class="lang-hi">Maths ke question ki misaal lein: pehle bracket ke andar ki cheez solve karte hain, fir bahar ki. <strong>Subquery bracket ke andar ka chhota sawaal hai</strong> (jaise 'Average salary kitni hai?'). Bahar wali query us answer ko use karti hai. <strong>CTE (WITH clause) ek saaf suthra variable banane jaisa hai</strong>: pehle hi likh diya 'WITH avg_sal AS (...)', fir neeche aasaani se use kar liya!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Subquery vs CTE:</strong> A Subquery is nested inside parentheses and can become unreadable ('spaghetti SQL') when nested multiple levels deep. A Common Table Expression (CTE) defined with the <code>WITH</code> keyword is modular, reusable, self-documenting, and can be recursive.</li><li><strong>Correlated Subquery:</strong> A subquery that depends on columns from the outer query for its values, executing once for every candidate row evaluated by the outer query (like a nested loop in programming).</li><li><strong>EXISTS vs IN (The Famous Interview Trap):</strong><br>• <code>IN</code> retrieves all values from the subquery into memory before comparing. If the subquery result contains a single <code>NULL</code>, <code>NOT IN</code> evaluates to UNKNOWN and returns ZERO rows!<br>• <code>EXISTS</code> returns a boolean as soon as the first matching row is found (short-circuit evaluation) and is completely safe against NULLs.</li><li><strong>When does optimizer materialize a CTE?</strong> Modern optimizers (PostgreSQL 12+, MySQL 8+) can inline CTEs just like subqueries, or materialize them with <code>WITH my_cte AS MATERIALIZED (...)</code>.</li><li><strong>Recursive CTE syntax:</strong> Consists of an Anchor member, followed by <code>UNION ALL</code>, followed by the Recursive member terminating on a condition.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a Subquery?</h2>
+        <p>A <strong>Subquery</strong> (or nested inner query) is a SELECT statement embedded inside another SQL statement. Subqueries can appear in the <code>SELECT</code> clause, the <code>FROM</code> clause (derived tables), or the <code>WHERE</code> clause.</p>
+        <p>Subqueries allow dynamic calculations without hardcoding static constants into your queries.</p>
+        
+        <h2>2. Correlated Subqueries & The EXISTS Operator</h2>
+        <p>While a standard subquery runs once and passes its result to the outer query, a <strong>Correlated Subquery</strong> references columns from the outer query table, executing repeatedly for every candidate row evaluated by the outer query.</p>
+        <p>When combined with the <code>EXISTS</code> or <code>NOT EXISTS</code> operator, the engine uses short-circuit evaluation: it stops searching the inner table as soon as the very first matching row is located.</p>
+        
+        <h2>3. Common Table Expressions (CTEs) with the WITH Clause</h2>
+        <p>Deeply nested subqueries are notoriously hard to read, debug, and maintain. <strong>Common Table Expressions (CTEs)</strong>, introduced in modern SQL with the <code>WITH</code> keyword, allow you to break down complex queries into clean, sequential, named temporary result sets.</p>
+        <p>CTEs make your SQL read top-to-bottom like clean Python or JavaScript code instead of an inside-out nested puzzle.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Scalar Subquery: Finding Employees Earning More Than the Company Average</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Inner query returns a single scalar value (e.g. 64500.00)
+SELECT 
+    emp_name,
+    department,
+    salary
+FROM employees
+WHERE salary &gt; (
+    SELECT AVG(salary) FROM employees
+)
+ORDER BY salary DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The inner subquery computes the company-wide average salary once, and the outer query filters employees against that benchmark.
+        </div>
+        
+        <h3>Code Example 2: Correlated Subquery: Employees Earning More Than Their OWN Department Average</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    e.emp_name,
+    e.department,
+    e.salary
+FROM employees e
+WHERE e.salary &gt; (
+    -- Correlated: references e.department from the outer query row!
+    SELECT AVG(sub.salary) 
+    FROM employees sub 
+    WHERE sub.department = e.department
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • For each employee evaluated by the outer query, the inner query calculates the average salary for that employee's specific department.
+        </div>
+        
+        <h3>Code Example 3: EXISTS vs NOT IN with NULL Safety</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Safe, high-performance check for customers with no orders
+SELECT c.customer_id, c.customer_name
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM orders o 
+    WHERE o.customer_id = c.customer_id
+);
+
+-- DANGEROUS anti-pattern (breaks if orders table has even one NULL customer_id!):
+-- SELECT * FROM customers WHERE customer_id NOT IN (SELECT customer_id FROM orders);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>EXISTS</code> stops as soon as a single match is found. <code>SELECT 1</code> is used by convention because EXISTS only cares about row existence, not column values.
+        </div>
+        
+        <h3>Code Example 4: Clean Multi-Step Data Pipeline with CTEs (WITH Clause)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Step 1: Calculate annual revenue per customer
+WITH customer_revenue AS (
+    SELECT 
+        customer_id,
+        SUM(order_amount) AS total_spent,
+        COUNT(order_id) AS orders_count
+    FROM orders
+    WHERE YEAR(order_date) = 2024
+    GROUP BY customer_id
+),
+-- Step 2: Calculate benchmark stats across all customers
+benchmark_stats AS (
+    SELECT AVG(total_spent) AS avg_customer_spend
+    FROM customer_revenue
+)
+-- Step 3: Final projection combining the clean CTEs
+SELECT 
+    c.customer_name,
+    cr.total_spent,
+    cr.orders_count
+FROM customer_revenue cr
+JOIN customers c ON cr.customer_id = c.customer_id
+CROSS JOIN benchmark_stats bs
+WHERE cr.total_spent &gt; bs.avg_customer_spend
+ORDER BY cr.total_spent DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how readable the query is: each CTE acts like a clean modular variable.
+        </div>
+        
+        <h3>Code Example 5: Recursive CTE: Traversing an Organizational Management Hierarchy</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Trace the reporting chain starting from the CEO down to junior staff
+WITH RECURSIVE org_tree AS (
+    -- 1. Anchor Member: The CEO (has no manager)
+    SELECT emp_id, emp_name, manager_id, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- 2. Recursive Member: Join org_tree with employees reporting to it
+    SELECT e.emp_id, e.emp_name, e.manager_id, ot.level + 1
+    FROM employees e
+    JOIN org_tree ot ON e.manager_id = ot.emp_id
+)
+SELECT level, emp_name, emp_id, manager_id
+FROM org_tree
+ORDER BY level, emp_name;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The Anchor initializes level 1 (CEO). The Recursive member repeatedly joins child employees until no more reporting relationships exist.
+        </div>
+        
+        <h3>Code Example 6: Subquery in the FROM Clause (Derived Table)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Find the average number of orders placed by active users
+SELECT ROUND(AVG(user_order_count), 2) AS avg_orders_per_user
+FROM (
+    SELECT customer_id, COUNT(order_id) AS user_order_count
+    FROM orders
+    GROUP BY customer_id
+) AS user_summary; -- Derived tables must always have an alias!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Derived tables allow you to run aggregations on top of other aggregations.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Subqueries, Correlated Subqueries & CTEs (WITH Clause)</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Subqueries & CTE Sandbox
+CREATE TABLE staff (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    dept VARCHAR(30),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO staff VALUES
+(1, 'Alice', 'Tech', 90000),
+(2, 'Bob', 'Tech', 70000),
+(3, 'Charlie', 'HR', 55000),
+(4, 'David', 'HR', 65000),
+(5, 'Eva', 'Sales', 80000);
+
+-- Use a CTE to find staff earning more than their department average
+WITH dept_avg AS (
+    SELECT dept, AVG(salary) AS avg_sal
+    FROM staff
+    GROUP BY dept
+)
+SELECT s.name, s.dept, s.salary, ROUND(da.avg_sal, 2) AS dept_average
+FROM staff s
+JOIN dept_avg da ON s.dept = da.dept
+WHERE s.salary > da.avg_sal;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Forgetting an alias on a FROM subquery:</strong> In ANSI SQL, every subquery inside a <code>FROM</code> clause (derived table) must have an alias (e.g. <code>FROM (...) AS derived_table</code>).</li><li><strong>The NOT IN NULL trap:</strong> If a subquery used with <code>NOT IN</code> returns a single NULL value, the entire query returns 0 rows! Always use <code>NOT EXISTS</code> instead.</li><li><strong>Infinite loops in Recursive CTEs:</strong> If data contains cyclical reporting (A manages B, B manages A), a recursive CTE will loop forever until hitting max recursion limits.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Default to CTEs for readability:</strong> Any time a query requires more than one subquery, refactor to CTEs. Your teammates and future code reviewers will thank you.</li><li><strong>Use EXISTS over COUNT(*) &gt; 0:</strong> To check if a record exists, writing <code>IF EXISTS (SELECT 1 FROM ...)</code> stops at the first row. Writing <code>IF (SELECT COUNT(*) FROM ...) &gt; 0</code> forces the engine to scan the entire table to count everything!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>A scalar subquery returns a single value; a multi-row subquery returns a list of values.</li><li>Correlated subqueries reference columns from the outer query and execute per outer row.</li><li>EXISTS uses short-circuit boolean evaluation and is immune to the NOT IN NULL trap.</li><li>Common Table Expressions (CTEs) define clean, named temporary views using WITH.</li><li>Recursive CTEs traverse trees, graphs, and hierarchical parent-child data structures.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a query using a subquery to find all products whose price is strictly greater than the average price of all products.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WHERE price > (SELECT AVG(price) FROM products).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT product_name, price
+FROM products
+WHERE price &gt; (
+    SELECT AVG(price) FROM products
+);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a query using a CTE to find all departments where the total payroll expenditure is greater than $250,000.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WITH dept_payroll AS (SELECT department, SUM(salary)...) SELECT * FROM dept_payroll WHERE total > 250000.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">WITH dept_payroll AS (
+    SELECT 
+        department,
+        SUM(salary) AS total_payroll
+    FROM employees
+    GROUP BY department
+)
+SELECT department, total_payroll
+FROM dept_payroll
+WHERE total_payroll &gt; 250000.00
+ORDER BY total_payroll DESC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Rewrite the following query using <code>NOT EXISTS</code> to eliminate the dangerous NOT IN NULL bug: <code>SELECT * FROM customers WHERE customer_id NOT IN (SELECT customer_id FROM orders);</code></h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WHERE NOT EXISTS (SELECT 1 FROM orders WHERE orders.customer_id = customers.customer_id).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT c.*
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.customer_id = c.customer_id
+);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="A correlated subquery references values from the outer query and executes repeatedly for each outer row candidate.">
+          <div class="quiz-question-text">1. What is a Correlated Subquery?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A subquery that only works on correlated numbers</div><div class="quiz-option"><span>B)</span> A subquery that depends on values from the outer query for each row evaluated</div><div class="quiz-option"><span>C)</span> A subquery that runs in parallel on multiple servers</div><div class="quiz-option"><span>D)</span> A subquery that creates a new database</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Comparing any value to a set containing NULL with NOT IN results in UNKNOWN, causing all candidate rows to be discarded.">
+          <div class="quiz-question-text">2. Why is 'NOT IN' considered dangerous when the subquery might return a NULL value?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It consumes 100% CPU</div><div class="quiz-option"><span>B)</span> If even one NULL is returned, the entire condition evaluates to UNKNOWN and returns ZERO rows</div><div class="quiz-option"><span>C)</span> It causes the database to delete data</div><div class="quiz-option"><span>D)</span> It only works in MySQL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="CTEs are declared using the standard ANSI SQL keyword <code>WITH</code>.">
+          <div class="quiz-question-text">3. What keyword is used to declare a Common Table Expression (CTE)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> LET</div><div class="quiz-option"><span>B)</span> WITH</div><div class="quiz-option"><span>C)</span> DECLARE</div><div class="quiz-option"><span>D)</span> TEMP</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="CTEs turn complex inside-out nested logic into clean, readable, top-to-bottom pipeline steps.">
+          <div class="quiz-question-text">4. What is the main structural advantage of a CTE over deeply nested subqueries?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> CTEs run 1000 times faster always</div><div class="quiz-option"><span>B)</span> CTEs make queries modular, sequential, self-documenting, and easy to maintain</div><div class="quiz-option"><span>C)</span> CTEs do not require permissions</div><div class="quiz-option"><span>D)</span> CTEs prevent syntax errors</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="A recursive CTE requires an Anchor member (initial seed row) and a Recursive member (the step rule linked with UNION ALL).">
+          <div class="quiz-question-text">5. What are the two mandatory members of a Recursive CTE?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Input Member and Output Member</div><div class="quiz-option"><span>B)</span> Anchor Member and Recursive Member</div><div class="quiz-option"><span>C)</span> Primary Member and Foreign Member</div><div class="quiz-option"><span>D)</span> Start Member and End Member</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write a CTE called <code>high_earners</code> that filters staff with salary >= 75000, then select only their names and departments!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#subquery" class="ref-pill">Glossary: Subquery</a><a href="../reference/glossary.html#cte" class="ref-pill">Glossary: CTE</a><a href="08-window-functions.html" class="ref-pill">Lesson 08: Window Functions</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="06-joins-in-depth.html" class="btn btn-outline">&larr; 06. SQL Joins In-Depth</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-07">Mark as Complete</button>
+          <a href="08-window-functions.html" class="btn btn-primary">08. Window Functions &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Forms & Inputs — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="08-forms-and-inputs.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 08</span>
+          </div>
+          <h1 class="lesson-title">Forms and User Input Fields</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Turn static documents into two-way interactive applications that collect user data, selections, and file uploads.</span>
+            <span class="lang-hi">User se data lene ke liye forms (<code>&lt;form&gt;</code>), labels, text inputs, checkboxes, dropdowns aur submit buttons banana seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The fundamental architecture of <code>&lt;form&gt;</code>: <code>action</code>, <code>method</code> (GET vs POST).</li>
+            <li>Why every input MUST be paired with a <code>&lt;label for="..."&gt;</code> for accessibility.</li>
+            <li>Mastering input types: <code>text</code>, <code>password</code>, <code>email</code>, <code>number</code>, <code>checkbox</code>, <code>radio</code>, <code>date</code>, <code>range</code>, and <code>file</code>.</li>
+            <li>Multi-line inputs with <code>&lt;textarea&gt;</code> and dropdown menus with <code>&lt;select&gt;</code>.</li>
+            <li>The critical difference between <code>type="submit"</code>, <code>type="reset"</code>, and <code>type="button"</code>.</li>
+            <li>Organizing complex forms with <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="07-tables.html">07. Tables &amp; Data Grids</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The DMV Driver's License Application</div>
+          <p>
+            <span class="lang-en">Imagine walking into the Department of Motor Vehicles. An official hands you a clipboard holding a paper application form (<strong><code>&lt;form&gt;</code></strong>). Each blank line has a printed label like <em>"Legal Full Name"</em> (<strong><code>&lt;label&gt;</code></strong>) pointing to a physical blank line where you write (<strong><code>&lt;input type="text"&gt;</code></strong>). Multiple choice checkboxes let you pick your organ donor status (<strong><code>checkbox</code></strong>), while mutually exclusive bubble buttons force you to choose one license tier (<strong><code>radio</code></strong>). When you hand the completed paper back across the counter, that physical handover is the <strong>Submit action</strong>!</span>
+            <span class="lang-hi">DMV ya passport office ke application form ki tarah sochiye. Kagaz ka form <code>&lt;form&gt;</code> hai, har khane ke aage likha instruction <code>&lt;label&gt;</code> hai, khali dabba jahan likhte hain woh <code>&lt;input&gt;</code> hai, aur counter par form jama karna <strong>Submit</strong> button hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Form Container and the <code>&lt;label&gt;</code> Requirement</h2>
+        <p>
+          A form is an interactive envelope wrapping user controls. When the user clicks "Submit", the browser packages all input values and sends them to the server defined in the <code>action</code> attribute:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Accessible Form Baseline</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;form action="/submit-account" method="POST"&gt;
+  &lt;!-- CRITICAL ACCESSIBILITY: Explicit label-to-input association --&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label for="user-email"&gt;Email Address:&lt;/label&gt;
+    &lt;input type="email" id="user-email" name="email" required placeholder="you@domain.com"&gt;
+  &lt;/div&gt;
+
+  &lt;button type="submit"&gt;Create Account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The 3 Essential Identifiers on Inputs:</strong><br>
+          &bull; <code>type="email"</code>: Determines what kind of data the user enters and which mobile keyboard appears (with the <code>@</code> symbol!).<br>
+          &bull; <code>id="user-email"</code>: Matches the label's <code>for="user-email"</code>. Clicking the label focuses the input cursor automatically!<br>
+          &bull; <code>name="email"</code>: The key sent to the server in the form payload: <code>email=you@domain.com</code>. <em>If an input lacks a name attribute, its value is never sent to the server!</em>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. GET vs POST: Choosing the Right Method</h2>
+        <p>
+          The <code>method</code> attribute controls how the browser sends data:
+        </p>
+        <ul>
+          <li><strong>GET (Default):</strong> Appends all form data directly into the URL query string: <code>search.html?q=javascript&amp;page=1</code>. Used for searches, filters, and read-only lookups. <em>Never use GET for passwords, credit cards, or sensitive data!</em></li>
+          <li><strong>POST:</strong> Packages data inside the hidden HTTP request body payload. Used for account creation, payments, login forms, and file uploads.</li>
+        </ul>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Common Input Types Showcase</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Password: Masks characters with black dots --&gt;
+&lt;label for="pwd"&gt;Password:&lt;/label&gt;
+&lt;input type="password" id="pwd" name="password" minlength="8" required&gt;
+
+&lt;!-- 2. Number: Numeric keyboard with min, max, and step increments --&gt;
+&lt;label for="qty"&gt;Quantity:&lt;/label&gt;
+&lt;input type="number" id="qty" name="quantity" min="1" max="100" value="1"&gt;
+
+&lt;!-- 3. Date picker: Native calendar modal --&gt;
+&lt;label for="bday"&gt;Birthdate:&lt;/label&gt;
+&lt;input type="date" id="bday" name="birthdate"&gt;
+
+&lt;!-- 4. Color picker: Native RGB palette --&gt;
+&lt;label for="fav-color"&gt;Theme Color:&lt;/label&gt;
+&lt;input type="color" id="fav-color" name="theme_color" value="#2563eb"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Mobile Optimization:</strong> Using <code>type="number"</code> displays a numeric keypad on mobile devices; <code>type="tel"</code> brings up the telephone pad; <code>type="email"</code> brings up the email keyboard.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Form Inputs Live</h2>
+        <p>Interact with the inputs, pick a color, slide the range bar, and click submit to observe the live console:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Interactive Form Builder</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; line-height: 1.5; color: #1e293b; }
+    .form-row { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;
+    }
+    button { background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <form onsubmit="event.preventDefault(); alert('Form submitted cleanly!');">
+    <div class="form-row">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" placeholder="John Doe" required>
+    </div>
+
+    <div class="form-row">
+      <label for="skill">Experience Level:</label>
+      <select id="skill">
+        <option value="beginner">Beginner (Level 1)</option>
+        <option value="intermediate">Intermediate (Level 2)</option>
+        <option value="advanced">Advanced (Level 3)</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label>
+        <input type="checkbox" id="newsletter" checked> Subscribe to weekly web tips
+      </label>
+    </div>
+
+    <button type="submit">Complete Registration</button>
+  </form>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Radio Buttons vs Checkboxes</h2>
+        <p>
+          Students often confuse radio buttons with checkboxes. Here is the distinction:
+        </p>
+        <ul>
+          <li><strong>Checkboxes (<code>type="checkbox"</code>):</strong> Allow the user to select <em>zero, one, or multiple independent choices</em>.</li>
+          <li><strong>Radio Buttons (<code>type="radio"</code>):</strong> Force the user to choose <em>exactly one option from a mutually exclusive group</em>. To group radio buttons together, they must all share the <strong>exact same <code>name</code> attribute</strong>!</li>
+        </ul>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Radio Button Grouping</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;p&gt;Choose your payment frequency:&lt;/p&gt;
+
+&lt;!-- Notice both inputs share name="billing_cycle" --&gt;
+&lt;div&gt;
+  &lt;input type="radio" id="bill-monthly" name="billing_cycle" value="monthly" checked&gt;
+  &lt;label for="bill-monthly"&gt;Pay Monthly ($15/mo)&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;div&gt;
+  &lt;input type="radio" id="bill-annual" name="billing_cycle" value="annual"&gt;
+  &lt;label for="bill-annual"&gt;Pay Annually ($120/yr &mdash; Save 33%)&lt;/label&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Magic of <code>name</code>:</strong> Because both share <code>name="billing_cycle"</code>, selecting one automatically unchecks the other. If you gave them different names, they would behave independently like broken checkboxes!
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Dropdown Menus and Textareas</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Dropdown select menu with grouped categories --&gt;
+&lt;label for="topic-select"&gt;Select Inquiry Topic:&lt;/label&gt;
+&lt;select id="topic-select" name="topic"&gt;
+  &lt;optgroup label="Technical Support"&gt;
+    &lt;option value="bug"&gt;Report a Code Bug&lt;/option&gt;
+    &lt;option value="account"&gt;Account Access Issue&lt;/option&gt;
+  &lt;/optgroup&gt;
+  &lt;optgroup label="Sales & Partnerships"&gt;
+    &lt;option value="enterprise"&gt;Enterprise License&lt;/option&gt;
+    &lt;option value="sponsor"&gt;Sponsorship&lt;/option&gt;
+  &lt;/optgroup&gt;
+&lt;/select&gt;
+
+&lt;!-- Multi-line expandable text area (notice: has closing tag!) --&gt;
+&lt;label for="message-box"&gt;Detailed Feedback:&lt;/label&gt;
+&lt;textarea id="message-box" name="message" rows="5" placeholder="Type here..."&gt;&lt;/textarea&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Syntax Note:</strong> Unlike <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code> is NOT a void element &mdash; it requires a closing tag (<code>&lt;/textarea&gt;</code>). Any text placed between the opening and closing tag becomes the initial default content.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Grouping with <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></h3>
+        <p>For long forms, group related fields together for accessibility:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;fieldset&gt;
+  &lt;legend&gt;Shipping Address Details&lt;/legend&gt;
+
+  &lt;label for="street"&gt;Street Address:&lt;/label&gt;
+  &lt;input type="text" id="street" name="street"&gt;
+
+  &lt;label for="city"&gt;City:&lt;/label&gt;
+  &lt;input type="text" id="city" name="city"&gt;
+&lt;/fieldset&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Accessibility Advantage:</strong> When a screen reader enters the fieldset, it announces the <code>&lt;legend&gt;</code> title, so users always know which section they are currently filling out.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Reading Form Data in Modern JavaScript</h3>
+        <p>Modern JavaScript has a native <code>FormData</code> API that reads all inputs in 2 lines of code:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const form = document.querySelector("form");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault(); // Stop page reload
+
+  // Automatically extracts all inputs with name attributes
+  const data = new FormData(this);
+
+  // Convert to clean JavaScript object
+  const formValues = Object.fromEntries(data.entries());
+  console.log("Submitted Form Data:", formValues);
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Pro Feature:</strong> <code>new FormData(form)</code> automatically collects every text field, checked radio, selected dropdown, and password with zero manual DOM queries.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting the <code>name</code> attribute:</strong> An input with <code>id="email"</code> but NO <code>name="email"</code> will NEVER be sent to the server when the form is submitted! Always provide both.</li>
+            <li><strong>Not connecting labels with <code>for</code>:</strong> Writing <code>&lt;label&gt;Name&lt;/label&gt;&lt;input id="name"&gt;</code> does not connect them. The label must explicitly have <code>for="name"</code> matching the input's ID.</li>
+            <li><strong>Default button behavior inside forms:</strong> Any <code>&lt;button&gt;</code> inside a form defaults to <code>type="submit"</code>! If you want a button that triggers a JavaScript modal or calculation without submitting the form, you MUST write <code>&lt;button type="button"&gt;</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Use the <code>autocomplete</code> attribute (e.g. <code>autocomplete="email"</code> or <code>autocomplete="current-password"</code>) &mdash; this allows password managers like 1Password and Chrome to auto-fill securely.</li>
+            <li>Always add <code>placeholder</code> text to provide an example of expected formatting, but never rely on placeholders instead of visible <code>&lt;label&gt;</code> tags.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;form action="url" method="POST"&gt;</code> wraps user input controls.</li>
+            <li>Always link <code>&lt;label for="id"&gt;</code> to <code>&lt;input id="id"&gt;</code>.</li>
+            <li>Inputs MUST have a <code>name</code> attribute to submit data to the server.</li>
+            <li>Radio buttons must share the exact same <code>name</code> to be mutually exclusive.</li>
+            <li><code>&lt;select&gt;</code> creates dropdowns; <code>&lt;textarea&gt;</code> creates multi-line text boxes.</li>
+            <li>Always specify <code>type="button"</code> for buttons that should not submit the form.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Connect a Label to an Input</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Connect this label to the input so that clicking the word "Username" focuses the typing cursor:</p>
+          <pre class="code-content"><code data-lang="html">&lt;label&gt;Username:&lt;/label&gt;
+&lt;input type="text" id="user-field"&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Add the for attribute to the label.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;label for="user-field"&gt;Username:&lt;/label&gt;&lt;input type="text" id="user-field"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Fix Independent Radio Buttons</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>A user can select both "Small" and "Large" at the same time in this broken t-shirt size selector. Fix it so only one size can be chosen:</p>
+          <pre class="code-content"><code data-lang="html">&lt;input type="radio" id="s" name="size_s"&gt; Small
+&lt;input type="radio" id="l" name="size_l"&gt; Large</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Radio buttons must share the exact same name value.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Give both radios the exact same name (e.g. <code>name="tshirt_size"</code>):<br>
+              <pre><code>&lt;input type="radio" id="s" name="tshirt_size" value="S"&gt; Small
+&lt;input type="radio" id="l" name="tshirt_size" value="L"&gt; Large</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Prevent Accidental Form Submission</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Inside a form, a developer creates <code>&lt;button onclick="calculateTip()"&gt;Calculate&lt;/button&gt;</code>. Whenever users click it, the whole page refreshes and reloads. Why, and how do you fix it?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: What is the default type of a button tag inside a form?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Any button inside a form defaults to <code>type="submit"</code>, which triggers form submission and reloads the page! To prevent this, explicitly declare <code>type="button"</code>:<br>
+              <code>&lt;button type="button" onclick="calculateTip()"&gt;Calculate&lt;/button&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 08 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Matching the label's for attribute to the input's id binds them for accessibility and click-focus.">
+            <div class="quiz-question-text">1. How do you bind an HTML &lt;label&gt; element to its corresponding &lt;input&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> By writing them in the same &lt;div&gt;</div>
+              <div class="quiz-option"><span>B)</span> By setting label's for attribute equal to the input's id</div>
+              <div class="quiz-option"><span>C)</span> By matching their class names</div>
+              <div class="quiz-option"><span>D)</span> Labels are automatically bound by order</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Without a name attribute, an input's value is omitted from the submission payload.">
+            <div class="quiz-question-text">2. What happens when a form is submitted if an &lt;input&gt; has no name attribute?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The input's value is completely omitted from the submitted data</div>
+              <div class="quiz-option"><span>B)</span> The browser crashes</div>
+              <div class="quiz-option"><span>C)</span> The server sends a 404 error</div>
+              <div class="quiz-option"><span>D)</span> The input value turns into null</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="All radio buttons in a mutually exclusive group must share the same name attribute.">
+            <div class="quiz-question-text">3. What attribute must be IDENTICAL across a group of radio buttons so only one can be selected?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> id</div>
+              <div class="quiz-option"><span>B)</span> value</div>
+              <div class="quiz-option"><span>C)</span> name</div>
+              <div class="quiz-option"><span>D)</span> type</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The POST method sends data privately inside the HTTP request body payload.">
+            <div class="quiz-question-text">4. Which HTTP method should be used for forms that submit passwords or payments?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> GET</div>
+              <div class="quiz-option"><span>B)</span> FETCH</div>
+              <div class="quiz-option"><span>C)</span> URL</div>
+              <div class="quiz-option"><span>D)</span> POST</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Buttons inside a form default to type='submit'.">
+            <div class="quiz-question-text">5. What is the default type of a &lt;button&gt; element placed inside a &lt;form&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> type="button"</div>
+              <div class="quiz-option"><span>B)</span> type="submit"</div>
+              <div class="quiz-option"><span>C)</span> type="reset"</div>
+              <div class="quiz-option"><span>D)</span> type="action"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Add a Multi-Line Feedback Field</h3>
+          <p>
+            In the live editor above, add a <code>&lt;textarea&gt;</code> field with <code>id="bio"</code> and <code>rows="3"</code> where the student can enter their personal bio. Don't forget to pair it with a <code>&lt;label for="bio"&gt;Your Bio:&lt;/label&gt;</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#form" class="ref-pill">&lt;form&gt; Tag</a>
+            <a href="../reference/html-tags-reference.html#input" class="ref-pill">&lt;input&gt; Types Directory</a>
+            <a href="../reference/html-tags-reference.html#label" class="ref-pill">&lt;label&gt;</a>
+            <a href="../reference/html-tags-reference.html#select" class="ref-pill">&lt;select&gt; &amp; &lt;option&gt;</a>
+            <a href="../reference/glossary.html#form" class="ref-pill">Glossary: Form</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="07-tables.html" class="btn btn-outline">&larr; Previous: Tables &amp; Data Grids</a>
+          <button class="mark-complete-btn" data-lesson-id="html-08">Mark as Complete</button>
+          <a href="09-form-validation.html" class="btn btn-primary">Next: Form Validation &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Fonts & Typography — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="04-fonts-and-text.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 04</span>
+          </div>
+          <h1 class="lesson-title">Typography and Text Styling</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Elevate user readability with high-performance system font stacks, line heights, letter spacing, and line-length limits.</span>
+            <span class="lang-hi">Readable typography, system font stacks, <code>line-height</code> aur line-length control (<code>max-width: 65ch</code>) seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why modern <strong>System Font Stacks</strong> outperform external Google Fonts in speed and privacy.</li>
+            <li>How the browser resolves the font-family fallback chain.</li>
+            <li>Key typographic properties: <code>font-size</code>, <code>font-weight</code>, <code>line-height</code>, and <code>letter-spacing</code>.</li>
+            <li>Controlling text cases and decoration: <code>text-transform</code> and <code>text-decoration</code>.</li>
+            <li>Truncating overflowing single-line text cleanly with <code>text-overflow: ellipsis</code>.</li>
+            <li>The Golden Rule of Reading Comfort: Limiting line length to 65 characters (<code>65ch</code>).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="03-colors-units-backgrounds.html">03. Colors, Units &amp; Backgrounds</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Classical Letterpress Typesetter</div>
+          <p>
+            <span class="lang-en">Imagine an old-world German printer arranging physical lead letter blocks for a Gutenberg press. If the lead letters are crammed too tightly together without vertical spacing between rows (<strong>tight <code>line-height</code></strong>), your eye accidentally re-reads the same sentence twice. If the sentences stretch 3 feet wide across the paper (<strong>missing <code>max-width</code></strong>), your eye muscles become exhausted tracking back to the start of the next line. Typography in CSS is the science of optical comfort &mdash; guiding human eyes effortlessly down a page!</span>
+            <span class="lang-hi">Pustak chhapne wale typesetter ki tarah sochiye. Agar do lines ke beech bilkul jagah na ho (kam <code>line-height</code>), toh aankhein thak jaati hain aur wahi line baar-baar padhni padti hai. CSS typography aankhon ko araam dene aur text ko aasaani se padhne yogya banane ki kala hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Modern System Font Stack</h2>
+        <p>
+          In the past, developers downloaded heavy external web fonts from CDNs. Today, senior developers prefer <strong>Native System Font Stacks</strong>. Every modern operating system (macOS, Windows, iOS, Android) already contains world-class, multi-million-dollar typefaces pre-installed (San Francisco, Segoe UI, Roboto):
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Zero-Latency Modern System Font Stack</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* The Modern Clean UI Font Stack */
+body {
+  font-family:
+    system-ui,               /* Modern universal standard */
+    -apple-system,           /* Safari / iOS / macOS (San Francisco) */
+    BlinkMacSystemFont,      /* Chrome on macOS */
+    "Segoe UI",              /* Windows 10 & 11 */
+    Roboto,                  /* Android & ChromeOS */
+    "Helvetica Neue", Arial, /* Quality Linux & Older Systems */
+    sans-serif;              /* Universal Fallback Category */
+}
+
+/* Monospaced Code Font Stack */
+code, pre {
+  font-family:
+    ui-monospace,            /* Native OS code font */
+    SFMono-Regular,          /* macOS Terminal */
+    "SF Mono", Menlo,
+    Consolas,                /* Windows VS Code default */
+    "Liberation Mono",
+    monospace;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Incredible Benefits:</strong><br>
+          &bull; <strong>Zero Milliseconds Download Time:</strong> The fonts are already on the user's hard drive.<br>
+          &bull; <strong>100% Offline Compatible:</strong> Your website looks stunning without internet.<br>
+          &bull; <strong>Zero Privacy Leaks:</strong> No third-party network requests tracking user IP addresses.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Font Weights and Line Heights</h2>
+        <p>
+          Two properties define 80% of typographic beauty: <code>font-weight</code> and <code>line-height</code>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Numeric Font Weights &amp; Unitless Line Heights</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Numeric font-weight scale (100 to 900) */
+.text-thin      { font-weight: 300; }
+.text-regular   { font-weight: 400; } /* Standard body default */
+.text-medium    { font-weight: 500; }
+.text-semibold  { font-weight: 600; } /* Clear card headings */
+.text-bold      { font-weight: 700; } /* Major page titles */
+.text-extrabold { font-weight: 800; }
+
+/* 2. UNITLESS line-height (Golden Rule!) */
+p {
+  font-size: 1rem;
+  line-height: 1.7; /* 1.7 times the font-size (1.7 * 16px = 27.2px) */
+}
+
+h1 {
+  font-size: 2.5rem;
+  line-height: 1.2; /* Headings need tighter line-height so lines don't drift! */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why unitless line-height is mandatory:</strong> If you write <code>line-height: 24px;</code> on a parent, and an <code>&lt;h1&gt;</code> inside has a font-size of 40px, the lines will collide and smash into each other! Using unitless <code>1.5</code> or <code>1.7</code> allows every child to scale its own line height proportionally.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Typographic Harmony Studio</h2>
+        <p>Tweak line height, letter spacing, and character limits below to see readability transform:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Reading Experience Lab</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 24px;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .prose-container {
+      /* The Golden 65-character optimal line length */
+      max-width: 65ch;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
+    }
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.025em; /* Subtle modern tight heading tracking */
+      margin-top: 0;
+      color: #1e293b;
+    }
+    p {
+      font-size: 1.05rem;
+      line-height: 1.7; /* Spacious, comfortable breathing room */
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="prose-container">
+    <h2>The Art of Typographic Comfort</h2>
+    <p>Notice how easy this paragraph is to read. The lines are not too long, the vertical spacing between sentences gives breathing room, and the letter-spacing gives crisp character definition.</p>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Text Formatting Properties</h2>
+        <p>
+          Beyond font-family and size, CSS offers precise typographic formatting tools:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Essential Text Properties</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. text-transform: Change casing without altering HTML */
+.badge-category {
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* Always add slight letter-spacing to all-caps text! */
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* 2. text-decoration: Underlines and strike-throughs */
+a {
+  text-decoration: none; /* Strip ugly default blue underline */
+}
+a:hover {
+  text-decoration: underline; /* Restore underline on hover for clarity */
+}
+.sale-old-price {
+  text-decoration: line-through; /* Strikethrough pricing */
+  color: #94a3b8;
+}
+
+/* 3. text-align: Alignment */
+.quote-center {
+  text-align: center;
+}
+.financial-figure {
+  text-align: right; /* Numbers are easiest to compare aligned right */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Design Pro-Tip:</strong> Whenever you set <code>text-transform: uppercase;</code>, always add <code>letter-spacing: 0.05em;</code>. All-capital letters naturally clash into one another without extra breathing room.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Truncating Single-Line Text with Ellipsis (...)</h3>
+        <p>When user-generated text is too long for a table cell or card header, truncate it gracefully:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.truncate-line {
+  /* 1. Prevent text from wrapping to a second line */
+  white-space: nowrap;
+
+  /* 2. Clip any overflowing text */
+  overflow: hidden;
+
+  /* 3. Insert the three trailing dots (...) */
+  text-overflow: ellipsis;
+
+  max-width: 250px;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Magic Trio:</strong> All three properties (<code>white-space: nowrap</code>, <code>overflow: hidden</code>, and <code>text-overflow: ellipsis</code>) are strictly required together for the ellipsis to appear!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Limiting Line Length with <code>ch</code> Units</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1ch = the width of the number '0' in the current font */
+.article-body {
+  max-width: 68ch; /* Restricts lines to ~68 characters wide */
+  margin-left: auto;
+  margin-right: auto;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Optometry Fact:</strong> Human eye tracking fatigues when sentences exceed 75 characters per line. Using <code>max-width: 65ch</code> keeps blog posts and tutorials in the psychological sweet spot of reading comfort.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Checking Font Metrics with JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const heading = document.querySelector("h2");
+const styles = window.getComputedStyle(heading);
+
+console.log("Resolved Font Family:", styles.fontFamily);
+console.log("Computed Font Size:", styles.fontSize);
+console.log("Computed Line Height:", styles.lineHeight);
+console.log("Letter Spacing:", styles.letterSpacing);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Diagnostic Tool:</strong> You can run this in DevTools to verify which font in your fallback chain was successfully loaded by the operating system.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Hardcoding <code>line-height</code> in pixels:</strong> Writing <code>line-height: 20px;</code> on a body element causes large headings to overlap into unreadable text soup. Always use unitless numbers: <code>line-height: 1.6;</code>.</li>
+            <li><strong>Using <code>text-align: justify;</code> on the web:</strong> Justified text looks good in print because printers hyphenate words manually. On web browsers, justification creates awkward "rivers of white space" that disorient dyslexic readers. Stick to left alignment.</li>
+            <li><strong>Neglecting generic fallback fonts:</strong> Always end your <code>font-family</code> with a generic family name like <code>sans-serif</code>, <code>serif</code>, or <code>monospace</code> as the ultimate safety net.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Use negative letter-spacing (<code>letter-spacing: -0.02em;</code>) on large bold headings (32px+) to make them look punchy, editorial, and polished.</li>
+            <li>For code snippets, use <code>ui-monospace</code> &mdash; it renders Apple's SF Mono on Mac and Microsoft's Consolas on Windows without downloading a single byte over the network!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>System font stacks deliver instant, offline typography with zero download latency.</li>
+            <li>Always use unitless <code>line-height</code> (e.g. <code>1.6</code> for body, <code>1.2</code> for headings).</li>
+            <li>Limit prose line length to <code>max-width: 65ch</code> for optimal reading comfort.</li>
+            <li>Pair <code>text-transform: uppercase</code> with slight <code>letter-spacing</code>.</li>
+            <li>Truncate single lines with <code>white-space: nowrap; overflow: hidden; text-overflow: ellipsis;</code>.</li>
+            <li>Always end <code>font-family</code> chains with a generic fallback (<code>sans-serif</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Create an All-Caps Category Badge</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the CSS rules to transform <code>.badge</code> text into uppercase with 0.05em letter spacing and bold weight (600).</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use text-transform, letter-spacing, and font-weight.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.badge {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Prevent Long Reading Fatigue</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>What two CSS properties ensure a blog post has comfortable line spacing and does not stretch past 70 characters wide on large desktop screens?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look at line-height and max-width with ch units.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>line-height: 1.7; max-width: 70ch;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Single-Line Truncation Bundle</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the complete 3-property CSS rule to truncate user names longer than 200px with a trailing ellipsis (...).</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: white-space, overflow, and text-overflow.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.user-name {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 04 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="System font stacks load with 0ms delay because the fonts are already on the device's storage.">
+            <div class="quiz-question-text">1. What is the major performance advantage of using native System Font Stacks?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They render in 3D automatically</div>
+              <div class="quiz-option"><span>B)</span> They compress images by 50%</div>
+              <div class="quiz-option"><span>C)</span> Zero network download latency because fonts are already installed locally on the OS</div>
+              <div class="quiz-option"><span>D)</span> They work only in Google Chrome</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Unitless line-height (e.g. 1.6) scales proportionally across all child font sizes without collision.">
+            <div class="quiz-question-text">2. Why should line-height always be specified as a unitless number (e.g. 1.6) rather than pixels?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Browsers do not support pixels for line-height</div>
+              <div class="quiz-option"><span>B)</span> Unitless line-height scales proportionally for child elements of varying font sizes</div>
+              <div class="quiz-option"><span>C)</span> Unitless line-height is bolder</div>
+              <div class="quiz-option"><span>D)</span> Pixels break text color</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The 'ch' unit is approximately the width of the character '0' in the current font.">
+            <div class="quiz-question-text">3. What does 1ch represent in CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The width of the '0' (zero) glyph in the active font</div>
+              <div class="quiz-option"><span>B)</span> Exactly 1 centimeter</div>
+              <div class="quiz-option"><span>C)</span> 100 pixels</div>
+              <div class="quiz-option"><span>D)</span> The height of the capital letter 'C'</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="All three properties must be present to produce an ellipsis.">
+            <div class="quiz-question-text">4. Which trio of CSS properties is required to truncate text with an ellipsis (...)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> display: flex; text-align: right; clip: auto;</div>
+              <div class="quiz-option"><span>B)</span> font-size: 14px; text-decoration: none; word-break: break-all;</div>
+              <div class="quiz-option"><span>C)</span> transform: scale(0.9); opacity: 0.5; filter: blur(2px);</div>
+              <div class="quiz-option"><span>D)</span> white-space: nowrap; overflow: hidden; text-overflow: ellipsis;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="45 to 75 characters (or ~65ch) is scientifically recognized as the optimal line length.">
+            <div class="quiz-question-text">5. What is the recommended optimal line length for readable body prose?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 150 to 200 characters</div>
+              <div class="quiz-option"><span>B)</span> 45 to 75 characters (around 65ch)</div>
+              <div class="quiz-option"><span>C)</span> Exactly 10 characters</div>
+              <div class="quiz-option"><span>D)</span> 1000 characters</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create an Editorial Callout</h3>
+          <p>
+            In the live editor above, change the <code>h2</code> font weight to <code>900</code>, add a subtle letter-spacing of <code>-0.03em</code>, and change the paragraph line-height to <code>1.8</code>. Click <strong>Run Code</strong> to feel the luxury magazine typographic aesthetic!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#typography" class="ref-pill">Typography Properties Reference</a>
+            <a href="../reference/glossary.html#typography" class="ref-pill">Glossary: Typography</a>
+            <a href="../reference/glossary.html#system-font" class="ref-pill">Glossary: System Font Stack</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Typography Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-colors-units-backgrounds.html" class="btn btn-outline">&larr; Previous: Colors, Units &amp; Backgrounds</a>
+          <button class="mark-complete-btn" data-lesson-id="css-04">Mark as Complete</button>
+          <a href="05-box-model.html" class="btn btn-primary">Next: The Box Model &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

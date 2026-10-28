@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypePulse | Minimalist Offline Typing Speed Test</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+  <a href="#words-container" class="skip-link">Skip to typing test</a>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="TypePulse Home">
+        <div class="brand-icon">
+          <!-- Inline SVG Keyboard Logo -->
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2.5" ry="2.5"></rect>
+            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path>
+            <path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"></path>
+            <path d="M8 16h8"></path>
+          </svg>
+        </div>
+        <span class="brand-title">Type<span>Pulse</span></span>
+        <span class="brand-badge">Offline</span>
+      </a>
+
+      <!-- Main Navigation -->
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="index.html" class="nav-link active" title="Typing Speed Test">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+          <span>Test</span>
+        </a>
+        <a href="learn/index.html" class="nav-link" title="Touch Typing Lessons">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span>Learn</span>
+        </a>
+        <a href="stats/index.html" class="nav-link" title="History & Statistics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg>
+          <span>Stats</span>
+        </a>
+        <a href="leaderboard/index.html" class="nav-link" title="Local Leaderboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path><path d="M14 14.66V17c0 .55.45 1 1 1h2"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          <span>Leaderboard</span>
+        </a>
+        <a href="settings/index.html" class="nav-link" title="Settings & Appearance">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </a>
+        <a href="about/index.html" class="nav-link" title="How WPM is Calculated & FAQ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          <span>About</span>
+        </a>
+      </nav>
+
+      <!-- Theme Switcher Button -->
+      <div class="header-actions">
+        <button id="theme-cycle-btn" class="btn btn-ghost btn-icon" title="Switch color theme" onclick="window.TypeApp.Theme.cycleTheme()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+
+    <!-- Active Test View -->
+    <div id="test-view">
+
+      <!-- Test Configuration Bar -->
+      <div class="test-config-bar" role="toolbar" aria-label="Test mode settings">
+        <!-- Modes -->
+        <div class="config-group">
+          <button class="config-btn active" data-mode="time" title="Timed Test">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            time
+          </button>
+          <button class="config-btn" data-mode="words" title="Words Count Test">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"></path></svg>
+            words
+          </button>
+          <button class="config-btn" data-mode="quote" title="Curated Quotes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"></path></svg>
+            quote
+          </button>
+          <button class="config-btn" data-mode="zen" title="Zen Free Typing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>
+            zen
+          </button>
+          <button id="btn-mode-custom" class="config-btn" data-mode="custom" title="Custom Pasted Text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            custom
+          </button>
+        </div>
+
+        <div class="config-separator"></div>
+
+        <!-- Submode: Time numbers -->
+        <div id="submode-time-group" class="config-group">
+          <button class="config-btn" data-submode="15">15</button>
+          <button class="config-btn active" data-submode="30">30</button>
+          <button class="config-btn" data-submode="60">60</button>
+          <button class="config-btn" data-submode="120">120</button>
+        </div>
+
+        <!-- Submode: Words count -->
+        <div id="submode-words-group" class="config-group" style="display: none;">
+          <button class="config-btn" data-submode="10">10</button>
+          <button class="config-btn active" data-submode="25">25</button>
+          <button class="config-btn" data-submode="50">50</button>
+          <button class="config-btn" data-submode="100">100</button>
+        </div>
+
+        <!-- Submode: Quotes options -->
+        <div id="submode-quote-group" class="config-group" style="display: none;">
+          <button class="config-btn" data-submode="short">short</button>
+          <button class="config-btn active" data-submode="medium">medium</button>
+          <button class="config-btn" data-submode="long">long</button>
+        </div>
+
+        <div class="config-separator"></div>
+
+        <!-- Toggles: Punctuation & Numbers -->
+        <div class="config-group">
+          <button id="toggle-punct" class="config-btn" title="Include punctuation marks">@ punctuation</button>
+          <button id="toggle-numbers" class="config-btn" title="Include numbers"># numbers</button>
+        </div>
+
+        <div class="config-separator"></div>
+
+        <!-- Difficulty Pill -->
+        <div class="config-group">
+          <button class="config-btn" data-difficulty="easy" title="Common 200 words">easy</button>
+          <button class="config-btn active" data-difficulty="medium" title="1000 standard words">medium</button>
+          <button class="config-btn" data-difficulty="hard" title="Rare & polysyllabic words">hard</button>
+          <button class="config-btn" data-difficulty="code" title="JS/HTML/CSS snippets">&lt;code&gt;</button>
+        </div>
+
+        <div class="config-separator"></div>
+
+        <!-- Language Pill -->
+        <div class="config-group">
+          <button class="config-btn active" data-language="english" title="English vocabulary">English</button>
+          <button class="config-btn" data-language="hinglish" title="Romanized Hindi words">Hinglish</button>
+        </div>
+      </div>
+
+      <!-- Live Stats (Fadeable) -->
+      <div id="live-stats" class="live-stats">
+        <div class="live-stat-item">
+          <div id="stat-timer" class="live-stat-value">30s</div>
+          <div class="live-stat-label">Time Remaining</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="stat-wpm" class="live-stat-value">0</div>
+          <div class="live-stat-label">Live WPM</div>
+        </div>
+        <div class="live-stat-item">
+          <div id="stat-acc" class="live-stat-value">100%</div>
+          <div class="live-stat-label">Accuracy</div>
+        </div>
+      </div>
+
+      <!-- Typing Box Area -->
+      <div id="typing-wrapper" class="typing-wrapper" tabindex="0" role="textbox" aria-label="Typing test area" aria-multiline="true">
+        <div id="words-container" class="words-container">
+          <div id="words-track" class="words-track">
+            <!-- Words dynamically rendered here -->
+          </div>
+          <!-- Animated Caret -->
+          <div id="caret" class="caret" aria-hidden="true"></div>
+        </div>
+
+        <!-- Quote Author (shown if quote mode) -->
+        <div id="quote-author" style="display: none; text-align: right; color: var(--text-muted); font-size: 0.9rem; font-style: italic; margin-top: 0.75rem;"></div>
+
+        <!-- Blur / Focus Prompt Overlay -->
+        <div id="focus-overlay" class="focus-overlay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path>
+            <path d="M8 16h8"></path>
+          </svg>
+          <span>Click here or press any key to focus</span>
+        </div>
+
+        <!-- Hidden input for mobile keyboard support -->
+        <input id="mobile-input" class="mobile-input-hidden" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+
+      <!-- Actions under typing box -->
+      <div class="test-actions-bar">
+        <button id="btn-restart" class="btn btn-ghost" title="Restart test (Tab + Enter)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          Restart Test
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Result Screen View (Hidden until test ends) -->
+    <div id="result-view" class="result-screen">
+      <div class="result-header">
+        <div class="result-main-stat">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <span id="res-skill-badge" class="result-skill-badge">Intermediate</span>
+            <span id="res-pb-badge" class="pb-badge" style="display: none;">★ New Personal Best!</span>
+          </div>
+          <div id="res-wpm-val" class="result-wpm-val">68</div>
+          <div class="result-wpm-label">Net Words Per Minute</div>
+        </div>
+
+        <!-- Quick result actions -->
+        <div class="result-actions" style="margin-top: 0;">
+          <button id="btn-try-again" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+            Next Test
+          </button>
+          <button id="btn-repeat-test" class="btn btn-ghost" title="Repeat identical words">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><path d="M7 23l-4-4 4-4"></path><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            Repeat Same Text
+          </button>
+          <button id="btn-practice-weak" class="btn btn-ghost" title="Practice weak words from this test">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            Practice Weak Words
+          </button>
+        </div>
+      </div>
+
+      <!-- Metrics Grid -->
+      <div class="result-metrics-grid">
+        <div class="metric-card">
+          <div id="res-acc-val" class="metric-card-val">98%</div>
+          <div class="metric-card-lbl">Accuracy</div>
+        </div>
+        <div class="metric-card">
+          <div id="res-raw-val" class="metric-card-val">72</div>
+          <div class="metric-card-lbl">Raw WPM</div>
+        </div>
+        <div class="metric-card">
+          <div id="res-cons-val" class="metric-card-val">89%</div>
+          <div class="metric-card-lbl">Consistency</div>
+        </div>
+        <div class="metric-card">
+          <div id="res-chars-val" class="metric-card-val" style="font-size: 1.4rem;">340/8/0/0</div>
+          <div class="metric-card-lbl">Chars (ok/err/extra/miss)</div>
+        </div>
+        <div class="metric-card">
+          <div id="res-time-val" class="metric-card-val">30s</div>
+          <div class="metric-card-lbl">Duration</div>
+        </div>
+        <div class="metric-card">
+          <div id="res-mode-val" class="metric-card-val" style="font-size: 1.3rem;">time 30</div>
+          <div class="metric-card-lbl">Mode</div>
+        </div>
+      </div>
+
+      <!-- Line Graph Canvas -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <span>WPM Progression & Errors (Red Dots)</span>
+          <span style="font-size: 0.75rem; text-transform: none; color: var(--text-sub);">Dashed line = Average WPM</span>
+        </div>
+        <canvas id="result-chart" class="chart-canvas"></canvas>
+      </div>
+
+      <!-- Weak Words & Keys Breakdown -->
+      <div class="result-analysis-section">
+        <div class="analysis-title">Mistyped Words in this run:</div>
+        <div id="res-weak-words-list" class="tags-list" style="margin-bottom: 1.25rem;">
+          <!-- tags -->
+        </div>
+
+        <div class="analysis-title">Mistyped Keys:</div>
+        <div id="res-weak-keys-list" class="tags-list">
+          <!-- tags -->
+        </div>
+      </div>
+
+      <!-- Secondary Share & Export buttons -->
+      <div class="result-actions">
+        <button id="btn-share-img" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Share as Image (PNG)
+        </button>
+        <button id="btn-copy-result" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copy Text Summary
+        </button>
+        <button id="btn-next-test" class="btn btn-primary">
+          Start Another Test &rarr;
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Custom Text Modal -->
+  <div id="custom-text-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
+    <div class="modal-card">
+      <h2 id="custom-modal-title" class="modal-title">Custom Practice Text</h2>
+      <p class="modal-desc">Paste your own custom paragraph, article, or practice text below:</p>
+      <textarea id="custom-input-text" class="custom-textarea" placeholder="Paste custom words here..."></textarea>
+      <div class="modal-footer">
+        <button id="modal-close-btn" class="btn btn-ghost">Cancel</button>
+        <button id="modal-apply-btn" class="btn btn-primary">Start Custom Test</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti Container -->
+  <div id="confetti-container" class="confetti-wrapper" aria-hidden="true"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="footer-shortcuts">
+        <span class="shortcut-item"><kbd>Tab</kbd> + <kbd>Enter</kbd> restart</span>
+        <span class="shortcut-item"><kbd>Esc</kbd> reset</span>
+      </div>
+      <div class="offline-pill">
+        <span class="offline-dot"></span>
+        100% Offline &middot; Zero External Dependencies
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts Loaded in Order (Vanilla JS, No ES modules on file://) -->
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/sound.js"></script>
+  <script src="assets/js/words.js"></script>
+  <script src="assets/js/quotes.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/chart.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

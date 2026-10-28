@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="12">
+  <title>Java 8+ Functional Programming: Streams, Lambdas & Optional | WebDev Academy</title>
+  <meta name="description" content="Master Java functional programming: Lambdas, Streams API (filter, map, flatMap, reduce, collect), Method References, Optional to avoid NPE, and Collectors.">
+  <meta name="keywords" content="Java streams API, Java lambdas, Optional java, filter map reduce, method references, Collectors groupingBy">
+  <meta property="og:title" content="Java 8+ Functional Programming: Streams, Lambdas & Optional">
+  <meta property="og:description" content="Master Java functional programming: Lambdas, Streams API (filter, map, flatMap, reduce, collect), Method References, Optional to avoid NPE, and Collectors.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 20 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">12. Functional Programming: Lambdas, Streams API & Optional</h1>
+          <p class="lesson-subtitle">Declarative data pipelines in modern Java: Transforming collections without mutating them, lazy evaluation, method references, and writing null-safe code with Optional.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 09 (Collections) & Lesson 10 (Generics).</p>
+            <ul>
+              <li>Understand Functional Interfaces (`Predicate`, `Function`, `Consumer`, `Supplier`).</li><li>Master the 3 stages of a Stream pipeline: Source, Intermediate operations, and Terminal operations.</li><li>Contrast Intermediate (Lazy) vs Terminal (Eager) Stream operations.</li><li>Master `filter`, `map`, `flatMap`, `reduce`, and `Collectors.groupingBy()`.</li><li>Use `Optional<T>` correctly to eradicate `NullPointerException`.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Factory Assembly Line & The Gift Box Analogy</h3>
+      <p><strong>Streams (The Factory Conveyor Belt):</strong> Think of a car manufacturing assembly line. In old imperatve programming, you walked into the warehouse, picked up every single part, hammered it with a loop, stored it in temporary boxes, and repeated. Exhausting!</p>
+      <p>With Java Streams, parts ride along an automatic conveyor belt:</p>
+      <ul>
+        <li><strong>Intermediate Operations (Lazy Workers):</strong> Station 1 discards scratched metal (<code>filter</code>). Station 2 paints remaining parts silver (<code>map</code>). Nobody touches a single piece of metal until the master switch at the very end is turned on (<strong>Lazy Evaluation</strong>)!</li>
+        <li><strong>Terminal Operation (The Packaging Unit):</strong> Turning the final lever (<code>collect(toList())</code> or <code>count()</code>) pulls all parts through the stations simultaneously in a single clean pass!</li>
+      </ul>
+      <p><strong>Optional (The Schrödinger's Gift Box):</strong> Instead of handing someone a raw item that might evaporate into <code>null</code> and blow up in their face, you hand them a sealed decorative box (<code>Optional&lt;User&gt;</code>). They can inspect <code>box.isPresent()</code> or safely unwrap with <code>box.orElse(defaultUser)</code> without ever crashing!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (फैक्ट्री का कन्वेयर बेल्ट और सीलबंद डिब्बा)</h3>
+      <p><strong>Streams API:</strong> सोचिए एक फैक्ट्री का कन्वेयर बेल्ट है। आम को छांटा जाता है (<code>filter</code> - सड़े आम बाहर), फिर उनका छिलका उतारकर जूस बनाया जाता है (<code>map</code>), और अंत में बोतल में पैक कर दिया जाता है (<code>collect</code>)। जब तक आखिरी बोतल वाला स्विच (Terminal Operation) नहीं दबाया जाता, तब तक बेल्ट चालू ही नहीं होती (Lazy Evaluation)!</p>
+      <p><strong>Optional:</strong> किसी को सीधे खाली हाथ भेजने के बजाय एक डिब्बा देना। डिब्बे के अंदर गिफ्ट हो भी सकता है और खाली भी। इसलिए आप <code>.orElse("Default")</code> लगाकर हमेशा सुरक्षित रहते हैं, कभी <code>NullPointerException</code> नहीं आता!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The 4 Core Functional Interfaces (java.util.function)</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Interface</th>
+            <th>Method Signature</th>
+            <th>Purpose</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Predicate&lt;T&gt;</code></td><td><code>boolean test(T t)</code></td><td>Condition / Filtering check</td><td><code>user -> user.getAge() >= 18</code></td></tr>
+          <tr><td><code>Function&lt;T, R&gt;</code></td><td><code>R apply(T t)</code></td><td>Transforms T into R</td><td><code>User::getEmail</code></td></tr>
+          <tr><td><code>Consumer&lt;T&gt;</code></td><td><code>void accept(T t)</code></td><td>Consumes input (side-effects)</td><td><code>System.out::println</code></td></tr>
+          <tr><td><code>Supplier&lt;T&gt;</code></td><td><code>T get()</code></td><td>Supplies output (factory)</td><td><code>() -> UUID.randomUUID().toString()</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. Lazy Evaluation & Short-Circuiting in Streams</h3>
+      <p>Streams are completely <strong>lazy</strong>: intermediate operations like <code>filter()</code> and <code>map()</code> are never executed until a terminal operation (<code>collect()</code>, <code>findFirst()</code>) is invoked:</p>
+      <div class="code-box">
+        <pre><code class="language-java">List<String> names = List.of("Aarav", "Priya", "Ananya", "Rohan");
+
+// Only 1 name passes filter before findFirst terminates the pipeline!
+String firstMatch = names.stream()
+    .filter(name -> {
+        System.out.println("Filtering: " + name);
+        return name.startsWith("A");
+    })
+    .findFirst() // Short-circuit terminal operation!
+    .orElse("None");</code></pre>
+      </div>
+
+      <h3>3. The Golden Rules of Optional&lt;T&gt;</h3>
+      <ul>
+        <li><strong>DO:</strong> Use <code>Optional&lt;T&gt;</code> as the return type of methods that might legitimately return no value.</li>
+        <li><strong>DON'T:</strong> Never use <code>Optional</code> as method parameters or class fields (wastes heap memory and is not serializable).</li>
+        <li><strong>DON'T:</strong> Never call <code>opt.get()</code> blindly without checking <code>isPresent()</code> &mdash; use <code>orElse()</code>, <code>orElseGet()</code>, or <code>orElseThrow()</code>!</li>
+      </ul>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Explain the difference between Intermediate and Terminal operations in Java Streams. What is the difference between orElse() and orElseGet() in Optional?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Intermediate vs Terminal Operations:</strong> Intermediate operations (filter, map, sorted, flatMap) return a new Stream and are lazily evaluated. Terminal operations (collect, forEach, reduce, count) trigger the execution of the pipeline and return a non-stream result or side effect. A stream cannot be reused after a terminal operation.</li><li><strong>Lazy Execution & Optimization:</strong> Because intermediate operations are lazy, the JVM optimizes execution by fusing multiple operations into a single pass and applying short-circuiting (e.g. limit(5) or findFirst() halts traversal early).</li><li><strong>orElse() vs orElseGet():</strong> In `opt.orElse(computeDefault())`, the default expression is evaluated eagerly every single time, even if the Optional already contains a value! In `opt.orElseGet(() -> computeDefault())`, the supplier lambda is executed lazily ONLY if the Optional is empty, saving expensive computations.</li><li><strong>flatMap vs map:</strong> `map()` transforms elements one-to-one (Stream<T> -> Stream<R>). `flatMap()` flattens nested structures one-to-many (e.g. Stream<List<Item>> -> Stream<Item>).</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always highlight: "Always prefer orElseGet(Supplier) over orElse() when the fallback involves object instantiation or expensive logic. Streams do not mutate their source data."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Advanced Stream Aggregation with Collectors.groupingBy</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.util.*;
+import java.util.stream.Collectors;
+
+public class StreamGroupingDemo {
+    public static void main(String[] args) {
+        List<Order> orders = List.of(
+            new Order("ELECTRONICS", 1200.0),
+            new Order("BOOKS", 45.0),
+            new Order("ELECTRONICS", 350.0),
+            new Order("BOOKS", 85.0),
+            new Order("FASHION", 150.0)
+        );
+
+        // Group total sales revenue by category in one elegant line!
+        Map<String, Double> revenueByCategory = orders.stream()
+            .collect(Collectors.groupingBy(
+                Order::getCategory,
+                Collectors.summingDouble(Order::getAmount)
+            ));
+
+        revenueByCategory.forEach((cat, total) -> 
+            System.out.println(cat + ": $" + total));
+    }
+}
+
+class Order {
+    private String cat; private double amt;
+    public Order(String c, double a) { cat=c; amt=a; }
+    public String getCategory() { return cat; }
+    public double getAmount() { return amt; }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Safe Domain Querying with Optional</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public Optional<User> findUserByEmail(String email) {
+    if ("admin@company.com".equalsIgnoreCase(email)) {
+        return Optional.of(new User("Admin", email));
+    }
+    return Optional.empty(); // Clean, explicit absence of value
+}
+
+// Client Consumption:
+String welcomeMessage = findUserByEmail(inputEmail)
+    .map(User::getName)
+    .map(name -> "Welcome back, " + name + "!")
+    .orElseGet(() -> "Welcome, Guest! Please sign up.");</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('12')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-12" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">import java.util.*;
+import java.util.stream.Collectors;
+
+public class StreamsSandbox {
+    public static void main(String[] args) {
+        List<Integer> nums = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        
+        // Filter even numbers, square them, and collect into a list
+        List<Integer> evenSquares = nums.stream()
+            .filter(n -> n % 2 == 0)
+            .map(n -> n * n)
+            .collect(Collectors.toList());
+
+        System.out.println("Even Squares: " + evenSquares);
+        
+        int totalSum = evenSquares.stream().reduce(0, Integer::sum);
+        System.out.println("Total Sum: " + totalSum);
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-12" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Reusing a Consumed Stream:</strong> Calling a terminal operation twice on the exact same Stream instance throws `IllegalStateException: stream has already been operated upon or closed`.</li><li><strong>Using `orElse(new ExpensiveObject())`:</strong> Instantiates `ExpensiveObject` on every execution regardless of whether the Optional has a value. Use `orElseGet(() -> new ExpensiveObject())`.</li><li><strong>Modifying External State Inside `forEach`:</strong> Mutating shared lists inside `stream().forEach(list::add)` is an anti-pattern and breaks with `parallelStream()`. Use `.collect()` instead.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use Method References (`Class::method`):</strong> Replace verbose lambdas `u -> u.getName()` with clean method references `User::getName`.</li><li><strong>Be Cautious with `parallelStream()`:</strong> Parallel streams use the shared common `ForkJoinPool`. Running blocking I/O inside parallel streams can starve the entire JVM!</li><li><strong>Leverage `Collectors.toMap()` with Merge Function:</strong> Always provide a merge rule `(existing, incoming) -> incoming` to prevent crashes when duplicate keys exist.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Streams process data declaratively without mutating the source.:</strong> Intermediate operations are lazy; terminal operations execute the pipeline.</li><li><strong>Core Functional Interfaces::</strong> Predicate (test), Function (apply), Consumer (accept), Supplier (get).</li><li><strong>Optional represents presence or absence of value;:</strong> use `orElseGet()` for lazy evaluation.</li><li><strong>Collectors.groupingBy and partitioningBy:</strong> provide powerful SQL-like aggregations in memory.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Filter and Uppercase</h4>
+        <p>Given a list of names, filter those starting with "J", convert to uppercase, and collect to list.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">List<String> result = names.stream()
+    .filter(n -> n.startsWith("J"))
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Flatten Nested Lists (flatMap)</h4>
+        <p>Given <code>List&lt;List&lt;String&gt;&gt; departmentSkills</code>, produce a distinct sorted list of all skills.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">List<String> allSkills = departmentSkills.stream()
+    .flatMap(List::stream)
+    .distinct()
+    .sorted()
+    .collect(Collectors.toList());</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Find Second Highest Number</h4>
+        <p>Find the second highest number in a list of integers using the Streams API.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">Optional<Integer> secondHighest = numbers.stream()
+    .distinct()
+    .sorted(Comparator.reverseOrder())
+    .skip(1)
+    .findFirst();</code></pre>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What happens if an intermediate stream operation is invoked without a terminal operation?</strong></p>
+        <label><input type="radio" name="q1" value="0"> It runs immediately in the background</label><br>
+        <label><input type="radio" name="q1" value="1"> Nothing is executed (Lazy Evaluation)</label><br>
+        <label><input type="radio" name="q1" value="0"> It throws an IllegalStateException</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Why is `opt.orElseGet(supplier)` preferred over `opt.orElse(value)` for expensive fallbacks?</strong></p>
+        <label><input type="radio" name="q2" value="1"> orElseGet executes the supplier lazily only if the Optional is empty</label><br>
+        <label><input type="radio" name="q2" value="0"> orElseGet is synchronized across threads</label><br>
+        <label><input type="radio" name="q2" value="0"> orElse is deprecated in Java 17</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Which functional interface accepts an argument and returns a boolean?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Consumer</label><br>
+        <label><input type="radio" name="q3" value="1"> Predicate</label><br>
+        <label><input type="radio" name="q3" value="0"> Supplier</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Can a Stream be traversed multiple times after calling `.collect()`?</strong></p>
+        <label><input type="radio" name="q4" value="0"> Yes, unlimited times</label><br>
+        <label><input type="radio" name="q4" value="1"> No, calling a terminal operation consumes and closes the stream</label><br>
+        <label><input type="radio" name="q4" value="0"> Only if declared serializable</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What stream operation is used to flatten a stream of collections into a single stream of elements?</strong></p>
+        <label><input type="radio" name="q5" value="1"> flatMap</label><br>
+        <label><input type="radio" name="q5" value="0"> map</label><br>
+        <label><input type="radio" name="q5" value="0"> reduce</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build an E-Commerce Analytics Pipeline with Streams</strong>
+            </div>
+            <div class="callout-body">
+              <p>Given a dataset of transactions, use Streams to filter completed orders, group total revenue by product category, and find the top-selling customer.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.util.*;
+import java.util.stream.*;
+
+public class SalesAnalytics {
+    // TODO: Write stream pipeline calculating top metrics
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="11-multithreading-concurrency.html" class="btn btn-outline">&larr; Prev: Multithreading & Concurrency</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-12')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="13-jdbc-and-database-connectivity.html" class="btn btn-primary">Next: JDBC & Database Persistence &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Even Squares: [4, 16, 36, 64, 100]\nTotal Sum: 220\nStream processing pipeline completed.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

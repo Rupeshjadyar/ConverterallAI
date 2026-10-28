@@ -68,6 +68,7 @@ export class AnalyticsService {
 
   public analyticsData = signal<AnalyticsState>(this.getEmptyState());
   private pollingTimer: any = null;
+  private consecutiveErrors = 0;
 
   init(): void {
     if (!this.isBrowser) return;
@@ -122,22 +123,32 @@ export class AnalyticsService {
     if (!this.isBrowser) return;
 
     fetch('/api/telemetry/stats')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Telemetry API not available');
+        return res.json();
+      })
       .then((data: AnalyticsState) => {
         if (data && typeof data.totalVisitors === 'number') {
           this.analyticsData.set(data);
+          this.consecutiveErrors = 0;
         }
       })
       .catch(() => {
-        // In local or static mode fallback, keep state updated
+        this.consecutiveErrors++;
+        // If API fails 3 times consecutively (e.g. static host or backend down), pause aggressive polling
+        if (this.consecutiveErrors >= 3 && this.pollingTimer) {
+          clearInterval(this.pollingTimer);
+          this.pollingTimer = null;
+        }
       });
   }
 
   public startLivePolling(): void {
     if (this.pollingTimer) clearInterval(this.pollingTimer);
+    this.consecutiveErrors = 0;
     this.pollingTimer = setInterval(() => {
       this.fetchLiveStats();
-    }, 5000); // Live poll every 5 seconds
+    }, 10000); // Poll every 10 seconds smoothly
   }
 
   private ensureVisitorId(): string {
@@ -243,20 +254,37 @@ export class AnalyticsService {
         this.currentCountry.set({ name: 'India', code: 'IN', flag: '🇮🇳' });
       }
 
-      // High precision background IP Geo lookup
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.country_name && data.country_code) {
-            const flag = this.getFlagEmoji(data.country_code);
-            this.currentCountry.set({
-              name: data.country_name,
-              code: data.country_code,
-              flag: flag
-            });
+      // High precision background IP Geo lookup (cached per session)
+      const cachedGeo = sessionStorage.getItem('c_all_geo');
+      if (cachedGeo) {
+        try {
+          const parsed = JSON.parse(cachedGeo);
+          if (parsed?.name && parsed?.code) {
+            this.currentCountry.set(parsed);
+            return;
           }
-        })
-        .catch(() => {});
+        } catch {}
+      }
+
+      setTimeout(() => {
+        fetch('https://ipapi.co/json/')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.country_name && data.country_code) {
+              const flag = this.getFlagEmoji(data.country_code);
+              const geoObj = {
+                name: data.country_name,
+                code: data.country_code,
+                flag: flag
+              };
+              this.currentCountry.set(geoObj);
+              try {
+                sessionStorage.setItem('c_all_geo', JSON.stringify(geoObj));
+              } catch {}
+            }
+          })
+          .catch(() => {});
+      }, 1500);
     } catch {
       // Fallback
     }

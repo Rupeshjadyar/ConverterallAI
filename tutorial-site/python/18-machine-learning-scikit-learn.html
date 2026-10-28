@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Machine Learning with Scikit-Learn: Models, Pipelines & Metrics — WebDev Academy</title>
+  <meta name="description" content="Master practical Machine Learning in Python. Learn the end-to-end ML pipeline with Scikit-Learn: Train/Test splitting, feature scaling (StandardScaler), Linear & Logistic Regression, Decision Trees, and evaluation metrics (Accuracy, Precision, Recall, F1-Score).">
+  <meta name="keywords" content="Machine Learning Python, Scikit-Learn tutorial, train test split, linear regression, logistic regression, decision trees, machine learning pipeline, confusion matrix">
+  <meta property="og:title" content="Machine Learning with Scikit-Learn: Models, Pipelines & Metrics">
+  <meta property="og:description" content="Master practical Machine Learning in Python. Learn the end-to-end ML pipeline with Scikit-Learn: Train/Test splitting, feature scaling (StandardScaler), Linear & Logistic Regression, Decision Trees, and evaluation metrics (Accuracy, Precision, Recall, F1-Score).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="18-machine-learning-scikit-learn.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 21 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 18</span>
+          </div>
+          <h1 class="lesson-title">Machine Learning with Scikit-Learn: Models, Pipelines & Metrics</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master practical Machine Learning in Python. Learn the end-to-end ML pipeline with Scikit-Learn: Train/Test splitting, feature scaling (StandardScaler), Linear & Logistic Regression, Decision Trees, and evaluation metrics (Accuracy, Precision, Recall, F1-Score).</span>
+            <span class="lang-hi">Scikit-Learn se Machine Learning seekhein: Supervised vs Unsupervised learning, Train/Test split, Linear/Logistic Regression, Decision Trees aur evaluation metrics (Precision, Recall, F1).</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3 pillars of Machine Learning: Supervised Learning, Unsupervised Learning, and Reinforcement Learning.</li><li>The Golden Rule of ML: Splitting data into Training and Testing sets (train_test_split).</li><li>Feature Engineering & Preprocessing: Handling outliers and normalization with StandardScaler.</li><li>Regression (continuous prediction) vs Classification (category prediction).</li><li>Training classic algorithms: Linear Regression, Logistic Regression, and Decision Trees.</li><li>Evaluating models: Confusion Matrix, Accuracy, Precision, Recall, and the F1-Score.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 16: Data Science: NumPy & Pandas.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of teaching a child to identify fruits. <strong>Supervised Learning is showing 1,000 flashcards</strong>: you show a photo of an Apple and tell them 'Apple', you show an Orange and tell them 'Orange'. <strong>The Train/Test Split is like keeping 200 secret flashcards hidden behind your back</strong>: you train the child on 800 cards (Training Set), and then test them on the 200 secret cards they have never seen before (Test Set) to prove they truly learned, rather than simply memorizing the answers! <strong>Overfitting is a student who memorizes exact practice exam questions word-for-word</strong>: they score 100% on the practice test, but fail the real final exam because the numbers were slightly different!</span>
+            <span class="lang-hi">Bachhe ko padhane ki misaal lein: <strong>Supervised Learning flashcards dikhana hai</strong> (photo dikhai aur bataya yeh seb hai, yeh santra hai). <strong>Train/Test split 200 sawaal chhipa kar rakhna hai</strong>: 800 sawaalo se sikhaya (Training), aur 200 naye sawaalo se exam liya (Testing) taaki pata chale ki bachha samjha hai ya bas ratta mara hai. <strong>Overfitting wo student hai jo kitabi keede ki tarah ratta maar leta hai</strong>: class me top karta hai lekin real life me fail ho jaata hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Overfitting vs Underfitting (The #1 ML Interview Question!):</strong><br>• <strong>Overfitting:</strong> High variance, low bias. The model memorizes training noise and performs poorly on unseen test data. Fix: Add regularization (L1/L2), prune decision trees, increase training data, use dropout.<br>• <strong>Underfitting:</strong> High bias, low variance. The model is too simple to capture the underlying pattern. Fix: Use a more complex model, engineer better features, decrease regularization.</li><li><strong>Why is Accuracy a misleading metric for imbalanced datasets?</strong> If 99% of credit card transactions are legitimate and 1% are fraudulent, a dumb model that predicts 'Legitimate' 100% of the time achieves 99% accuracy while catching ZERO fraud! Always use <strong>Precision, Recall, and F1-Score (or ROC-AUC)</strong>.</li><li><strong>Precision vs Recall:</strong><br>• <code>Precision (TP / (TP + FP))</code>: Out of all positive predictions, how many were actually positive? (Crucial for spam detection: don't flag important emails as spam).<br>• <code>Recall (TP / (TP + FN))</code>: Out of all actual positive cases, how many did the model catch? (Crucial for medical cancer diagnosis: never miss a sick patient).</li><li><strong>Data Leakage:</strong> When information from the test dataset leaks into the training pipeline (e.g. fitting a StandardScaler on the entire dataset before splitting!). Always fit scalers ONLY on the training set!</li><li><strong>Scikit-Learn Estimator API:</strong> Follows a uniform interface across all algorithms: <code>model.fit(X_train, y_train)</code> to train, and <code>model.predict(X_test)</code> to make predictions.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Machine Learning?</h2>
+        <p>In traditional programming, engineers write explicit rules: <code>Rules + Data = Answers</code>. In <strong>Machine Learning</strong>, the computer infers the rules automatically from examples: <code>Data + Answers = Rules</code>.</p>
+        <p><strong>Scikit-Learn (sklearn)</strong> is Python's premier industrial library for classical machine learning, offering standardized interfaces for data preprocessing, classification, regression, and clustering.</p>
+        
+        <h2>2. The Machine Learning Lifecycle Pipeline</h2>
+        <p>Every production ML project follows an orderly 5-step lifecycle:</p>
+        <p>1. <strong>Data Collection & Cleaning</strong> (Pandas)<br>2. <strong>Feature Engineering & Scaling</strong> (StandardScaler)<br>3. <strong>Train/Test Splitting</strong> (train_test_split)<br>4. <strong>Model Training</strong> (model.fit)<br>5. <strong>Evaluation & Validation</strong> (classification_report)</p>
+        
+        <h2>3. Regression vs Classification</h2>
+        <p>Supervised learning problems split into two categories based on the target variable:</p>
+        <p>• <strong>Regression:</strong> Predicting a continuous numeric quantity (e.g. House price, temperature, stock value).<br>• <strong>Classification:</strong> Predicting a discrete categorical label (e.g. Spam or Not Spam, Disease diagnosis, Customer churn).</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: A Complete End-to-End Classification Pipeline in Scikit-Learn</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.datasets import load_iris
+# from sklearn.model_selection import train_test_split
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.ensemble import RandomForestClassifier
+# from sklearn.metrics import classification_report, accuracy_score
+# 
+# # 1. Load dataset (Features X, Labels y)
+# iris = load_iris()
+# X, y = iris.data, iris.target
+# 
+# # 2. Train / Test Split (80% train, 20% test)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# 
+# # 3. Feature Scaling (Fit on train, transform on both!)
+# scaler = StandardScaler()
+# X_train_scaled = scaler.fit_transform(X_train)
+# X_test_scaled = scaler.transform(X_test)  # Never fit on test data!
+# 
+# # 4. Train Model (Random Forest)
+# model = RandomForestClassifier(n_estimators=100, random_state=42)
+# model.fit(X_train_scaled, y_train)
+# 
+# # 5. Evaluate on unseen test data
+# predictions = model.predict(X_test_scaled)
+# print(f'Accuracy: {accuracy_score(y_test, predictions):.2%}')
+# print('\nDetailed Metrics:\n', classification_report(y_test, predictions))</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how <code>scaler.fit_transform()</code> is called on training data, while only <code>scaler.transform()</code> is called on test data to prevent data leakage.
+        </div>
+        
+        <h3>Code Example 2: Linear Regression for Continuous Value Predictions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.linear_model import LinearRegression
+# import numpy as np
+# 
+# # House size in sqft (X) -&gt; House Price in $1000s (y)
+# X = np.array([[850], [1200], [1500], [1800], [2400], [3000]])
+# y = np.array([210, 280, 340, 410, 520, 650])
+# 
+# regressor = LinearRegression()
+# regressor.fit(X, y)
+# 
+# # Predict price for a 2000 sqft home
+# predicted_price = regressor.predict([[2000]])
+# print(f'Predicted Price for 2,000 sqft: ${predicted_price[0]:.2f}k')
+# print(f'Line slope (Weight): {regressor.coef_[0]:.4f}, Intercept: {regressor.intercept_:.2f}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Linear regression learns the optimal slope (weight) and intercept (bias) minimizing mean squared error.
+        </div>
+        
+        <h3>Code Example 3: Logistic Regression for Binary Probability Classification</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.linear_model import LogisticRegression
+# 
+# # Features: [Hours_Studied, Practice_Exams_Taken] -&gt; Passed Exam (0 or 1)
+# X_train = [[1, 0], [2, 1], [4, 2], [6, 3], [8, 4], [9, 5]]
+# y_train = [0, 0, 0, 1, 1, 1]
+# 
+# clf = LogisticRegression()
+# clf.fit(X_train, y_train)
+# 
+# # Predict class AND probability
+# new_student = [[7, 3]]
+# proba = clf.predict_proba(new_student)[0]
+# print(f'Pass Probability: {proba[1]:.2%}, Predicted Class: {clf.predict(new_student)[0]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Logistic regression applies the Sigmoid activation function to output probabilities between 0.0 and 1.0.
+        </div>
+        
+        <h3>Code Example 4: The Confusion Matrix: TP, FP, TN, FN Explained</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.metrics import confusion_matrix
+# 
+# # Actual ground truth vs Model predictions
+# y_actual = [1, 1, 1, 0, 0, 0, 1, 0]
+# y_pred =   [1, 1, 0, 0, 0, 1, 1, 0]
+# 
+# cm = confusion_matrix(y_actual, y_pred)
+# # [[TN, FP],
+# #  [FN, TP]]
+# print('Confusion Matrix:\n', cm)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN) reveal exact error types.
+        </div>
+        
+        <h3>Code Example 5: Building Composable ML Pipelines with Pipeline</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.pipeline import Pipeline
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.svm import SVC
+# 
+# # Bundle scaling and modeling into a single deployable object!
+# pipeline = Pipeline([
+#     ('scaler', StandardScaler()),
+#     ('classifier', SVC(kernel='rbf', C=1.0))
+# ])
+# 
+# # pipeline.fit(X_train, y_train)
+# # pipeline.predict(X_test)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>Pipeline</code> prevents data leakage and ensures identical transformations occur during training and production inference.
+        </div>
+        
+        <h3>Code Example 6: Cross-Validation for Robust Performance Assessment</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sklearn.model_selection import cross_val_score
+# from sklearn.ensemble import GradientBoostingClassifier
+# 
+# # K-Fold Cross Validation (5 folds)
+# model = GradientBoostingClassifier()
+# # scores = cross_val_score(model, X, y, cv=5, scoring='f1_macro')
+# # print(f'Mean Cross-Val F1 Score: {scores.mean():.4f} (+/- {scores.std():.4f})')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • 5-Fold Cross-Validation splits data into 5 rotating train/test splits, eliminating reliance on a single lucky split.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Machine Learning with Scikit-Learn: Models, Pipelines & Metrics</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Machine Learning Decision Boundary Simulator
+# Predict loan approval based on Credit Score and Income
+def predict_loan(credit_score, income_k):
+    # Simulated decision tree rules
+    if credit_score >= 700:
+        return 'Approved (High Credit)' if income_k >= 30 else 'Approved with Co-Signer'
+    else:
+        return 'Approved (High Income)' if income_k >= 80 else 'Declined (High Risk)'
+
+print(f'Customer 1 (720, 45k): {predict_loan(720, 45)}')
+print(f'Customer 2 (620, 25k): {predict_loan(620, 25)}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Data Leakage:</strong> Calling <code>scaler.fit(X)</code> on the ENTIRE dataset before <code>train_test_split()</code>. This leaks test set distribution into the training phase!</li><li><strong>Evaluating imbalanced datasets with Accuracy:</strong> In fraud detection or rare cancer screening, a 99% accurate model can be 100% useless. Always look at Precision, Recall, and PR-AUC.</li><li><strong>Ignoring feature scaling for distance-based algorithms:</strong> Algorithms like KNN, SVM, and Neural Networks will fail if one feature is 0-1 and another is 0-1,000,000. Always scale features!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always set random_state:</strong> Pass <code>random_state=42</code> in <code>train_test_split</code> and model initializers so your experiments are 100% reproducible across machines.</li><li><strong>Feature Importance in Tree Models:</strong> After fitting a <code>RandomForestClassifier</code>, inspect <code>model.feature_importances_</code> to understand which business features drive predictions.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Supervised learning trains on labeled data (X features, y targets).</li><li>Always split data into training and testing sets to test generalization.</li><li>StandardScaler standardizes features to zero mean and unit variance.</li><li>Regression predicts numbers; Classification predicts categorical labels.</li><li>Use Precision, Recall, and F1-Score for robust evaluation on imbalanced datasets.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What is the difference between Supervised Learning and Unsupervised Learning?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about whether labels (answers) are provided.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Supervised Learning: The algorithm is provided both input features (X) and ground-truth target labels (y).
+# Examples: Predicting house prices, classifying spam.
+
+# Unsupervised Learning: The algorithm is given only raw input features (X) with NO target labels,
+# and must discover hidden patterns, groupings, or clusters on its own.
+# Examples: Customer segmentation (K-Means), Dimensionality reduction (PCA).</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Suppose a model predicts cancer: out of 100 actual cancer patients, it correctly identifies 90, but misses 10. Out of 100 healthy patients, it incorrectly flags 5 as having cancer. Calculate the Recall and Precision of the model.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Recall = TP / (TP + FN); Precision = TP / (TP + FP).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># TP (True Positives) = 90 (Cancer correctly caught)
+# FN (False Negatives) = 10 (Cancer missed!)
+# FP (False Positives) = 5 (Healthy flagged as cancer)
+# TN (True Negatives) = 95 (Healthy confirmed)
+
+# Recall = TP / (TP + FN) = 90 / (90 + 10) = 90 / 100 = 90%
+# Precision = TP / (TP + FP) = 90 / (90 + 5) = 90 / 95 = 94.7%</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what Data Leakage is in Machine Learning, provide an example scenario with feature scaling, and explain how to prevent it using Scikit-Learn Pipelines.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain scaler.fit() on X_train vs X.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Data Leakage occurs when information from outside the training dataset (i.e. the test set)
+# is inadvertently used to train the machine learning model, creating unrealistically optimistic test scores.
+
+# Scenario:
+# Running scaler.fit(X) on all data calculates the global mean and standard deviation of the test set.
+# When the model trains, it has already 'seen' the test set distribution!
+
+# Prevention:
+# 1. Split data first: X_train, X_test = train_test_split(X)
+# 2. scaler.fit_transform(X_train) - Only learns from training set!
+# 3. scaler.transform(X_test) - Applies training mean to test set.
+# 4. Or wrap both in a Pipeline([('scaler', StandardScaler()), ('model', Model())]) which enforces this automatically!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Overfitting occurs when a model memorizes training noise rather than generalizable underlying patterns.">
+          <div class="quiz-question-text">1. What is Overfitting in Machine Learning?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A model that takes too long to download</div><div class="quiz-option"><span>B)</span> A model that performs exceptionally well on training data but fails to generalize to unseen test data</div><div class="quiz-option"><span>C)</span> A model with too few parameters</div><div class="quiz-option"><span>D)</span> A dataset with too many columns</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="In imbalanced datasets, majority-class prediction produces deceptively high accuracy. Precision, Recall, and F1 must be used.">
+          <div class="quiz-question-text">2. Why is Accuracy a poor evaluation metric for severely imbalanced datasets (e.g. 99% negative, 1% positive)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Accuracy is difficult to calculate</div><div class="quiz-option"><span>B)</span> A trivial model predicting the majority class 100% of the time gets 99% accuracy while detecting zero positive cases</div><div class="quiz-option"><span>C)</span> Accuracy only works for regression problems</div><div class="quiz-option"><span>D)</span> Accuracy is deprecated in Scikit-Learn</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>train_test_split()</code> is the standard function for dividing data into train and test sets.">
+          <div class="quiz-question-text">3. What Scikit-Learn function splits datasets into independent training and validation subsets?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> data_split()</div><div class="quiz-option"><span>B)</span> train_test_split()</div><div class="quiz-option"><span>C)</span> partition_dataset()</div><div class="quiz-option"><span>D)</span> k_fold()</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The F1-Score is the harmonic mean of Precision and Recall: <code>2 * (P * R) / (P + R)</code>.">
+          <div class="quiz-question-text">4. What metric measures the harmonic mean of Precision and Recall?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> ROC-AUC</div><div class="quiz-option"><span>B)</span> F1-Score</div><div class="quiz-option"><span>C)</span> Mean Squared Error</div><div class="quiz-option"><span>D)</span> R-Squared</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>StandardScaler</code> standardizes features so each column has mean=0 and variance=1.">
+          <div class="quiz-question-text">5. What is the role of StandardScaler in Scikit-Learn?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Cleans missing values</div><div class="quiz-option"><span>B)</span> Standardizes features by removing the mean and scaling to unit variance (Z-score normalization)</div><div class="quiz-option"><span>C)</span> Sorts numbers alphabetically</div><div class="quiz-option"><span>D)</span> Encodes text to numbers</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, test predict_loan with credit_score 680 and income_k 90 to see if high income overrides average credit score!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#machine-learning" class="ref-pill">Glossary: Machine Learning</a><a href="../reference/glossary.html#scikit-learn" class="ref-pill">Glossary: Scikit-Learn</a><a href="19-deep-learning-nlp-cv.html" class="ref-pill">Lesson 19: Deep Learning, NLP & CV</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="17-data-visualization-matplotlib.html" class="btn btn-outline">&larr; 17. Data Visualization: Matplotlib</a>
+          <button class="mark-complete-btn" data-lesson-id="python-18">Mark as Complete</button>
+          <a href="19-deep-learning-nlp-cv.html" class="btn btn-primary">19. Deep Learning, NLP & CV &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Loops &amp; Iteration — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="05-loops.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 05</span>
+          </div>
+          <h1 class="lesson-title">Loops &amp; Repetitive Execution</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Automate repetitive tasks with precision. Master for, while, modern for...of, and break/continue statements.</span>
+            <span class="lang-hi">Loops aur Iteration: for, while, do...while, modern for...of arrays ke liye, aur infinite loop se bachna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3-part anatomy of a traditional <code>for</code> loop: initialization, condition, increment.</li>
+            <li>When to use <code>while</code> vs <code>do...while</code> (guaranteed single run).</li>
+            <li>The modern <strong><code>for...of</code></strong> loop for clean array and string iteration.</li>
+            <li>The <strong><code>for...in</code></strong> loop for enumerating object properties.</li>
+            <li>Controlling loop flow with <code>break</code> (emergency exit) and <code>continue</code> (skip iteration).</li>
+            <li>Preventing the dreaded <strong>Infinite Loop</strong> that freezes browser tabs.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="04-conditions.html">04. Conditionals &amp; Branching</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Industrial Packaging Robot</div>
+          <p>
+            <span class="lang-en">Imagine an automated factory conveyor belt:
+            <br>&bull; A human worker packaging 5,000 bottles of ketchup gets exhausted, makes typos, and needs coffee breaks after 30 minutes.
+            <br>&bull; A robotic arm on the line does not tire. It is programmed with a simple loop:
+            <br>&bull; <em>"Pick bottle &rarr; screw cap on &rarr; increment counter &rarr; repeat until 5,000 bottles are done!"</em>
+            <br>Loops in JavaScript give you that superhuman factory robot! You can process 100,000 database records, render 50 product cards, or search a million words in 3 milliseconds flat!</span>
+            <span class="lang-hi">Factory ke packaging robot ki tarah sochiye: Agar insaan ko 1,000 dabbe pack karne ko kahein toh wo thak jayega. Lekin ek robot bina thake ek hi kaam ko 1,000 baar secondon me kar sakta hai. JavaScript me <code>loop</code> wahi robot hai jo repetitive kaam ko aasaani se nipta deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Classic `for` Loop</h2>
+        <p>
+          The standard <code>for</code> loop has 3 distinct clauses separated by semicolons:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-js); border-radius:var(--radius-sm); font-family:var(--font-mono);">
+          for (initialization; condition; increment/update) { ... }
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Anatomy of the For Loop</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// Count from 1 to 5
+for (let i = 1; i <= 5; i++) {
+  console.log(`Step ${i}`);
+}
+
+// Looping through an array backwards
+const items = ["Gold", "Silver", "Bronze"];
+for (let i = items.length - 1; i >= 0; i--) {
+  console.log(`Rank: ${items[i]}`);
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Step-by-Step Breakdown:</strong><br>
+          1. <code>let i = 1</code>: Runs <em>once</em> before loop starts.<br>
+          2. <code>i &lt;= 5</code>: Tested before <em>every</em> iteration. If false, loop terminates.<br>
+          3. <code>{ ... }</code>: Code block runs.<br>
+          4. <code>i++</code>: Updates the counter at the end of each pass.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The `while` &amp; `do...while` Loops</h2>
+        <p>
+          Use a <code>while</code> loop when you do not know beforehand how many iterations will be required (e.g., waiting for user input or rolling dice until a 6 appears):
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: While vs Do-While</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. WHILE LOOP: Condition checked BEFORE running
+let attempts = 0;
+while (attempts < 3) {
+  console.log(`Attempt #${attempts + 1}`);
+  attempts++; // REQUIRED to avoid infinite loop!
+}
+
+// 2. DO...WHILE LOOP: GUARANTEED to execute at least ONCE!
+let count = 10;
+do {
+  console.log("This prints once even though 10 is not less than 5!");
+  count++;
+} while (count < 5);</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Modern Iteration: The Clean `for...of` Loop</h2>
+        <p>
+          Introduced in ES6, <code>for...of</code> is the modern, readable standard for iterating over arrays, strings, Maps, and NodeLists without index bookkeeping:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Clean Iteration with `for...of`</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const technologies = ["HTML", "CSS", "JavaScript", "SVG"];
+
+// The clean, elegant modern way:
+for (const tech of technologies) {
+  console.log(`Mastering ${tech}...`);
+}
+
+// Works directly on Strings too!
+const word = "CODE";
+for (const char of word) {
+  console.log(char); // 'C', 'O', 'D', 'E'
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Iterating Object Properties with `for...in`</h2>
+        <p>
+          While <code>for...of</code> iterates over <strong>values</strong> of an iterable, <code>for...in</code> enumerates the <strong>keys / property names</strong> of an object:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Object Inspection with `for...in`</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const serverConfig = {
+  host: "localhost",
+  port: 8080,
+  protocol: "https",
+  timeoutMs: 5000
+};
+
+for (const key in serverConfig) {
+  console.log(`${key}: ${serverConfig[key]}`);
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Controlling Loop Flow: `break` and `continue`</h2>
+        <p>
+          You can interrupt the natural cycle of a loop using two keywords:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Break and Continue in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+for (const n of numbers) {
+  // 1. CONTINUE: Skip even numbers (jump directly to next iteration)
+  if (n % 2 === 0) {
+    continue;
+  }
+
+  // 2. BREAK: Stop loop entirely when reaching 7
+  if (n === 7) {
+    console.log("Target reached. Terminating loop!");
+    break;
+  }
+
+  console.log("Odd number:", n); // Prints: 1, 3, 5
+}</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. The Deadly Infinite Loop Disaster</h2>
+        <p>
+          An infinite loop occurs when the loop termination condition can never become false. Because JavaScript is single-threaded, an infinite loop completely locks the CPU core, freezes the browser tab, and forces the user to Kill the task in Task Manager!
+        </p>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: The Infinite Loop Danger</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">/* DANGEROUS DISASTER CODE (Do NOT run!):
+let counter = 0;
+while (counter < 10) {
+  console.log("Running forever!");
+  // Missing: counter++ !
+  // counter stays 0 forever, so counter < 10 is ALWAYS true! Tab crashes!
+}
+*/</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Loop Laboratory</h2>
+        <p>
+          Test loops and DOM item generation live in the editor:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Dynamic List Generator</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    ul { list-style: none; padding: 0; }
+    li {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <h3>Generated Task Pipeline</h3>
+  <ul id="task-list"></ul>
+
+  <script>
+    const listEl = document.getElementById("task-list");
+    const tasks = [
+      "Review pull requests",
+      "Deploy staging build",
+      "Run automated unit tests",
+      "Update API documentation",
+      "Verify mobile responsiveness"
+    ];
+
+    let htmlMarkup = "";
+    
+    // Clean modern for...of loop
+    for (const [index, task] of tasks.entries()) {
+      console.log(`Task #${index + 1}: ${task}`);
+      htmlMarkup += `<li>&#9989; ${index + 1}. ${task}</li>`;
+    }
+
+    listEl.innerHTML = htmlMarkup;
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Off-by-One Errors:</strong> Using <code>i &lt;= items.length</code> instead of <code>i &lt; items.length</code> causes the final iteration to access <code>items[items.length]</code>, which is <code>undefined</code>!</li>
+            <li><strong>Using <code>for...in</code> on Arrays:</strong> <code>for...in</code> returns array indices as <em>strings</em> (e.g. <code>"0"</code>, <code>"1"</code>) and may iterate over custom array properties in unpredictable order. Always use <code>for...of</code> for arrays.</li>
+            <li><strong>Forgetting to increment counter in a while loop:</strong> Missing <code>i++</code> in a <code>while</code> loop triggers an instant browser freeze.</li>
+            <li><strong>Declaring loop counters with <code>var</code>:</strong> Using <code>for (var i = 0; ...)</code> leaks <code>i</code> into the global scope. Always use <code>for (let i = 0; ...)</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Cache array length in large arrays:</strong> For performance in massive arrays (1,000,000+ items), cache the length: <code>for (let i = 0, len = arr.length; i &lt; len; i++)</code>.</li>
+            <li><strong>Use <code>array.entries()</code> with <code>for...of</code>:</strong> Need both the index AND the element? Write <code>for (const [idx, item] of arr.entries())</code>!</li>
+            <li><strong>Higher-order methods:</strong> As you progress, functional methods like <code>map()</code> and <code>filter()</code> often replace basic <code>for</code> loops for cleaner, declarative code.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>for (let i = 0; i &lt; n; i++)</code> is the standard index-controlled loop.</li>
+            <li><code>while</code> loops check condition before; <code>do...while</code> runs at least once.</li>
+            <li>Use <code>for...of</code> for arrays, strings, and iterables.</li>
+            <li>Use <code>for...in</code> to enumerate keys of plain objects.</li>
+            <li><code>break</code> terminates the loop immediately; <code>continue</code> skips to the next iteration.</li>
+            <li>Always ensure loop conditions have a guaranteed path to becoming false.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Print Odd Numbers</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write a <code>for</code> loop that prints odd numbers from 1 to 9 (1, 3, 5, 7, 9) by updating the counter by 2 each pass.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: i += 2.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>for (let i = 1; i <= 9; i += 2) {
+  console.log(i);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Sum Numbers with a For-Of Loop</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Given an array <code>const prices = [19.99, 4.50, 12.00, 8.25];</code>, write a <code>for...of</code> loop that computes the total sum of all prices.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: let total = 0; for (const p of prices) total += p;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>let total = 0;
+for (const p of prices) {
+  total += p;
+}
+console.log("Total:", total);</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Find and Early Exit</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>You have an array of users: <code>const users = [{id: 1, name: "A"}, {id: 2, name: "B"}, {id: 3, name: "C"}];</code>. Write a loop that finds user with id 2, logs their name, and immediately terminates using <code>break</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: if (user.id === 2) { console.log(user.name); break; }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>for (const user of users) {
+  if (user.id === 2) {
+    console.log("Found user:", user.name);
+    break;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 05 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="for...of iterates directly over values of iterables (arrays, strings, sets).">
+            <div class="quiz-question-text">1. Which loop construct is modern and specifically designed for iterating array values cleanly?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> for...in</div>
+              <div class="quiz-option"><span>B)</span> for...of</div>
+              <div class="quiz-option"><span>C)</span> goto loop</div>
+              <div class="quiz-option"><span>D)</span> repeat...until</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="do...while checks its condition at the bottom, guaranteeing at least one execution.">
+            <div class="quiz-question-text">2. Which loop is guaranteed to execute its code block at least once, even if the condition is false from the start?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> for loop</div>
+              <div class="quiz-option"><span>B)</span> while loop</div>
+              <div class="quiz-option"><span>C)</span> do...while loop</div>
+              <div class="quiz-option"><span>D)</span> for...of loop</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="continue skips the rest of the current iteration and jumps to the next cycle.">
+            <div class="quiz-question-text">3. What does the 'continue' keyword do inside a loop?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Skips the rest of the current iteration and jumps immediately to the next cycle</div>
+              <div class="quiz-option"><span>B)</span> Exits the loop permanently</div>
+              <div class="quiz-option"><span>C)</span> Restarts the computer</div>
+              <div class="quiz-option"><span>D)</span> Speeds up loop execution</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="for...in iterates over the enumerable keys / property names of an object.">
+            <div class="quiz-question-text">4. What does 'for...in' iterate over when used on an object?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The file system</div>
+              <div class="quiz-option"><span>B)</span> The memory addresses</div>
+              <div class="quiz-option"><span>C)</span> Only number values</div>
+              <div class="quiz-option"><span>D)</span> The enumerable keys / property names of the object</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="An infinite loop starves the single JavaScript execution thread, freezing the UI completely.">
+            <div class="quiz-question-text">5. Why is an infinite loop dangerous in client-side JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It burns out the monitor pixels</div>
+              <div class="quiz-option"><span>B)</span> JavaScript is single-threaded; an infinite loop completely blocks the event loop, freezing the browser tab</div>
+              <div class="quiz-option"><span>C)</span> It deletes the HTML file</div>
+              <div class="quiz-option"><span>D)</span> It causes a syntax error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a Multiplication Table Generator</h3>
+          <p>
+            In the live editor, write a <code>for</code> loop that logs the 7 times table from <code>7 x 1 = 7</code> up to <code>7 x 10 = 70</code> using template literals!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#loops" class="ref-pill">Loops &amp; Iteration Reference</a>
+            <a href="../reference/glossary.html#loop" class="ref-pill">Glossary: Loops</a>
+            <a href="../reference/glossary.html#iteration" class="ref-pill">Glossary: Iteration</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Loops Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="04-conditions.html" class="btn btn-outline">&larr; Previous: Conditionals &amp; Branching</a>
+          <button class="mark-complete-btn" data-lesson-id="js-05">Mark as Complete</button>
+          <a href="06-functions.html" class="btn btn-primary">Next: Functions &amp; Arrow Functions &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

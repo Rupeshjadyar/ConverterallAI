@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Deep Learning, Natural Language Processing (NLP) & Computer Vision (OpenCV) — WebDev Academy</title>
+  <meta name="description" content="Journey into modern Artificial Intelligence. Understand Artificial Neural Networks (ANN), weights, biases, and activation functions (ReLU, Sigmoid), Computer Vision with OpenCV and Convolutional Neural Networks (CNNs), and Natural Language Processing (NLP) from tokenization to Transformers.">
+  <meta name="keywords" content="Deep Learning Python, PyTorch, TensorFlow, OpenCV Python, Computer Vision, NLP tokenization, Convolutional Neural Networks CNN, Transformers AI">
+  <meta property="og:title" content="Deep Learning, Natural Language Processing (NLP) & Computer Vision (OpenCV)">
+  <meta property="og:description" content="Journey into modern Artificial Intelligence. Understand Artificial Neural Networks (ANN), weights, biases, and activation functions (ReLU, Sigmoid), Computer Vision with OpenCV and Convolutional Neural Networks (CNNs), and Natural Language Processing (NLP) from tokenization to Transformers.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="19-deep-learning-nlp-cv.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 22 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 19</span>
+          </div>
+          <h1 class="lesson-title">Deep Learning, Natural Language Processing (NLP) & Computer Vision (OpenCV)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Journey into modern Artificial Intelligence. Understand Artificial Neural Networks (ANN), weights, biases, and activation functions (ReLU, Sigmoid), Computer Vision with OpenCV and Convolutional Neural Networks (CNNs), and Natural Language Processing (NLP) from tokenization to Transformers.</span>
+            <span class="lang-hi">Deep Learning, NLP aur Computer Vision seekhein: Neural Networks, weights aur biases, OpenCV se image processing, CNNs aur NLP tokenization se Transformers tak.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Neural Network Architecture: Input layers, hidden layers, weights, biases, and activation functions (ReLU, Softmax).</li><li>How Neural Networks learn: Forward propagation, Loss functions, and Backpropagation with Gradient Descent.</li><li>Computer Vision foundations: How computers see images as 3D NumPy arrays (Height &times; Width &times; Channels).</li><li>Image processing with OpenCV: Reading, resizing, filtering, edge detection, and Convolutional Neural Networks (CNNs).</li><li>Natural Language Processing (NLP): Text cleaning, tokenization, Stopwords, and Word Embeddings.</li><li>Modern AI architecture: The Attention Mechanism and Transformer models (BERT, GPT, LLMs).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 18: Machine Learning with Scikit-Learn + NumPy.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of human vision and speech. <strong>A Neural Network is like millions of tiny sound mixers at an audio concert</strong>: each knob (weight) adjusts the volume of an input instrument until the final blended song sounds perfect. If the song sounds screechy (high Loss), an audio engineer turns all knobs slightly in the right direction (Backpropagation). <strong>Computer Vision is recognizing that a photograph is just a giant spreadsheet of color numbers (RGB)</strong>: a 1080p image is simply a 1920x1080 matrix of red, green, and blue numbers between 0 and 255. <strong>A Convolution kernel (CNN) is like sliding a small magnifying glass across the image</strong> to detect edges, corners, eyes, and noses. <strong>NLP Transformers are like a group of translators who read an entire paragraph at once</strong>, understanding that 'bank' means a financial institution in 'bank account', but river shore in 'river bank' using Attention!</span>
+            <span class="lang-hi">Insaan ke dimag ki misaal lein: <strong>Neural Network hazaron chhote chhote switches (weights) jaisa hai</strong> jo input ko adjust karke sahi output nikalta hai. <strong>Computer Vision ke liye har photo bas numbers ka ek bada matrix (RGB) hai</strong>: 0 se 255 ke beech red, green aur blue numbers. <strong>CNN ek magnifying glass ki tarah photo par ghoomta hai</strong> aur aankh, naak aur chehre ke edges pehchanta hai. <strong>NLP me Transformers ek smart reader jaisa hai</strong> jo 'bank' word ka context samajhta hai ki wo river bank hai ya paise ka bank!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>How does a Neural Network learn?</strong> Through <strong>Backpropagation and Gradient Descent</strong>. The network makes a forward pass prediction, calculates error via a Loss Function (e.g. Cross-Entropy / MSE), and computes the gradient (derivative) of the loss with respect to each weight using the Chain Rule, adjusting weights in the negative gradient direction.</li><li><strong>Why are Convolutional Neural Networks (CNNs) used for Computer Vision instead of Standard Dense Networks?</strong> Dense networks require a separate weight for every single pixel, leading to parameter explosion (a 1000x1000 image has 1 million inputs!). CNNs use <strong>parameter sharing</strong> with small sliding filter kernels (e.g. 3x3) that provide <strong>translation invariance</strong> (a cat is recognized whether it is in the top-left or bottom-right corner).</li><li><strong>What is an Activation Function and why is it needed?</strong> Without activation functions, any multi-layer neural network collapses into a single linear equation (W2 * W1 * X = W_combined * X). Non-linear activations like <strong>ReLU (Rectified Linear Unit: max(0, x))</strong> allow networks to approximate arbitrary complex non-linear functions.</li><li><strong>What is Tokenization in NLP?</strong> Breaking continuous text into discrete numeric tokens (words, subwords, or characters) that can be mapped to high-dimensional dense vector embeddings.</li><li><strong>What is the Attention Mechanism in Transformers?</strong> Coined in 'Attention Is All You Need' (Vaswani et al., 2017), self-attention computes dynamic mathematical relationships between all words in a sentence simultaneously, resolving long-range context without sequential RNN bottlenecks.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Artificial Neural Networks (ANN): The Bedrock of Deep Learning</h2>
+        <p>Inspired by biological neurons in the brain, an <strong>Artificial Neural Network (ANN)</strong> consists of interconnected layers of nodes (neurons).</p>
+        <p>Each neuron calculates a weighted sum of its inputs plus a bias: <code>z = (w1*x1 + w2*x2 + ... + wn*xn) + b</code>, and passes the result through a non-linear <strong>Activation Function</strong> (such as ReLU or Sigmoid).</p>
+        
+        <h2>2. Computer Vision with OpenCV & CNNs</h2>
+        <p>To a computer, a digital image is not art &mdash; it is a 3-dimensional NumPy array of pixel intensities: <code>(Height, Width, Color Channels)</code>.</p>
+        <p><strong>OpenCV (Open Source Computer Vision)</strong> provides tools for image manipulation, while <strong>Convolutional Neural Networks (CNNs)</strong> extract spatial features (edges, textures, shapes) through convolutional filter kernels and pooling layers.</p>
+        
+        <h2>3. Natural Language Processing (NLP) & The Transformer Revolution</h2>
+        <p>Computers cannot process raw human text directly; text must be transformed into numbers through <strong>Tokenization</strong> and mapped into geometric vector spaces called <strong>Word Embeddings</strong>.</p>
+        <p>Modern NLP is powered by <strong>Transformers</strong> (BERT, GPT), which use <strong>Self-Attention</strong> to weigh the importance of every word relative to every other word in a sentence simultaneously.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Building a Neural Network from Scratch in Pure Python & NumPy</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import numpy as np
+
+# Activation function: Sigmoid
+def sigmoid(x):
+    return 1.0 / (1.0 + np.exp(-x))
+
+# Derivative of sigmoid for backpropagation
+def sigmoid_derivative(output):
+    return output * (1.0 - output)
+
+# Input data: 4 training samples with 2 features each (XOR problem)
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([[0], [1], [1], [0]])
+
+# Initialize random weights
+np.random.seed(42)
+weights_0 = 2 * np.random.random((2, 4)) - 1  # Input -&gt; Hidden Layer (4 neurons)
+weights_1 = 2 * np.random.random((4, 1)) - 1  # Hidden -&gt; Output Layer (1 neuron)
+
+# Training loop: 10,000 epochs of Forward &amp; Backpropagation
+for epoch in range(10000):
+    # 1. Forward Propagation
+    layer_1 = sigmoid(np.dot(X, weights_0))
+    layer_2 = sigmoid(np.dot(layer_1, weights_1))
+    
+    # 2. Compute Loss Error
+    error = y - layer_2
+    
+    # 3. Backpropagation (Gradient Descent with Chain Rule)
+    layer_2_delta = error * sigmoid_derivative(layer_2)
+    layer_1_error = layer_2_delta.dot(weights_1.T)
+    layer_1_delta = layer_1_error * sigmoid_derivative(layer_1)
+    
+    # 4. Weight Updates
+    weights_1 += layer_1.T.dot(layer_2_delta) * 0.1
+    weights_0 += X.T.dot(layer_1_delta) * 0.1
+
+print(f'Neural Net Predictions after 10,000 epochs:\n{np.round(layer_2, 3)}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • A complete 2-layer Neural Network written in 30 lines of pure NumPy demonstrating forward and backward passes.
+        </div>
+        
+        <h3>Code Example 2: Computer Vision: Loading, Resizing and Filtering Images with OpenCV</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import cv2
+# import numpy as np
+# 
+# # 1. Read image as a 3D NumPy array (Height, Width, BGR Channels)
+# image = cv2.imread('sample_photo.jpg')
+# print(f'Image Shape: {image.shape}')  # e.g. (1080, 1920, 3)
+# 
+# # 2. Convert Color from BGR to Grayscale
+# gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# 
+# # 3. Resize image to standard AI input dimensions (224x224)
+# resized = cv2.resize(gray, (224, 224))
+# 
+# # 4. Edge Detection with Canny Filter
+# edges = cv2.Canny(resized, threshold1=100, threshold2=200)
+# 
+# # 5. Save processed output
+# cv2.imwrite('edges_detected.jpg', edges)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • OpenCV represents images natively as NumPy arrays, allowing direct mathematical slicing and matrix filters.
+        </div>
+        
+        <h3>Code Example 3: 2D Convolutional Filter Kernel Mechanics (The Math Behind CNNs)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import numpy as np
+
+# Simulated 4x4 grayscale image patch
+image_patch = np.array([
+    [10, 10, 10,  0],
+    [10, 10, 10,  0],
+    [10, 10, 10,  0],
+    [10, 10, 10,  0]
+])
+
+# Vertical Edge Detection Sobel Kernel (3x3)
+vertical_kernel = np.array([
+    [-1, 0, 1],
+    [-2, 0, 2],
+    [-1, 0, 1]
+])
+
+# Compute convolution on top-left 3x3 region
+sub_region = image_patch[0:3, 0:3]
+edge_score = np.sum(sub_region * vertical_kernel)
+print(f'Convolution Output at (0,0): {edge_score}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Convolution multiplies sliding filter kernels with image sub-regions to detect vertical edges and textures.
+        </div>
+        
+        <h3>Code Example 4: Natural Language Processing: Text Cleaning and Tokenization</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import re
+
+raw_text = 'Artificial Intelligence &amp; Deep Learning are revolutionizing 2024! Visit https://ai.com'
+
+# 1. Clean URLs, special characters, and lowercase
+cleaned = re.sub(r'https?://\S+', '', raw_text)      # Remove URLs
+cleaned = re.sub(r'[^a-zA-Z\s]', '', cleaned).lower() # Keep only letters
+print(f'Cleaned text: {cleaned}')
+
+# 2. Word Tokenization (Split into discrete tokens)
+tokens = cleaned.split()
+print(f'Tokens: {tokens}')
+
+# 3. Stopword Removal
+stopwords = {'are', 'and', 'the', 'is', 'in', 'at', 'of'}
+filtered_tokens = [t for t in tokens if t not in stopwords]
+print(f'Meaningful keywords: {filtered_tokens}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Preprocessing and tokenization convert unstructured human sentences into clean token sequences for AI models.
+        </div>
+        
+        <h3>Code Example 5: Word Embeddings: Mapping Words to Vectors (Word2Vec Intuition)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Conceptual 3-dimensional embedding space: [Royal, Gender_Female, Age_Young]
+embeddings = {
+    'king':   np.array([0.95, 0.05, 0.60]),
+    'queen':  np.array([0.94, 0.95, 0.58]),
+    'man':    np.array([0.05, 0.02, 0.62]),
+    'woman':  np.array([0.04, 0.98, 0.61])
+}
+
+# The famous vector algebra: King - Man + Woman = Queen!
+result_vector = embeddings['king'] - embeddings['man'] + embeddings['woman']
+
+# Cosine similarity to verify proximity to 'queen'
+def cosine_similarity(v1, v2):
+    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+
+similarity = cosine_similarity(result_vector, embeddings['queen'])
+print(f'Similarity between (King - Man + Woman) and Queen: {similarity:.4f}')  # ~0.999!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Word embeddings capture nuanced semantic meaning as geometric coordinates in high-dimensional vector spaces.
+        </div>
+        
+        <h3>Code Example 6: Modern AI with HuggingFace Transformers (Sentiment Analysis)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># In modern production AI, pre-trained Transformer models are used via HuggingFace:
+# from transformers import pipeline
+# 
+# # Load sentiment analysis pipeline in 1 line
+# classifier = pipeline('sentiment-analysis')
+# 
+# result = classifier('WebDev Academy is the best self-contained coding platform on earth!')
+# print(result)
+# # [{'label': 'POSITIVE', 'score': 0.9998}]</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Transformer pipelines allow developers to deploy state-of-the-art LLMs for classification, translation, and summarization in 3 lines of code.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Deep Learning, Natural Language Processing (NLP) & Computer Vision (OpenCV)</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Tokenizer Sandbox
+text = 'FastAPI, PyTorch, and OpenCV power modern computer vision web applications.'
+words = [w.strip('.,') for w in text.split()]
+vocab = {word: idx for idx, word in enumerate(set(words), start=1)}
+
+print(f'Total words: {len(words)}')
+print(f'Vocabulary size: {len(vocab)}')
+print(f'Encoded token sequence: {[vocab[w] for w in words]}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>BGR vs RGB in OpenCV:</strong> OpenCV loads images in <strong>BGR</strong> (Blue, Green, Red) format by default, while Matplotlib expects <strong>RGB</strong>. Displaying an OpenCV image in Matplotlib without <code>cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</code> turns human faces blue!</li><li><strong>Forgetting Non-Linear Activations:</strong> If you stack multiple neural network layers without activation functions (like ReLU), the entire deep network mathematically collapses into a single trivial linear regression model.</li><li><strong>Vanishing Gradient Problem:</strong> Using Sigmoid activation functions in very deep networks (20+ layers) causes gradients to shrink exponentially toward zero during backpropagation, halting learning. Use <strong>ReLU</strong> or <strong>GELU</strong> instead!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Transfer Learning:</strong> In real-world Computer Vision and NLP, rarely train a model from scratch. Take a pre-trained model (ResNet, MobileNet, BERT) trained on millions of images/texts and fine-tune only the final classification layer on your dataset!</li><li><strong>GPU Acceleration with PyTorch:</strong> Move tensors to GPU hardware effortlessly with <code>tensor.to('cuda')</code> to accelerate matrix multiplications by 50x.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Neural networks learn through forward propagation, loss calculation, and backpropagation.</li><li>Activation functions (ReLU, Sigmoid) introduce necessary non-linearity.</li><li>Images are 3D NumPy arrays (Height, Width, Channels); OpenCV uses BGR by default.</li><li>Convolutional Neural Networks (CNNs) use sliding spatial filters for translation-invariant vision.</li><li>Transformers use Self-Attention to understand complex context across natural language.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What are the dimensions (shape) of a standard color RGB image that is 1920 pixels wide and 1080 pixels high when loaded into a NumPy array in Python?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Remember NumPy shape is (Height, Width, Channels).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Shape is (Height, Width, Channels):
+# (1080, 1920, 3)</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Python function <code>relu(x)</code> that implements the Rectified Linear Unit activation function on a NumPy array, returning <code>max(0, x)</code> for every element.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use np.maximum(0, x).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">import numpy as np
+
+def relu(x):
+    return np.maximum(0, x)
+
+print(relu(np.array([-5, -2, 0, 3, 7])))  # [0, 0, 0, 3, 7]</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Why do Deep Learning models use Convolutional layers (CNNs) instead of fully-connected Dense layers for processing high-resolution image inputs?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Calculate the parameters needed for a 1000x1000 image in a Dense layer vs a 3x3 filter.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># 1. Parameter Explosion:
+# A 1000x1000 color image has 3,000,000 inputs. Connecting this to a modest hidden layer of 1,000 neurons
+# requires 3,000,000 * 1,000 = 3 BILLION weights! This would exhaust GPU RAM on a single layer.
+
+# 2. Parameter Sharing &amp; Translation Invariance:
+# A CNN slides a tiny 3x3 filter (only 9 weights + 1 bias = 10 parameters!) across the entire image.
+# Because the same weights scan everywhere, the network detects visual features (edges, corners, objects)
+# regardless of where they appear in the image.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Non-linear activation functions (like ReLU) enable neural networks to learn non-linear boundaries.">
+          <div class="quiz-question-text">1. What is the role of an Activation Function in Artificial Neural Networks?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To turn on the computer power</div><div class="quiz-option"><span>B)</span> To introduce non-linearity so the network can learn complex arbitrary patterns beyond simple linear equations</div><div class="quiz-option"><span>C)</span> To compress the file size</div><div class="quiz-option"><span>D)</span> To encrypt weights</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="OpenCV historically reads images in BGR (Blue, Green, Red) format.">
+          <div class="quiz-question-text">2. What color channel order does OpenCV use by default when loading images?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> RGB</div><div class="quiz-option"><span>B)</span> BGR</div><div class="quiz-option"><span>C)</span> CMYK</div><div class="quiz-option"><span>D)</span> Grayscale</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Backpropagation applies the calculus Chain Rule backwards from the loss function to compute weight gradients.">
+          <div class="quiz-question-text">3. What mathematical algorithm is used to compute gradients and update neural network weights during training?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Binary Search</div><div class="quiz-option"><span>B)</span> Backpropagation with Gradient Descent</div><div class="quiz-option"><span>C)</span> Dijkstra algorithm</div><div class="quiz-option"><span>D)</span> Merge sort</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The Self-Attention mechanism allows Transformers to process all words in parallel while preserving contextual relationships.">
+          <div class="quiz-question-text">4. What breakthrough architectural mechanism powers modern Transformer models (BERT, GPT)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Recurrent Loops</div><div class="quiz-option"><span>B)</span> Self-Attention</div><div class="quiz-option"><span>C)</span> Decision Trees</div><div class="quiz-option"><span>D)</span> Genetic Algorithms</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Transfer learning reuses feature representations learned by foundational models, saving weeks of training time.">
+          <div class="quiz-question-text">5. What is 'Transfer Learning' in modern AI development?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Transferring files over FTP</div><div class="quiz-option"><span>B)</span> Taking a pre-trained model trained on massive datasets (ImageNet, web text) and fine-tuning it on a specific custom task</div><div class="quiz-option"><span>C)</span> Converting Python code to Java</div><div class="quiz-option"><span>D)</span> Moving models from hard drive to RAM</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, add 'PyTorch' and 'OpenCV' into a sentence, and observe how the tokenizer assigns unique integer tokens!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#deep-learning" class="ref-pill">Glossary: Deep Learning</a><a href="../reference/glossary.html#neural-network" class="ref-pill">Glossary: Neural Network</a><a href="20-python-interview-guide.html" class="ref-pill">Lesson 20: Top 100 Python Interview Q&A</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="18-machine-learning-scikit-learn.html" class="btn btn-outline">&larr; 18. Machine Learning: Scikit-Learn</a>
+          <button class="mark-complete-btn" data-lesson-id="python-19">Mark as Complete</button>
+          <a href="20-python-interview-guide.html" class="btn btn-primary">20. 🎯 Top 100 Python Interview Q&A &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

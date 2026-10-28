@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="06">
+  <title>Java Inheritance, Polymorphism & Dynamic Dispatch (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master OOP Inheritance (extends, super), Method Overloading vs Overriding, Dynamic Method Dispatch (Runtime Polymorphism), Covariant Returns, and final.">
+  <meta name="keywords" content="Java inheritance, polymorphism, method overriding vs overloading, dynamic method dispatch, super keyword, covariant return">
+  <meta property="og:title" content="Java Inheritance, Polymorphism & Dynamic Dispatch (Interview Ready)">
+  <meta property="og:description" content="Master OOP Inheritance (extends, super), Method Overloading vs Overriding, Dynamic Method Dispatch (Runtime Polymorphism), Covariant Returns, and final.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-warning">Intermediate</span>
+            <span class="badge badge-outline">⏱️ 18 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">06. Inheritance, Polymorphism & Dynamic Method Dispatch</h1>
+          <p class="lesson-subtitle">Code reuse and dynamic runtime behaviors: Super constructors, method overriding rules, runtime polymorphism, and why Java forbids multiple class inheritance.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 05 (Classes, Objects & Encapsulation).</p>
+            <ul>
+              <li>Understand single class inheritance via `extends` and why Java prevents multiple inheritance (Diamond Problem).</li><li>Master the `super` keyword for parent constructor invocation and member access.</li><li>Contrast Method Overloading (Compile-Time) vs Method Overriding (Runtime).</li><li>Deeply understand Dynamic Method Dispatch and virtual method invocation tables (vtable).</li><li>Learn covariant return types and rules for `@Override` annotations.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Genetic Blueprint & Universal Remote Control Analogy</h3>
+      <p><strong>Inheritance:</strong> You inherit your parents' DNA (eye color, height, blood group) automatically. You don't build a human skeleton from scratch; you extend what your parents gave you, and then add your own unique skills (like coding in Java!). That is <code>class Child extends Parent</code>.</p>
+      <p><strong>Polymorphism (Many Forms):</strong> Think of a universal TV remote control. The power button on the remote sends a standard signal: <em>"Turn On"</em>. If you aim it at a Sony TV, it displays the Sony logo; if you aim it at an LG TV, it plays the LG chime; if you aim it at a projector, the lens bulb lights up.</p>
+      <p>The remote control reference variable is always <code>DisplayDevice device;</code>, but the actual device in the room decides what happens when <code>device.turnOn()</code> is pressed (<strong>Dynamic Method Dispatch</strong>!).</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (माता-पिता के गुण और यूनिवर्सल रिमोट)</h3>
+      <p><strong>Inheritance:</strong> आपको अपने माता-पिता से कई गुण (जैसे कद, आवाज) मुफ्त में मिल जाते हैं (extends)। आपको शून्य से शुरुआत नहीं करनी पड़ती!</p>
+      <p><strong>Polymorphism (बहुरूपता):</strong> मान लीजिए आपके हाथ में एक यूनिवर्सल रिमोट है। आप बटन दबाते हैं "स्टार्ट"। अगर सामने कार है, तो कार का इंजन स्टार्ट होगा; अगर सामने AC है, तो AC ठंडी हवा देने लगेगा! रिमोट का बटन एक ही है (<code>vehicle.start()</code>), लेकिन सामने जो ऑब्जेक्ट होगा, काम उसी के हिसाब से होगा। इसी को कहते हैं <strong>Runtime Polymorphism</strong>!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. Method Overloading vs Method Overriding Matrix</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Method Overloading</th>
+            <th>Method Overriding</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Type of Polymorphism</strong></td><td>Compile-Time (Static Binding)</td><td>Runtime (Dynamic Binding)</td></tr>
+          <tr><td><strong>Location</strong></td><td>Same class (usually)</td><td>Across Superclass and Subclass</td></tr>
+          <tr><td><strong>Method Signature</strong></td><td><strong>Must differ</strong> (params or types)</td><td><strong>Must be identical</strong> (name & params)</td></tr>
+          <tr><td><strong>Return Type</strong></td><td>Can be different or same</td><td>Must be same or covariant (subtype)</td></tr>
+          <tr><td><strong>Access Modifier</strong></td><td>Can have any modifier</td><td>Cannot be more restrictive than parent</td></tr>
+          <tr><td><strong>Exceptions</strong></td><td>Can throw any exception</td><td>Cannot throw broader checked exceptions</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. How Dynamic Method Dispatch Works Under the Hood</h3>
+      <p>When the JVM executes <code>Parent ref = new Child(); ref.doWork();</code>, it does NOT determine which method to call at compile-time. At runtime, the JVM inspects the object's actual class in the Heap, reads its <strong>Virtual Method Table (vtable)</strong>, and executes the child's overridden implementation.</p>
+
+      <h3>3. Why Java Disallows Multiple Class Inheritance</h3>
+      <p>The <strong>Diamond Problem</strong>: If Class D extends both Class B and Class C, and both B and C inherit and override a method <code>foo()</code> from Class A, which method should D execute when calling <code>foo()</code>? Ambiguity! Java avoids this by permitting only single class inheritance while allowing multiple interface implementations.</p>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Explain Dynamic Method Dispatch in Java. Can you override private or static methods?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Dynamic Method Dispatch Mechanism:</strong> Runtime polymorphism where an overridden method call is resolved dynamically at runtime based on the actual object instance on the heap, rather than the reference type.</li><li><strong>Cannot Override Private Methods:</strong> Private methods are not visible to subclasses and are bound at compile-time using private binding. A same-name method in a child is treated as a completely new, unrelated method.</li><li><strong>Cannot Override Static Methods (Method Hiding):</strong> Static methods belong to the class, not the instance. If a subclass declares a static method with the same signature, it "hides" the parent static method rather than overriding it. Resolution depends entirely on the reference type.</li><li><strong>Covariant Return Types:</strong> Since Java 5, an overriding method may declare a return type that is a subtype of the return type declared in the parent method.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always state: "Static methods cannot be overridden; they are hidden. Private and final methods cannot be overridden. Overriding is resolved at runtime based on the Heap object; overloading is resolved at compile time based on parameter types."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Dynamic Method Dispatch in Action</h4>
+        <div class="code-box">
+          <pre><code class="language-java">class PaymentGateway {
+    public void processPayment(double amount) {
+        System.out.println("Processing generic payment of $" + amount);
+    }
+}
+
+class UPIPayment extends PaymentGateway {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing instant UPI payment of $" + amount + " via VPA");
+    }
+}
+
+class CreditCardPayment extends PaymentGateway {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing Credit Card 3D-Secure payment of $" + amount);
+    }
+}
+
+public class DispatchDemo {
+    public static void executeCheckout(PaymentGateway gateway, double amount) {
+        gateway.processPayment(amount); // JVM dynamically dispatches to UPI or CreditCard!
+    }
+
+    public static void main(String[] args) {
+        executeCheckout(new UPIPayment(), 299.0);
+        executeCheckout(new CreditCardPayment(), 1499.0);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Super Constructor Calling & Initialization Order</h4>
+        <div class="code-box">
+          <pre><code class="language-java">class Vehicle {
+    protected String brand;
+    public Vehicle(String brand) {
+        this.brand = brand;
+        System.out.println("1. Vehicle super constructor executed.");
+    }
+}
+
+class ElectricCar extends Vehicle {
+    private int batteryCapacityKWh;
+    public ElectricCar(String brand, int batteryCapacityKWh) {
+        super(brand); // Must be the first statement!
+        this.batteryCapacityKWh = batteryCapacityKWh;
+        System.out.println("2. ElectricCar sub constructor executed.");
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('06')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-06" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class PolymorphismSandbox {
+    public static void main(String[] args) {
+        Animal a = new Dog();
+        a.sound(); // Dispatches Dog sound
+        
+        System.out.println("Is dog an animal? " + (a instanceof Animal));
+    }
+}
+
+class Animal {
+    void sound() { System.out.println("Generic animal sound"); }
+}
+
+class Dog extends Animal {
+    @Override
+    void sound() { System.out.println("Woof! Woof!"); }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-06" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Thinking Static Methods Can Be Overridden:</strong> Writing `@Override` on a static method triggers a compile error because static methods belong to classes and cannot participate in virtual dispatch.</li><li><strong>Forgetting `super()` with Parameterized Parent Constructors:</strong> If parent class lacks a default constructor, the child constructor must explicitly call `super(args)` on its very first line.</li><li><strong>Narrowing Access Permissions in Child:</strong> If parent method is `public`, attempting to override it as `protected` or `private` causes a compilation error.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Always Use the `@Override` Annotation:</strong> It forces the compiler to verify that you have actually matched the parent method signature, catching spelling mistakes instantly.</li><li><strong>Favor Composition Over Inheritance:</strong> Deep inheritance trees (more than 2-3 levels) create brittle systems. Use object composition ("has-a") rather than inheritance ("is-a").</li><li><strong>Mark Non-Overridable Classes as `final`:</strong> If a class is not specifically engineered for inheritance (like `String`), declare it `final` to prevent security and architecture leaks.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Inheritance enables code reuse via `extends`;:</strong> super invokes parent constructors and methods.</li><li><strong>Compile-time overloading uses method signatures;:</strong> runtime overriding uses dynamic dispatch.</li><li><strong>Private and static methods cannot be overridden.:</strong> Static methods undergo method hiding.</li><li><strong>Dynamic dispatch uses JVM vtables:</strong> to route method calls to the exact Heap object.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Identify Overloading vs Overriding</h4>
+        <p>In class A: <code>void test(int x)</code>; In class B (extends A): <code>void test(String s)</code>. Is this overriding or overloading?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> It is <strong>Method Overloading</strong>! The parameter types differ (<code>int</code> vs <code>String</code>). Overriding requires the exact same method signature.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Covariant Return Types</h4>
+        <p>If parent method returns <code>Number</code>, can the child override it to return <code>Double</code>? Explain why.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> Yes! <code>Double</code> is a subclass of <code>Number</code>. Java allows covariant return types where the overriding method returns a more specific subtype.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Method Hiding with Static Methods</h4>
+        <p>Given <code>Parent p = new Child(); p.greet();</code> where <code>greet()</code> is static in both classes, whose method runs?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> <code>Parent.greet()</code> runs! Static method calls are resolved at compile-time based on the reference type (<code>Parent</code>), not the runtime instance (<code>Child</code>).</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What happens if a subclass method has the exact same name and parameters as a parent's `static` method?</strong></p>
+        <label><input type="radio" name="q1" value="0"> It overrides the parent method dynamically</label><br>
+        <label><input type="radio" name="q1" value="1"> It hides the parent method (Method Hiding)</label><br>
+        <label><input type="radio" name="q1" value="0"> It throws a compile error</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Why does Java forbid multiple inheritance with classes?</strong></p>
+        <label><input type="radio" name="q2" value="1"> To prevent ambiguity like the Diamond Problem</label><br>
+        <label><input type="radio" name="q2" value="0"> Because the JVM cannot allocate more than one class</label><br>
+        <label><input type="radio" name="q2" value="0"> Because C++ does not allow it</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Can an overriding method have a more restrictive access modifier than the superclass method?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Yes, anytime</label><br>
+        <label><input type="radio" name="q3" value="1"> No, it will cause a compilation error</label><br>
+        <label><input type="radio" name="q3" value="0"> Only for protected methods</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Where must the `super()` call be placed in a subclass constructor?</strong></p>
+        <label><input type="radio" name="q4" value="1"> The first statement of the constructor</label><br>
+        <label><input type="radio" name="q4" value="0"> At the end of the constructor</label><br>
+        <label><input type="radio" name="q4" value="0"> In the catch block</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What table does JVM use at runtime to perform Dynamic Method Dispatch?</strong></p>
+        <label><input type="radio" name="q5" value="1"> Virtual Method Table (vtable)</label><br>
+        <label><input type="radio" name="q5" value="0"> Hash Map Table</label><br>
+        <label><input type="radio" name="q5" value="0"> Binary Search Tree</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Scalable Notification Service with Polymorphism</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create an abstract notification system with subclasses EmailNotification, SMSNotification, and PushNotification, demonstrating polymorphism by sending batch alerts through a parent list.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.util.*;
+
+abstract class Notification {
+    abstract void send(String message);
+}
+// TODO: Implement concrete subclasses and execute polymorphic batch delivery</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="05-oop-classes-objects-constructors.html" class="btn btn-outline">&larr; Prev: Classes & Encapsulation</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-06')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="07-oop-abstraction-interfaces.html" class="btn btn-primary">Next: Abstraction & Interfaces &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Woof! Woof!\nIs dog an animal? true\nDynamic runtime dispatch resolved to Dog.sound().";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

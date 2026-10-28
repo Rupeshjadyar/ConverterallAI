@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Modern CSS3 Mastery — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .course-hero {
+      background: linear-gradient(135deg, var(--c-css-light), var(--bg-surface));
+      border: 1px solid var(--c-css-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+    .lesson-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .lesson-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--c-css);
+    }
+    .lesson-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+    .lesson-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body data-course="css" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner" style="max-width: 960px;">
+
+        <div class="course-hero">
+          <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.25rem 0.65rem; background:var(--c-css); color:white; border-radius:var(--radius-full); font-size:0.75rem; font-weight:700; margin-bottom:1rem;">
+            CSS3 VISUAL ENGINEERING
+          </div>
+          <h1 style="font-size: 2.5rem; color: var(--text-primary); margin-bottom: 0.75rem;">Modern CSS3: Design, Layout &amp; Motion</h1>
+          <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 720px; line-height: 1.6;">
+            Transform raw HTML markup into breathtaking, responsive, user-friendly digital experiences. Master the Box Model, 1D Flexbox, 2D Grid layouts, fluid responsive typography, hardware-accelerated animations, and maintainable BEM architecture.
+          </p>
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="01-introduction-and-syntax.html" class="btn btn-primary" style="background:var(--c-css); border-color:var(--c-css); padding:0.6rem 1.4rem;">Start Lesson 1 &rarr;</a>
+            <a href="#final-exam" class="btn btn-outline" style="padding:0.6rem 1.2rem;">Take Course Final Exam</a>
+          </div>
+        </div>
+
+        <!-- Roadmap -->
+        <h2>Course Roadmap</h2>
+        <div style="display:flex; flex-direction:column; gap:1rem; margin:1.5rem 0 2.5rem 0;">
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-success); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 1: Foundations &amp; The Box Model (Lessons 01 &ndash; 05)</strong> &mdash; Syntax, specificity, colors, units, typography, and box-sizing.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-warning); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 2: Modern Layout Mastery (Lessons 06 &ndash; 10)</strong> &mdash; Display flow, positioning, Flexbox, 2D CSS Grid, and responsive media queries.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-danger); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 3: Advanced UI &amp; Architecture (Lessons 11 &ndash; 16)</strong> &mdash; Pseudo-elements, 3D transforms, keyframe animations, CSS variables, layout patterns, and BEM.
+          </div>
+        </div>
+
+        <!-- Lessons Directory -->
+        <h2>All 16 Lessons</h2>
+        <div class="lesson-grid">
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 01</span>
+            <h4>01. Intro &amp; Syntax</h4>
+            <p>Rulesets, selectors, properties, values, inline vs internal vs external stylesheets.</p>
+            <a href="01-introduction-and-syntax.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 02</span>
+            <h4>02. Selectors &amp; Specificity</h4>
+            <p>Classes, IDs, combinators, attribute selectors, and specificity calculation formula.</p>
+            <a href="02-selectors-specificity.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 03</span>
+            <h4>03. Colors, Units &amp; Backgrounds</h4>
+            <p>Hex, RGB, HSL, relative units (rem, em, vh, vw, %), and multi-stop linear gradients.</p>
+            <a href="03-colors-units-backgrounds.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 04</span>
+            <h4>04. Fonts &amp; Typography</h4>
+            <p>System font stacks, line-height, font-weight, text-align, letter-spacing, and readability.</p>
+            <a href="04-fonts-and-text.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-beginner" style="width:fit-content; margin-bottom:0.5rem;">Lesson 05</span>
+            <h4>05. The Box Model</h4>
+            <p>Content, padding, border, margin, margin collapse, and box-sizing: border-box.</p>
+            <a href="05-box-model.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 06</span>
+            <h4>06. Display &amp; Overflow</h4>
+            <p>Block, inline, inline-block, none vs hidden, and overflow clipping/scrolling.</p>
+            <a href="06-display-visibility-overflow.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 07</span>
+            <h4>07. Positioning &amp; z-index</h4>
+            <p>Static, relative, absolute, fixed, sticky, and the 3D stacking context.</p>
+            <a href="07-position-z-index.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 08</span>
+            <h4>08. Flexbox Layouts</h4>
+            <p>Main axis, cross axis, justify-content, align-items, flex-direction, and flex-wrap.</p>
+            <a href="08-flexbox.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 09</span>
+            <h4>09. CSS Grid Layouts</h4>
+            <p>2D grid tracks, fr units, repeat, minmax, auto-fit, and grid-template-areas.</p>
+            <a href="09-grid.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-intermediate" style="width:fit-content; margin-bottom:0.5rem;">Lesson 10</span>
+            <h4>10. Responsive Design</h4>
+            <p>Mobile-first architecture, media query breakpoints, and responsive media rules.</p>
+            <a href="10-responsive-design-media-queries.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 11</span>
+            <h4>11. Pseudo-Classes &amp; Elements</h4>
+            <p>:hover, :focus-visible, :nth-child(), and decorative ::before / ::after styling.</p>
+            <a href="11-pseudo-classes-pseudo-elements.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 12</span>
+            <h4>12. Transitions &amp; Transforms</h4>
+            <p>Fluid micro-interactions, ease-in-out timing curves, translate, scale, and rotate.</p>
+            <a href="12-transitions-transforms.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 13</span>
+            <h4>13. Animations &amp; Keyframes</h4>
+            <p>Continuous @keyframes motion, loading spinners, pulsing indicators, and fill-mode.</p>
+            <a href="13-animations-keyframes.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 14</span>
+            <h4>14. Variables, Calc &amp; Clamp</h4>
+            <p>CSS custom properties, dynamic theming, calc(), clamp(), min(), and fluid font sizes.</p>
+            <a href="14-css-variables-calc-clamp.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 15</span>
+            <h4>15. Modern Layout Patterns</h4>
+            <p>Holy Grail layout, responsive card grids, centered heroes, and sticky footers.</p>
+            <a href="15-modern-layout-patterns.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+          <div class="lesson-card">
+            <span class="badge badge-advanced" style="width:fit-content; margin-bottom:0.5rem;">Lesson 16</span>
+            <h4>16. Architecture &amp; BEM</h4>
+            <p>Block-Element-Modifier naming, modular styles, CSS resets vs normalize, and clean code.</p>
+            <a href="16-css-best-practices-organization.html" class="btn btn-outline" style="align-self:flex-start;">Open Lesson &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Final Course Exam -->
+        <div id="final-exam" class="quiz-section" style="margin-top: 4rem;">
+          <div class="quiz-header">
+            <div>
+              <h2 style="margin:0; font-size:1.6rem; color:var(--text-primary);">&#127941; Modern CSS3 Certification Exam</h2>
+              <p style="color:var(--text-muted); margin:0.25rem 0 0 0; font-size:0.9rem;">20 Questions across all 16 lessons &bull; Pass with 80% to earn your Certificate</p>
+            </div>
+          </div>
+
+          <!-- 20 Comprehensive CSS Exam Questions -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Inline styles have the highest specificity score (1000), beating IDs (100), classes (10), and elements (1).">
+            <div class="quiz-question-text">1. In the CSS cascade specificity hierarchy, which selector type has the highest weight?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> ID selector (#header)</div>
+              <div class="quiz-option"><span>B)</span> Inline style attribute (style="...")</div>
+              <div class="quiz-option"><span>C)</span> Class selector (.card)</div>
+              <div class="quiz-option"><span>D)</span> Element tag selector (p, div)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="box-sizing: border-box includes padding and border within the declared width and height.">
+            <div class="quiz-question-text">2. What does 'box-sizing: border-box' ensure in the CSS Box Model?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Padding and borders are included INSIDE the element's total width and height</div>
+              <div class="quiz-option"><span>B)</span> Padding and borders are added on top of width, making the box wider</div>
+              <div class="quiz-option"><span>C)</span> Borders are converted to dashed lines</div>
+              <div class="quiz-option"><span>D)</span> Margins are removed completely</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="1rem is always relative to the root <html> font-size (typically 16px by default).">
+            <div class="quiz-question-text">3. What is the unit 'rem' relative to in CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The immediate parent element's font-size</div>
+              <div class="quiz-option"><span>B)</span> The viewport height</div>
+              <div class="quiz-option"><span>C)</span> The root &lt;html&gt; element's font-size</div>
+              <div class="quiz-option"><span>D)</span> The browser window width</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="justify-content aligns flex items along the main axis.">
+            <div class="quiz-question-text">4. In CSS Flexbox, which property aligns items along the MAIN axis?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> align-items</div>
+              <div class="quiz-option"><span>B)</span> align-content</div>
+              <div class="quiz-option"><span>C)</span> flex-direction</div>
+              <div class="quiz-option"><span>D)</span> justify-content</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="align-items aligns items along the cross axis (perpendicular to main axis).">
+            <div class="quiz-question-text">5. In CSS Flexbox, which property centers items along the CROSS axis?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> justify-content: center;</div>
+              <div class="quiz-option"><span>B)</span> align-items: center;</div>
+              <div class="quiz-option"><span>C)</span> flex-wrap: wrap;</div>
+              <div class="quiz-option"><span>D)</span> order: 0;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="The 'fr' unit represents a fraction of the available free space in the grid container.">
+            <div class="quiz-question-text">6. What does the 'fr' unit represent in CSS Grid?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A fraction of the available free space inside the grid container</div>
+              <div class="quiz-option"><span>B)</span> Fixed resolution in pixels</div>
+              <div class="quiz-option"><span>C)</span> Frame rate for animations</div>
+              <div class="quiz-option"><span>D)</span> Font ratio multiplier</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="repeat(auto-fit, minmax(250px, 1fr)) creates an intrinsically responsive grid without media queries.">
+            <div class="quiz-question-text">7. Which CSS Grid function combination creates a responsive auto-wrapping column layout without media queries?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> grid-template-columns: repeat(3, 100px);</div>
+              <div class="quiz-option"><span>B)</span> grid-template-columns: 1fr 1fr 1fr;</div>
+              <div class="quiz-option"><span>C)</span> grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));</div>
+              <div class="quiz-option"><span>D)</span> grid-columns: auto-wrap;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="position: relative serves as the coordinate reference boundary for child elements with position: absolute.">
+            <div class="quiz-question-text">8. What position value must a parent have to act as the boundary container for an absolutely positioned child?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> position: static</div>
+              <div class="quiz-option"><span>B)</span> position: fixed</div>
+              <div class="quiz-option"><span>C)</span> position: inherit</div>
+              <div class="quiz-option"><span>D)</span> position: relative (or any non-static value)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="position: sticky acts like relative until scrolled to a threshold offset, where it sticks like fixed.">
+            <div class="quiz-question-text">9. Which position value causes an element to scroll naturally with the page until reaching a scroll offset threshold, then sticks in place?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> fixed</div>
+              <div class="quiz-option"><span>B)</span> sticky</div>
+              <div class="quiz-option"><span>C)</span> absolute</div>
+              <div class="quiz-option"><span>D)</span> static</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="display: none removes the element from visual flow; visibility: hidden hides it while preserving its space.">
+            <div class="quiz-question-text">10. What is the fundamental difference between 'display: none' and 'visibility: hidden'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> display: none removes the element from document flow; visibility: hidden hides it while preserving its physical space</div>
+              <div class="quiz-option"><span>B)</span> display: none is for images only</div>
+              <div class="quiz-option"><span>C)</span> visibility: hidden deletes the element from the DOM</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="CSS custom properties (variables) must always start with two hyphens (--).">
+            <div class="quiz-question-text">11. What prefix is required when declaring a native CSS Variable (Custom Property)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> $ (e.g. $primary-color)</div>
+              <div class="quiz-option"><span>B)</span> @ (e.g. @primary-color)</div>
+              <div class="quiz-option"><span>C)</span> -- (e.g. --primary-color)</div>
+              <div class="quiz-option"><span>D)</span> var- (e.g. var-primary-color)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="clamp(min, preferred, max) clamps a value between a minimum floor and maximum ceiling with a dynamic fluid value.">
+            <div class="quiz-question-text">12. Which modern CSS math function accepts three parameters (minimum, preferred, and maximum) for fluid typography?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> min()</div>
+              <div class="quiz-option"><span>B)</span> max()</div>
+              <div class="quiz-option"><span>C)</span> calc()</div>
+              <div class="quiz-option"><span>D)</span> clamp()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="The content property is strictly required for ::before and ::after to render.">
+            <div class="quiz-question-text">13. Which property is strictly mandatory for ::before and ::after pseudo-elements to render on screen?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> display</div>
+              <div class="quiz-option"><span>B)</span> content</div>
+              <div class="quiz-option"><span>C)</span> position</div>
+              <div class="quiz-option"><span>D)</span> z-index</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="Mobile-first responsive design writes default styles for small screens, using min-width queries to expand for desktop.">
+            <div class="quiz-question-text">14. What media query approach defines the 'Mobile-First' design methodology?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Default styles for mobile, using @media (min-width: ...) to layer desktop enhancements</div>
+              <div class="quiz-option"><span>B)</span> Default styles for desktop, using @media (max-width: ...) to remove elements on mobile</div>
+              <div class="quiz-option"><span>C)</span> Writing separate CSS files for every phone model</div>
+              <div class="quiz-option"><span>D)</span> Disabling CSS on phones</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="transform and opacity are composited directly on the GPU, avoiding expensive layout reflows and repaints.">
+            <div class="quiz-question-text">15. Which CSS properties are hardware-accelerated on the GPU and yield 60fps smooth animations?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> width and height</div>
+              <div class="quiz-option"><span>B)</span> top and left</div>
+              <div class="quiz-option"><span>C)</span> transform and opacity</div>
+              <div class="quiz-option"><span>D)</span> margin and padding</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="animation-fill-mode: forwards retains the styling applied by the final keyframe after animation completes.">
+            <div class="quiz-question-text">16. What property ensures an animated element stays in its final 100% keyframe state when the animation finishes?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> animation-iteration-count: infinite;</div>
+              <div class="quiz-option"><span>B)</span> animation-direction: reverse;</div>
+              <div class="quiz-option"><span>C)</span> animation-play-state: paused;</div>
+              <div class="quiz-option"><span>D)</span> animation-fill-mode: forwards;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Two vertical margins collapse into a single margin equal to the larger of the two values.">
+            <div class="quiz-question-text">17. An element with margin-bottom: 30px is followed directly by an element with margin-top: 20px. In normal document flow, what is the vertical space between them?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 50px</div>
+              <div class="quiz-option"><span>B)</span> 30px (Margin Collapse takes the larger margin)</div>
+              <div class="quiz-option"><span>C)</span> 20px</div>
+              <div class="quiz-option"><span>D)</span> 10px</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="In BEM, double underscores denote an Element (.card__title) and double hyphens denote a Modifier (.card--featured).">
+            <div class="quiz-question-text">18. In the popular BEM naming methodology, what do double underscores (__) signify?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> An Element belonging to a Block (e.g. .card__title)</div>
+              <div class="quiz-option"><span>B)</span> A Modifier variation (e.g. .card--large)</div>
+              <div class="quiz-option"><span>C)</span> An ID selector</div>
+              <div class="quiz-option"><span>D)</span> A private variable</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="z-index only takes effect on positioned elements (relative, absolute, fixed, sticky) or flex/grid items.">
+            <div class="quiz-question-text">19. Why might a 'z-index: 9999' rule have no visual effect on a standard &lt;div&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because z-index maxes out at 100</div>
+              <div class="quiz-option"><span>B)</span> Because z-index only works on images</div>
+              <div class="quiz-option"><span>C)</span> Because the element is static; z-index requires a non-static position (relative, absolute, fixed, sticky) or flex/grid context</div>
+              <div class="quiz-option"><span>D)</span> Because z-index requires JavaScript to activate</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="3" data-explanation="!important breaks the cascade, creates maintenance nightmares, and makes stylesheets difficult to override.">
+            <div class="quiz-question-text">20. Why do senior developers strongly advise against using '!important' in stylesheets?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It is deprecated in CSS3</div>
+              <div class="quiz-option"><span>B)</span> It slows down browser parsing by 50%</div>
+              <div class="quiz-option"><span>C)</span> It breaks color values</div>
+              <div class="quiz-option"><span>D)</span> It shatters the natural CSS cascade and creates brittle specificity wars that are hard to maintain</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Certificate Prompt -->
+        <div style="background:var(--bg-surface); border:2px dashed var(--state-success); border-radius:var(--radius-md); padding:2rem; text-align:center; margin:3rem 0;">
+          <h3 style="color:var(--state-success); margin-top:0;">&#127881; Claim Your Modern CSS3 Certificate</h3>
+          <p style="color:var(--text-secondary); max-width:600px; margin:0.5rem auto 1.5rem auto;">
+            Score 80% or higher on the exam above, or complete all 16 CSS lessons to unlock your personalized Certificate of Completion.
+          </p>
+          <a href="../certificate/index.html?course=CSS3" class="btn btn-success" style="padding:0.75rem 1.75rem; font-size:1rem;">Generate My CSS3 Certificate &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

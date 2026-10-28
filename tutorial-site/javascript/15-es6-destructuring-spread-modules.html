@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>ES6+ Destructuring &amp; Spread — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="15-es6-destructuring-spread-modules.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 15</span>
+          </div>
+          <h1 class="lesson-title">Modern ES6+: Destructuring, Rest &amp; Spread</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Write concise, expressive JavaScript. Master object/array destructuring, rest/spread operators, optional chaining, and ES modules.</span>
+            <span class="lang-hi">Modern ES6+: Object/Array Destructuring, Rest/Spread operators (...), Optional Chaining (?.), aur ES Modules seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Unpacking data effortlessly using <strong>Object Destructuring</strong> and <strong>Array Destructuring</strong>.</li>
+            <li>Renaming extracted keys and assigning fallback defaults.</li>
+            <li>The 2 faces of three dots (<code>...</code>): <strong>Rest</strong> (collecting) vs <strong>Spread</strong> (expanding).</li>
+            <li>Non-destructive shallow copying and merging of objects and arrays.</li>
+            <li>Crash prevention with <strong>Optional Chaining (<code>?.</code>)</strong>.</li>
+            <li>Variable swapping in a single line without temporary variables (<code>[a, b] = [b, a]</code>).</li>
+            <li>ES6 Modules architecture: Named exports vs Default exports.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="14-forms-with-javascript.html">14. Forms &amp; Input Validation</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Traveler's Compartmentalized Backpack</div>
+          <p>
+            <span class="lang-en">Imagine traveling with a multi-pocket hiking backpack:
+            <br>&bull; <strong>Without Destructuring:</strong> Every time you need your passport, you unzip the whole backpack, dig through dirty socks and sleeping bags, and write: <code>backpack.leftPocket.innerPouch.passport</code>.
+            <br>&bull; <strong>With Destructuring:</strong> You immediately pull out just the items you need and lay them neatly on your desk: <code>const { passport, sunglasses } = backpack;</code>.
+            <br>&bull; <strong>The Spread Operator (<code>...</code>):</strong> Dumping a box of loose LEGO bricks onto the floor, spreading all pieces out so you can combine them with another set!</span>
+            <span class="lang-hi">Travel backpack ki tarah sochiye: Har baar poore object me andar tak jaane ki bajaye, Destructuring ke zariye aap zaroori samaan (jaise { name, age }) ko seedha nikaal kar alag variables me rakh lete hain. Aur Spread operator (...) ek dabba khol kar uske saare tukdon ko doosre dabbe me bikhairne jaisa hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Object Destructuring</h2>
+        <p>
+          Object destructuring extracts properties from an object and binds them to distinct variables matching the property keys:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Basic &amp; Advanced Object Destructuring</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const userProfile = {
+  id: 489,
+  username: "alex_dev",
+  email: "alex@example.com",
+  role: "admin",
+  location: {
+    city: "San Francisco",
+    country: "USA"
+  }
+};
+
+// 1. Basic Destructuring:
+const { username, email } = userProfile;
+console.log(username); // "alex_dev"
+
+// 2. Renaming during extraction & Providing Default Fallback:
+const { role: userRole, avatarUrl = "default-avatar.png" } = userProfile;
+console.log(userRole);   // "admin" (renamed from 'role')
+console.log(avatarUrl);  // "default-avatar.png" (applied default because avatarUrl was undefined)
+
+// 3. Nested Destructuring:
+const { location: { city } } = userProfile;
+console.log(city); // "San Francisco"
+
+// 4. In Function Parameter Signatures (Senior Standard!):
+function displayUserBadge({ username, role }) {
+  console.log(`Badge: @${username} [${role.toUpperCase()}]`);
+}
+displayUserBadge(userProfile); // "Badge: @alex_dev [ADMIN]"</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Array Destructuring</h2>
+        <p>
+          Array destructuring unpacks items based on their <strong>numerical index position</strong>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Array Destructuring &amp; Value Swapping</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const coordinates = [37.7749, -122.4194, 15]; // [lat, lng, altitude]
+
+// 1. Extract by position:
+const [latitude, longitude] = coordinates;
+console.log(`Lat: ${latitude}, Lng: ${longitude}`);
+
+// 2. Skipping items using empty commas:
+const [lat, , altitude] = coordinates;
+console.log(`Altitude: ${altitude}`); // 15
+
+// 3. SWAPPING TWO VARIABLES WITHOUT A TEMP VARIABLE:
+let primaryColor = "blue";
+let secondaryColor = "orange";
+
+// The modern 1-line swap idiom:
+[primaryColor, secondaryColor] = [secondaryColor, primaryColor];
+console.log(primaryColor);   // "orange"
+console.log(secondaryColor); // "blue"</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Spread Operator (`...`): Expanding Data</h2>
+        <p>
+          When the three dots (<code>...</code>) appear on the right side of an assignment or in a function call, they act as the <strong>Spread Operator</strong> &mdash; expanding an iterable into its individual elements:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Spreading Arrays and Objects</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Array Cloning & Merging:
+const frontEnd = ["HTML", "CSS", "JavaScript"];
+const backEnd = ["Node.js", "PostgreSQL"];
+
+const fullStack = [...frontEnd, ...backEnd, "DevOps"];
+console.log(fullStack); // ["HTML", "CSS", "JavaScript", "Node.js", "PostgreSQL", "DevOps"]
+
+// 2. Object Merging & Shallow Cloning:
+const defaultSettings = {
+  theme: "light",
+  fontSize: 14,
+  notifications: true
+};
+
+const userPreferences = {
+  theme: "dark", // Overrides default!
+  fontSize: 18
+};
+
+// Merges objects (properties on the right overwrite properties on the left):
+const finalSettings = { ...defaultSettings, ...userPreferences };
+console.log(finalSettings); 
+// { theme: "dark", fontSize: 18, notifications: true }</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The Rest Operator (`...`): Collecting Data</h2>
+        <p>
+          When the three dots appear on the left side of an assignment (in destructuring or function parameters), they act as the <strong>Rest Operator</strong> &mdash; gathering remaining elements into an array or object:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Rest Gathering in Destructuring</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Rest in Array Destructuring:
+const [winner, runnerUp, ...participants] = ["Alice", "Bob", "Charlie", "David", "Emma"];
+console.log(winner);        // "Alice"
+console.log(participants);  // ["Charlie", "David", "Emma"]
+
+// 2. Rest in Object Destructuring:
+const serverResponse = {
+  status: 200,
+  message: "OK",
+  data: [1, 2, 3],
+  timestamp: 1761500000000
+};
+
+// Extract 'status' and gather all other metadata into 'metadata':
+const { status, ...metadata } = serverResponse;
+console.log(status);   // 200
+console.log(metadata); // { message: "OK", data: [1,2,3], timestamp: 1761500000000 }</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Crash Protection: Optional Chaining (`?.`)</h2>
+        <p>
+          Before ES2020, attempting to read a deeply nested property on an object where an intermediate key was <code>null</code> or <code>undefined</code> crashed the entire application with an uncaught <code>TypeError: Cannot read properties of undefined</code>.
+        </p>
+        <p>
+          <strong>Optional Chaining (<code>?.</code>)</strong> immediately short-circuits and returns <code>undefined</code> if any part of the path is nullish:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Optional Chaining in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const userAccount = {
+  id: 12,
+  profile: null // Profile has not been filled out yet!
+};
+
+// OLD DANGEROUS CODE:
+// const avatar = userAccount.profile.avatar; // CRASH! TypeError!
+
+// MODERN CRASH-PROOF CODE:
+const avatar = userAccount?.profile?.avatar;
+console.log(avatar); // undefined (No crash! Execution continues safely!)
+
+// Combine with Nullish Coalescing (??) for the ultimate safe fallback:
+const avatarFinal = userAccount?.profile?.avatar ?? "default-avatar.png";
+console.log(avatarFinal); // "default-avatar.png"</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. ES6 Modules: `export` &amp; `import`</h2>
+        <p>
+          Modules allow you to break massive codebases into separate, organized files:
+        </p>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Named vs Default Exports</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// --- In file: mathUtils.js ---
+// 1. Named Exports (Can export multiple items):
+export const PI = 3.14159;
+export function add(a, b) { return a + b; }
+
+// 2. Default Export (Only ONE per file):
+export default function multiply(a, b) { return a * b; }
+
+
+// --- In file: app.js ---
+// Importing named exports (in curly braces) and default export:
+import multiply, { PI, add } from "./mathUtils.js";
+
+console.log(add(5, 10));     // 15
+console.log(multiply(4, 5)); // 20</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Test ES6+ Features Live</h2>
+        <p>
+          Experiment with object destructuring and spread merging below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: ES6+ Syntax Playground</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h3>ES6+ Modern Syntax Output</h3>
+  <div id="output" style="font-family:monospace; background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:8px;"></div>
+
+  <script>
+    const outputEl = document.getElementById("output");
+
+    // Sample data
+    const apiResponse = {
+      user: {
+        id: 701,
+        details: {
+          fullName: "Jordan Lee",
+          skills: ["JavaScript", "CSS", "HTML"]
+        }
+      }
+    };
+
+    // Destructuring with optional chaining
+    const { user: { details: { fullName, skills } } } = apiResponse;
+    const [primarySkill, ...otherSkills] = skills;
+    const company = apiResponse.user?.company?.name ?? "Freelance Engineer";
+
+    console.log("Full Name:", fullName);
+    console.log("Primary:", primarySkill);
+    console.log("Others:", otherSkills);
+
+    outputEl.innerHTML = `
+      <strong>Developer:</strong> ${fullName}<br>
+      <strong>Primary Skill:</strong> ${primarySkill}<br>
+      <strong>Other Skills:</strong> ${otherSkills.join(", ")}<br>
+      <strong>Company:</strong> ${company}
+    `;
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Placing Rest (<code>...</code>) before other parameters:</strong> The Rest parameter MUST be the <strong>final</strong> element in an array pattern or function parameter list. Writing <code>function test(...rest, lastItem)</code> throws a fatal <code>SyntaxError</code>!</li>
+            <li><strong>Assuming spread creates deep clones:</strong> Spread syntax (<code>{ ...obj }</code>) performs a <strong>shallow copy</strong>. If an object contains nested objects or arrays, the nested objects are still copied by reference!</li>
+            <li><strong>Missing <code>type="module"</code> in HTML:</strong> If you use <code>import</code> and <code>export</code> in browser scripts, the HTML script tag MUST declare <code>&lt;script type="module" src="app.js"&gt;</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Destructure directly in React/UI parameters:</strong> Destructuring props right in the function head (<code>function Card({ title, price, isFeatured })</code>) makes components instantly self-documenting.</li>
+            <li><strong>Optional chaining with function calls:</strong> You can use optional chaining to safely execute callbacks that might be undefined: <code>onSuccess?.(data)</code>!</li>
+            <li><strong>Clone and override in one move:</strong> When updating state immutably: <code>const updatedUser = { ...user, age: user.age + 1 };</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Object destructuring extracts by key name; array destructuring extracts by index position.</li>
+            <li>Swap variables in 1 line: <code>[a, b] = [b, a]</code>.</li>
+            <li>Spread (<code>...</code>) expands iterables for shallow cloning and merging.</li>
+            <li>Rest (<code>...</code>) collects leftover items into an array or object.</li>
+            <li>Optional chaining (<code>?.</code>) halts errors on undefined intermediate properties.</li>
+            <li>ES Modules use <code>export</code> and <code>import</code> for clean separation of concerns.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): One-Line Swap</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Given <code>let x = 1; let y = 2;</code>, write the single-line array destructuring statement that swaps their values so <code>x === 2</code> and <code>y === 1</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: [x, y] = [y, x];</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>[x, y] = [y, x];</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Merge Objects with Override</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Given <code>const base = { theme: "light", font: "sans", size: 14 };</code>, use object spread to create a new object <code>custom</code> that has all properties of <code>base</code>, but overrides <code>theme</code> with <code>"dark"</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: const custom = { ...base, theme: "dark" };</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>const custom = { ...base, theme: "dark" };</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Deep Safe Extraction</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>You receive an unknown API response object <code>data</code>. Write an expression using Optional Chaining and Nullish Coalescing to extract <code>data.results[0].author.name</code>, falling back to <code>"Anonymous"</code> if any part of the path is missing.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: data?.results?.[0]?.author?.name ?? "Anonymous"</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>const authorName = data?.results?.[0]?.author?.name ?? "Anonymous";</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 15 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Optional chaining (?.) returns undefined instead of throwing a TypeError if an intermediate property is null or undefined.">
+            <div class="quiz-question-text">1. What is the primary purpose of the Optional Chaining operator (?.)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To make asynchronous requests faster</div>
+              <div class="quiz-option"><span>B)</span> To safely read deeply nested object properties without throwing a TypeError when intermediate keys are nullish</div>
+              <div class="quiz-option"><span>C)</span> To encrypt API keys</div>
+              <div class="quiz-option"><span>D)</span> To connect multiple strings together</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Object destructuring extracts values based on matching property names/keys.">
+            <div class="quiz-question-text">2. How does Object Destructuring determine which variable receives which value?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> By index position (0, 1, 2)</div>
+              <div class="quiz-option"><span>B)</span> By variable data type</div>
+              <div class="quiz-option"><span>C)</span> By matching property key names</div>
+              <div class="quiz-option"><span>D)</span> By alphabetical order</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="In destructuring, 'key: newName' renames the variable during extraction.">
+            <div class="quiz-question-text">3. In 'const { name: fullName } = user;', what is the name of the newly created variable?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> fullName</div>
+              <div class="quiz-option"><span>B)</span> name</div>
+              <div class="quiz-option"><span>C)</span> user</div>
+              <div class="quiz-option"><span>D)</span> name:fullName</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Rest must always be the final element in the list.">
+            <div class="quiz-question-text">4. Where must the Rest parameter (...rest) be placed in a function definition?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> As the first parameter</div>
+              <div class="quiz-option"><span>B)</span> Anywhere in the middle</div>
+              <div class="quiz-option"><span>C)</span> Outside the parentheses</div>
+              <div class="quiz-option"><span>D)</span> Strictly as the very last parameter</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="A file can have multiple named exports, but at most ONE default export.">
+            <div class="quiz-question-text">5. How many 'default' exports can a single JavaScript module file contain?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Unlimited</div>
+              <div class="quiz-option"><span>B)</span> Exactly one</div>
+              <div class="quiz-option"><span>C)</span> Two</div>
+              <div class="quiz-option"><span>D)</span> None; default exports are deprecated</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create an App State Merger</h3>
+          <p>
+            In the live editor, create an object <code>defaultConfig = { dark: false, volume: 80, language: "en" }</code>. Using spread syntax, merge it with a <code>userOverrides = { volume: 100 }</code> object and log the resulting updated configuration!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#es6" class="ref-pill">ES6+ Features Reference</a>
+            <a href="../reference/glossary.html#destructuring" class="ref-pill">Glossary: Destructuring</a>
+            <a href="../reference/glossary.html#spread-operator" class="ref-pill">Glossary: Spread Operator</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">Modern ES6+ Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="14-forms-with-javascript.html" class="btn btn-outline">&larr; Previous: Forms &amp; Input Validation</a>
+          <button class="mark-complete-btn" data-lesson-id="js-15">Mark as Complete</button>
+          <a href="16-classes-and-oop.html" class="btn btn-primary">Next: Classes &amp; Object-Oriented JS &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

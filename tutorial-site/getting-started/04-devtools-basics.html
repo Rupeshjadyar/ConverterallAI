@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Browser DevTools Basics — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="getting-started" data-current-lesson="04-devtools-basics.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- 1. Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--bg-subtle); color:var(--text-secondary);">Module 04</span>
+          </div>
+          <h1 class="lesson-title">Browser Developer Tools (DevTools) Essentials</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Unlock the built-in superpower inside every web browser to inspect HTML, tweak CSS live, and debug JavaScript errors.</span>
+            <span class="lang-hi">Har browser ke andar maujood DevTools ko seekhein. HTML inspect karna, live CSS badalna aur JavaScript errors pakadna.</span>
+          </p>
+        </div>
+
+        <!-- 2. What you will learn & Prerequisites -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3 ways to launch Developer Tools in Chrome, Firefox, Edge, and Safari.</li>
+            <li>Inspecting and live-editing DOM elements in the <strong>Elements panel</strong>.</li>
+            <li>Tweaking CSS styles in real time and using the visual color picker.</li>
+            <li>Using the <strong>Console panel</strong> as an interactive JavaScript scratchpad.</li>
+            <li>Understanding red JavaScript error logs and line numbers.</li>
+            <li>Inspecting asset delivery and status codes in the <strong>Network panel</strong>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="03-your-first-webpage.html">03. Your First Webpage</a>.
+          </div>
+        </div>
+
+        <!-- 3. Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Formula 1 Diagnostic Scanner</div>
+          <p>
+            <span class="lang-en">Imagine buying a high-performance sports car. Looking from the outside, you only see the sleek paint and tires. But when an engineer opens the hood and plugs in a digital diagnostic computer, they see real-time fuel pressure, engine temperature, sensor readouts, and cylinder timings. <strong>DevTools is that diagnostic computer for websites.</strong> It peels back the polished design and shows you every gear, wire, and voltage pulsing through the page.</span>
+            <span class="lang-hi">Jaise ek Formula 1 car ke mechanic ke paas ek diagnostic computer hota hai jo car ke sensors aur engine ko live monitor karta hai, waise hi <strong>DevTools</strong> web developers ka diagnostic tool hai jisse hum website ke piche ka HTML, CSS aur JS live dekh sakte hain.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. How to Open Developer Tools</h2>
+        <p>
+          Every modern browser has Developer Tools built right in &mdash; no plugins or downloads needed! You can open them using three methods:
+        </p>
+        <ol>
+          <li><strong>Keyboard Shortcut (Fastest):</strong> Press <code>F12</code> or <code>Ctrl + Shift + I</code> (on Mac: <code>Cmd + Option + I</code>).</li>
+          <li><strong>Right-Click Inspect:</strong> Right-click directly on any element on any webpage (a button, an image, a paragraph) and select <strong>Inspect</strong>. The Elements panel will jump straight to that exact line of HTML!</li>
+          <li><strong>Browser Menu:</strong> Click the 3 dots in the top-right corner &rarr; <em>More Tools</em> &rarr; <em>Developer Tools</em>.</li>
+        </ol>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: What You See in the Elements Panel</h3>
+        <p>The Elements tab displays the live DOM tree as reconstructed by the browser:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Inside the Elements Panel: You can double click any text to edit it live! --&gt;
+&lt;div class="user-card" id="profile-102"&gt;
+  &lt;h2 class="user-name"&gt;Sophia Martinez&lt;/h2&gt;
+  &lt;p class="user-role"&gt;Lead Frontend Architect&lt;/p&gt;
+  &lt;button type="button" class="btn-connect"&gt;Connect&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key DevTools Action:</strong><br>
+          &bull; Double-click "Sophia Martinez" directly inside the DevTools window and type your own name. The webpage updates instantly on your screen! (Note: Refreshing the page reloads the original file from disk, resetting your live test).
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Experiment: Simulating DevTools Style Tweaking</h2>
+        <p>In DevTools, you can toggle CSS properties on and off with checkboxes. Try toggling and altering the styles here:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Live CSS Property Manipulation</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .badge-card {
+      font-family: system-ui, sans-serif;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 320px;
+      margin: 10px auto;
+      text-align: center;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    .badge-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #3b82f6;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body style="background: #f1f5f9; padding: 20px;">
+  <div class="badge-card">
+    <div class="badge-avatar">JS</div>
+    <h3 style="margin: 0; color: #0f172a;">JavaScript Ninja</h3>
+    <p style="color: #64748b; font-size: 14px; margin: 8px 0 16px 0;">Level 1 Developer</p>
+    <button style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+      Verified Student
+    </button>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Console: Your Interactive JS Scratchpad</h2>
+        <p>
+          The <strong>Console tab</strong> is where JavaScript runs and outputs logs. You can type any valid JavaScript expression directly into the prompt (<code>&gt;</code>) and press <code>Enter</code> to execute it on the current webpage immediately!
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Common Console Logging Commands</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// 1. Standard informative log
+console.log("Page finished loading successfully.");
+
+// 2. Yellow warning log (for deprecated features or mild issues)
+console.warn("Careful: This element has no alt description!");
+
+// 3. Red error log (for broken logic or missing assets)
+console.error("Critical Failure: Unable to locate user profile.");
+
+// 4. Formatted data table (super powerful for arrays of objects!)
+console.table([
+  { id: 1, name: "HTML5", status: "Mastered" },
+  { id: 2, name: "CSS3", status: "In Progress" },
+  { id: 3, name: "JavaScript", status: "Next Up" }
+]);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Pro Feature:</strong> <code>console.table()</code> turns ugly JSON arrays into a beautiful, sortable spreadsheet table inside your DevTools console!
+        </div>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Running Live Queries from the Console</h3>
+        <p>Did you know Chrome and Edge DevTools have built-in shorthand shortcuts in the Console?</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// $0 refers to whichever element is currently highlighted in the Elements tab!
+$0.style.backgroundColor = "yellow";
+
+// $('h1') is shorthand for document.querySelector('h1') in the console
+$('h1').textContent = "Changed Live via DevTools Console!";
+
+// $$('p') is shorthand for document.querySelectorAll('p')
+console.log("Total paragraphs on page: " + $$('p').length);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why $0 is magical:</strong> When debugging, simply click an element in the Elements tab, switch to the Console, type <code>$0</code>, and you can inspect its methods and properties directly.
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Reading and Debugging JavaScript Errors</h2>
+        <p>
+          When JavaScript code encounters a fatal bug, your browser does not crash or show a blue screen of death. It quietly logs a red error to the Console, pointing out the exact line number where the issue occurred:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Anatomy of a Console Error Message</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
+    at app.js:24:18
+    at init (app.js:12:3)</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How to read this like a Senior Developer:</strong><br>
+          &bull; <code>TypeError</code>: You tried to perform an action on something that isn't allowed.<br>
+          &bull; <code>Cannot read properties of null</code>: You tried to find an element with <code>document.getElementById()</code>, but it wasn't found on the page (it returned <code>null</code>)!<br>
+          &bull; <code>app.js:24:18</code>: Click this blue link! DevTools will jump straight to line 24 of your script file so you can fix it.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Testing Mobile Responsiveness with Device Toolbar</h3>
+        <p>
+          You don't need 10 different smartphones to test how your website looks on mobile screens. DevTools includes a <strong>Device Mode</strong> emulator (shortcut: <code>Ctrl + Shift + M</code>):
+        </p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Must always be inside &lt;head&gt; for Device Mode to simulate mobile properly --&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Device Mode Features:</strong><br>
+          &bull; Switch between iPhone, Samsung Galaxy, iPad, and custom resolutions.<br>
+          &bull; Test portrait vs landscape rotation.<br>
+          &bull; Simulate touch gestures instead of mouse clicks.<br>
+          &bull; Throttle network speeds to simulate slow 3G connections.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Measuring Performance in the Console</h3>
+        <p>You can benchmark how long any piece of JavaScript takes to run using <code>console.time()</code>:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Start a named timer
+console.time("LoopPerformance");
+
+// Run a calculation loop
+let total = 0;
+for (let i = 0; i < 1000000; i++) {
+  total += i;
+}
+
+// Stop the timer and print duration in milliseconds
+console.timeEnd("LoopPerformance");
+// Output: LoopPerformance: 3.42ms</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Concept:</strong> Whenever you wonder whether your code is running quickly or dragging your page down, wrap it with <code>console.time()</code> and <code>console.timeEnd()</code>.
+        </div>
+
+        <!-- Section 4: Interactive Developer Tool: Speed Typing Test -->
+        <h2>4. Developer Practical Tool: Live Speed Typing Test</h2>
+        <p>
+          <span class="lang-en">A vital developer tool is your typing speed and code accuracy. Test your coding velocity with this interactive speed typing test right here inside the Developer Tools module:</span>
+          <span class="lang-hi">Developer Tools ke andar direct Speed Typing Test: Coding velocity aur accuracy test karein.</span>
+        </p>
+
+        <div style="background:var(--bg-card); border:2px solid var(--c-primary); border-radius:var(--radius-md); padding:24px; margin:24px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:18px;">
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-outline dev-mode-btn active" onclick="setInlineMode('js', this)" style="padding:4px 12px; font-size:12px; font-weight:700;">JavaScript</button>
+              <button class="btn btn-outline dev-mode-btn" onclick="setInlineMode('html', this)" style="padding:4px 12px; font-size:12px; font-weight:700;">HTML/CSS</button>
+              <button class="btn btn-outline dev-mode-btn" onclick="setInlineMode('vocab', this)" style="padding:4px 12px; font-size:12px; font-weight:700;">Tech Words</button>
+            </div>
+            <div style="display:flex; gap:16px; font-family:var(--font-code); font-weight:bold; font-size:15px;">
+              <span style="color:#38bdf8;">WPM: <span id="dt-wpm">0</span></span>
+              <span style="color:#10b981;">Acc: <span id="dt-acc">100%</span></span>
+              <span style="color:#f59e0b;">Time: <span id="dt-time">30s</span></span>
+            </div>
+          </div>
+
+          <div id="dt-arena" onclick="focusDtInput()" style="background:var(--bg-body); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:20px; min-height:120px; font-family:var(--font-code); font-size:17px; line-height:1.7; position:relative; cursor:text; user-select:none;">
+            <div id="dt-overlay" style="position:absolute; inset:0; background:rgba(15,23,42,0.8); display:flex; align-items:center; justify-content:center; color:#38bdf8; font-weight:bold; cursor:pointer;">
+              &#128070; Click here to start typing test inside DevTools...
+            </div>
+            <div id="dt-display"></div>
+            <input type="text" id="dt-input" style="position:absolute; opacity:0; pointer-events:none; left:-9999px;">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+            <button class="btn btn-outline" onclick="resetDtTest()" style="font-size:12px; padding:6px 14px;">&#8635; Restart Test</button>
+            <a href="05-developer-typing-test.html" style="font-size:13px; color:var(--c-primary); font-weight:bold; text-decoration:none;">Open Fullscreen Test Studio &rarr;</a>
+          </div>
+        </div>
+
+        <script>
+          (function() {
+            const dtSnippets = {
+              'js': [
+                "const debounce = (func, delay) => {\n  let timer;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => func(...args), delay);\n  };\n};",
+                "const uniqueScores = array.filter((score, index, self) => {\n  return self.indexOf(score) === index && score >= 60;\n}).sort((a, b) => b - a);"
+              ],
+              'html': [
+                "<div class=\"container\">\n  <header class=\"navbar\">\n    <a href=\"#\" class=\"logo\">WebDev</a>\n    <nav class=\"nav-links\">\n      <a href=\"#about\">About</a>\n    </nav>\n  </header>\n</div>"
+              ],
+              'vocab': [
+                "asynchronous closure prototype inheritance polymorphism encapsulation recursion algorithm binary search hoisting destructuring"
+              ]
+            };
+
+            let curMode = 'js';
+            let target = '';
+            let chars = [];
+            let curIdx = 0;
+            let errors = 0;
+            let strokes = 0;
+            let timerActive = false;
+            let tInterval = null;
+            let tLeft = 30;
+            let tStart = null;
+
+            const input = document.getElementById('dt-input');
+            const arena = document.getElementById('dt-arena');
+            const display = document.getElementById('dt-display');
+            const overlay = document.getElementById('dt-overlay');
+            const wpmEl = document.getElementById('dt-wpm');
+            const accEl = document.getElementById('dt-acc');
+            const timeEl = document.getElementById('dt-time');
+
+            window.setInlineMode = function(mode, btn) {
+              curMode = mode;
+              document.querySelectorAll('.dev-mode-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              resetDtTest();
+            };
+
+            window.focusDtInput = function() {
+              overlay.style.display = 'none';
+              arena.style.borderColor = 'var(--c-primary)';
+              input.focus();
+            };
+
+            function loadDtSnippet() {
+              const list = dtSnippets[curMode];
+              target = list[Math.floor(Math.random() * list.length)];
+              display.innerHTML = '';
+              chars = [];
+              for (let i = 0; i < target.length; i++) {
+                const s = document.createElement('span');
+                s.textContent = target[i];
+                s.style.color = 'var(--text-muted)';
+                if (i === 0) s.style.background = 'var(--c-primary)';
+                if (i === 0) s.style.color = '#0f172a';
+                display.appendChild(s);
+                chars.push(s);
+              }
+            }
+
+            input.addEventListener('input', function() {
+              if (!timerActive) {
+                timerActive = true;
+                tStart = Date.now();
+                tInterval = setInterval(() => {
+                  tLeft--;
+                  timeEl.textContent = tLeft + 's';
+                  updateStats();
+                  if (tLeft <= 0) {
+                    clearInterval(tInterval);
+                    input.blur();
+                    alert(`DevTools Typing Test Finished! WPM: ${wpmEl.textContent}, Accuracy: ${accEl.textContent}`);
+                  }
+                }, 1000);
+              }
+
+              const val = input.value;
+              input.value = '';
+              if (!val || curIdx >= target.length) return;
+
+              strokes++;
+              if (val === target[curIdx]) {
+                chars[curIdx].style.color = '#10b981';
+                chars[curIdx].style.background = 'transparent';
+              } else {
+                errors++;
+                chars[curIdx].style.color = '#ef4444';
+                chars[curIdx].style.background = 'rgba(239,68,68,0.2)';
+              }
+
+              curIdx++;
+              if (curIdx < target.length) {
+                chars[curIdx].style.background = 'var(--c-primary)';
+                chars[curIdx].style.color = '#0f172a';
+              }
+              updateStats();
+            });
+
+            function updateStats() {
+              const elapsedSec = tStart ? Math.max((Date.now() - tStart) / 1000, 1) : 1;
+              const mins = elapsedSec / 60;
+              const correct = chars.filter(c => c.style.color === 'rgb(16, 185, 129)').length;
+              const wpm = Math.round((correct / 5) / mins) || 0;
+              const acc = strokes > 0 ? Math.max(0, Math.round(((strokes - errors) / strokes) * 100)) : 100;
+              wpmEl.textContent = wpm;
+              accEl.textContent = acc + '%';
+            }
+
+            window.resetDtTest = function() {
+              clearInterval(tInterval);
+              timerActive = false;
+              curIdx = 0;
+              errors = 0;
+              strokes = 0;
+              tLeft = 30;
+              tStart = null;
+              wpmEl.textContent = '0';
+              accEl.textContent = '100%';
+              timeEl.textContent = '30s';
+              loadDtSnippet();
+              overlay.style.display = 'flex';
+            };
+
+            loadDtSnippet();
+          })();
+        </script>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Assuming DevTools changes are permanent:</strong> Edits you make inside the Elements or Styles tabs are in temporary browser memory. As soon as you refresh (F5), they disappear! Always copy your successful tweaks back into your source code in VS Code.</li>
+            <li><strong>Ignoring the Console tab:</strong> When a button "does nothing" or a script seems dead, 99% of the time there is a bright red error message waiting for you in the Console tab!</li>
+            <li><strong>Testing mobile view without the viewport meta tag:</strong> If you omit <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>, mobile browsers will shrink your desktop site down into tiny unreadable ant text.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Press <strong>Ctrl + Shift + C</strong> (or click the inspect arrow icon in the top-left of DevTools) to hover over any element on the page and select it instantly.</li>
+            <li>In the Styles tab, click on any color swatch square to open the interactive color picker &mdash; you can drag hues, sample colors from the screen, and switch between HEX, RGB, and HSL formats.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Press <strong>F12</strong> or right-click &rarr; <strong>Inspect</strong> to open Developer Tools.</li>
+            <li><strong>Elements tab</strong> = Live HTML tree + CSS styles editor.</li>
+            <li><strong>Console tab</strong> = Real-time JavaScript runner and error log viewer.</li>
+            <li><strong>Network tab</strong> = Monitor downloaded files, load times, and HTTP status codes.</li>
+            <li>Press <strong>Ctrl + Shift + M</strong> to toggle the responsive Mobile Device toolbar.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Open DevTools Right Now</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>On this very lesson page, press <code>F12</code> (or right-click this text and choose "Inspect"). Find the <code>&lt;h1&gt;</code> heading and identify what font-size it has in the Styles panel.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look in the Styles pane on the right under .lesson-title.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The heading has the class <code>.lesson-title</code>, which specifies <code>font-size: 2.25rem</code>!
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Run Math in the Console</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Switch to the <strong>Console</strong> tab in DevTools. Type <code>24 * 60 * 60</code> and press Enter. What number is printed?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: This calculates the number of seconds in a single day.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>86400</code>! The DevTools Console is a full mathematical calculator and REPL (Read-Eval-Print Loop) environment.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Find the Mystery Element via Console</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>In the Console tab, type <code>document.querySelector('.site-logo').textContent.trim()</code> and press Enter. What is returned?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: It targets the brand logo text at the top of the page.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> It returns <code>"WebDevAcademy"</code>! You just queried the live website using standard DOM JavaScript from the DevTools console.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 04 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="F12 is the universal shortcut across Windows and Linux browsers to open Developer Tools.">
+            <div class="quiz-question-text">1. What is the single function key shortcut to open DevTools?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> F12</div>
+              <div class="quiz-option"><span>B)</span> F1</div>
+              <div class="quiz-option"><span>C)</span> F5</div>
+              <div class="quiz-option"><span>D)</span> F11</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The Elements tab shows the live HTML DOM tree and allows interactive CSS style editing.">
+            <div class="quiz-question-text">2. Which DevTools tab allows you to inspect and live-edit HTML tags and CSS properties?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Security</div>
+              <div class="quiz-option"><span>B)</span> Elements (or Inspector)</div>
+              <div class="quiz-option"><span>C)</span> Memory</div>
+              <div class="quiz-option"><span>D)</span> Lighthouse</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="DevTools edits are temporary in memory; refreshing the page restores the original saved file.">
+            <div class="quiz-question-text">3. What happens to the edits you make inside DevTools when you press F5 (refresh)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They are automatically saved to your hard drive file</div>
+              <div class="quiz-option"><span>B)</span> Your computer will restart</div>
+              <div class="quiz-option"><span>C)</span> The temporary edits disappear and the page resets to the file's saved code</div>
+              <div class="quiz-option"><span>D)</span> The edits are sent to Google</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The Console tab logs runtime messages, exceptions, errors, and acts as an interactive code runner.">
+            <div class="quiz-question-text">4. Where should you look first when your JavaScript is not working as expected?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Browser History</div>
+              <div class="quiz-option"><span>B)</span> Downloads Tab</div>
+              <div class="quiz-option"><span>C)</span> Bookmarks Bar</div>
+              <div class="quiz-option"><span>D)</span> DevTools Console Tab</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Ctrl + Shift + M toggles the responsive mobile device emulation mode.">
+            <div class="quiz-question-text">5. What keyboard shortcut toggles the mobile responsive screen emulator in DevTools?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Ctrl + Alt + Delete</div>
+              <div class="quiz-option"><span>B)</span> Ctrl + Shift + M (Cmd + Shift + M on Mac)</div>
+              <div class="quiz-option"><span>C)</span> Ctrl + P</div>
+              <div class="quiz-option"><span>D)</span> Alt + Tab</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Customize the Live Card</h3>
+          <p>
+            In the interactive editor above, change the background color of the <code>.badge-avatar</code> to <code>#ef4444</code> (crimson red), and change the initials from "JS" to your own first and last name initials. Click <strong>Run Code</strong> to inspect your work!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#devtools" class="ref-pill">Glossary: DevTools</a>
+            <a href="../reference/glossary.html#console" class="ref-pill">Glossary: Console</a>
+            <a href="../reference/glossary.html#dom" class="ref-pill">Glossary: DOM</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">DevTools Cheatsheet</a>
+            <a href="../practice/typing-test.html" class="ref-pill" style="border-color:var(--c-primary); color:var(--c-primary); font-weight:700;">⚡ Practice: Developer Typing Test</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-your-first-webpage.html" class="btn btn-outline">&larr; Previous: Your First Webpage</a>
+          <button class="mark-complete-btn" data-lesson-id="getting-started-04">Mark as Complete</button>
+          <a href="05-developer-typing-test.html" class="btn btn-primary">Next: Fullscreen Typing Test &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

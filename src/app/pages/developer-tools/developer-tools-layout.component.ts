@@ -46,6 +46,16 @@ import { SQL_TOPICS, SqlTopicItem } from './sql/sql.models';
               <span class="rail-tooltip">Overview Hub</span>
             </button>
 
+            <!-- Web Tutorials Icon (HTML/CSS/JS) -->
+            <a
+              routerLink="/developer-tools/web-tutorials"
+              class="rail-btn"
+              title="Web Tutorials (HTML, CSS, JS)"
+            >
+              <span class="rail-icon">🌐</span>
+              <span class="rail-tooltip">Web Tutorials</span>
+            </a>
+
             <!-- SQL Learn Icon -->
             <button
               class="rail-btn"
@@ -56,6 +66,16 @@ import { SQL_TOPICS, SqlTopicItem } from './sql/sql.models';
               <span class="rail-icon">🗄️</span>
               <span class="rail-tooltip">SQL Learn (14 Topics)</span>
             </button>
+
+            <!-- Typing Speed Test Icon -->
+            <a
+              routerLink="/typing-speed-test"
+              class="rail-btn"
+              title="Typing Speed Test (WPM)"
+            >
+              <span class="rail-icon">⚡</span>
+              <span class="rail-tooltip">Typing Speed Test</span>
+            </a>
 
             <!-- Type Master Icon -->
             <a
@@ -238,6 +258,19 @@ import { SQL_TOPICS, SqlTopicItem } from './sql/sql.models';
                 <span class="tree-section-label">Developer Tools</span>
               </div>
 
+              <!-- 0. Web Tutorials (HTML, CSS, JavaScript, Java, Python, SQL) -->
+              <a
+                routerLink="/developer-tools/web-tutorials"
+                routerLinkActive="node-active"
+                class="tree-node tree-single"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🌐</span>
+                <span class="tree-node-text">Learn through ConverterAllAI</span>
+                <span class="badge-accent hot">HOT</span>
+              </a>
+
               <!-- 1. SQL Learn (Expandable Parent with 14 Child Lessons) -->
               <div class="tree-group" [class.is-expanded]="sqlExpanded()">
                 <div
@@ -270,7 +303,20 @@ import { SQL_TOPICS, SqlTopicItem } from './sql/sql.models';
                 </div>
               </div>
 
-              <!-- 2. Type Master Pro (Single Node) -->
+              <!-- 2. Typing Speed Test (WPM) -->
+              <a
+                routerLink="/typing-speed-test"
+                routerLinkActive="node-active"
+                class="tree-node tree-single"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">⚡</span>
+                <span class="tree-node-text">Typing Speed Test</span>
+                <span class="badge-accent hot">NEW</span>
+              </a>
+
+              <!-- 3. Type Master Pro (Single Node) -->
               <a
                 routerLink="/typing-master"
                 class="tree-node tree-single"

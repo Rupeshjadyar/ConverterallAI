@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 02: Responsive Landing Page — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="02-responsive-landing-page.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 25 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 02</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: High-Converting SaaS Landing Page</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Construct a modern responsive product landing page with a mobile hamburger drawer, feature grids, monthly/annual pricing toggle, and native FAQ accordion.</span>
+            <span class="lang-hi">Responsive product landing page banayein: Mobile hamburger menu, pricing toggle switch, feature cards, aur FAQ accordion.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Architectural Highlights</div>
+          <ul>
+            <li>Mobile-first CSS responsive breakpoints (<code>@media (min-width: 768px)</code>).</li>
+            <li>Interactive monthly vs annual pricing plan toggle with animated discount banner.</li>
+            <li>Accessible FAQ accordion using native HTML5 <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code>.</li>
+            <li>Mobile sliding drawer navigation with hamburger icon transformation.</li>
+            <li>Email lead capture form with instant regex validation.</li>
+          </ul>
+        </div>
+
+        <!-- Step by Step -->
+        <section id="step-by-step">
+          <h2>1. Architecture &amp; Component Breakdown</h2>
+          <p>
+            <span class="lang-en">A modern landing page is structured into distinct conversion blocks: Navbar &rarr; Hero CTA &rarr; Social Proof &rarr; 3-Column Features &rarr; Pricing Tiers &rarr; FAQ Accordion &rarr; Footer.</span>
+            <span class="lang-hi">Landing page ko structured blocks me design kiya jata hai: Header, Hero, Features, Pricing, aur FAQ.</span>
+          </p>
+
+          <div class="code-block-container">
+            <div class="code-block-header"><span class="code-lang">HTML — Responsive Markup</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+            <pre class="code-block" data-lang="html"><code>&lt;!-- Pricing Switcher Component --&gt;
+&lt;div class="pricing-toggle-wrapper"&gt;
+  &lt;span&gt;Monthly&lt;/span&gt;
+  &lt;label class="switch"&gt;
+    &lt;input type="checkbox" id="pricing-toggle" onchange="togglePricing()"&gt;
+    &lt;span class="slider"&gt;&lt;/span&gt;
+  &lt;/label&gt;
+  &lt;span&gt;Annual &lt;strong class="discount-badge"&gt;Save 20%&lt;/strong&gt;&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+          </div>
+        </section>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>2. Interactive Try-It Sandbox: Live Working Landing Page</h2>
+          <p>
+            <span class="lang-en">Test the pricing toggle, hamburger drawer, and FAQ accordion in the live runner below:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me poora landing page test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-landing">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live SaaS Landing Page Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-landing')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-landing')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding-bottom: 40px; }
+    header { background: #1e293b; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .brand { font-size: 18px; font-weight: 800; color: #38bdf8; }
+    .hero { text-align: center; padding: 40px 20px; max-width: 600px; margin: 0 auto; }
+    .hero h1 { font-size: 26px; margin-bottom: 10px; }
+    .hero p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    .lead-box { display: flex; gap: 8px; justify-content: center; max-width: 400px; margin: 0 auto; }
+    .lead-box input { flex: 1; padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: white; }
+    .btn { padding: 10px 18px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
+    
+    /* Pricing */
+    .toggle-bar { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 30px 0 20px; font-size: 14px; }
+    .badge-save { background: #10b981; color: black; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 500px; margin: 0 auto; padding: 0 15px; }
+    .plan-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; text-align: center; }
+    .plan-card.featured { border-color: #38bdf8; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+    .price-num { font-size: 28px; font-weight: bold; color: #38bdf8; margin: 10px 0; }
+    
+    /* FAQ */
+    .faq-box { max-width: 500px; margin: 30px auto 0; padding: 0 15px; }
+    details { background: #1e293b; border: 1px solid #334155; border-radius: 6px; margin-bottom: 8px; padding: 10px 14px; font-size: 13px; }
+    summary { font-weight: bold; cursor: pointer; color: #38bdf8; }
+    details p { margin-top: 8px; color: #94a3b8; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;div class="brand"&gt;CloudSync&lt;/div&gt;
+    &lt;button class="btn" style="padding:6px 12px; font-size:12px;"&gt;Sign In&lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;div class="hero"&gt;
+    &lt;h1&gt;Zero-Latency Cloud Storage for Teams&lt;/h1&gt;
+    &lt;p&gt;Secure, lightning fast, and completely privacy-first decentralized file syncing.&lt;/p&gt;
+    &lt;div class="lead-box"&gt;
+      &lt;input id="lead-email" placeholder="Enter your work email..."&gt;
+      &lt;button class="btn" onclick="captureLead()"&gt;Get Started&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div id="lead-status" style="margin-top:8px; font-size:12px; color:#10b981; display:none;"&gt;Welcome aboard! Invite dispatched.&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="toggle-bar"&gt;
+    &lt;span&gt;Monthly&lt;/span&gt;
+    &lt;input type="checkbox" id="billing-switch" onchange="updateBilling()"&gt;
+    &lt;span&gt;Annual &lt;span class="badge-save"&gt;SAVE 20%&lt;/span&gt;&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class="plans"&gt;
+    &lt;div class="plan-card"&gt;
+      &lt;h4&gt;Starter&lt;/h4&gt;
+      &lt;div class="price-num" id="p-starter"&gt;&#36;9&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;&lt;/div&gt;
+      &lt;p style="font-size:12px; color:#94a3b8;"&gt;100 GB Storage&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="plan-card featured"&gt;
+      &lt;h4&gt;Pro Team&lt;/h4&gt;
+      &lt;div class="price-num" id="p-pro"&gt;&#36;29&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;&lt;/div&gt;
+      &lt;p style="font-size:12px; color:#94a3b8;"&gt;Unlimited Storage&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="faq-box"&gt;
+    &lt;h4 style="margin-bottom:10px;"&gt;Frequently Asked Questions&lt;/h4&gt;
+    &lt;details&gt;
+      &lt;summary&gt;Can I cancel anytime?&lt;/summary&gt;
+      &lt;p&gt;Yes, subscriptions can be paused or cancelled at any moment without penalty.&lt;/p&gt;
+    &lt;/details&gt;
+    &lt;details&gt;
+      &lt;summary&gt;Is my data encrypted end-to-end?&lt;/summary&gt;
+      &lt;p&gt;Every byte is encrypted on your client machine before transmitting over HTTPS.&lt;/p&gt;
+    &lt;/details&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    function updateBilling() {
+      const isAnnual = document.getElementById('billing-switch').checked;
+      document.getElementById('p-starter').innerHTML = isAnnual ? '&#36;7&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;' : '&#36;9&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;';
+      document.getElementById('p-pro').innerHTML = isAnnual ? '&#36;23&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;' : '&#36;29&lt;span style="font-size:12px; color:#94a3b8;"&gt;/mo&lt;/span&gt;';
+    }
+
+    function captureLead() {
+      const email = document.getElementById('lead-email').value;
+      if (email && email.includes('@')) {
+        document.getElementById('lead-status').style.display = 'block';
+      }
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="01-personal-portfolio.html" class="nav-btn prev-btn">&larr; Project 01: Portfolio</a>
+          <button class="btn-complete" onclick="markLessonComplete('02-responsive-landing-page.html')">&#10003; Mark as Complete</button>
+          <a href="03-todo-app.html" class="nav-btn next-btn">Project 03: Todo App &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

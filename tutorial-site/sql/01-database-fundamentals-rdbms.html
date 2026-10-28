@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>SQL & RDBMS Database Fundamentals — WebDev Academy</title>
+  <meta name="description" content="Master the core concepts of Relational Database Management Systems (RDBMS), tables, schemas, primary keys, foreign keys, and E.F. Codd's rules from absolute zero.">
+  <meta name="keywords" content="SQL, RDBMS, database fundamentals, primary key, foreign key, relational database, tables rows columns, SQL tutorial beginner">
+  <meta property="og:title" content="SQL & RDBMS Database Fundamentals">
+  <meta property="og:description" content="Master the core concepts of Relational Database Management Systems (RDBMS), tables, schemas, primary keys, foreign keys, and E.F. Codd's rules from absolute zero.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="01-database-fundamentals-rdbms.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 14 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 01</span>
+          </div>
+          <h1 class="lesson-title">SQL & RDBMS Database Fundamentals</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the core concepts of Relational Database Management Systems (RDBMS), tables, schemas, primary keys, foreign keys, and E.F. Codd's rules from absolute zero.</span>
+            <span class="lang-hi">Database aur RDBMS ke basic concepts seekhein: tables, rows, columns, Primary Key aur Foreign Key kaise kaam karte hain.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What a database is, why flat files fail, and how RDBMS powers the modern world.</li><li>The anatomy of a database table: Fields (Columns), Tuples (Rows), and Data Types.</li><li>Database Keys in depth: Primary Key, Candidate Key, Foreign Key, and Composite Key.</li><li>The concept of Referential Integrity and relational constraints.</li><li>E.F. Codd's foundational rules for relational databases.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> None! This is the absolute starting point for all database engineering.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a physical school office. A flat file (like an Excel sheet) is a giant register where you write student names, parents' phone numbers, their class, and library books all in one huge messy list. If a parent changes their phone number, you have to update 50 different rows. An <strong>RDBMS is a smart locker system</strong> with separate, organized cabinets: one cabinet for Students (with unique Roll Numbers), one cabinet for Classes, and one for Library Books. Instead of repeating data, they connect to each other using smart index cards (Keys)!</span>
+            <span class="lang-hi">Socho ek school ka office hai. Excel sheet ek lambi dairy jaisi hai jahan student, uske mummy-papa ka phone, fees, sab ek jagah likha hai. Agar phone number badla toh 50 jagah change karna padega. <strong>RDBMS ek super-smart file cabinet hai</strong>: Students ka alag dabba, Fees ka alag dabba, aur Books ka alag dabba. Har student ka Roll Number (Primary Key) ek dabba dusre dabbe se jorta hai taaki duplicate data na bane!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is an RDBMS?</strong> A Relational Database Management System organizes data into structured two-dimensional tables (relations) consisting of rows and columns, enforcing relationships using Primary and Foreign Keys.</li><li><strong>Primary Key vs Unique Key:</strong> A Primary Key uniquely identifies a record and CANNOT contain NULL values (only one PK per table). A Unique Key also enforces uniqueness across records but CAN accept one (or multiple depending on SQL dialect) NULL value.</li><li><strong>Foreign Key:</strong> A column or group of columns in one table that references the Primary Key of another table, enforcing referential integrity.</li><li><strong>Why not use flat files (CSV/Excel)?</strong> RDBMS provides ACID transaction guarantees, concurrency control for millions of simultaneous users, data integrity constraints, high-speed B-Tree indexing, and zero redundant storage.</li><li><strong>Candidate Key vs Super Key:</strong> A Super Key is any set of attributes that uniquely identifies a row. A Candidate Key is a minimal Super Key with no redundant attributes.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a Database and Why Do We Need SQL?</h2>
+        <p>Every interactive application on earth &mdash; Instagram, Netflix, Uber, your bank &mdash; needs to store information permanently so it isn't lost when computers turn off. While you could technically save data into text files or JSON files, they fail immediately when two users try to edit a file at the same time, or when searching through 100 million records takes 45 minutes instead of 2 milliseconds.</p>
+        <p>SQL (Structured Query Language) is the universal, standardized language created by IBM researchers Donald Chamberlin and Raymond Boyce to declare <em>what</em> data you want from a relational database, leaving the database engine to figure out the fastest algorithm to retrieve it.</p>
+        
+        <h2>2. Database Anatomy: Tables, Columns, Rows, and Keys</h2>
+        <p>A database contains one or more <strong>Tables</strong> (also mathematically called <em>relations</em>). Each table has a defined <strong>Schema</strong> &mdash; the blueprint of columns and their data types.</p>
+        <p>Each horizontal entry is a <strong>Row</strong> (or <em>Record</em> / <em>Tuple</em>). Each vertical field is a <strong>Column</strong> (or <em>Attribute</em>). To ensure every single row can be uniquely identified and connected to other tables, we apply <strong>Keys</strong>.</p>
+        
+        <h2>3. The 4 Essential Database Keys Every Developer Must Know</h2>
+        <p>In interviews and production system design, key definitions are tested relentlessly:</p>
+        <p><strong>1. Primary Key (PK):</strong> The unique identifier of a row. Must be unique and NOT NULL.<br><strong>2. Foreign Key (FK):</strong> A link pointing to a PK in a parent table.<br><strong>3. Composite Key:</strong> A primary key formed by combining two or more columns together (e.g., student_id + course_id).<br><strong>4. Surrogate Key vs Natural Key:</strong> A natural key uses existing real-world unique data (e.g. Email, SSN). A surrogate key is an artificial number generated by the database (e.g., auto-incrementing ID or UUID), which is industry best practice because real-world identifiers often change!</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Designing an Academic Relational Schema with Keys</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- 1. Parent Table: Departments
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY AUTO_INCREMENT,
+    department_name VARCHAR(100) NOT NULL UNIQUE,
+    building_name VARCHAR(50)
+);
+
+-- 2. Child Table: Students (Linked via Foreign Key)
+CREATE TABLE students (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    enrollment_date DATE DEFAULT (CURRENT_DATE),
+    department_id INT,
+    CONSTRAINT fk_student_dept 
+        FOREIGN KEY (department_id) 
+        REFERENCES departments(department_id)
+        ON DELETE SET NULL
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>PRIMARY KEY AUTO_INCREMENT</code>: Generates an automatic 1, 2, 3... integer surrogate key.<br>• <code>NOT NULL</code>: Enforces that this column cannot be left empty.<br>• <code>UNIQUE</code>: Guarantees no two records share the same email or department name.<br>• <code>CONSTRAINT fk_student_dept FOREIGN KEY</code>: Links students to their department, guaranteeing you cannot assign a student to a department that does not exist!
+        </div>
+        
+        <h3>Code Example 2: Composite Primary Key in a Many-to-Many Enrollment Table</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Junction Table linking Students and Courses
+CREATE TABLE course_enrollments (
+    student_id INT NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    semester VARCHAR(20) NOT NULL,
+    grade CHAR(2),
+    -- Composite Primary Key: A student can only enroll in a course once per semester
+    PRIMARY KEY (student_id, course_code, semester),
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • A Composite Key combines multiple columns to form uniqueness.<br>• <code>ON DELETE CASCADE</code>: If a student is deleted from the students table, all their enrollment records are automatically cleaned up.
+        </div>
+        
+        <h3>Code Example 3: Inserting Parent and Child Data with Referential Integrity</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Insert Departments first (Parent)
+INSERT INTO departments (department_name, building_name) 
+VALUES ('Computer Science', 'Turing Hall'),
+       ('Mechanical Engineering', 'Newton Lab');
+
+-- Insert Students referencing valid department_id (Child)
+INSERT INTO students (first_name, last_name, email, department_id)
+VALUES ('Aarav', 'Sharma', 'aarav@univ.edu', 1),
+       ('Priya', 'Verma', 'priya@univ.edu', 1),
+       ('Rohan', 'Patel', 'rohan@univ.edu', 2);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice that parent rows in <code>departments</code> must exist before child rows in <code>students</code> can reference their IDs.
+        </div>
+        
+        <h3>Code Example 4: Demonstrating Referential Integrity Protection</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- This will FAIL with a Foreign Key Violation error:
+-- Because department_id 99 does not exist in the departments table!
+INSERT INTO students (first_name, last_name, email, department_id)
+VALUES ('Invalid', 'Student', 'ghost@univ.edu', 99);
+
+-- ERROR 1452 (23000): Cannot add or update a child row: 
+-- a foreign key constraint fails</code></pre>
+        </div>
+        <div class="code-explanation">
+          • This error proves the beauty of RDBMS: the database acts as a security guard, preventing corrupted orphan data.
+        </div>
+        
+        <h3>Code Example 5: Inspecting Table Schema and Metadata</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- In PostgreSQL:
+\d students;
+
+-- In MySQL / MariaDB:
+DESCRIBE students;
+
+-- In Standard ANSI SQL:
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'students';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>information_schema</code> is the ANSI-standard internal catalog describing all tables, views, and columns in your database.
+        </div>
+        
+        <h3>Code Example 6: Reading Related Data with a Relational Projection</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Verify data integrity by combining student name with their department
+SELECT 
+    s.student_id,
+    CONCAT(s.first_name, ' ', s.last_name) AS full_name,
+    s.email,
+    d.department_name,
+    d.building_name
+FROM students s
+JOIN departments d ON s.department_id = d.department_id;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Joins connect relations on the fly using their Primary Key & Foreign Key links without storing redundant text.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: SQL & RDBMS Database Fundamentals</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive SQL Sandbox: Explore Schema & Keys
+CREATE TABLE authors (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE books (
+    book_id INT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    price DECIMAL(5,2),
+    author_id INT REFERENCES authors(author_id)
+);
+
+INSERT INTO authors VALUES (1, 'George Orwell'), (2, 'J.K. Rowling');
+INSERT INTO books VALUES (101, '1984', 14.99, 1), (102, 'Animal Farm', 9.99, 1);
+
+SELECT b.title, b.price, a.author_name
+FROM books b
+JOIN authors a ON b.author_id = a.author_id;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using a real-world attribute (like phone number or Aadhaar/SSN) as Primary Key:</strong> People change phone numbers, and typing errors occur. Always prefer a surrogate auto-increment ID or UUID as Primary Key.</li><li><strong>Forgetting NOT NULL on critical fields:</strong> Leaving names or amounts nullable leads to subtle NullPointerException bugs in application code.</li><li><strong>Omitting Foreign Keys:</strong> Developers sometimes create columns named <code>user_id</code> but forget the <code>FOREIGN KEY</code> constraint. This creates orphan records when users are deleted.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always use singular lowercase names:</strong> Name tables <code>user</code>, <code>order</code>, <code>invoice</code> (or plural consistently like <code>users</code>, <code>orders</code>) without mixing camelCase and snake_case.</li><li><strong>Index all Foreign Keys:</strong> In almost all RDBMS (PostgreSQL, MySQL, Oracle), Primary Keys are indexed automatically, but Foreign Keys are NOT automatically indexed. Always create an index on FK columns to avoid full table locks during cascading operations!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>An RDBMS organizes information into structured tables with rows (tuples) and columns (attributes).</li><li>A Primary Key uniquely identifies a record and never allows NULLs.</li><li>A Foreign Key enforces referential integrity by pointing to a valid Primary Key in another table.</li><li>Surrogate Keys (auto-incrementing integers or UUIDs) protect your schema from unpredictable real-world data changes.</li><li>SQL is declarative: you tell the engine WHAT data you need, and the query optimizer decides HOW to fetch it.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a SQL statement to create a table named <code>categories</code> with an auto-incrementing integer Primary Key <code>category_id</code> and a mandatory, unique text field <code>category_name</code> (up to 50 characters).</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use INT PRIMARY KEY AUTO_INCREMENT and VARCHAR(50) NOT NULL UNIQUE.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">CREATE TABLE categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL UNIQUE
+);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Create a <code>products</code> table with <code>product_id</code> as PK, <code>product_name</code> (mandatory), <code>price</code> (decimal up to 10 digits with 2 decimals, default 0.00), and a Foreign Key <code>category_id</code> referencing the <code>categories</code> table.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use DECIMAL(10,2) DEFAULT 0.00 and CONSTRAINT fk_prod_cat FOREIGN KEY (category_id) REFERENCES categories(category_id).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">CREATE TABLE products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) DEFAULT 0.00,
+    category_id INT,
+    CONSTRAINT fk_prod_cat 
+        FOREIGN KEY (category_id) 
+        REFERENCES categories(category_id)
+);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what happens when an administrator runs <code>DELETE FROM departments WHERE department_id = 1;</code> if the students table has foreign key constraint with <code>ON DELETE RESTRICT</code> vs <code>ON DELETE CASCADE</code> vs <code>ON DELETE SET NULL</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about whether child rows are preserved, deleted, or blocked.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- RESTRICT: The database rejects the deletion with an error because child student rows still exist.
+-- CASCADE: The database deletes department 1 AND automatically deletes all students enrolled in department 1.
+-- SET NULL: The database deletes department 1, and updates all students in that department to have department_id = NULL.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="A table can only have ONE Primary Key and it strictly forbids NULLs. Unique Keys enforce uniqueness but allow NULL entries (representing absence of value).">
+          <div class="quiz-question-text">1. What is the primary difference between a Primary Key and a Unique Key?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A Primary Key can have duplicate values, Unique Key cannot</div><div class="quiz-option"><span>B)</span> A Primary Key cannot contain NULL values, whereas a Unique Key can accept a NULL value</div><div class="quiz-option"><span>C)</span> Unique Keys are only used in NoSQL databases</div><div class="quiz-option"><span>D)</span> There can be multiple Primary Keys per table, but only one Unique Key</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="Foreign keys enforce referential integrity by guaranteeing that a child row's reference matches a real, existing primary key in the parent table.">
+          <div class="quiz-question-text">2. What is a Foreign Key used for?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To encrypt database passwords for external users</div><div class="quiz-option"><span>B)</span> To store IP addresses of computers in foreign countries</div><div class="quiz-option"><span>C)</span> To establish and enforce a link between data in two tables (referential integrity)</div><div class="quiz-option"><span>D)</span> To speed up mathematical calculations</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="A surrogate key is an artificial, system-generated identifier with no business meaning, ensuring stability even if user details change.">
+          <div class="quiz-question-text">3. Which of the following is considered a 'Surrogate Key'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A user's National Identification Number (Aadhaar / SSN)</div><div class="quiz-option"><span>B)</span> A customer's verified personal Email address</div><div class="quiz-option"><span>C)</span> An auto-generated numeric ID (e.g. 101, 102, 103) with no real-world business meaning</div><div class="quiz-option"><span>D)</span> A student's full name and date of birth</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Referential integrity guarantees that foreign keys always point to valid, existing parent rows, preventing corrupted 'orphan' records.">
+          <div class="quiz-question-text">4. What does the term 'Referential Integrity' guarantee?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> That queries execute in less than 1 millisecond</div><div class="quiz-option"><span>B)</span> That relationships between tables remain consistent and child tables cannot point to non-existent parent rows</div><div class="quiz-option"><span>C)</span> That the database hard drive never runs out of disk space</div><div class="quiz-option"><span>D)</span> That database backups are created every hour</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="In relational database theory formulated by E.F. Codd, a table is a Relation, a column is an Attribute, and a row is a Tuple.">
+          <div class="quiz-question-text">5. In a relational table, what is another mathematical term for a 'Row'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Attribute</div><div class="quiz-option"><span>B)</span> Tuple</div><div class="quiz-option"><span>C)</span> Cardinality</div><div class="quiz-option"><span>D)</span> Domain</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, add a third table called <code>orders</code> with an <code>order_id</code>, <code>order_date</code>, and a foreign key referencing <code>books(book_id)</code>. Insert 2 sample orders and verify the schema!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#primary-key" class="ref-pill">Glossary: Primary Key</a><a href="../reference/glossary.html#foreign-key" class="ref-pill">Glossary: Foreign Key</a><a href="../reference/glossary.html#rdbms" class="ref-pill">Glossary: RDBMS</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="index.html" class="btn btn-outline">&larr; SQL Course Index</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-01">Mark as Complete</button>
+          <a href="02-ddl-create-alter-drop.html" class="btn btn-primary">DDL: CREATE, ALTER, DROP &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

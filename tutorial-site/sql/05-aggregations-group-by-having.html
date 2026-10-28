@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Aggregations, GROUP BY & The Crucial HAVING Clause — WebDev Academy</title>
+  <meta name="description" content="Master SQL aggregate functions (COUNT, SUM, AVG, MIN, MAX), group datasets into meaningful business summaries with GROUP BY, and understand the difference between WHERE and HAVING in technical interviews.">
+  <meta name="keywords" content="SQL aggregations, GROUP BY, HAVING clause, COUNT SUM AVG MIN MAX, WHERE vs HAVING, SQL interview">
+  <meta property="og:title" content="Aggregations, GROUP BY & The Crucial HAVING Clause">
+  <meta property="og:description" content="Master SQL aggregate functions (COUNT, SUM, AVG, MIN, MAX), group datasets into meaningful business summaries with GROUP BY, and understand the difference between WHERE and HAVING in technical interviews.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="05-aggregations-group-by-having.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 05</span>
+          </div>
+          <h1 class="lesson-title">Aggregations, GROUP BY & The Crucial HAVING Clause</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master SQL aggregate functions (COUNT, SUM, AVG, MIN, MAX), group datasets into meaningful business summaries with GROUP BY, and understand the difference between WHERE and HAVING in technical interviews.</span>
+            <span class="lang-hi">Aggregate functions (COUNT, SUM, AVG) aur GROUP BY seekhein. Jaanein WHERE aur HAVING me kya farak hota hai jo har interview me pucha jaata hai.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 5 core aggregate functions: COUNT(*), COUNT(col), SUM, AVG, MIN, and MAX.</li><li>The subtle difference between COUNT(*) and COUNT(column_name) regarding NULLs.</li><li>Grouping categorical data into summaries using GROUP BY.</li><li>The #1 SQL Interview Distinction: WHERE (row filter) vs HAVING (aggregate group filter).</li><li>Filtering aggregated groups with multiple criteria and combining with ORDER BY.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 04: DQL & Filtering.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of sorting coins in your piggy bank. <strong>WHERE is examining each single coin BEFORE grouping</strong> &mdash; you throw away any foreign currency or fake plastic coins. <strong>GROUP BY is organizing the remaining valid coins into piles</strong>: a pile of 1-dollar coins, a pile of 5-dollar coins, and a pile of 10-dollar coins. <strong>HAVING is filtering the PILES AFTER grouping</strong> &mdash; for example: 'Only give me piles that have more than 50 dollars in total value'. You cannot inspect the total value of a pile before the pile has been created!</span>
+            <span class="lang-hi">Gullak ke sikke ginne ki misaal lein: <strong>WHERE sikko ko alag dher lagane se PEHLE filter karta hai</strong> (nakli sikke bahar phenk diye). <strong>GROUP BY bache hue sikko ka dher banata hai</strong> (1 rupee ke alag, 5 ke alag, 10 ke alag). <strong>HAVING dher banne ke BAAD dher par filter lagata hai</strong> (jaise 'wahi dher dikhao jisme 100 se zyada rupaye hain'). Dher banne se pehle aap dher ka total nahi nikal sakte!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>WHERE vs HAVING (Top Interview Question):</strong><br>• <code>WHERE</code> filters individual rows <em>before</em> any grouping occurs. Cannot use aggregate functions (e.g. <code>WHERE SUM(sal) &gt; 5000</code> is illegal).<br>• <code>HAVING</code> filters aggregated groups <em>after</em> the <code>GROUP BY</code> clause is evaluated. Can freely use aggregate functions (e.g. <code>HAVING COUNT(*) &gt;= 5</code>).</li><li><strong>COUNT(*) vs COUNT(column):</strong> <code>COUNT(*)</code> counts every row regardless of NULL values. <code>COUNT(column)</code> counts only rows where that specific column is NOT NULL.</li><li><strong>Rule of GROUP BY in SELECT:</strong> Any non-aggregated column in the <code>SELECT</code> clause MUST appear in the <code>GROUP BY</code> clause. Failing to do so causes a syntax error in ANSI SQL.</li><li><strong>AVG with NULLs:</strong> <code>AVG()</code> ignores NULL rows entirely, calculating sum divided by the count of non-null rows, which can skew averages if NULL represents 0.</li><li><strong>Performance Tip:</strong> Always filter as many rows as possible in the <code>WHERE</code> clause before grouping to reduce the number of rows the engine must sort and aggregate in memory.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What are Aggregate Functions?</h2>
+        <p>In standard SQL queries, each row produces an individual output row. <strong>Aggregate functions</strong> collapse multiple rows into a single summary value. The 5 foundational aggregate functions are:</p>
+        <p>• <code>COUNT(expr)</code>: Total number of rows.<br>• <code>SUM(col)</code>: Total mathematical sum of a numeric column.<br>• <code>AVG(col)</code>: Arithmetic mean.<br>• <code>MIN(col)</code>: Smallest value (works on numbers, dates, and text!).<br>• <code>MAX(col)</code>: Largest value.</p>
+        
+        <h2>2. Grouping Rows with GROUP BY</h2>
+        <p>When you want aggregations broken down by category &mdash; such as total sales <em>per country</em> or average salary <em>per department</em> &mdash; you use the <code>GROUP BY</code> clause.</p>
+        <p>The database partitions the rows by the distinct values of the grouped column, runs the aggregation on each partition, and outputs one summary row per group.</p>
+        
+        <h2>3. The Critical Difference: WHERE vs HAVING</h2>
+        <p>Beginners frequently try to filter aggregates using WHERE: <code>WHERE COUNT(*) &gt; 10</code>. This immediately fails because WHERE executes before rows are grouped!</p>
+        <p>Remember the execution pipeline: <strong>FROM &rarr; WHERE &rarr; GROUP BY &rarr; HAVING &rarr; SELECT</strong>. Use WHERE to drop rows before grouping, and use HAVING to drop group summaries after grouping.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Demonstrating COUNT(*) vs COUNT(column) with NULLs</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Table: employees (id, name, bonus)
+-- Row 1: (1, 'Alice', 500)
+-- Row 2: (2, 'Bob', NULL)
+-- Row 3: (3, 'Charlie', 200)
+
+SELECT 
+    COUNT(*) AS total_employees,           -- Returns 3
+    COUNT(bonus) AS employees_with_bonus,  -- Returns 2 (ignores Bob's NULL!)
+    SUM(bonus) AS total_bonus,             -- Returns 700
+    AVG(bonus) AS avg_bonus                -- Returns 350 (700 / 2, NOT 700 / 3!)
+FROM employees;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>COUNT(bonus)</code> and <code>AVG(bonus)</code> ignore NULLs. If Bob's NULL should count as 0 in the average, write <code>AVG(COALESCE(bonus, 0))</code>.
+        </div>
+        
+        <h3>Code Example 2: GROUP BY with Multiple Aggregations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    department,
+    COUNT(*) AS head_count,
+    MIN(salary) AS minimum_salary,
+    MAX(salary) AS maximum_salary,
+    ROUND(AVG(salary), 2) AS average_salary,
+    SUM(salary) AS total_payroll
+FROM employees
+WHERE is_active = TRUE
+GROUP BY department
+ORDER BY total_payroll DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • One summary row is produced for each unique department.
+        </div>
+        
+        <h3>Code Example 3: Filtering Groups with the HAVING Clause</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Find departments with at least 5 active employees AND average salary &gt; 75000
+SELECT 
+    department,
+    COUNT(*) AS total_staff,
+    ROUND(AVG(salary), 2) AS avg_sal
+FROM employees
+WHERE is_active = TRUE
+GROUP BY department
+HAVING COUNT(*) &gt;= 5 
+   AND AVG(salary) &gt; 75000.00;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>HAVING</code> filters the resulting groups using aggregate calculations.
+        </div>
+        
+        <h3>Code Example 4: Combining WHERE and HAVING in the Same Query</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Calculate high-ticket order stats in 2024 for loyal customers
+SELECT 
+    customer_id,
+    COUNT(order_id) AS total_orders,
+    SUM(order_amount) AS total_spent
+FROM orders
+WHERE order_date &gt;= '2024-01-01'  -- WHERE filters individual orders before grouping
+  AND status = 'COMPLETED'
+GROUP BY customer_id
+HAVING SUM(order_amount) &gt; 10000 -- HAVING filters customer groups after summing
+ORDER BY total_spent DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how WHERE eliminates non-2024 or uncompleted orders first, making GROUP BY much faster.
+        </div>
+        
+        <h3>Code Example 5: GROUP BY Across Multiple Columns</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Sales totals broken down by Year AND Region
+SELECT 
+    YEAR(order_date) AS order_year,
+    shipping_region,
+    COUNT(*) AS total_shipments,
+    SUM(order_amount) AS gross_revenue
+FROM orders
+GROUP BY YEAR(order_date), shipping_region
+ORDER BY order_year DESC, gross_revenue DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Multi-column grouping produces combinations: (2024, 'North'), (2024, 'South'), (2023, 'North'), etc.
+        </div>
+        
+        <h3>Code Example 6: Counting Unique Items with COUNT(DISTINCT col)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Number of unique customers who bought from each store branch
+SELECT 
+    store_id,
+    COUNT(*) AS total_transactions,
+    COUNT(DISTINCT customer_id) AS unique_shoppers
+FROM sales
+GROUP BY store_id;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>COUNT(DISTINCT customer_id)</code> eliminates repeat purchases by the same customer within the store group.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Aggregations, GROUP BY & The Crucial HAVING Clause</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Aggregations Sandbox
+CREATE TABLE sales_records (
+    id INT PRIMARY KEY,
+    salesperson VARCHAR(50),
+    region VARCHAR(30),
+    amount DECIMAL(8,2)
+);
+
+INSERT INTO sales_records VALUES
+(1, 'Aarav', 'North', 1200.00),
+(2, 'Priya', 'South', 3400.00),
+(3, 'Aarav', 'North', 1800.00),
+(4, 'Rohan', 'West',  2200.00),
+(5, 'Priya', 'South', 4100.00),
+(6, 'Sneha', 'North',  900.00);
+
+-- Calculate total sales per region, only showing regions with total > 3000
+SELECT region, COUNT(*) AS deals, SUM(amount) AS total_sales
+FROM sales_records
+GROUP BY region
+HAVING SUM(amount) > 3000
+ORDER BY total_sales DESC;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Selecting columns not in GROUP BY:</strong> Writing <code>SELECT dept, emp_name, AVG(sal) FROM emp GROUP BY dept;</code> is invalid because the engine doesn't know which <code>emp_name</code> to pick for the department group.</li><li><strong>Using WHERE instead of HAVING for aggregates:</strong> Writing <code>WHERE AVG(salary) &gt; 50000</code> will throw an immediate syntax error.</li><li><strong>Ignoring NULL impacts on AVG():</strong> Forgetting that <code>AVG()</code> skips NULLs can lead to mathematically incorrect corporate reports.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Filter in WHERE early:</strong> Every row you filter in <code>WHERE</code> avoids an expensive in-memory sort or hash aggregation. Never push conditions into <code>HAVING</code> that could have been in <code>WHERE</code>!</li><li><strong>GROUPING SETS, ROLLUP & CUBE:</strong> Advanced SQL provides <code>GROUP BY ROLLUP(year, region)</code> to generate sub-totals and grand totals automatically in a single query.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Aggregate functions (COUNT, SUM, AVG, MIN, MAX) summarize multiple rows into a single value.</li><li>COUNT(*) counts all rows; COUNT(col) counts non-null rows.</li><li>GROUP BY categorizes data into summary buckets.</li><li>WHERE filters rows before grouping; HAVING filters groups after aggregation.</li><li>Non-aggregated columns in SELECT must be included in the GROUP BY clause.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a query to find the total number of books, the lowest price, and the highest price from the <code>books</code> table.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use COUNT(*), MIN(price), and MAX(price).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    COUNT(*) AS total_books,
+    MIN(price) AS min_price,
+    MAX(price) AS max_price
+FROM books;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Find the average salary for each department from the <code>employees</code> table, only including active employees (<code>is_active = TRUE</code>), and display only departments where the average salary exceeds 60,000.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Combine WHERE is_active = TRUE with GROUP BY department and HAVING AVG(salary) > 60000.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    department,
+    ROUND(AVG(salary), 2) AS avg_salary
+FROM employees
+WHERE is_active = TRUE
+GROUP BY department
+HAVING AVG(salary) &gt; 60000.00;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Write a query to find all <code>customer_id</code>s who have placed more than 3 orders in the year 2024 and have spent a grand total of more than $5,000, sorted by total spend descending.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WHERE for the 2024 date filter and HAVING for COUNT > 3 AND SUM > 5000.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    customer_id,
+    COUNT(order_id) AS order_count,
+    SUM(order_total) AS total_spent
+FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2024-12-31'
+GROUP BY customer_id
+HAVING COUNT(order_id) &gt; 3 
+   AND SUM(order_total) &gt; 5000.00
+ORDER BY total_spent DESC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="WHERE filters source rows before GROUP BY executes; HAVING filters the aggregated summary buckets.">
+          <div class="quiz-question-text">1. What is the fundamental difference between WHERE and HAVING?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> WHERE is used in MySQL, HAVING is used in Oracle</div><div class="quiz-option"><span>B)</span> WHERE filters rows before grouping; HAVING filters groups after aggregation</div><div class="quiz-option"><span>C)</span> WHERE can only check numbers; HAVING can check strings</div><div class="quiz-option"><span>D)</span> There is no difference; they are aliases</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="AVG() ignores NULL rows and calculates 60 / 3 = 20.">
+          <div class="quiz-question-text">2. If a column contains values [10, 20, NULL, 30], what will AVG(col) return?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 15 (60 / 4)</div><div class="quiz-option"><span>B)</span> 20 (60 / 3)</div><div class="quiz-option"><span>C)</span> NULL</div><div class="quiz-option"><span>D)</span> Error</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Option B is illegal because <code>job_title</code> is in the SELECT clause but is NOT in the GROUP BY clause or inside an aggregate function.">
+          <div class="quiz-question-text">3. Which of the following is an ILLEGAL SQL query in standard ANSI SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SELECT department, AVG(salary) FROM employees GROUP BY department;</div><div class="quiz-option"><span>B)</span> SELECT department, job_title, AVG(salary) FROM employees GROUP BY department;</div><div class="quiz-option"><span>C)</span> SELECT COUNT(*) FROM employees;</div><div class="quiz-option"><span>D)</span> SELECT department, COUNT(*) FROM employees GROUP BY department HAVING COUNT(*) > 5;</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="COUNT(DISTINCT column) deduplicates values before counting.">
+          <div class="quiz-question-text">4. What does COUNT(DISTINCT country) return?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> The total number of rows in the table</div><div class="quiz-option"><span>B)</span> The count of unique, non-null country values</div><div class="quiz-option"><span>C)</span> A list of all countries separated by commas</div><div class="quiz-option"><span>D)</span> The country with the most letters</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Yes, without GROUP BY, the entire result set is treated as one single group.">
+          <div class="quiz-question-text">5. Can you have a HAVING clause without a GROUP BY clause?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> No, it throws a fatal syntax error</div><div class="quiz-option"><span>B)</span> Yes, in which case HAVING treats the entire table as a single group</div><div class="quiz-option"><span>C)</span> Only on temporary tables</div><div class="quiz-option"><span>D)</span> Only when using PostgreSQL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write a query that calculates the total sales made by each salesperson, sorted from highest sales to lowest!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#aggregate" class="ref-pill">Glossary: Aggregate Function</a><a href="../reference/glossary.html#group-by" class="ref-pill">Glossary: GROUP BY</a><a href="06-joins-in-depth.html" class="ref-pill">Lesson 06: SQL Joins In-Depth</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="04-dql-select-where-operators.html" class="btn btn-outline">&larr; 04. DQL & Filtering</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-05">Mark as Complete</button>
+          <a href="06-joins-in-depth.html" class="btn btn-primary">06. SQL Joins In-Depth &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -53,6 +53,8 @@ const legalPages = [
 ];
 
 const sqlChapters = [
+  '/developer-tools/web-tutorials',
+  '/ai-chat',
   '/developer-tools/sql/intro',
   '/developer-tools/sql/syntax',
   '/developer-tools/sql/ddl',

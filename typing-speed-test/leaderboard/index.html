@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Leaderboard | TypePulse</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .lb-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+    .lb-table-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table.lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    table.lb-table th, table.lb-table td {
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    table.lb-table th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .rank-cell {
+      font-weight: 700;
+      font-family: var(--font-mono);
+      width: 50px;
+    }
+    .rank-1 { color: #f59e0b; font-size: 1.15rem; }
+    .rank-2 { color: #94a3b8; font-size: 1.05rem; }
+    .rank-3 { color: #b45309; font-size: 1.05rem; }
+    .name-editable {
+      cursor: pointer;
+      border-bottom: 1px dashed var(--text-muted);
+      padding-bottom: 2px;
+    }
+    .name-editable:hover {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .local-notice-box {
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2.5"></rect><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"></path><path d="M8 16h8"></path></svg>
+        </div>
+        <span class="brand-title">Type<span>Pulse</span></span>
+        <span class="brand-badge">Offline</span>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="main-nav">
+        <a href="../index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg><span>Test</span></a>
+        <a href="../learn/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg><span>Learn</span></a>
+        <a href="../stats/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg><span>Stats</span></a>
+        <a href="index.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path><path d="M14 14.66V17c0 .55.45 1 1 1h2"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span>Leaderboard</span></a>
+        <a href="../settings/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Settings</span></a>
+        <a href="../about/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>About</span></a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-icon" onclick="window.TypeApp.Theme.cycleTheme()" title="Switch theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.02em;">Local Device Hall of Fame</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem;">Top 20 best scores achieved on this browser and device.</p>
+    </div>
+
+    <!-- Offline notice -->
+    <div class="local-notice-box">
+      <strong>🔒 Note: Local-Only Storage</strong> — This leaderboard runs entirely on your device's <code>localStorage</code>. No scores are transmitted over the internet or sent to external servers. Your records remain private and work 100% offline.
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="lb-filters">
+      <button class="config-btn active" data-lb-filter="all" onclick="filterLeaderboard('all')">All Modes</button>
+      <button class="config-btn" data-lb-filter="time" onclick="filterLeaderboard('time')">Time Mode</button>
+      <button class="config-btn" data-lb-filter="words" onclick="filterLeaderboard('words')">Words Mode</button>
+      <button class="config-btn" data-lb-filter="quote" onclick="filterLeaderboard('quote')">Quote Mode</button>
+    </div>
+
+    <!-- Leaderboard Table Card -->
+    <div class="lb-table-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 1.1rem; color: var(--text-main); font-weight: 700;">Top 20 High Scores</h3>
+        <button class="btn btn-ghost btn-sm" style="color: var(--error);" onclick="resetLeaderboard()">Clear Leaderboard</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Rank</th>
+              <th>Typist</th>
+              <th>Net WPM</th>
+              <th>Raw WPM</th>
+              <th>Accuracy</th>
+              <th>Mode</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="lb-table-body">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="offline-pill">
+        <span class="offline-dot"></span>
+        100% Offline &middot; Zero Network Calls
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script>
+    let activeFilter = 'all';
+
+    function filterLeaderboard(mode) {
+      activeFilter = mode;
+      document.querySelectorAll('[data-lb-filter]').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-lb-filter') === mode);
+      });
+      renderLeaderboard();
+    }
+
+    function renderLeaderboard() {
+      const tbody = document.getElementById('lb-table-body');
+      if (!tbody || !window.TypeApp.Storage) return;
+      tbody.innerHTML = '';
+
+      const list = window.TypeApp.Storage.getLeaderboard(activeFilter);
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No scores registered yet. Complete tests to build your leaderboard!</td></tr>`;
+        return;
+      }
+
+      list.forEach((entry, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+        const rankIcon = rank === 1 ? '🥇 ' : rank === 2 ? '🥈 ' : rank === 3 ? '🥉 ' : '';
+        const dateStr = new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank-cell ${rankClass}">${rankIcon}#${rank}</td>
+          <td><span class="name-editable" onclick="editTypistName('${entry.id}')" title="Click to edit name">${entry.name || 'Typist'}</span></td>
+          <td style="font-family: var(--font-mono); font-weight: 700; color: var(--primary); font-size: 1.15rem;">${entry.wpm}</td>
+          <td style="font-family: var(--font-mono); color: var(--text-sub);">${entry.rawWpm || entry.wpm}</td>
+          <td style="font-family: var(--font-mono);">${entry.accuracy}%</td>
+          <td style="font-size: 0.85rem; text-transform: capitalize;">${entry.mode} ${entry.subMode || ''}</td>
+          <td style="font-size: 0.85rem; color: var(--text-muted);">${dateStr}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editTypistName(entryId) {
+      const newName = prompt('Enter new nickname for this score:');
+      if (newName && newName.trim().length > 0) {
+        const raw = localStorage.getItem('tst_leaderboard');
+        if (raw) {
+          const list = JSON.parse(raw);
+          const item = list.find(x => x.id === entryId);
+          if (item) {
+            item.name = newName.trim();
+            localStorage.setItem('tst_leaderboard', JSON.stringify(list));
+            renderLeaderboard();
+          }
+        }
+      }
+    }
+
+    function resetLeaderboard() {
+      if (confirm('Clear all entries from this local device leaderboard?')) {
+        window.TypeApp.Storage.clearLeaderboard();
+        renderLeaderboard();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLeaderboard();
+    });
+  </script>
+</body>
+</html>

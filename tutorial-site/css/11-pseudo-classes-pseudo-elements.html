@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Pseudo-Classes &amp; Pseudo-Elements — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="11-pseudo-classes-pseudo-elements.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 11</span>
+          </div>
+          <h1 class="lesson-title">Pseudo-Classes &amp; Pseudo-Elements</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Target dynamic states, generate virtual decorations with ::before/::after, and harness the revolutionary :has() selector.</span>
+            <span class="lang-hi">Dynamic states (:hover, :focus-visible), virtual elements (::before, ::after) aur revolutionary :has() selector seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The single vs double colon distinction: <strong>Pseudo-class (<code>:</code>)</strong> vs <strong>Pseudo-element (<code>::</code>)</strong>.</li>
+            <li>User interaction states: <code>:hover</code>, <code>:active</code>, <code>:focus</code>, and accessibility-critical <code>:focus-visible</code>.</li>
+            <li>Structural targeting: <code>:first-child</code>, <code>:last-child</code>, and the formulaic <code>:nth-child(2n)</code>.</li>
+            <li>Generating decorative elements without HTML bloat using <code>::before</code>, <code>::after</code>, and <code>content: ""</code>.</li>
+            <li>Modern selectors: <code>:is()</code>, <code>:where()</code>, <code>:not()</code>, and the game-changing parent selector <code>:has()</code>.</li>
+            <li>Styling text highlights with <code>::selection</code> and list bullets with <code>::marker</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="10-responsive-design-media-queries.html">10. Responsive Design &amp; Media Queries</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Chameleon and The Twin Shadows</div>
+          <p>
+            <span class="lang-en">Think of how objects change appearance and interact:
+            <br>&bull; <strong>Pseudo-Class (<code>:state</code>):</strong> A chameleon changing color! It is still the exact same animal, but its internal state changed (it is angry, cold, or resting). <code>button:hover</code> is the same button reacting when a mouse enters its space.
+            <br>&bull; <strong>Pseudo-Element (<code>::subpart</code>):</strong> An invisible twin shadow! You didn't create a second person in the room, but CSS conjures a virtual companion standing directly before you (<code>::before</code>) or directly after you (<code>::after</code>) to carry luggage or wear a badge!</span>
+            <span class="lang-hi">Chameleon (Girgit) aur Parchhai ki tarah sochiye: Pseudo-class (<code>:</code>) ek hi element ka badalta roop ya state hai (jaise mouse aane par :hover ya click par :active). Jabki Pseudo-element (<code>::</code>) ek aisi virtual cheez hai jo HTML me nahi hai par CSS use element ke aage (::before) ya peeche (::after) paida kar deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Fundamental Distinction: Single (<code>:</code>) vs Double (<code>::</code>) Colon</h2>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Type</th>
+              <th style="padding:10px;">Syntax</th>
+              <th style="padding:10px;">What it targets</th>
+              <th style="padding:10px;">Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><strong>Pseudo-Class</strong></td>
+              <td style="padding:10px;">Single colon <code>:</code></td>
+              <td style="padding:10px;">An existing element in a specific dynamic state or DOM position</td>
+              <td style="padding:10px;"><code>:hover</code>, <code>:focus-visible</code>, <code>:nth-child(2)</code>, <code>:checked</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><strong>Pseudo-Element</strong></td>
+              <td style="padding:10px;">Double colon <code>::</code></td>
+              <td style="padding:10px;">A virtual sub-part or generated fragment of an element</td>
+              <td style="padding:10px;"><code>::before</code>, <code>::after</code>, <code>::selection</code>, <code>::placeholder</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Section 2 -->
+        <h2>2. Interaction States &amp; Accessible Focus Rings</h2>
+        <p>
+          Never remove focus rings with <code>outline: none</code> without providing an accessible replacement! Modern browsers provide <code>:focus-visible</code>, which displays focus rings only for keyboard tab navigation while suppressing them on mouse clicks:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Accessible Interaction States</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.primary-btn {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+/* Mouse cursor hovering */
+.primary-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Moment of clicking down */
+.primary-btn:active {
+  transform: scale(0.97);
+}
+
+/* Keyboard Tab Navigation Focus (High Accessibility!) */
+.primary-btn:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 3px;
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Structural &amp; Form Pseudo-Classes</h2>
+        <p>
+          Style elements based on their position in parent containers or their form input state without cluttering HTML with extra classes:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Zebra Stripes &amp; Disabled Inputs</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Zebra striping table rows */
+tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Highlight the very first paragraph in an article */
+article p:first-of-type {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+/* Style checkboxes when selected */
+input[type="checkbox"]:checked + label {
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* Disabled button appearance */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The Power of <code>::before</code> &amp; <code>::after</code></h2>
+        <p>
+          Pseudo-elements let you insert decorative flourishes, notification dots, tooltips, and badges purely from CSS.
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-warning); border-radius:var(--radius-sm);">
+          <strong>The Golden Rule:</strong> A pseudo-element WILL NOT RENDER unless you declare the <code>content: ""</code> property! Even if empty, <code>content</code> is mandatory.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Live Pulsing Online Status Indicator</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.user-avatar {
+  position: relative; /* Anchor for pseudo-element */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+/* Green online status dot generated purely in CSS */
+.user-avatar.is-online::after {
+  content: ""; /* REQUIRED! */
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: #22c55e;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The Revolutionary <code>:has()</code> Parent Selector</h2>
+        <p>
+          For 25 years, CSS could only select children, never parents. The revolutionary <code>:has()</code> pseudo-class changes web development forever. It allows an element to style itself based on its contents or children:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The `:has()` Parent Selector</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Style the card border red IF it contains an invalid input! */
+.form-card:has(input:invalid) {
+  border-color: #ef4444;
+}
+
+/* Style the body when a modal is open inside it (prevent background scrolling!) */
+body:has(.modal-backdrop.is-active) {
+  overflow: hidden;
+}
+
+/* Style a figure caption only if it contains an image */
+figure:has(img) {
+  background: #f1f5f9;
+  border-radius: 8px;
+}</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Stylistic Polish with <code>::selection</code> &amp; <code>::marker</code></h2>
+        <p>
+          Customize small OS-level details for that high-end polished product aesthetic:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Custom Selection &amp; List Bullets</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Change highlight color when user selects text with mouse */
+::selection {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Style list bullet dots directly */
+ul.custom-list li::marker {
+  color: #3b82f6;
+  font-size: 1.2rem;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Test Pseudo-Classes and Elements</h2>
+        <p>
+          Hover over the button and select text to see pseudo-classes and pseudo-elements in action:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Pseudo Playground</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, sans-serif; padding: 24px; background: #f8fafc; }
+
+  /* Custom text selection */
+  ::selection {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .btn {
+    position: relative;
+    padding: 12px 28px;
+    background: #0f172a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  /* Animated underline effect using ::after */
+  .btn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #3b82f6;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s ease;
+  }
+
+  .btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+</style>
+</head>
+<body>
+  <h3>Interactive Pseudo Demonstration</h3>
+  <p style="color:#64748b; margin:12px 0;">Highlight any of this text with your mouse to test ::selection!</p>
+  <button class="btn">Hover Over Me</button>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>content: ""</code> on <code>::before</code>/<code>::after</code>:</strong> Without this property, the browser will not allocate a box for the pseudo-element and it remains completely invisible.</li>
+            <li><strong>Using <code>:nth-child</code> when meaning <code>:nth-of-type</code>:</strong> If you write <code>p:nth-child(2)</code>, but the 2nd child in the container is an <code>&lt;h2&gt;</code>, the selector matches nothing! Use <code>p:nth-of-type(2)</code> if mixed elements share the parent.</li>
+            <li><strong>Removing focus outlines globally:</strong> Writing <code>* { outline: none; }</code> breaks keyboard navigation for disabled users. Use <code>:focus-visible</code> instead.</li>
+            <li><strong>Applying <code>::before</code> to replaced elements:</strong> Elements like <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, and <code>&lt;br&gt;</code> do not contain DOM children and cannot host <code>::before</code> or <code>::after</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Zero-specificity resetting with <code>:where()</code>:</strong> When building component libraries or resets, wrapping selectors in <code>:where()</code> assigns them <code>0,0,0</code> specificity, allowing developers to override them with ease.</li>
+            <li><strong>Combining <code>:not()</code> for clean lists:</strong> <code>li:not(:last-child) { border-bottom: 1px solid #ccc; }</code> avoids writing border resets on the final item.</li>
+            <li><strong>Decorative icons via CSS:</strong> Use <code>::before { content: "\2713"; }</code> to inject checkmarks into success messages without altering HTML markup.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Pseudo-classes (<code>:</code>) target states; pseudo-elements (<code>::</code>) generate virtual DOM pieces.</li>
+            <li>Always provide <code>:focus-visible</code> styling for accessible keyboard navigation.</li>
+            <li><code>::before</code> and <code>::after</code> strictly require <code>content: ""</code> to render.</li>
+            <li><code>:has()</code> serves as the long-awaited parent and relational selector.</li>
+            <li><code>:is()</code> takes the highest specificity of its arguments; <code>:where()</code> has zero specificity.</li>
+            <li><code>::selection</code> customizes text highlight colors.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Accessible Keyboard Focus Ring</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the CSS rule that applies a 2px solid cyan outline with a 2px offset to links ONLY when navigating with the keyboard Tab key, without displaying it during mouse clicks.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the :focus-visible pseudo-class.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>a:focus-visible {
+  outline: 2px solid cyan;
+  outline-offset: 2px;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Zebra Striping a Table</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write a CSS selector that targets every odd row inside a table body and changes its background to <code>#f1f5f9</code>, while leaving header rows untouched.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: tbody tr:nth-child(odd).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>tbody tr:nth-child(odd) {
+  background-color: #f1f5f9;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Select Parent Form Card</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Using the modern parent selector, write a single CSS rule that highlights the border of a <code>.card</code> in red whenever any checkbox inside that card is currently <code>:checked</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: .card:has(input[type="checkbox"]:checked).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.card:has(input[type="checkbox"]:checked) {
+  border-color: #ef4444;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 11 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Pseudo-classes (single colon) target states; pseudo-elements (double colon) target sub-parts or virtual nodes.">
+            <div class="quiz-question-text">1. What is the syntactic standard differentiating pseudo-classes from pseudo-elements in modern CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Pseudo-classes use dollar signs ($)</div>
+              <div class="quiz-option"><span>B)</span> Pseudo-elements are written in uppercase</div>
+              <div class="quiz-option"><span>C)</span> Pseudo-classes use a single colon (:), while pseudo-elements use a double colon (::)</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Without the content property, ::before and ::after generate no box and fail to render.">
+            <div class="quiz-question-text">2. Which CSS property is strictly mandatory for ::before and ::after pseudo-elements to render?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> content: "";</div>
+              <div class="quiz-option"><span>B)</span> display: block;</div>
+              <div class="quiz-option"><span>C)</span> width: 100%;</div>
+              <div class="quiz-option"><span>D)</span> z-index: 1;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation=":focus-visible applies outlines for keyboard accessibility while hiding them for mouse clicks.">
+            <div class="quiz-question-text">3. Why is ':focus-visible' preferred over ':focus' for styling interactive buttons?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> :focus-visible works without CSS</div>
+              <div class="quiz-option"><span>B)</span> It shows focus outlines for keyboard tab navigation while avoiding ugly focus rings on mouse clicks</div>
+              <div class="quiz-option"><span>C)</span> It runs faster in WebGL</div>
+              <div class="quiz-option"><span>D)</span> It automatically submits the form</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation=":has() acts as the relational parent selector, styling an element based on its descendants.">
+            <div class="quiz-question-text">4. What makes the ':has()' pseudo-class revolutionary in modern CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It connects to SQL databases</div>
+              <div class="quiz-option"><span>B)</span> It encrypts passwords</div>
+              <div class="quiz-option"><span>C)</span> It compresses images by 80%</div>
+              <div class="quiz-option"><span>D)</span> It allows selecting parent elements based on child conditions without JavaScript</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Replaced elements without a DOM box tree (img, input, br) cannot host ::before or ::after.">
+            <div class="quiz-question-text">5. On which of the following elements will '::before' and '::after' NOT render?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;div&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;button&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;img&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;p&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Custom External Link Indicator</h3>
+          <p>
+            In the live editor, create an <code>a[target="_blank"]::after</code> rule that appends a tiny <code>&#8599;</code> arrow icon next to all external links automatically!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#selectors" class="ref-pill">Selectors &amp; Pseudo Reference</a>
+            <a href="../reference/glossary.html#pseudo-class" class="ref-pill">Glossary: Pseudo-Class</a>
+            <a href="../reference/glossary.html#pseudo-element" class="ref-pill">Glossary: Pseudo-Element</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Selectors Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="10-responsive-design-media-queries.html" class="btn btn-outline">&larr; Previous: Responsive Design &amp; Media Queries</a>
+          <button class="mark-complete-btn" data-lesson-id="css-11">Mark as Complete</button>
+          <a href="12-transitions-transforms.html" class="btn btn-primary">Next: Transitions &amp; Transforms &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

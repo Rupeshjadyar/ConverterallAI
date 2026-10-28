@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Vanilla JavaScript Mastery — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .course-hero {
+      background: linear-gradient(135deg, var(--c-js-light), var(--bg-surface));
+      border: 1px solid var(--c-js-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+    .lesson-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .lesson-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--c-js);
+    }
+    .lesson-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+    .lesson-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body data-course="javascript" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner" style="max-width: 960px;">
+
+        <div class="course-hero">
+          <div style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.25rem 0.65rem; background:var(--c-js); color:#000; border-radius:var(--radius-full); font-size:0.75rem; font-weight:800; margin-bottom:1rem;">
+            JAVASCRIPT INTERACTIVITY &amp; LOGIC
+          </div>
+          <h1 style="font-size: 2.5rem; color: var(--text-primary); margin-bottom: 0.75rem;">Vanilla JavaScript: The Programming Engine</h1>
+          <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 720px; line-height: 1.6;">
+            Master the world's most ubiquitous programming language. Go from foundational variables and loops to real-time DOM manipulation, event-driven architecture, asynchronous Promises, async/await, and Object-Oriented patterns without relying on heavy external frameworks.
+          </p>
+          <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="01-introduction-console.html" class="btn btn-primary" style="background:var(--c-js); color:#000; font-weight:700; border-color:var(--c-js); padding:0.6rem 1.4rem;">Start Lesson 1 &rarr;</a>
+            <a href="#final-exam" class="btn btn-outline" style="padding:0.6rem 1.2rem;">Take JavaScript Certification Exam</a>
+          </div>
+        </div>
+
+        <!-- Roadmap -->
+        <h2>Course Roadmap</h2>
+        <div style="display:flex; flex-direction:column; gap:1rem; margin:1.5rem 0 2.5rem 0;">
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--state-success); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 1: Syntax &amp; Control Flow (Lessons 01 &ndash; 05)</strong> &mdash; Console, variables (let/const), primitive data types, arithmetic/comparison operators, conditional branching, and loops.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--c-js); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 2: Functions, Data Structures &amp; Scopes (Lessons 06 &ndash; 10)</strong> &mdash; Arrow functions, closures, hoisting, array mutation &amp; iterations (map, filter, reduce), object literals, the <code>this</code> keyword, and built-in Math/Date.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--c-html); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 3: The Dynamic DOM &amp; Interactive Events (Lessons 11 &ndash; 14)</strong> &mdash; Node querying, textContent/innerHTML, dynamic node creation, event listeners, event bubbling &amp; delegation, and client-side form validation.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--c-css); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 4: Modern ES6+, OOP &amp; Asynchronous JavaScript (Lessons 15 &ndash; 20)</strong> &mdash; Destructuring, rest/spread, ES6 Classes &amp; inheritance, try/catch error handling, the Event Loop, Promises, async/await, and localStorage persistence.
+          </div>
+          <div style="padding:1rem 1.25rem; background:var(--bg-surface); border-left:4px solid var(--c-reference); border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+            <strong>Tier 5: RegEx, Debugging &amp; Best Practices (Lessons 21 &ndash; 22)</strong> &mdash; Regular expressions for pattern verification, Chrome DevTools breakpoints, avoiding memory leaks, and professional clean code principles.
+          </div>
+        </div>
+
+        <!-- Curriculum Lessons Grid -->
+        <h2>All 22 Interactive Lessons</h2>
+        <div class="lesson-grid">
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 01</div>
+            <h4>01. Introduction &amp; The Console</h4>
+            <p>What is JS, how the V8 engine interprets code, script tags, console.log/warn/error, and browser REPL execution.</p>
+            <a href="01-introduction-console.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 02</div>
+            <h4>02. Variables &amp; Data Types</h4>
+            <p>let vs const vs var, the 7 primitives (string, number, boolean, null, undefined, symbol, bigint) and references.</p>
+            <a href="02-variables-data-types.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 03</div>
+            <h4>03. Operators &amp; Type Coercion</h4>
+            <p>Arithmetic, logical operators, strict (===) vs loose (==) equality, and implicit vs explicit type conversion.</p>
+            <a href="03-operators-type-conversion.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 04</div>
+            <h4>04. Conditionals &amp; Branching</h4>
+            <p>if, else if, else, ternary conditional operator, switch statements, and truthy vs falsy values.</p>
+            <a href="04-conditions.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 05</div>
+            <h4>05. Loops &amp; Iteration</h4>
+            <p>for, while, do...while, modern for...of for arrays, for...in for objects, and break/continue statements.</p>
+            <a href="05-loops.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 06</div>
+            <h4>06. Functions &amp; Arrow Functions</h4>
+            <p>Function declarations, function expressions, modern arrow functions, default arguments, and return values.</p>
+            <a href="06-functions.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 07</div>
+            <h4>07. Scope, Hoisting &amp; Closures</h4>
+            <p>Global, function, and block scopes, temporal dead zone, variable hoisting, and the power of closures.</p>
+            <a href="07-scope-hoisting-closures.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 08</div>
+            <h4>08. Arrays &amp; High-Order Methods</h4>
+            <p>Mutating methods (push, pop, splice) vs non-mutating transformations (map, filter, reduce, find, some, every).</p>
+            <a href="08-arrays-and-array-methods.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 09</div>
+            <h4>09. Objects &amp; the 'this' Keyword</h4>
+            <p>Object literals, dot vs bracket notation, object methods, Object.keys/entries, and binding rules for 'this'.</p>
+            <a href="09-objects-and-this.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 10</div>
+            <h4>10. Strings, Numbers, Math &amp; Date</h4>
+            <p>Template literals, string slicing, Number methods, Math functions (random, round, floor), and Date parsing.</p>
+            <a href="10-strings-numbers-math-date.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 11</div>
+            <h4>11. DOM: Selecting &amp; Modifying</h4>
+            <p>querySelector, querySelectorAll, modifying textContent, innerHTML, dataset, and manipulating classList.</p>
+            <a href="11-dom-selecting-changing.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 12</div>
+            <h4>12. DOM: Creating &amp; Removing Nodes</h4>
+            <p>createElement, appendChild, insertAdjacentHTML, removing nodes, DocumentFragment, and avoiding repaint thrashing.</p>
+            <a href="12-dom-creating-removing.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 13</div>
+            <h4>13. Events &amp; Event Delegation</h4>
+            <p>addEventListener, click/input/keydown events, event bubbling, event.preventDefault(), and event delegation.</p>
+            <a href="13-events-and-event-delegation.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 14</div>
+            <h4>14. Forms with JavaScript</h4>
+            <p>Reading form inputs, form submission handling, FormData object, and live client-side validation feedback.</p>
+            <a href="14-forms-with-javascript.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 15</div>
+            <h4>15. Modern ES6+: Destructuring &amp; Spread</h4>
+            <p>Array &amp; object destructuring, rest/spread operators (...), optional chaining (?.), and nullish coalescing (??).</p>
+            <a href="15-es6-destructuring-spread-modules.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 16</div>
+            <h4>16. Classes &amp; Object-Oriented JS</h4>
+            <p>ES6 class syntax, constructor, instance methods, getters/setters, class inheritance with extends/super, and static methods.</p>
+            <a href="16-classes-and-oop.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 17</div>
+            <h4>17. Error Handling &amp; Debugging</h4>
+            <p>try...catch...finally, throwing custom Error objects, inspecting call stacks, and handling unexpected runtime bugs.</p>
+            <a href="17-error-handling.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 18</div>
+            <h4>18. Asynchronous JS: Promises &amp; Async/Await</h4>
+            <p>The JavaScript Call Stack, Web APIs, Event Loop, Promise resolution/rejection, and clean async/await syntax.</p>
+            <a href="18-promises-async-await.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 19</div>
+            <h4>19. Fetch API &amp; JSON Handling</h4>
+            <p>JSON serialization (parse/stringify), modern HTTP requests with fetch, handling responses, and offline mock fallbacks.</p>
+            <a href="19-fetch-api-and-json.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 20</div>
+            <h4>20. LocalStorage &amp; SessionStorage</h4>
+            <p>Persisting user data across browser refreshes, setItem, getItem, removeItem, and storing complex JSON objects.</p>
+            <a href="20-localstorage-sessionstorage.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 21</div>
+            <h4>21. Regular Expressions (RegEx) Basics</h4>
+            <p>Pattern matching, character classes, quantifiers, anchors (^ and $), test(), exec(), and input format validation.</p>
+            <a href="21-regex-basics.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+          <div class="lesson-card">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">LESSON 22</div>
+            <h4>22. JS Best Practices &amp; Performance</h4>
+            <p>Debounce &amp; throttle patterns, avoiding memory leaks, clean modular code, linting, and senior engineering habits.</p>
+            <a href="22-debugging-and-best-practices.html" class="btn btn-sm btn-outline">Explore Lesson &rarr;</a>
+          </div>
+
+        </div>
+
+        <!-- Course Final Exam -->
+        <hr style="margin: 3rem 0; border:0; border-top: 1px solid var(--border-subtle);">
+
+        <div id="final-exam" class="quiz-section">
+          <div class="quiz-header">
+            <div>
+              <span class="badge" style="background:var(--c-js); color:#000; font-weight:800;">OFFICIAL CERTIFICATION TEST</span>
+              <h2 style="margin: 0.5rem 0 0.25rem 0; font-size: 1.8rem;">JavaScript Master Certification Exam</h2>
+              <p style="color:var(--text-muted); font-size:0.9rem; margin:0;">20 Comprehensive Questions &bull; Passing Score: 70% (14/20) &bull; Instant Verification</p>
+            </div>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="const prevents reassignment of the variable identifier; let allows reassignment. Both are block-scoped.">
+            <div class="quiz-question-text">1. What is the key functional difference between 'let' and 'const'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 'let' is for strings and 'const' is for numbers</div>
+              <div class="quiz-option"><span>B)</span> 'let' variables can be reassigned, while 'const' variables cannot be reassigned after declaration</div>
+              <div class="quiz-option"><span>C)</span> 'const' is hoisted to the top of the file, while 'let' is not</div>
+              <div class="quiz-option"><span>D)</span> 'const' variables cannot store objects</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Strict equality (===) compares both value and data type without implicit coercion.">
+            <div class="quiz-question-text">2. What does the strict equality operator (===) compare?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Only memory references</div>
+              <div class="quiz-option"><span>B)</span> Only values after converting types</div>
+              <div class="quiz-option"><span>C)</span> Both value AND data type without converting types</div>
+              <div class="quiz-option"><span>D)</span> Variable names</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="JavaScript has 7 primitive types: string, number, boolean, null, undefined, symbol, and bigint.">
+            <div class="quiz-question-text">3. Which of the following is a primitive data type in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Symbol</div>
+              <div class="quiz-option"><span>B)</span> Array</div>
+              <div class="quiz-option"><span>C)</span> Function</div>
+              <div class="quiz-option"><span>D)</span> Object</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="A closure is a function bundled with references to its surrounding lexical environment.">
+            <div class="quiz-question-text">4. What is a 'closure' in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The keyword used to close a file handle</div>
+              <div class="quiz-option"><span>B)</span> The curly braces that end an if statement</div>
+              <div class="quiz-option"><span>C)</span> An error thrown when memory is exhausted</div>
+              <div class="quiz-option"><span>D)</span> A function that retains access to its outer lexical scope variables even after the outer function has executed</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="map transforms each item and returns a new array; it does not mutate the original array.">
+            <div class="quiz-question-text">5. What does Array.prototype.map() return?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A single accumulated number</div>
+              <div class="quiz-option"><span>B)</span> A brand new array containing the results of calling a provided function on every element</div>
+              <div class="quiz-option"><span>C)</span> The index of the first matching item</div>
+              <div class="quiz-option"><span>D)</span> A boolean indicating if items match</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q6 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="reduce processes an array from left to right and reduces it to a single accumulated output value.">
+            <div class="quiz-question-text">6. Which array method executes a reducer function to produce a single cumulative value (like sum)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> filter()</div>
+              <div class="quiz-option"><span>B)</span> forEach()</div>
+              <div class="quiz-option"><span>C)</span> reduce()</div>
+              <div class="quiz-option"><span>D)</span> slice()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q7 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Arrow functions do not bind their own 'this'; they inherit 'this' lexically from the enclosing scope.">
+            <div class="quiz-question-text">7. How do Arrow Functions handle the 'this' keyword?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They inherit 'this' lexically from their surrounding outer scope without binding their own</div>
+              <div class="quiz-option"><span>B)</span> They bind 'this' to the global window object always</div>
+              <div class="quiz-option"><span>C)</span> They bind 'this' to the DOM element that fired the event</div>
+              <div class="quiz-option"><span>D)</span> They throw an error if 'this' is accessed</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q8 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="querySelector returns the first matching element, or null if no match is found.">
+            <div class="quiz-question-text">8. What does document.querySelector() return if no element matches the specified selector?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> undefined</div>
+              <div class="quiz-option"><span>B)</span> An empty array []</div>
+              <div class="quiz-option"><span>C)</span> It throws a DOMException error</div>
+              <div class="quiz-option"><span>D)</span> null</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q9 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Event delegation attaches one listener to a parent element and checks event.target to handle dynamic children efficiently.">
+            <div class="quiz-question-text">9. What is 'Event Delegation' in DOM programming?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Passing events to a Web Worker thread</div>
+              <div class="quiz-option"><span>B)</span> Attaching a single event listener to a parent container to manage events from current and future child elements via event bubbling</div>
+              <div class="quiz-option"><span>C)</span> Using setTimeout to delay button clicks</div>
+              <div class="quiz-option"><span>D)</span> Deleting event listeners after one click</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q10 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="event.preventDefault() stops the browser's default behavior, such as full-page reloads on form submissions.">
+            <div class="quiz-question-text">10. Why is 'event.preventDefault()' commonly called inside a form 'submit' listener?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To prevent the browser from executing its default full-page reload/navigation</div>
+              <div class="quiz-option"><span>B)</span> To delete input values immediately</div>
+              <div class="quiz-option"><span>C)</span> To stop CSS animations</div>
+              <div class="quiz-option"><span>D)</span> To encrypt form passwords</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q11 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="The spread operator expands an iterable into individual elements or shallowly copies properties.">
+            <div class="quiz-question-text">11. What does the spread operator (...) do when applied to an array?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Converts the array into a string</div>
+              <div class="quiz-option"><span>B)</span> Multiplies all array values by 3</div>
+              <div class="quiz-option"><span>C)</span> Unpacks/expands the individual elements of the array into another array or function call</div>
+              <div class="quiz-option"><span>D)</span> Deletes all array elements</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q12 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Optional chaining (?.) returns undefined instead of throwing a TypeError if the left side is null or undefined.">
+            <div class="quiz-question-text">12. What is the benefit of Optional Chaining (user?.address?.city)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It makes API requests faster</div>
+              <div class="quiz-option"><span>B)</span> It encrypts sensitive user data</div>
+              <div class="quiz-option"><span>C)</span> It automatically creates empty objects</div>
+              <div class="quiz-option"><span>D)</span> It safely reads nested properties without throwing a TypeError if an intermediate reference is null or undefined</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q13 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="super() invokes the parent class constructor and must be called before accessing 'this' in a derived class.">
+            <div class="quiz-question-text">13. In an ES6 class extending a parent class, what must be called in the constructor before accessing 'this'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> this.init()</div>
+              <div class="quiz-option"><span>B)</span> super()</div>
+              <div class="quiz-option"><span>C)</span> parent.constructor()</div>
+              <div class="quiz-option"><span>D)</span> Object.assign()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q14 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="A Promise has three states: pending (in progress), fulfilled (resolved successfully), or rejected (failed).">
+            <div class="quiz-question-text">14. What are the three mutually exclusive states of a JavaScript Promise?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> pending, fulfilled, rejected</div>
+              <div class="quiz-option"><span>B)</span> start, running, stop</div>
+              <div class="quiz-option"><span>C)</span> open, closed, error</div>
+              <div class="quiz-option"><span>D)</span> active, inactive, paused</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q15 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="The 'await' keyword pauses execution of the enclosing async function until the Promise settles.">
+            <div class="quiz-question-text">15. Where can the 'await' keyword be placed in standard JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Inside any for loop</div>
+              <div class="quiz-option"><span>B)</span> Only inside class constructors</div>
+              <div class="quiz-option"><span>C)</span> Exclusively inside functions declared with the 'async' keyword or top-level ES modules</div>
+              <div class="quiz-option"><span>D)</span> Inside HTML script tags without async</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q16 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="JSON.stringify converts a JavaScript object into a JSON string; JSON.parse converts a JSON string back into an object.">
+            <div class="quiz-question-text">16. Which method serializes a JavaScript object into a JSON text string?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> JSON.parse()</div>
+              <div class="quiz-option"><span>B)</span> Object.toString()</div>
+              <div class="quiz-option"><span>C)</span> JSON.serialize()</div>
+              <div class="quiz-option"><span>D)</span> JSON.stringify()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q17 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="localStorage persists across browser sessions and tabs until explicitly cleared; sessionStorage clears when the tab closes.">
+            <div class="quiz-question-text">17. How does localStorage differ from sessionStorage?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> localStorage can store binary files; sessionStorage cannot</div>
+              <div class="quiz-option"><span>B)</span> localStorage persists data indefinitely across browser restarts, while sessionStorage clears when the tab is closed</div>
+              <div class="quiz-option"><span>C)</span> sessionStorage is encrypted</div>
+              <div class="quiz-option"><span>D)</span> localStorage is limited to 100 bytes</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q18 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The caret (^) anchors to the start of a string; dollar sign ($) anchors to the end of a string.">
+            <div class="quiz-question-text">18. In Regular Expressions, what do the anchors '^' and '$' represent?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Beginning and end of the string, respectively</div>
+              <div class="quiz-option"><span>B)</span> Uppercase letters and numbers</div>
+              <div class="quiz-option"><span>C)</span> Whitespace characters</div>
+              <div class="quiz-option"><span>D)</span> Comments and variables</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q19 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Debouncing delays execution until a set duration of quiet inactivity passes after the latest trigger.">
+            <div class="quiz-question-text">19. What does the 'debounce' performance pattern do for a search input field?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It disables the keyboard while typing</div>
+              <div class="quiz-option"><span>B)</span> It executes the search query 60 times per second</div>
+              <div class="quiz-option"><span>C)</span> It postpones executing the search function until the user has stopped typing for a specified interval</div>
+              <div class="quiz-option"><span>D)</span> It translates search terms into lowercase</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q20 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The Event Loop continuously monitors the Call Stack and moves callbacks from the Microtask and Task queues when the stack is empty.">
+            <div class="quiz-question-text">20. What role does the JavaScript Event Loop play?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It compiles JavaScript into bytecode</div>
+              <div class="quiz-option"><span>B)</span> It continuously checks if the Call Stack is clear, and moves queued asynchronous tasks into the stack for execution</div>
+              <div class="quiz-option"><span>C)</span> It prevents users from refreshing the webpage</div>
+              <div class="quiz-option"><span>D)</span> It runs recursive loops automatically</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

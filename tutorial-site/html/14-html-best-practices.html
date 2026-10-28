@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Best Practices — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="14-html-best-practices.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 14</span>
+          </div>
+          <h1 class="lesson-title">HTML Best Practices, Clean Code &amp; Validation</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Graduate from writing working HTML to authoring clean, maintainable, production-ready frontend architectures.</span>
+            <span class="lang-hi">HTML course ka capstone lesson: Senior developer code quality standards, validation checklist aur best practices.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The fundamental principle of <strong>Separation of Concerns</strong> (HTML vs CSS vs JS).</li>
+            <li>Consistent indentation, naming conventions, and quoting standards.</li>
+            <li>Validating HTML markup and catching hidden structural errors.</li>
+            <li>Optimizing asset loading performance with <code>defer</code> and <code>async</code> on scripts.</li>
+            <li>The Senior Developer's 20-Point Pre-Flight HTML Audit Checklist.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="13-accessibility-aria.html">13. Accessibility &amp; ARIA</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Airline Pilot's Pre-Flight Checklist</div>
+          <p>
+            <span class="lang-en">Commercial airline pilots never simply hop into a cockpit and push the throttle forward. Even pilots with 30 years of experience hold a physical <strong>Pre-Flight Checklist</strong> clipboard, verifying every rudder hydraulic, fuel valve, and altimeter reading one by one. In web engineering, your code might look fine when you casually preview it, but without a strict quality checklist, hidden errors like missing alt descriptions, unclosed tags, and unvalidated forms will cause silent failures for your users!</span>
+            <span class="lang-hi">Commercial pilot ki pre-flight inspection checklist ki tarah sochiye. Experienced pilot bhi plane udane se pehle har ek safety check verify karta hai. Senior developer bhi code live karne se pehle accessibility, tags aur performance check karta hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Holy Trinity: Separation of Concerns</h2>
+        <p>
+          The golden rule of frontend software engineering is keeping the three layers of the web strictly separated:
+        </p>
+        <ul>
+          <li><strong>HTML (Structure &amp; Meaning):</strong> Defines what elements exist on the page (headings, lists, forms, images). No visual styling, no logic scripts.</li>
+          <li><strong>CSS (Presentation &amp; Visual Design):</strong> Dictates colors, spacing, typography, grid layouts, and transitions. Lives in external stylesheets (<code>.css</code>).</li>
+          <li><strong>JavaScript (Behavior &amp; State):</strong> Manages user interactions, animations, calculations, and data persistence. Lives in external script files (<code>.js</code>).</li>
+        </ul>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Anti-Pattern vs Clean Separation of Concerns</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- TERRIBLE: Spaghetti Code (HTML, CSS, and JS all tangled together) --&gt;
+&lt;div style="background-color:red; font-size:18px; padding:10px;"
+     onclick="if(confirm('Delete?')){location.href='/del';}"&gt;
+  &lt;b&gt;&lt;font color="white"&gt;DELETE RECORD&lt;/font&gt;&lt;/b&gt;
+&lt;/div&gt;
+
+&lt;!-- BEAUTIFUL: Clean Separation of Concerns --&gt;
+&lt;!-- 1. HTML: Clean semantic markup --&gt;
+&lt;button type="button" class="btn btn-danger" id="delete-btn"&gt;
+  Delete Record
+&lt;/button&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why the clean version wins:</strong><br>
+          &bull; The styling is handled in CSS under <code>.btn-danger</code> (reusable across 50 pages).<br>
+          &bull; The click behavior is handled in JavaScript via <code>addEventListener</code>.<br>
+          &bull; The HTML is accessible, keyboard-focusable, and easy to read.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Script Loading Performance: <code>defer</code> vs <code>async</code></h2>
+        <p>
+          When a browser is downloading HTML and encounters a <code>&lt;script src="app.js"&gt;&lt;/script&gt;</code> tag, it immediately <strong>halts HTML parsing</strong> until the script is fully downloaded and executed. This creates a noticeable delay:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Non-Blocking Script Execution</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. DEFER (Best Practice for application logic):
+     Downloads script in the background while HTML continues parsing.
+     Executes ONLY AFTER the HTML parsing is 100% complete! --&gt;
+&lt;script src="app.js" defer&gt;&lt;/script&gt;
+
+&lt;!-- 2. ASYNC (Best for independent scripts like analytics):
+     Downloads script in the background, but pauses HTML parsing the
+     exact instant the download finishes to execute immediately! --&gt;
+&lt;script src="analytics.js" async&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Senior Recommendation:</strong> 95% of the time, place your scripts in the <code>&lt;head&gt;</code> and add the <code>defer</code> attribute. This ensures your script downloads as early as possible without blocking page rendering!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Code Architecture Refactor</h2>
+        <p>Inspect how clean HTML conventions, CSS utility classes, and semantic buttons operate together:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Production Component Blueprint</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clean Architecture</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; line-height: 1.6; color: #1e293b; }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 400px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: bold;
+      background: #ecfdf5;
+      color: #059669;
+    }
+    .btn {
+      background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <article class="card">
+    <span class="badge">Production Ready</span>
+    <h3 style="margin: 8px 0;">Clean HTML Standard</h3>
+    <p style="color: #64748b; font-size: 14px;">This component follows all 20 points of our pre-flight engineering checklist.</p>
+    <button type="button" class="btn" onclick="alert('Component verified!')">Inspect Component</button>
+  </article>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Senior Developer's Pre-Flight HTML Checklist</h2>
+        <p>
+          Before committing code to a Git repository or shipping a project live, run through this 20-point quality audit:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The 20-Point Production Audit Checklist</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">STRUCTURE & SYNTAX:
+[ ] 01. Line 1 has <!DOCTYPE html> in lowercase.
+[ ] 02. The <html> root tag specifies the language: <html lang="en">.
+[ ] 03. Character encoding is set as the first child of <head>: <meta charset="UTF-8">.
+[ ] 04. Mobile responsive viewport is configured: <meta name="viewport" content="width=device-width, initial-scale=1.0">.
+[ ] 05. A unique, descriptive <title> (under 60 chars) is declared for each page.
+[ ] 06. A compelling <meta name="description"> (140-160 chars) is present.
+[ ] 07. All tags and attribute names are strictly lowercase (e.g. <input>, not <INPUT>).
+[ ] 08. All attribute values are enclosed in double quotes (class="card").
+[ ] 09. Indentation is consistent (2 spaces per nesting level throughout the document).
+[ ] 10. All non-void elements have matching, uncrossed closing tags.
+
+SEMANTICS & ACCESSIBILITY:
+[ ] 11. Exactly ONE <h1> exists on the page representing the primary page topic.
+[ ] 12. Headings follow a strict logical hierarchy without skipping levels (h1 -> h2 -> h3).
+[ ] 13. Semantic landmarks (<header>, <nav>, <main>, <footer>) are used instead of generic divs.
+[ ] 14. Every <img> tag has a meaningful alt description (or alt="" if purely decorative).
+[ ] 15. Every <input> is bound to a visible <label for="...">.
+[ ] 16. Icon-only buttons have an explicit aria-label describing their action.
+[ ] 17. Interactive action elements use native <button>, never <div onclick>.
+
+PERFORMANCE & LINKS:
+[ ] 18. Below-the-fold images have loading="lazy".
+[ ] 19. All external links with target="_blank" include rel="noopener noreferrer".
+[ ] 20. JavaScript files in the <head> use the defer attribute to prevent render blocking.</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Senior Habit:</strong> Bookmark this 20-point checklist. Running through it on every page will prevent 99% of frontend bugs before code review.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Accessible Button vs Accessible Link Rules</h3>
+        <p>A crucial rule that distinguishes beginners from senior developers:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- RULE: If it navigates the user to a new URL, use an ANCHOR (&lt;a&gt;) --&gt;
+&lt;a href="dashboard.html" class="nav-btn"&gt;Go to Dashboard&lt;/a&gt;
+
+&lt;!-- RULE: If it triggers an in-page action (modals, calculations, deletes), use a BUTTON --&gt;
+&lt;button type="button" class="action-btn" onclick="openModal()"&gt;Open Filter Dialog&lt;/button&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this matters:</strong> Screen readers announce links and buttons differently. Users know that pressing Enter on a link changes the page, while pressing Enter or Spacebar on a button performs an action.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Clean Code Indentation Conventions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- CLEAN: Consistent 2-space indentation with clear parent-child alignment --&gt;
+&lt;section class="features-section"&gt;
+  &lt;h2&gt;Core Highlights&lt;/h2&gt;
+  &lt;div class="grid"&gt;
+    &lt;div class="grid-item"&gt;
+      &lt;h3&gt;High Performance&lt;/h3&gt;
+      &lt;p&gt;Zero external requests.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="grid-item"&gt;
+      &lt;h3&gt;Offline Ready&lt;/h3&gt;
+      &lt;p&gt;Runs on file:// protocol.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Readability:</strong> Clean vertical alignment allows you to visually scan opening and closing brackets in seconds.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Automated DOM Health Check with JavaScript</h3>
+        <p>You can run this diagnostic script in your browser console to audit your page quality:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Quick automated page audit
+console.group("Page Health Diagnostics");
+console.log("H1 Count (Should be 1):", document.querySelectorAll("h1").length);
+console.log("Images Missing Alt:", document.querySelectorAll("img:not([alt])").length);
+console.log("Inputs Missing ID:", document.querySelectorAll("input:not([id])").length);
+console.log("Buttons with Missing Type:", document.querySelectorAll("button:not([type])").length);
+console.groupEnd();</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Diagnostic Output:</strong> If "Images Missing Alt" is greater than 0, you instantly know which accessibility bugs need fixing before shipping!
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Mixing uppercase and lowercase tags:</strong> Writing <code>&lt;DIV&gt;</code> or <code>&lt;Section&gt;</code> is messy and non-standard. Always stick strictly to lowercase HTML.</li>
+            <li><strong>Leaving broken temporary links (<code>href="#"</code>):</strong> When prototyping links, use realistic paths like <code>href="index.html"</code> rather than empty hash tags that cause jarring jumps.</li>
+            <li><strong>Forgetting <code>type="button"</code> on non-submit buttons:</strong> Always explicitly specify <code>type="button"</code> on UI controls inside forms to avoid unwanted page reloads.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Configure VS Code to <strong>Format on Save</strong> (Settings &rarr; Editor: Format On Save) &mdash; your code indentation and attribute alignment will automatically format to perfection every time you hit <code>Ctrl + S</code>.</li>
+            <li>Congratulations on finishing all 14 HTML5 lessons! Take the <strong>HTML Certification Exam</strong> on the course hub to test your comprehensive knowledge!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Maintain Separation of Concerns: HTML = Structure, CSS = Style, JS = Behavior.</li>
+            <li>Use <code>defer</code> on <code>&lt;script&gt;</code> tags in <code>&lt;head&gt;</code> to prevent render blocking.</li>
+            <li>Use <code>&lt;a&gt;</code> for navigation; use <code>&lt;button&gt;</code> for actions.</li>
+            <li>Ensure all images have <code>alt</code> and all inputs have <code>&lt;label&gt;</code>.</li>
+            <li>Run the 20-point pre-flight checklist before publishing any webpage.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Button vs Link Selection</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>A control in your navbar opens a "Change Language" popup dialog modal without changing the URL. Should this control be an <code>&lt;a&gt;</code> or a <code>&lt;button&gt;</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Does it navigate to a new page or trigger an in-page action?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> A <strong><code>&lt;button type="button"&gt;</code></strong>! Because it triggers an in-page action (opening a modal dialog) rather than navigating to a new URL.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Script Loading Optimization</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You have an application script <code>main.js</code> that interacts with HTML elements in the body. You want to place it in the <code>&lt;head&gt;</code> without blocking the initial HTML render. What attribute should you add?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: It defers execution until HTML parsing completes.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Add the <strong><code>defer</code></strong> attribute:<br>
+              <code>&lt;script src="main.js" defer&gt;&lt;/script&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Comprehensive Code Review Audit</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Identify all 3 violations in this snippet:</p>
+          <pre class="code-content"><code data-lang="html">&lt;div onclick="goToCart()" style="color:blue;"&gt;
+  &lt;IMG SRC="cart.png"&gt;
+&lt;/div&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Check semantic tag choice, casing, alt text, and inline CSS.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              1. Uses <code>&lt;div onclick&gt;</code> instead of an accessible <code>&lt;button&gt;</code> or <code>&lt;a&gt;</code>.<br>
+              2. <code>&lt;IMG SRC="..."&gt;</code> is written in uppercase and is missing the mandatory <code>alt</code> attribute.<br>
+              3. Uses an inline <code>style="color:blue;"</code> attribute violating separation of concerns.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 14 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="defer downloads in parallel and executes only after HTML parsing completes.">
+            <div class="quiz-question-text">1. What is the primary advantage of adding the defer attribute to a &lt;script&gt; tag in the &lt;head&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It minifies the JavaScript code automatically</div>
+              <div class="quiz-option"><span>B)</span> It encrypts the script file</div>
+              <div class="quiz-option"><span>C)</span> It downloads the script in the background without blocking HTML parsing</div>
+              <div class="quiz-option"><span>D)</span> It converts the script into CSS</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Anchors (<a>) are for navigation; buttons are for actions.">
+            <div class="quiz-question-text">2. When should an interactive element be built using an &lt;a&gt; tag rather than a &lt;button&gt; tag?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Whenever you want blue text</div>
+              <div class="quiz-option"><span>B)</span> Whenever clicking the element navigates the user to a new URL</div>
+              <div class="quiz-option"><span>C)</span> Only inside the footer</div>
+              <div class="quiz-option"><span>D)</span> When using mobile touchscreens</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Double quotes (class='btn') and lowercase tags are the universal standard.">
+            <div class="quiz-question-text">3. What is the standard convention for HTML tags and attribute quotes?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Strictly lowercase tags with double quotes around attribute values</div>
+              <div class="quiz-option"><span>B)</span> Uppercase tags with single quotes</div>
+              <div class="quiz-option"><span>C)</span> Mixed case tags with unquoted values</div>
+              <div class="quiz-option"><span>D)</span> CamelCase tags like <MyElement></div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Separation of concerns keeps structure (HTML), style (CSS), and logic (JS) isolated for maintainability.">
+            <div class="quiz-question-text">4. What is the core rationale behind the 'Separation of Concerns' principle?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To make files larger</div>
+              <div class="quiz-option"><span>B)</span> To prevent users from viewing source code</div>
+              <div class="quiz-option"><span>C)</span> To satisfy older browsers only</div>
+              <div class="quiz-option"><span>D)</span> To keep structure, presentation, and behavior cleanly separated for maintainability and reuse</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Exactly one <h1> per document is standard semantic practice.">
+            <div class="quiz-question-text">5. According to modern semantic best practices, how many &lt;h1&gt; tags should a webpage have?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Zero</div>
+              <div class="quiz-option"><span>B)</span> Exactly one</div>
+              <div class="quiz-option"><span>C)</span> Five</div>
+              <div class="quiz-option"><span>D)</span> One for every paragraph</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Audit the Production Component</h3>
+          <p>
+            In the live editor above, add an <code>id="primary-card"</code> to the <code>&lt;article&gt;</code> element, and give the button an explicit <code>title="Click to verify this component's readiness"</code>. Run the code and test the button!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="index.html#final-exam" class="ref-pill">&#127941; HTML5 Certification Final Exam</a>
+            <a href="../reference/html-tags-reference.html" class="ref-pill">HTML Tags Reference</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">HTML Cheatsheet</a>
+            <a href="../css/index.html" class="ref-pill">Next Course: Modern CSS3</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="13-accessibility-aria.html" class="btn btn-outline">&larr; Previous: Accessibility &amp; ARIA</a>
+          <button class="mark-complete-btn" data-lesson-id="html-14">Mark as Complete</button>
+          <a href="index.html" class="btn btn-primary">Course Exam &amp; Certificate &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

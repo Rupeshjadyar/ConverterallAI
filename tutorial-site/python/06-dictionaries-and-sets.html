@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Data Types: Dictionaries & Sets in Depth — WebDev Academy</title>
+  <meta name="description" content="Master Python's hash-based collections: Dictionaries (key-value hash maps) and Sets (unique hash sets). Learn O(1) lookup mechanics, dictionary comprehensions, dict merging (|), and mathematical set operations.">
+  <meta name="keywords" content="Python dictionary, Python set, hash map Python, dict methods, set operations, dictionary comprehension, O(1) lookup">
+  <meta property="og:title" content="Python Data Types: Dictionaries & Sets in Depth">
+  <meta property="og:description" content="Master Python's hash-based collections: Dictionaries (key-value hash maps) and Sets (unique hash sets). Learn O(1) lookup mechanics, dictionary comprehensions, dict merging (|), and mathematical set operations.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="06-dictionaries-and-sets.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 06</span>
+          </div>
+          <h1 class="lesson-title">Python Data Types: Dictionaries & Sets in Depth</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Python's hash-based collections: Dictionaries (key-value hash maps) and Sets (unique hash sets). Learn O(1) lookup mechanics, dictionary comprehensions, dict merging (|), and mathematical set operations.</span>
+            <span class="lang-hi">Python Dictionaries aur Sets deep-dive: O(1) fast lookup kaise hota hai, Dictionary Comprehensions, Dict union operator (|) aur Sets ke mathematical operations.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How Hash Tables work under the hood: Hash functions, hash collision resolution, and O(1) lookups.</li><li>Dictionary fundamentals: keys(), values(), items(), and the safe .get(key, default) method.</li><li>Dictionary Comprehensions: Transforming and filtering key-value mappings.</li><li>Modern Dictionary Merging with the pipe operator (|) introduced in Python 3.9.</li><li>Sets: Deduplication, uniqueness, and mathematical set operations (union, intersection, difference, symmetric difference).</li><li>Frozensets: Immutable sets that can be stored inside other sets or used as dict keys.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 05: Data Types: Lists & Tuples.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a coat check room at a theatre with 10,000 jackets. If jackets were stored in a List, the attendant would have to walk down 10,000 hangers one by one to find your jacket &mdash; that is slow O(N) search! <strong>A Dictionary is like receiving a coat check token with a specific number (Hash Key)</strong>: when you hand back your token, the attendant walks straight to locker #482 in 1 second &mdash; that is <strong>O(1) instant lookup</strong>! <strong>A Set is like an exclusive VIP guest club where everyone's name badge is unique</strong>: if a guest tries to enter twice, the bouncer at the door blocks them because duplicates are physically impossible!</span>
+            <span class="lang-hi">Coat check room ki misaal lein: agar 10,000 jackets hain aur list me rakhi hain, toh dhoondne me ghanto lagenge (O(N)). <strong>Dictionary ek token number jaisi hai (Key)</strong>: token dikhaya aur seedha wahi jacket 1 second me bahar nikal aayi (O(1) Instant Lookup)! <strong>Set ek VIP party jaisa hai jahan har insaan unique hota hai</strong>: agar koi dobara ghusne ki koshish karega toh use entry nahi milegi kyunki duplicate allow nahi hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>How does Python implement Dictionaries and Sets?</strong> Both are implemented using <strong>Hash Tables</strong>. In Python 3.7+, dictionaries are guaranteed to maintain insertion order while consuming 20-25% less memory thanks to a compact two-array design (a sparse indices array + a dense entries table).</li><li><strong>What makes a key valid for a Dictionary or Set?</strong> The object must be <strong>hashable</strong>: it must implement <code>__hash__()</code> and <code>__eq__()</code>, and its hash value must never change during its lifetime. Primitives (int, str, float) and immutable tuples are hashable; mutable collections (list, dict, set) are NOT hashable.</li><li><strong>Time Complexity of Dict &amp; Set Operations:</strong> Key lookup, insertion, update, and deletion are all <strong>O(1) average time</strong>. In the worst case (pathological hash collisions), complexity degrades to O(N).</li><li><strong>dict.get() vs dict[key]:</strong> <code>dict[key]</code> raises a <code>KeyError</code> if the key does not exist. <code>dict.get(key, default)</code> returns <code>None</code> (or a custom default) without crashing.</li><li><strong>Dictionary Merging (Python 3.9+):</strong> You can merge two dictionaries using the union operator: <code>merged = dict1 | dict2</code> (dict2 overwrites overlapping keys in dict1).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Dictionaries: Key-Value Hash Maps</h2>
+        <p>A <strong>Dictionary</strong> (<code>dict</code>) is an unordered (or insertion-ordered in Python 3.7+) collection of key-value pairs enclosed in curly braces <code>{}</code>. Each unique key maps to a value.</p>
+        <p>Dictionaries provide constant-time <code>O(1)</code> average performance for reading, adding, and updating entries.</p>
+        
+        <h2>2. Dictionary Methods & Iteration Patterns</h2>
+        <p>To extract data from a dictionary, Python provides three essential views: <code>.keys()</code>, <code>.values()</code>, and <code>.items()</code>.</p>
+        <p>When accessing keys that might not exist, always prefer <code>.get()</code> or <code>.setdefault()</code> over direct indexing to prevent fatal <code>KeyError</code> crashes.</p>
+        
+        <h2>3. Sets: Unordered Collections of Unique Elements</h2>
+        <p>A <strong>Set</strong> (<code>set</code>) is a collection of unique, hashable elements. Sets are defined using curly braces <code>{1, 2, 3}</code> or the <code>set()</code> constructor (note that <code>{}</code> creates an empty dictionary, not a set!).</p>
+        <p>Sets are the ultimate tool for high-speed deduplication and mathematical Venn diagram operations.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Dictionary Operations and Safe Key Retrieval with .get()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">user = {
+    'id': 1042,
+    'username': 'aarav_dev',
+    'email': 'aarav@univ.edu',
+    'is_admin': False
+}
+
+# 1. Reading existing key
+print(f'Username: {user["username"]}')
+
+# 2. Safe retrieval with default value (Prevents KeyError!)
+phone = user.get('phone_number', 'Not Provided')
+print(f'Contact Phone: {phone}')
+
+# 3. Iterating through items (key-value pairs)
+for key, val in user.items():
+    print(f'  {key:&lt;12} -&gt; {val}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>user.get('phone_number', 'Not Provided')</code> gracefully returns a fallback instead of crashing with a KeyError.
+        </div>
+        
+        <h3>Code Example 2: Dictionary Comprehensions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># 1. Invert a dictionary (Swap Keys and Values)
+country_codes = {'US': 'United States', 'IN': 'India', 'GB': 'United Kingdom'}
+inverted = {name: code for code, name in country_codes.items()}
+print(f'Inverted Mapping: {inverted}')
+
+# 2. Filtering a dictionary by value condition
+salaries = {'Alice': 95000, 'Bob': 45000, 'Charlie': 82000, 'Diana': 60000}
+high_earners = {name: sal for name, sal in salaries.items() if sal &gt;= 75000}
+print(f'High earners: {high_earners}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Dictionary comprehensions allow fast, readable transformations and filtering of key-value data.
+        </div>
+        
+        <h3>Code Example 3: Modern Dictionary Merging with the Pipe Operator (|) in Python 3.9+</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">default_config = {'theme': 'dark', 'font_size': 14, 'show_sidebar': True}
+user_preferences = {'font_size': 18, 'theme': 'dracula'}
+
+# The | operator merges dicts (right side overwrites left side)
+active_settings = default_config | user_preferences
+print(f'Active Configuration: {active_settings}')
+# {'theme': 'dracula', 'font_size': 18, 'show_sidebar': True}</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The pipe <code>|</code> operator provides a clean, native way to merge configuration dictionaries without mutation.
+        </div>
+        
+        <h3>Code Example 4: Sets: Deduplication and Instant Membership Testing</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Instant list deduplication in O(N) time
+raw_tags = ['python', 'web', 'python', 'django', 'web', 'fastapi']
+unique_tags = list(set(raw_tags))
+print(f'Deduplicated tags: {unique_tags}')
+
+# High-speed membership testing: O(1) vs List O(N)
+valid_roles = {'admin', 'editor', 'moderator'}
+current_role = 'admin'
+if current_role in valid_roles:  # Instant O(1) hash check!
+    print(f'Access granted for role: {current_role}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>item in my_set</code> takes O(1) time because of hash mapping, whereas <code>item in my_list</code> takes O(N) linear time.
+        </div>
+        
+        <h3>Code Example 5: Mathematical Set Operations (Venn Diagram Magic)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">python_devs = {'Aarav', 'Priya', 'Rohan', 'Sneha'}
+java_devs = {'Rohan', 'Vikram', 'Sneha', 'Meera'}
+
+# 1. Union (|): Devs who know EITHER Python OR Java
+print(f'Union: {python_devs | java_devs}')
+
+# 2. Intersection (&amp;): Full-stack devs who know BOTH
+print(f'Intersection: {python_devs &amp; java_devs}')  # {'Rohan', 'Sneha'}
+
+# 3. Difference (-): Devs who know ONLY Python
+print(f'Only Python: {python_devs - java_devs}')   # {'Aarav', 'Priya'}
+
+# 4. Symmetric Difference (^): Devs who know ONLY ONE language
+print(f'Exclusive: {python_devs ^ java_devs}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Set operators mirror mathematical Venn diagrams: union, intersection, set difference, and symmetric difference.
+        </div>
+        
+        <h3>Code Example 6: Frozenset: The Immutable Set</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Regular sets cannot be stored inside other sets because they are mutable
+# frozenset is immutable and hashable!
+immutable_permissions = frozenset(['READ', 'WRITE'])
+
+role_matrix = {
+    immutable_permissions: 'Standard Author',
+    frozenset(['READ']): 'Viewer'
+}
+print(f'Role lookup: {role_matrix[immutable_permissions]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>frozenset</code> is the set equivalent of a tuple: immutable, protected, and fully hashable.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Data Types: Dictionaries & Sets in Depth</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Dicts & Sets Sandbox
+inventory = {'laptops': 15, 'keyboards': 42, 'monitors': 8}
+
+# Check stock safely
+item = 'tablets'
+stock = inventory.get(item, 0)
+print(f'Stock for {item}: {stock}')
+
+# Set operations: Find missing accessories
+required_items = {'laptop', 'charger', 'mouse', 'bag'}
+packed_items = {'laptop', 'charger'}
+missing = required_items - packed_items
+print(f'Still need to pack: {missing}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Creating an empty set with {}:</strong> Writing <code>s = {}</code> creates an empty <strong>dict</strong>, NOT a set! To create an empty set, you must write <code>s = set()</code>.</li><li><strong>Using a list as a dictionary key:</strong> Writing <code>d = {[1, 2]: 'val'}</code> raises <code>TypeError: unhashable type: 'list'</code>. Use a tuple instead: <code>d = {(1, 2): 'val'}</code>.</li><li><strong>Relying on dict ordering in older Python versions:</strong> Dictionaries only guarantee insertion order starting in Python 3.7+.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use collections.defaultdict:</strong> When grouping data into lists or counting, <code>defaultdict(list)</code> eliminates cumbersome <code>if key not in d: d[key] = []</code> checks.</li><li><strong>Use collections.Counter for counting frequencies:</strong> <code>Counter(['a', 'b', 'a', 'c'])</code> counts item frequencies in a single line of code with O(N) efficiency.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Dictionaries map unique hashable keys to values in O(1) average time.</li><li>Always use .get(key, default) to prevent unhandled KeyError crashes.</li><li>Sets store unique elements and support high-speed membership testing (O(1)).</li><li>Set math operators: | (Union), & (Intersection), - (Difference), ^ (Symmetric Difference).</li><li>frozenset is an immutable set that can serve as a dict key or set member.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python script that counts the frequency of each word in a sentence: <code>'apple banana apple cherry banana apple'</code> and prints the word frequency dictionary.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Split the string into words, create a dict, and loop using word_counts[w] = word_counts.get(w, 0) + 1.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">sentence = 'apple banana apple cherry banana apple'
+word_counts = {}
+for word in sentence.split():
+    word_counts[word] = word_counts.get(word, 0) + 1
+print(word_counts)  # {'apple': 3, 'banana': 2, 'cherry': 1}</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Given two lists of user IDs: <code>registered_users = [101, 102, 103, 104]</code> and <code>active_users = [103, 104, 105, 106]</code>, use sets to find: 1) Users who registered but were never active. 2) Users who are active without being registered.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Convert to sets and use the difference (-) operator.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">reg_set = set([101, 102, 103, 104])
+act_set = set([103, 104, 105, 106])
+
+inactive = reg_set - act_set
+unregistered_active = act_set - reg_set
+print(f'Registered but inactive: {inactive}')      # {101, 102}
+print(f'Active without registration: {unregistered_active}') # {105, 106}</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what a Hash Collision is in a Python dictionary and how CPython resolves it internally.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain open addressing and quadratic probing.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># A hash collision occurs when two distinct keys produce the exact same integer hash modulo the table size.
+# CPython resolves collisions using Open Addressing with a perturbed pseudorandom probing sequence (quadratic-like probing).
+# If a slot is occupied, CPython probes next slots (i = (5*i + 1 + perturb) &amp; mask) until an empty bucket is found.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="2" data-explanation="Dictionaries use hash tables to achieve constant-time O(1) average lookup performance.">
+          <div class="quiz-question-text">1. What is the average time complexity of looking up a key in a Python dictionary?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> O(N)</div><div class="quiz-option"><span>B)</span> O(log N)</div><div class="quiz-option"><span>C)</span> O(1)</div><div class="quiz-option"><span>D)</span> O(N^2)</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>{}</code> creates an empty dictionary. You must use <code>set()</code> to create an empty set.">
+          <div class="quiz-question-text">2. How do you create an empty Set in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> s = {}</div><div class="quiz-option"><span>B)</span> s = set()</div><div class="quiz-option"><span>C)</span> s = []</div><div class="quiz-option"><span>D)</span> s = ()</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Directly accessing a non-existent key raises a KeyError. Use <code>d.get('b')</code> to avoid crashes.">
+          <div class="quiz-question-text">3. What happens if you run: d = {'a': 1}; print(d['b'])?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Prints None</div><div class="quiz-option"><span>B)</span> Raises a KeyError: 'b'</div><div class="quiz-option"><span>C)</span> Prints 0</div><div class="quiz-option"><span>D)</span> Creates key 'b' automatically</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The ampersand <code>&</code> computes the set intersection of common elements.">
+          <div class="quiz-question-text">4. Which set operator finds the intersection (common elements) of two sets?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> |</div><div class="quiz-option"><span>B)</span> &</div><div class="quiz-option"><span>C)</span> -</div><div class="quiz-option"><span>D)</span> ^</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="Python 3.9 introduced the union operator <code>dict1 | dict2</code> for dictionary merging.">
+          <div class="quiz-question-text">5. What new operator was introduced in Python 3.9 to merge two dictionaries?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> +</div><div class="quiz-option"><span>B)</span> &</div><div class="quiz-option"><span>C)</span> | (pipe operator)</div><div class="quiz-option"><span>D)</span> ++</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, add 'headphones' to required_items, re-run, and observe how it is added to the still-needed items!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#dictionary" class="ref-pill">Glossary: Dictionary</a><a href="../reference/glossary.html#set" class="ref-pill">Glossary: Set</a><a href="07-conditionals-and-loops.html" class="ref-pill">Lesson 07: Conditionals & Loops</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="05-lists-and-tuples.html" class="btn btn-outline">&larr; 05. Data Types: Lists & Tuples</a>
+          <button class="mark-complete-btn" data-lesson-id="python-06">Mark as Complete</button>
+          <a href="07-conditionals-and-loops.html" class="btn btn-primary">07. Conditionals & Loops &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

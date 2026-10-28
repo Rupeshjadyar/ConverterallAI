@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Developer Cheatsheets — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .print-banner { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .cheatsheet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .sheet-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; }
+    .sheet-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border-color); display: flex; align-items: center; gap: 8px; }
+    .sheet-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+    .sheet-table td, .sheet-table th { padding: 6px 8px; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .sheet-table code { font-size: 12px; }
+    @media print {
+      #app-header, #app-sidebar, #right-toc, #app-footer, .print-banner, .lesson-navigation { display: none !important; }
+      .layout-container { display: block !important; }
+      .main-content { max-width: 100% !important; padding: 0 !important; }
+      .sheet-card { break-inside: avoid; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body data-course="reference" data-current-lesson="cheatsheets.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-reference-light); color:var(--c-reference); border:1px solid var(--c-reference-border);">&#128218; Built-in Reference</span>
+            <span class="reading-time">&#128424; Printable Quick Reference</span>
+          </div>
+          <h1 class="lesson-title">High-Density Developer Cheat Sheets</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Printable, high-density reference cards covering HTML5 structures, CSS3 Flexbox &amp; Grid layouts, and modern JavaScript syntax idioms.</span>
+            <span class="lang-hi">HTML, CSS aur JavaScript ke high-density printable cheat sheets. Quick reference ke liye use karein ya PDF print karein.</span>
+          </p>
+        </div>
+
+        <div class="print-banner">
+          <div><strong>&#128424; Print-Optimized Layout:</strong> Click "Print / Save PDF" to generate a clean, multi-page reference sheet.</div>
+          <button class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
+        </div>
+
+        <!-- Section 1: HTML5 Cheatsheet -->
+        <h2>1. HTML5 Quick Reference</h2>
+        <div class="cheatsheet-grid">
+          <!-- Structure Boilerplate -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-html);">&#128196; HTML5 Document Skeleton</div>
+            <pre class="code-block" data-lang="html"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;&lt;nav&gt;...&lt;/nav&gt;&lt;/header&gt;
+  &lt;main&gt;...&lt;/main&gt;
+  &lt;footer&gt;...&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+
+          <!-- Common Form Inputs -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-html);">&#128221; Form Input Types</div>
+            <table class="sheet-table">
+              <tr><th>Type</th><th>Use Case</th></tr>
+              <tr><td><code>type="text"</code></td><td>Standard single line text</td></tr>
+              <tr><td><code>type="email"</code></td><td>Email with auto-validation</td></tr>
+              <tr><td><code>type="password"</code></td><td>Masked security input</td></tr>
+              <tr><td><code>type="number"</code></td><td>Numeric input with min/max/step</td></tr>
+              <tr><td><code>type="checkbox"</code></td><td>Multi-select toggles</td></tr>
+              <tr><td><code>type="radio"</code></td><td>Single option in named group</td></tr>
+              <tr><td><code>type="file"</code></td><td>File upload (with <code>accept</code>)</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 2: CSS3 Cheatsheet -->
+        <h2>2. CSS3 Layout &amp; Selectors Reference</h2>
+        <div class="cheatsheet-grid">
+          <!-- Flexbox Cheat -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-css);">&#128260; Flexbox Cheat Sheet</div>
+            <table class="sheet-table">
+              <tr><th>Property</th><th>Values</th></tr>
+              <tr><td><code>flex-direction</code></td><td><code>row | column | row-reverse</code></td></tr>
+              <tr><td><code>justify-content</code></td><td><code>flex-start | center | space-between | space-evenly</code></td></tr>
+              <tr><td><code>align-items</code></td><td><code>stretch | center | flex-start | flex-end</code></td></tr>
+              <tr><td><code>flex-wrap</code></td><td><code>nowrap | wrap | wrap-reverse</code></td></tr>
+              <tr><td><code>gap</code></td><td><code>10px | 1rem (spacing between items)</code></td></tr>
+              <tr><td><code>flex (child)</code></td><td><code>flex: 1 (grow equally) | flex: 0 0 200px</code></td></tr>
+            </table>
+          </div>
+
+          <!-- CSS Grid Cheat -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-css);">&#129521; CSS Grid Cheat Sheet</div>
+            <table class="sheet-table">
+              <tr><th>Property</th><th>Values</th></tr>
+              <tr><td><code>grid-template-columns</code></td><td><code>repeat(3, 1fr) | 200px 1fr</code></td></tr>
+              <tr><td><code>Auto Responsive</code></td><td><code>repeat(auto-fit, minmax(250px, 1fr))</code></td></tr>
+              <tr><td><code>grid-template-rows</code></td><td><code>auto 1fr auto</code></td></tr>
+              <tr><td><code>gap / row-gap</code></td><td><code>16px | 1.5rem</code></td></tr>
+              <tr><td><code>grid-column (child)</code></td><td><code>span 2 | 1 / -1 (full width)</code></td></tr>
+            </table>
+          </div>
+
+          <!-- Selector Specificity -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-css);">&#9878; Specificity Hierarchy</div>
+            <table class="sheet-table">
+              <tr><th>Selector Type</th><th>Weight</th><th>Example</th></tr>
+              <tr><td>Inline style</td><td>1000</td><td><code>style="..."</code></td></tr>
+              <tr><td>ID selector</td><td>100</td><td><code>#main-nav</code></td></tr>
+              <tr><td>Class / Pseudo-class</td><td>10</td><td><code>.btn, :hover</code></td></tr>
+              <tr><td>Element / Pseudo-element</td><td>1</td><td><code>div, p, ::after</code></td></tr>
+              <tr><td>Universal</td><td>0</td><td><code>*</code></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 3: Modern JavaScript Cheatsheet -->
+        <h2>3. Modern JavaScript (ES6+) Reference</h2>
+        <div class="cheatsheet-grid">
+          <!-- Array Iteration Methods -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-js);">&#128290; Array Methods Cheat Sheet</div>
+            <table class="sheet-table">
+              <tr><th>Method</th><th>Mutates?</th><th>Returns</th></tr>
+              <tr><td><code>map(fn)</code></td><td>No</td><td>New transformed array</td></tr>
+              <tr><td><code>filter(fn)</code></td><td>No</td><td>New filtered array</td></tr>
+              <tr><td><code>reduce(fn, init)</code></td><td>No</td><td>Single accumulated value</td></tr>
+              <tr><td><code>find(fn)</code></td><td>No</td><td>First matching item (or undefined)</td></tr>
+              <tr><td><code>some(fn) / every(fn)</code></td><td>No</td><td>Boolean true/false</td></tr>
+              <tr><td><code>slice(start, end)</code></td><td>No</td><td>Shallow slice copy</td></tr>
+              <tr><td><code>splice(i, del, add)</code></td><td><strong>Yes</strong></td><td>Removed elements</td></tr>
+              <tr><td><code>push() / pop()</code></td><td><strong>Yes</strong></td><td>End of array operations</td></tr>
+            </table>
+          </div>
+
+          <!-- ES6 Idioms -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-js);">&#9889; ES6+ Modern Syntax Idioms</div>
+            <pre class="code-block" data-lang="javascript"><code>// Destructuring & Defaults
+const { name, role = "User" } = person;
+const [first, ...rest] = numbers;
+
+// Spread operator
+const clone = { ...original, active: true };
+const merged = [...arr1, ...arr2];
+
+// Optional chaining & Nullish coalescing
+const city = user?.address?.city ?? "Unknown";
+
+// Template literals
+const greeting = `Hello, ${name.toUpperCase()}!`;</code></pre>
+          </div>
+
+          <!-- Async / Fetch Template -->
+          <div class="sheet-card">
+            <div class="sheet-title" style="color:var(--c-js);">&#127760; Fetch API Template</div>
+            <pre class="code-block" data-lang="javascript"><code>async function postJson(url, payload) {
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("API Error:", err.message);
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="glossary.html" class="nav-btn prev-btn">&larr; Glossary (A-Z)</a>
+          <a href="colors-and-entities.html" class="nav-btn next-btn">Colors &amp; HTML Entities &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

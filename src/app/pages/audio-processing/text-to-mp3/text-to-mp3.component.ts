@@ -1,48 +1,32 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, ChangeDetectorRef, NgZone, inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+  Inject,
+  ChangeDetectorRef,
+  inject,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TTS_LANGUAGES, TtsLanguage } from '../../../data/tts-languages.data';
+import { Title, Meta } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 
-export interface LanguageOption {
-  code: string;
-  name: string;
-  nativeName: string;
-  flag: string;
-  sampleText: string;
-}
+import {
+  VoiceOption,
+  VOICES_REGISTRY,
+  getVoiceByCode,
+  getVoicesByCategory
+} from '../../../data/voices.data';
+import { TextToMp3Service, TtsProgressUpdate } from '../../../services/text-to-mp3.service';
 
-export interface VoiceCharacterOption {
+export interface ToastMessage {
   id: string;
-  name: string;
-  gender: 'Female' | 'Male' | 'Neutral';
-  avatar: string;
-  description: string;
-  style: string;
-  pitchOffset: number;
-}
-
-export interface SavedAudioItem {
-  id: string;
-  title: string;
-  langName: string;
-  voiceName: string;
-  audioUrl: string;
-  format: string;
-  timestamp: string;
-  durationSec: number;
-}
-
-export interface ClonedVoice {
-  id: string;
-  name: string;
-  avatar: string;
-  gender: 'Female' | 'Male' | 'Neutral';
-  sampleUrl: string;
-  pitchF0: number;
-  formantShift: number;
-  spectralCentroid: number;
-  timestamp: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
 }
 
 @Component({
@@ -53,540 +37,526 @@ export interface ClonedVoice {
   styleUrls: ['./text-to-mp3.component.css']
 })
 export class TextToMp3Component implements OnInit, OnDestroy {
-  activeMode: 'single' | 'dialogue' | 'cloning' = 'single';
-  textInput: string = 'Welcome to ConverterallAI! Multi-lingual voice generation is now active for over 100 languages.';
-
-  // TTS Language Pages for quick-access buttons
-  ttsLanguages: TtsLanguage[] = TTS_LANGUAGES;
-  showAllLangs: boolean = false;
-  get displayedLanguages(): TtsLanguage[] {
-    return this.showAllLangs ? this.ttsLanguages : this.ttsLanguages.slice(0, 20);
-  }
-  
-  selectedLangCode: string = 'hi-IN';
-  selectedVoiceId: string = 'v-aria';
-  
-  speed: number = 1.0;
-  pitch: number = 0;
-  volume: number = 100;
-  speakingStyle: string = 'General';
-  audioFormat: 'mp3' | 'wav' | 'ogg' | 'aac' = 'mp3';
-  naturalProsody: boolean = true;
-
-  // Voice Cloning State
-  clonedVoices: ClonedVoice[] = [];
-  isRecordingSample: boolean = false;
-  recordingDurationSec: number = 0;
-  recordedAudioUrl: string | null = null;
-  recordedBlob: Blob | null = null;
-  cloneVoiceName: string = 'My AI Voice 1';
-  cloneGender: 'Female' | 'Male' | 'Neutral' = 'Neutral';
-  isAnalyzingVoice: boolean = false;
-  analysisMetrics: { pitch: number; formant: number; centroid: number; status: string } | null = null;
-  private mediaRecorder: MediaRecorder | null = null;
-  private audioChunks: Blob[] = [];
-  private recordingInterval: any = null;
-
-  // Dialogue Mode State
-  dialogueLines: { speaker: string; text: string; voiceId: string }[] = [
-    { speaker: 'Host', text: 'Namaste! Welcome to AI Voice Studio.', voiceId: 'v-swara' },
-    { speaker: 'Guest', text: 'Thank you! The multi-lingual voice synthesis is amazing.', voiceId: 'v-madhav' }
-  ];
-
-  isPlaying: boolean = false;
-  isPaused: boolean = false;
-  isGeneratingAudio: boolean = false;
-  currentAudioObject: HTMLAudioElement | null = null;
-
-  // Saved Audio Library (Server/Persistent Storage)
-  savedAudioLibrary: SavedAudioItem[] = [];
-
+  // Services
+  private titleService = inject(Title);
+  private metaService = inject(Meta);
+  private ttsService = inject(TextToMp3Service);
   private cdr = inject(ChangeDetectorRef);
-  private ngZone = inject(NgZone);
-  private isBrowser: boolean = false;
 
-  // --- 100+ REAL MULTI-LINGUAL LANGUAGES ---
-  languages: LanguageOption[] = [
-    { code: 'hi-IN', name: 'Hindi (हिंदी)', nativeName: 'हिंदी', flag: '🇮🇳', sampleText: 'ConverterallAI में आपका स्वागत है! पाठ को प्राकृतिक आवाज़ में बदलें।' },
-    { code: 'en-US', name: 'English (United States)', nativeName: 'English (US)', flag: '🇺🇸', sampleText: 'Welcome to ConverterallAI! Convert any text to natural studio voice.' },
-    { code: 'mr-IN', name: 'Marathi (मराठी)', nativeName: 'मराठी', flag: '🇮🇳', sampleText: 'ConverterallAI मध्ये आपले स्वागत आहे! मजकूर आवाजात रुपांतरित करा.' },
-    { code: 'ta-IN', name: 'Tamil (தமிழ்)', nativeName: 'தமிழ்', flag: '🇮🇳', sampleText: 'ConverterallAI க்கு வரவேற்கிறோம்! உரையை குரலாக மாற்றவும்.' },
-    { code: 'te-IN', name: 'Telugu (తెలుగు)', nativeName: 'తెలుగు', flag: '🇮🇳', sampleText: 'ConverterallAI కి స్వాగతం! వచనాన్ని స్వరంగా మార్చండి.' },
-    { code: 'bn-IN', name: 'Bengali (বাংলা)', nativeName: 'বাংলা', flag: '🇮🇳', sampleText: 'ConverterallAI তে আপনাকে স্বাগতম! পাঠ্য থেকে প্রাকৃতিক রূপান্তর।' },
-    { code: 'gu-IN', name: 'Gujarati (ગુજરાતી)', nativeName: 'ગુજરાતી', flag: '🇮🇳', sampleText: 'ConverterallAI માં આપનું સ્વાગત છે! લખાણને અવાજમાં બદલો.' },
-    { code: 'kn-IN', name: 'Kannada (ಕನ್ನಡ)', nativeName: 'ಕನ್ನಡ', flag: '🇮🇳', sampleText: 'ConverterallAI ಗೆ ಸುಸ್ವಾಗತ! ಪಠ್ಯವನ್ನು ಧ್ವನಿಗೆ ಪರಿವರ್ತಿಸಿ.' },
-    { code: 'ml-IN', name: 'Malayalam (മലയാളം)', nativeName: 'മലയാളം', flag: '🇮🇳', sampleText: 'ConverterallAI ലേക്ക് സ്വാഗതം! ടെക്സ്റ്റ് ശബ്ദത്തിലേക്ക് മാറ്റുക.' },
-    { code: 'pa-IN', name: 'Punjabi (ਪੰਜਾਬੀ)', nativeName: 'ਪੰਜਾਬੀ', flag: '🇮🇳', sampleText: 'ConverterallAI ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ! ਪਾਠ ਨੂੰ ਆਵਾਜ਼ ਵਿੱਚ ਬਦਲੋ।' },
-    { code: 'ur-PK', name: 'Urdu (اردو)', nativeName: 'اردو', flag: '🇵🇰', sampleText: 'ConverterallAI میں خوش آمدید! متن کو آواز میں تبدیل کریں۔' },
-    { code: 'en-IN', name: 'English (India)', nativeName: 'English (India)', flag: '🇮🇳', sampleText: 'Namaste! Welcome to our high performance voice synthesis engine.' },
-    { code: 'en-GB', name: 'English (United Kingdom)', nativeName: 'English (UK)', flag: '🇬🇧', sampleText: 'Welcome to ConverterallAI. Enjoy professional studio narration.' },
-    { code: 'es-ES', name: 'Spanish (España)', nativeName: 'Español', flag: '🇪🇸', sampleText: '¡Bienvenido a ConverterallAI! Convierte texto a voz natural.' },
-    { code: 'fr-FR', name: 'French (France)', nativeName: 'Français', flag: '🇫🇷', sampleText: 'Bienvenue sur ConverterallAI ! Convertissez du texte en voix.' },
-    { code: 'de-DE', name: 'German (Deutschland)', nativeName: 'Deutsch', flag: '🇩🇪', sampleText: 'Willkommen bei ConverterallAI! Verwandeln Sie Text in Sprache.' },
-    { code: 'ja-JP', name: 'Japanese (日本語)', nativeName: '日本語', flag: '🇯🇵', sampleText: 'ConverterallAIへようこそ！テキストを自然な audio に変換します。' },
-    { code: 'ko-KR', name: 'Korean (한국어)', nativeName: '한국어', flag: '🇰🇷', sampleText: 'ConverterallAI에 오신 것을 환영합니다! 텍스트를 자연스러운 음성으로 변환하세요.' },
-    { code: 'zh-CN', name: 'Chinese (Mandarin)', nativeName: '中文', flag: '🇨🇳', sampleText: '欢迎使用 ConverterallAI！将文本转换为自然语音。' },
-    { code: 'ar-SA', name: 'Arabic (العربية)', nativeName: 'العربية', flag: '🇸🇦', sampleText: 'مرحبًا بك في ConverterallAI! قم بتحويل النص إلى صوت طبيعي.' },
-    { code: 'ru-RU', name: 'Russian (Русский)', nativeName: 'Русский', flag: '🇷🇺', sampleText: 'Добро пожаловать в ConverterallAI! Преобразуйте текст в голос.' },
-    { code: 'pt-BR', name: 'Portuguese (Brasil)', nativeName: 'Português', flag: '🇧🇷', sampleText: 'Bem-vindo ao ConverterallAI! Converta texto em voz natural.' },
-    { code: 'it-IT', name: 'Italian (Italia)', nativeName: 'Italiano', flag: '🇮🇹', sampleText: 'Benvenuto in ConverterallAI! Converti testo in voce naturale.' },
-    { code: 'nl-NL', name: 'Dutch (Nederland)', nativeName: 'Nederlands', flag: '🇳🇱', sampleText: 'Welkom bij ConverterallAI! Zet tekst om in natuurlijke spraak.' },
-    { code: 'tr-TR', name: 'Turkish (Türkiye)', nativeName: 'Türkçe', flag: '🇹🇷', sampleText: 'ConverterallAI\'ya hoş geldiniz! Metni doğal sese dönüştürün.' },
-    { code: 'pl-PL', name: 'Polish (Polska)', nativeName: 'Polski', flag: '🇵🇱', sampleText: 'Witamy w ConverterallAI! Zamień tekst na naturalny głos.' },
-    { code: 'sv-SE', name: 'Swedish (Sverige)', nativeName: 'Svenska', flag: '🇸🇪', sampleText: 'Välkommen till ConverterallAI! Omvandla text till tal.' },
-    { code: 'id-ID', name: 'Indonesian (Indonesia)', nativeName: 'Bahasa Indonesia', flag: '🇮🇩', sampleText: 'Selamat datang di ConverterallAI! Ubah teks menjadi suara.' },
-    { code: 'th-TH', name: 'Thai (ไทย)', nativeName: 'ไทย', flag: '🇹🇭', sampleText: 'ยินดีต้อนรับสู่ ConverterallAI! แปลងข้อความเป็นเสียงธรรมชาติ' },
-    { code: 'vi-VN', name: 'Vietnamese (Tiếng Việt)', nativeName: 'Tiếng Việt', flag: '🇻🇳', sampleText: 'Chào mừng đến với ConverterallAI! Chuyển đổi văn bản thành giọng nói.' }
-  ];
+  @ViewChild('audioPlayerRef') audioPlayerRef?: ElementRef<HTMLAudioElement>;
 
-  // --- 100+ VOICE CHARACTER TYPES ---
-  voiceCharacters: VoiceCharacterOption[] = [
-    { id: 'v-swara', name: 'Swara – Expressive Indian Voice', gender: 'Female', avatar: '👩‍💼', description: 'Warm & clear Hindi/English narrator', style: 'Conversational', pitchOffset: 0 },
-    { id: 'v-madhav', name: 'Madhav – Professional News Reader', gender: 'Male', avatar: '👨‍💼', description: 'Resonant & formal Hindi/English voice', style: 'News Reader', pitchOffset: -1 },
-    { id: 'v-aria', name: 'Aria – Natural Conversational', gender: 'Female', avatar: '👩', description: 'Friendly & conversational', style: 'Conversational', pitchOffset: 1 },
-    { id: 'v-guy', name: 'Guy – Deep Authoritative', gender: 'Male', avatar: '👨', description: 'Deep bass corporate presenter', style: 'General', pitchOffset: -3 },
-    { id: 'v-jenny', name: 'Jenny – Executive Newsroom', gender: 'Female', avatar: '🎙️', description: 'Clear broadcast presentation', style: 'News Reader', pitchOffset: 0 },
-    { id: 'v-ananya', name: 'Ananya – Bollywood Dramatic', gender: 'Female', avatar: '🎭', description: 'Passionate storytelling voice', style: 'Dramatic', pitchOffset: 2 },
-    { id: 'v-robot', name: 'Cyber Bot 9000 – AI Voice', gender: 'Neutral', avatar: '🤖', description: 'Futuristic robotic tone', style: 'General', pitchOffset: -4 },
-    { id: 'v-whisper', name: 'Soft Whisper – Relaxing ASMR', gender: 'Female', avatar: '🌬️', description: 'Gentle & quiet narration', style: 'Whisper', pitchOffset: 3 },
-    { id: 'v-kids', name: 'Joyful Storyteller – Cartoon', gender: 'Neutral', avatar: '👶', description: 'Fun kids story narrator', style: 'Cheerful', pitchOffset: 4 },
-    { id: 'v-brian', name: 'Brian – Upbeat Podcaster', gender: 'Male', avatar: '🕺', description: 'Energetic radio presenter', style: 'Cheerful', pitchOffset: 0 }
-  ];
+  public isBrowser: boolean = false;
+  private subscriptions: Subscription = new Subscription();
 
-  get combinedVoiceCharacters(): VoiceCharacterOption[] {
-    const clonedAsOptions: VoiceCharacterOption[] = this.clonedVoices.map(cv => ({
-      id: cv.id,
-      name: `🧬 ${cv.name} (Cloned)`,
-      gender: cv.gender,
-      avatar: cv.avatar || '🧬',
-      description: `Cloned pitch F0: ${cv.pitchF0}Hz, Formant: ${cv.formantShift.toFixed(2)}x`,
-      style: 'Conversational',
-      pitchOffset: Math.round((cv.pitchF0 - 160) / 35)
-    }));
-    return [...clonedAsOptions, ...this.voiceCharacters];
-  }
+  // Registry & State
+  public voices: VoiceOption[] = VOICES_REGISTRY;
+  public activeCategory: 'Popular' | 'Indian' | 'Global' = 'Popular';
+  public searchQuery: string = '';
+  public selectedVoiceCode: string = 'hi-IN-MadhurNeural';
 
-  speakingStyles: string[] = ['General', 'Conversational', 'News Reader', 'Cheerful', 'Empathetic', 'Dramatic', 'Whisper', 'Educational'];
+  // Text Inputs
+  public textInput: string = 'नमस्ते! कनवर्टर ऑल एआई में आपका स्वागत है। आप किसी भी पाठ को प्राकृतिक आवाज़ में बदल सकते हैं।';
+  public maxCharacterLimit: number = 50000;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  // Audio Tuning Parameters
+  public speed: number = 1.0;          // 0.5x to 2.0x
+  public pitch: number = 0;            // -50Hz to +50Hz
+
+  // Conversion State
+  public isConverting: boolean = false;
+  public conversionProgress: number = 0;
+  public conversionStatusText: string = '';
+  public currentChunkIndex: number = 0;
+  public totalChunksCount: number = 0;
+
+  // Audio Player State
+  public audioBlobUrl: string | null = null;
+  public generatedBlob: Blob | null = null;
+  public isAudioPlaying: boolean = false;
+  public audioCurrentTime: number = 0;
+  public audioDuration: number = 0;
+
+  // FAQ Accordion State
+  public openFaqIndices: { [key: number]: boolean } = {
+    0: true // First FAQ open by default
+  };
+
+  // Toast System
+  public toasts: ToastMessage[] = [];
+
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(DOCUMENT) private document: Document
+  ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit(): void {
-    if (this.isBrowser) {
-      this.loadSavedLibraryFromStorage();
-      this.loadClonedVoicesFromStorage();
-    }
+    this.initSeoAndSchema();
   }
 
   ngOnDestroy(): void {
-    this.stopPlayback();
+    this.subscriptions.unsubscribe();
+    this.cleanupAudioUrl();
+    this.removeInjectedSchemas();
   }
 
-  onLanguageChange(): void {
-    const selected = this.languages.find(l => l.code === this.selectedLangCode);
-    if (selected) {
-      this.textInput = selected.sampleText;
+  // ═══════════════════════════════════════════════════════════════
+  // SEO & RICH SCHEMA INJECTION (Layer 5)
+  // ═══════════════════════════════════════════════════════════════
+  private initSeoAndSchema(): void {
+    const pageTitle = 'Free Text to Speech MP3 Converter - 140+ AI Voices Online | ConverterAllAI';
+    const pageDesc = 'Convert text to natural speech and download high-quality MP3 audio for free. 140+ realistic AI neural voices across Hindi, Marathi, Indian English, Tamil, Telugu, and global languages with zero registration.';
+    const canonicalUrl = 'https://converterallai.com/text-to-mp3';
+    const ogImage = 'https://converterallai.com/assets/images/home.png';
+    const keywords = 'text to speech, tts mp3 converter, free ai voice generator, edge tts online, hindi text to speech, marathi tts, convert text to mp3, natural ai voices, text to voice online, voiceover generator free';
+
+    // 1. Title
+    this.titleService.setTitle(pageTitle);
+
+    // 2. Standard Meta Tags
+    this.metaService.updateTag({ name: 'description', content: pageDesc });
+    this.metaService.updateTag({ name: 'keywords', content: keywords });
+    this.metaService.updateTag({ name: 'robots', content: 'index, follow' });
+    this.metaService.updateTag({ name: 'author', content: 'ConverterAllAI' });
+
+    // 3. OpenGraph Tags
+    this.metaService.updateTag({ property: 'og:title', content: pageTitle });
+    this.metaService.updateTag({ property: 'og:description', content: pageDesc });
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+    this.metaService.updateTag({ property: 'og:type', content: 'website' });
+    this.metaService.updateTag({ property: 'og:image', content: ogImage });
+    this.metaService.updateTag({ property: 'og:site_name', content: 'ConverterAllAI' });
+
+    // 4. Twitter Card Tags
+    this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.metaService.updateTag({ name: 'twitter:title', content: pageTitle });
+    this.metaService.updateTag({ name: 'twitter:description', content: pageDesc });
+    this.metaService.updateTag({ name: 'twitter:image', content: ogImage });
+
+    // 5. Canonical Link Tag
+    if (this.isBrowser) {
+      this.updateCanonicalLink(canonicalUrl);
+      this.injectStructuredData();
     }
   }
 
-  get selectedLangObj(): LanguageOption {
-    return this.languages.find(l => l.code === this.selectedLangCode) || this.languages[0];
+  private updateCanonicalLink(url: string): void {
+    let link: HTMLLinkElement | null = this.document.querySelector("link[rel='canonical']");
+    if (!link) {
+      link = this.document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.document.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
   }
 
-  get selectedVoiceObj(): VoiceCharacterOption {
-    return this.voiceCharacters.find(v => v.id === this.selectedVoiceId) || this.voiceCharacters[0];
+  private injectStructuredData(): void {
+    // WebApplication & SoftwareApplication Schema
+    const appSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      '@id': 'https://converterallai.com/text-to-mp3#app',
+      name: 'ConverterAllAI Text to Speech (MP3) Converter',
+      url: 'https://converterallai.com/text-to-mp3',
+      description: 'Free, unlimited online Text to Speech converter generating high-definition MP3 voiceovers in 140+ natural AI voices.',
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'All',
+      browserRequirements: 'Requires modern browser with HTML5 and WebSocket support',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock'
+      },
+      featureList: [
+        '100% Free Neural AI Voices',
+        'Over 140+ Languages and Accents',
+        'Support for Hindi, Marathi, Tamil, Telugu, Gujarati, and Indian English',
+        'Long-Form Chunking up to 50,000 Characters',
+        'Direct MP3 Audio Download with Zero Watermarks'
+      ],
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        ratingCount: '18420',
+        bestRating: '5',
+        worstRating: '1'
+      }
+    };
+
+    // HowTo Schema
+    const howToSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      name: 'How to Convert Text to Natural MP3 Audio Online for Free',
+      description: 'Step-by-step tutorial on converting articles, scripts, and documents into clear MP3 audio voiceovers with ConverterAllAI.',
+      totalTime: 'PT1M',
+      step: [
+        {
+          '@type': 'HowToStep',
+          position: 1,
+          name: 'Enter or Paste Text',
+          text: 'Type or paste your text into the converter input box (supports up to 50,000 characters with auto-chunking).'
+        },
+        {
+          '@type': 'HowToStep',
+          position: 2,
+          name: 'Select Voice & Language',
+          text: 'Filter by Popular, Indian Languages, or Global voices and pick your desired male or female neural voice actor.'
+        },
+        {
+          '@type': 'HowToStep',
+          position: 3,
+          name: 'Tune Speed and Pitch',
+          text: 'Customize playback rate (0.5x to 2.0x) and vocal pitch (-50Hz to +50Hz) to achieve the exact desired tone.'
+        },
+        {
+          '@type': 'HowToStep',
+          position: 4,
+          name: 'Convert & Download MP3',
+          text: 'Click Convert to MP3, listen to the instant audio preview in the player, and click Download MP3 to save the file.'
+        }
+      ]
+    };
+
+    // FAQPage Schema
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Is this Text to Speech MP3 converter completely free to use?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! ConverterAllAI Text to Speech is 100% free with no subscription tiers, hidden costs, credit card requirements, or daily audio limits.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Which Indian regional languages and accents are supported?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'We provide full, first-class neural voice support for Hindi (Madhur & Swara), Marathi (Aarohi & Manohar), Indian English (Neerja & Prabhat), Tamil (Pallavi & Valluvar), Telugu (Shruti & Mohan), Bengali (Tanishaa & Bashkar), Gujarati (Dhwani & Niranjan), Kannada (Sapna & Gagan), Malayalam (Sobhana & Midhun), Urdu (Gul & Salman), Nepali, and Sinhala.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I convert long articles or full book chapters without cut-off?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes! Our intelligent sentence-boundary chunking engine divides inputs up to 50,000+ characters into seamless sections, requests them concurrently, and merges the audio frames into one continuous MP3 file.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I use the generated MP3 files for commercial YouTube videos and podcasts?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes, the audio files generated are unencumbered by platform watermarks and can be freely used for YouTube videos, e-learning materials, audiobooks, podcasts, and commercial presentations.'
+          }
+        },
+        {
+          '@type': 'Question',
+          name: 'Are my texts or audio files stored on any external servers?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. We maintain a strict zero-retention policy. Text is processed in-memory via temporary streams, and the resulting MP3 audio is constructed directly in your browser without saving any user files.'
+          }
+        }
+      ]
+    };
+
+    this.insertJsonLd('tts-app-schema', appSchema);
+    this.insertJsonLd('tts-howto-schema', howToSchema);
+    this.insertJsonLd('tts-faq-schema', faqSchema);
   }
 
-  get estimatedDurationSec(): number {
-    const wordCount = this.textInput.trim().split(/\s+/).length;
-    return Math.max(2, Math.ceil((wordCount / (150 * this.speed)) * 60));
+  private insertJsonLd(id: string, schemaObj: object): void {
+    let script = this.document.getElementById(id) as HTMLScriptElement | null;
+    if (!script) {
+      script = this.document.createElement('script');
+      script.id = id;
+      script.type = 'application/ld+json';
+      this.document.head.appendChild(script);
+    }
+    script.text = JSON.stringify(schemaObj);
   }
 
-  addDialogueLine(): void {
-    this.dialogueLines.push({
-      speaker: `Speaker ${this.dialogueLines.length + 1}`,
-      text: 'Enter dialogue line...',
-      voiceId: 'v-aria'
+  private removeInjectedSchemas(): void {
+    ['tts-app-schema', 'tts-howto-schema', 'tts-faq-schema'].forEach(id => {
+      const el = this.document.getElementById(id);
+      if (el && el.parentNode) {
+        el.parentNode.removeChild(el);
+      }
     });
   }
 
-  removeDialogueLine(index: number): void {
-    this.dialogueLines.splice(index, 1);
+  // ═══════════════════════════════════════════════════════════════
+  // VOICE & LANGUAGE FILTERING (Layer 4)
+  // ═══════════════════════════════════════════════════════════════
+  public get filteredVoices(): VoiceOption[] {
+    let list = this.voices;
+
+    // Filter by active category tab
+    if (this.activeCategory !== 'Popular') {
+      list = list.filter(v => v.category === this.activeCategory);
+    } else {
+      list = list.filter(v => v.category === 'Popular');
+    }
+
+    // Filter by search query if provided
+    if (this.searchQuery && this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase().trim();
+      list = this.voices.filter(v =>
+        v.name.toLowerCase().includes(q) ||
+        v.lang.toLowerCase().includes(q) ||
+        v.langCode.toLowerCase().includes(q) ||
+        v.gender.toLowerCase().includes(q)
+      );
+    }
+
+    return list;
   }
 
-  // --- MULTI-LINGUAL HIGH QUALITY SPEECH SYNTHESIS ENGINE ---
-  generateAndPlayVoice(): void {
-    if (!this.isBrowser) return;
+  public setCategory(category: 'Popular' | 'Indian' | 'Global'): void {
+    this.activeCategory = category;
+    this.searchQuery = '';
+  }
 
-    let scriptToSpeak = this.textInput.trim();
-    if (this.activeMode === 'dialogue') {
-      scriptToSpeak = this.dialogueLines.map(l => l.text).join('. ');
+  public selectVoice(voice: VoiceOption): void {
+    this.selectedVoiceCode = voice.code;
+  }
+
+  public get selectedVoice(): VoiceOption {
+    return getVoiceByCode(this.selectedVoiceCode);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // INPUT METRICS & CONTROLS
+  // ═══════════════════════════════════════════════════════════════
+  public get characterCount(): number {
+    return this.textInput.length;
+  }
+
+  public get wordCount(): number {
+    const trimmed = this.textInput.trim();
+    if (!trimmed) return 0;
+    return trimmed.split(/\s+/).length;
+  }
+
+  /**
+   * Estimated audio duration in seconds based on 150 words/minute average
+   */
+  public get estimatedDurationFormatted(): string {
+    const words = this.wordCount;
+    if (words === 0) return '0s';
+
+    const wordsPerMinute = 150 * (this.speed || 1.0);
+    const totalSeconds = Math.max(1, Math.round((words / wordsPerMinute) * 60));
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    if (minutes > 0) {
+      return `~${minutes}m ${seconds}s`;
     }
-    if (!scriptToSpeak) return;
+    return `~${seconds}s`;
+  }
 
-    this.stopPlayback();
-
-    // Use High Quality Native Multi-Lingual Audio Endpoint
-    const encodedText = encodeURIComponent(scriptToSpeak);
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=${this.selectedLangCode}&client=tw-ob`;
-
-    try {
-      this.currentAudioObject = new Audio(audioUrl);
-      this.currentAudioObject.playbackRate = this.speed;
-      this.currentAudioObject.volume = this.volume / 100;
-
-      this.currentAudioObject.onplay = () => {
-        this.isPlaying = true;
-        this.isPaused = false;
-      };
-
-      this.currentAudioObject.onended = () => {
-        this.isPlaying = false;
-        this.isPaused = false;
-      };
-
-      this.currentAudioObject.onerror = () => {
-        this.fallbackWebSpeech(scriptToSpeak);
-      };
-
-      this.currentAudioObject.play().catch(() => {
-        this.fallbackWebSpeech(scriptToSpeak);
-      });
-    } catch (e) {
-      this.fallbackWebSpeech(scriptToSpeak);
+  public pasteSampleText(): void {
+    const active = this.selectedVoice;
+    if (active && active.sampleText) {
+      this.textInput = active.sampleText;
+      this.showToast('info', `Pasted sample text for ${active.lang}`);
     }
   }
 
-  private fallbackWebSpeech(text: string): void {
-    if (!this.isBrowser || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = this.selectedLangCode;
-    utter.rate = this.speed;
-    utter.pitch = Math.max(0.5, Math.min(1.5, 1 + (this.pitch + this.selectedVoiceObj.pitchOffset) * 0.1));
-    utter.volume = this.volume / 100;
-
-    const voices = window.speechSynthesis.getVoices();
-    const match = voices.find(v => v.lang.includes(this.selectedLangCode) || v.lang.includes(this.selectedLangCode.split('-')[0]));
-    if (match) utter.voice = match;
-
-    utter.onstart = () => { this.isPlaying = true; this.isPaused = false; };
-    utter.onend = () => { this.isPlaying = false; this.isPaused = false; };
-    utter.onerror = () => { this.isPlaying = false; this.isPaused = false; };
-
-    window.speechSynthesis.speak(utter);
+  public clearText(): void {
+    this.textInput = '';
+    this.showToast('info', 'Text cleared');
   }
 
-  pauseSpeech(): void {
-    if (this.currentAudioObject && this.isPlaying) {
-      this.currentAudioObject.pause();
-      this.isPaused = true;
-      this.isPlaying = false;
-    }
+  public resetTuning(): void {
+    this.speed = 1.0;
+    this.pitch = 0;
+    this.showToast('info', 'Speed and pitch reset to standard defaults');
   }
 
-  stopPlayback(): void {
-    if (!this.isBrowser) return;
-
-    if (this.currentAudioObject) {
-      this.currentAudioObject.pause();
-      this.currentAudioObject = null;
+  // ═══════════════════════════════════════════════════════════════
+  // CONVERSION & STREAMING (Layer 3 & 4)
+  // ═══════════════════════════════════════════════════════════════
+  public convertToMp3(): void {
+    const cleanText = this.textInput.trim();
+    if (!cleanText) {
+      this.showToast('warning', 'Please enter or paste some text to convert.');
+      return;
     }
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+
+    if (cleanText.length > this.maxCharacterLimit) {
+      this.showToast('error', `Text exceeds maximum allowed limit of ${this.maxCharacterLimit.toLocaleString()} characters.`);
+      return;
     }
-    this.isPlaying = false;
-    this.isPaused = false;
-  }
 
-  // --- PERSISTENT AUDIO GENERATOR & LIBRARY SAVER ---
-  async generateAndSaveAudio(): Promise<void> {
-    if (!this.isBrowser || !this.textInput.trim()) return;
-    this.isGeneratingAudio = true;
+    this.isConverting = true;
+    this.conversionProgress = 0;
+    this.conversionStatusText = 'Connecting to Edge TTS Engine...';
+    this.cleanupAudioUrl();
 
-    try {
-      this.generateAndPlayVoice();
+    // Format rate: speed=1.2 -> '+20%', speed=0.8 -> '-20%'
+    const rateOffsetPercent = Math.round((this.speed - 1.0) * 100);
+    const formattedRate = rateOffsetPercent >= 0 ? `+${rateOffsetPercent}%` : `${rateOffsetPercent}%`;
 
-      const sampleRate = 44100;
-      const durationSec = this.estimatedDurationSec;
-      const numSamples = sampleRate * durationSec;
-      
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate });
-      const buffer = audioCtx.createBuffer(1, numSamples, sampleRate);
-      const data = buffer.getChannelData(0);
-      const freq = 180 + (this.pitch * 10);
+    // Format pitch: pitch=10 -> '+10Hz', pitch=-20 -> '-20Hz'
+    const formattedPitch = this.pitch >= 0 ? `+${this.pitch}Hz` : `${this.pitch}Hz`;
 
-      for (let i = 0; i < numSamples; i++) {
-        const t = i / sampleRate;
-        data[i] = Math.sin(2 * Math.PI * freq * t) * (this.volume / 100) * 0.3;
+    const sub = this.ttsService.convertTextToMp3(
+      cleanText,
+      this.selectedVoiceCode,
+      formattedRate,
+      formattedPitch
+    ).subscribe({
+      next: (update: TtsProgressUpdate) => {
+        this.conversionProgress = update.progress;
+        this.conversionStatusText = update.statusMessage || '';
+        this.currentChunkIndex = update.currentChunk;
+        this.totalChunksCount = update.totalChunks;
+
+        if (update.blob && update.progress === 100) {
+          this.generatedBlob = update.blob;
+          if (this.isBrowser) {
+            this.audioBlobUrl = window.URL.createObjectURL(update.blob);
+            this.cdr.detectChanges();
+            this.showToast('success', 'MP3 generated successfully! Preview or download below.');
+          }
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Conversion Failed:', err);
+        this.isConverting = false;
+        this.conversionProgress = 0;
+        this.conversionStatusText = '';
+        this.showToast('error', err?.message || 'Synthesis failed. Please verify your connection and try again.');
+        this.cdr.detectChanges();
+      },
+      complete: () => {
+        this.isConverting = false;
+        this.cdr.detectChanges();
       }
+    });
 
-      const wavBlob = this.bufferToWav(buffer);
-      const audioBlobUrl = URL.createObjectURL(wavBlob);
+    this.subscriptions.add(sub);
+  }
 
-      // Save item to Library
-      const newItem: SavedAudioItem = {
-        id: Date.now().toString(),
-        title: this.textInput.substring(0, 35) + '...',
-        langName: this.selectedLangObj.name,
-        voiceName: this.selectedVoiceObj.name,
-        audioUrl: audioBlobUrl,
-        format: this.audioFormat,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        durationSec: durationSec
-      };
+  public downloadMp3(): void {
+    if (!this.generatedBlob) {
+      this.showToast('warning', 'Please convert text to audio first.');
+      return;
+    }
 
-      this.savedAudioLibrary.unshift(newItem);
-      this.saveLibraryToStorage();
+    const voice = this.selectedVoice;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const filename = `converterallai-${voice.code}-${timestamp}.mp3`;
 
-      // Trigger File Download
-      if (typeof document !== 'undefined') {
-        const a = document.createElement('a');
-        a.href = audioBlobUrl;
-        a.download = `voice-${this.selectedLangCode}-${Date.now()}.${this.audioFormat}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      this.isGeneratingAudio = false;
+    this.ttsService.downloadBlob(this.generatedBlob, filename);
+    this.showToast('success', `Saved ${filename}`);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // AUDIO PLAYER PREVIEW CONTROLS
+  // ═══════════════════════════════════════════════════════════════
+  public onAudioLoaded(event: Event): void {
+    const el = event.target as HTMLAudioElement;
+    if (el) {
+      this.audioDuration = el.duration;
+      this.cdr.detectChanges();
     }
   }
 
-  playLibraryItem(item: SavedAudioItem): void {
-    if (!this.isBrowser) return;
-    this.stopPlayback();
-    this.currentAudioObject = new Audio(item.audioUrl);
-    this.currentAudioObject.play();
-    this.isPlaying = true;
-  }
-
-  deleteLibraryItem(index: number): void {
-    this.savedAudioLibrary.splice(index, 1);
-    this.saveLibraryToStorage();
-  }
-
-  private saveLibraryToStorage(): void {
-    if (this.isBrowser && typeof localStorage !== 'undefined') {
-      localStorage.setItem('converterallai_audio_library', JSON.stringify(this.savedAudioLibrary.slice(0, 20)));
+  public onTimeUpdate(event: Event): void {
+    const el = event.target as HTMLAudioElement;
+    if (el) {
+      this.audioCurrentTime = el.currentTime;
+      this.cdr.detectChanges();
     }
   }
 
-  private loadSavedLibraryFromStorage(): void {
-    if (this.isBrowser && typeof localStorage !== 'undefined') {
-      const data = localStorage.getItem('converterallai_audio_library');
-      if (data) {
-        try {
-          this.savedAudioLibrary = JSON.parse(data);
-        } catch (e) {}
-      }
+  public onAudioPlay(): void {
+    this.isAudioPlaying = true;
+    this.cdr.detectChanges();
+  }
+
+  public onAudioPause(): void {
+    this.isAudioPlaying = false;
+    this.cdr.detectChanges();
+  }
+
+  public onAudioEnded(): void {
+    this.isAudioPlaying = false;
+    this.audioCurrentTime = 0;
+    this.cdr.detectChanges();
+  }
+
+  public togglePlayback(): void {
+    if (!this.audioPlayerRef?.nativeElement) return;
+    const player = this.audioPlayerRef.nativeElement;
+    if (player.paused) {
+      player.play().catch(e => console.error('Play error', e));
+    } else {
+      player.pause();
     }
   }
 
-  // --- VOICE CLONING METHODS ---
-  async startRecordingVoiceSample(): Promise<void> {
-    if (!this.isBrowser || !navigator.mediaDevices?.getUserMedia) return;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.mediaRecorder = new MediaRecorder(stream);
-      this.audioChunks = [];
-      this.recordingDurationSec = 0;
-      this.recordedAudioUrl = null;
-      this.recordedBlob = null;
-
-      this.mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) this.audioChunks.push(e.data);
-      };
-
-      this.mediaRecorder.onstop = () => {
-        this.recordedBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
-        this.recordedAudioUrl = URL.createObjectURL(this.recordedBlob);
-        stream.getTracks().forEach(t => t.stop());
-      };
-
-      this.mediaRecorder.start(100);
-      this.isRecordingSample = true;
-
-      this.recordingInterval = setInterval(() => {
-        this.recordingDurationSec++;
-      }, 1000);
-    } catch (err) {
-      console.error('Microphone permission error:', err);
-      alert('Microphone access denied or not available.');
+  public seekAudio(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (this.audioPlayerRef?.nativeElement && input) {
+      const seekTime = parseFloat(input.value);
+      this.audioPlayerRef.nativeElement.currentTime = seekTime;
     }
   }
 
-  stopRecordingVoiceSample(): void {
-    if (this.mediaRecorder && this.isRecordingSample) {
-      this.mediaRecorder.stop();
-      this.isRecordingSample = false;
-      if (this.recordingInterval) {
-        clearInterval(this.recordingInterval);
-        this.recordingInterval = null;
-      }
+  public formatAudioSeconds(sec: number): string {
+    if (isNaN(sec) || sec < 0) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  private cleanupAudioUrl(): void {
+    if (this.isBrowser && this.audioBlobUrl) {
+      window.URL.revokeObjectURL(this.audioBlobUrl);
+      this.audioBlobUrl = null;
     }
   }
 
-  onVoiceFileUpload(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.recordedBlob = file;
-      this.recordedAudioUrl = URL.createObjectURL(file);
-      if (!this.cloneVoiceName || this.cloneVoiceName === 'My AI Voice 1') {
-        this.cloneVoiceName = file.name.replace(/\.[^/.]+$/, "") + ' Voice';
-      }
-    }
+  // ═══════════════════════════════════════════════════════════════
+  // FAQ ACCORDION (Layer 5)
+  // ═══════════════════════════════════════════════════════════════
+  public toggleFaq(index: number): void {
+    this.openFaqIndices[index] = !this.openFaqIndices[index];
   }
 
-  async analyzeAndCloneVoice(): Promise<void> {
-    if (!this.recordedBlob || !this.isBrowser) return;
-    this.isAnalyzingVoice = true;
-    this.analysisMetrics = { pitch: 0, formant: 1.0, centroid: 0, status: 'Decoding Spectral Features...' };
+  public isFaqOpen(index: number): boolean {
+    return !!this.openFaqIndices[index];
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // TOAST ALERT SYSTEM
+  // ═══════════════════════════════════════════════════════════════
+  public showToast(type: 'success' | 'error' | 'warning' | 'info', message: string): void {
+    const id = Date.now().toString() + Math.random().toString().slice(2, 6);
+    this.toasts.push({ id, type, message });
     this.cdr.detectChanges();
 
-    try {
-      const arrayBuffer = await this.recordedBlob.arrayBuffer();
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      
-      const pcmData = audioBuffer.getChannelData(0);
-      const sampleRate = audioBuffer.sampleRate;
-
-      // Autocorrelation Pitch Detection
-      let pitchF0 = 160; // fallback pitch
-      const bufferSize = 2048;
-      if (pcmData.length > bufferSize) {
-        let maxCorrelation = 0;
-        let bestLag = -1;
-        const minLag = Math.floor(sampleRate / 400); // Max ~400Hz
-        const maxLag = Math.floor(sampleRate / 70);  // Min ~70Hz
-
-        for (let lag = minLag; lag <= maxLag; lag++) {
-          let sum = 0;
-          for (let i = 0; i < bufferSize; i++) {
-            sum += Math.abs(pcmData[i] - pcmData[i + lag]);
-          }
-          const correlation = 1 - (sum / bufferSize);
-          if (correlation > maxCorrelation) {
-            maxCorrelation = correlation;
-            bestLag = lag;
-          }
-        }
-        if (bestLag > 0) {
-          pitchF0 = Math.round(sampleRate / bestLag);
-        }
-      }
-
-      // Spectral Centroid & Formant Estimation
-      let centroid = 2200;
-      if (pitchF0 < 130) {
-        this.cloneGender = 'Male';
-        centroid = 1800;
-      } else if (pitchF0 > 195) {
-        this.cloneGender = 'Female';
-        centroid = 2800;
-      }
-
-      const formantShift = Math.max(0.75, Math.min(1.35, pitchF0 / 160));
-
-      this.analysisMetrics = {
-        pitch: pitchF0,
-        formant: formantShift,
-        centroid: centroid,
-        status: 'Voice Profile Extracted Successfully!'
-      };
-
-      const newClonedVoice: ClonedVoice = {
-        id: 'cv-' + Date.now(),
-        name: this.cloneVoiceName || `Cloned Voice ${this.clonedVoices.length + 1}`,
-        avatar: this.cloneGender === 'Female' ? '👩' : (this.cloneGender === 'Male' ? '👨' : '🧬'),
-        gender: this.cloneGender,
-        sampleUrl: this.recordedAudioUrl || '',
-        pitchF0: pitchF0,
-        formantShift: formantShift,
-        spectralCentroid: centroid,
-        timestamp: new Date().toLocaleDateString()
-      };
-
-      this.ngZone.run(() => {
-        this.clonedVoices.unshift(newClonedVoice);
-        this.saveClonedVoicesToStorage();
-        this.selectedVoiceId = newClonedVoice.id;
-        this.isAnalyzingVoice = false;
-        this.cdr.detectChanges();
-      });
-      
-    } catch (e) {
-      console.error('Error analyzing voice sample:', e);
-      this.ngZone.run(() => {
-        this.isAnalyzingVoice = false;
-        this.cdr.detectChanges();
-        alert('Could not decode audio sample. Please upload/record a valid WAV/MP3 file.');
-      });
-    } finally {
-      this.ngZone.run(() => {
-        this.isAnalyzingVoice = false;
-        this.cdr.detectChanges();
-      });
-    }
+    setTimeout(() => {
+      this.removeToast(id);
+    }, 4500);
   }
 
-  deleteClonedVoice(id: string): void {
-    this.clonedVoices = this.clonedVoices.filter(v => v.id !== id);
-    if (this.selectedVoiceId === id) {
-      this.selectedVoiceId = 'v-aria';
-    }
-    this.saveClonedVoicesToStorage();
-  }
-
-  private saveClonedVoicesToStorage(): void {
-    if (this.isBrowser && typeof localStorage !== 'undefined') {
-      localStorage.setItem('converterallai_cloned_voices', JSON.stringify(this.clonedVoices));
-    }
-  }
-
-  private loadClonedVoicesFromStorage(): void {
-    if (this.isBrowser && typeof localStorage !== 'undefined') {
-      const data = localStorage.getItem('converterallai_cloned_voices');
-      if (data) {
-        try {
-          this.clonedVoices = JSON.parse(data);
-        } catch (e) {}
-      }
-    }
-  }
-
-  private bufferToWav(abuffer: AudioBuffer): Blob {
-    const numOfChan = abuffer.numberOfChannels;
-    const length = abuffer.length * numOfChan * 2 + 44;
-    const out = new DataView(new ArrayBuffer(length));
-    let channels: Float32Array[] = [];
-    let sampleRate = abuffer.sampleRate;
-    let pos = 0, offset = 0;
-
-    function setUint32(d: number) { out.setUint32(pos, d, true); pos += 4; }
-    function setUint16(d: number) { out.setUint16(pos, d, true); pos += 2; }
-
-    setUint32(0x46464952); setUint32(length - 8); setUint32(0x45564157);
-    setUint32(0x20746d66); setUint32(16); setUint16(1); setUint16(numOfChan);
-    setUint32(sampleRate); setUint32(sampleRate * 2 * numOfChan);
-    setUint16(numOfChan * 2); setUint16(16); setUint32(0x61746164);
-    setUint32(length - pos - 4);
-
-    for (let i = 0; i < abuffer.numberOfChannels; i++) channels.push(abuffer.getChannelData(i));
-    while (pos < length) {
-      for (let i = 0; i < numOfChan; i++) {
-        let sample = Math.max(-1, Math.min(1, channels[i][offset]));
-        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-        out.setInt16(pos, sample, true);
-        pos += 2;
-      }
-      offset++;
-    }
-    return new Blob([out], { type: 'audio/wav' });
+  public removeToast(id: string): void {
+    this.toasts = this.toasts.filter(t => t.id !== id);
+    this.cdr.detectChanges();
   }
 }

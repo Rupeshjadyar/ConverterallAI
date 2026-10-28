@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Frontend Coding Challenges — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .challenge-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .challenge-filter-btn { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); transition: all 0.2s; }
+    .challenge-filter-btn:hover, .challenge-filter-btn.active { background: var(--c-primary); color: white; border-color: var(--c-primary); }
+    .diff-filter-group { display: flex; gap: 6px; margin-bottom: 16px; align-items: center; }
+    .diff-btn { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-muted); }
+    .diff-btn.active { background: var(--bg-card); color: var(--text-main); border-color: var(--c-primary); box-shadow: 0 0 0 1px var(--c-primary); }
+    .challenge-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 22px; margin-bottom: 24px; transition: border-color 0.2s; }
+    .challenge-card:hover { border-color: var(--c-primary); }
+    .challenge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .challenge-title { font-size: 18px; font-weight: 700; margin: 0; }
+    .challenge-tags { display: flex; gap: 6px; }
+    .challenge-prompt { font-size: 15px; line-height: 1.6; margin-bottom: 14px; }
+    .challenge-details { margin-top: 14px; }
+    details summary { font-weight: 600; cursor: pointer; color: var(--c-primary); padding: 6px 0; }
+  </style>
+</head>
+<body data-course="practice" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Practice Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">&#9874; Practical Training</span>
+            <span class="reading-time">&#128187; Interactive Challenges</span>
+          </div>
+          <h1 class="lesson-title">Frontend Coding Challenges</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Level up your problem-solving skills with practical HTML, CSS, and JavaScript challenges. Test logic, build UI widgets, and inspect battle-tested solutions.</span>
+            <span class="lang-hi">HTML, CSS aur JavaScript ke practical coding challenges. Logic build karein, problem solve karein aur hint/solution dekhein.</span>
+          </p>
+        </div>
+
+        <!-- Featured Developer Tools Card -->
+        <div style="background:linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(16, 185, 129, 0.1)); border:1px solid var(--c-primary); border-radius:var(--radius-md); padding:20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <span class="badge" style="background:var(--c-primary); color:#0f172a; font-weight:800;">NEW DEVELOPER TOOL</span>
+              <strong style="font-size:17px; color:var(--text-main);">Developer Speed Typing Test</strong>
+            </div>
+            <p style="margin:0; font-size:14px; color:var(--text-muted); max-width:600px;">
+              Test and boost your coding speed! Practice live with real JavaScript syntax, HTML tags, CSS rules, and technical vocabulary with instant WPM &amp; accuracy metrics.
+            </p>
+          </div>
+          <a href="typing-test.html" class="btn btn-primary" style="white-space:nowrap; padding:10px 20px; font-weight:700;">Start Typing Test &#9654;</a>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="diff-filter-group">
+          <span style="font-size:13px; font-weight:600; margin-right:8px; color:var(--text-muted);">Difficulty:</span>
+          <button class="diff-btn active" onclick="setDiff('all', this)">All Difficulties</button>
+          <button class="diff-btn" onclick="setDiff('easy', this)">Easy</button>
+          <button class="diff-btn" onclick="setDiff('medium', this)">Medium</button>
+          <button class="diff-btn" onclick="setDiff('hard', this)">Hard</button>
+        </div>
+
+        <div class="challenge-filters">
+          <button class="challenge-filter-btn active" onclick="setTopic('all', this)">All Topics</button>
+          <button class="challenge-filter-btn" onclick="setTopic('html', this)">HTML Semantics</button>
+          <button class="challenge-filter-btn" onclick="setTopic('css', this)">CSS Layouts</button>
+          <button class="challenge-filter-btn" onclick="setTopic('js', this)">JavaScript Logic</button>
+          <button class="challenge-filter-btn" onclick="setTopic('dom', this)">DOM Manipulation</button>
+        </div>
+
+        <div id="challenge-count" style="margin-bottom:20px; font-size:14px; font-weight:600; color:var(--text-muted);">Showing challenges</div>
+
+        <!-- Challenges List -->
+        <div id="challenges-container">
+
+          <!-- Challenge 1 (Easy JS) -->
+          <div class="challenge-card" data-diff="easy" data-topic="js">
+            <div class="challenge-header">
+              <h3 class="challenge-title">1. Title Case a Sentence</h3>
+              <div class="challenge-tags">
+                <span class="exercise-difficulty diff-easy">Easy</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">JavaScript</span>
+              </div>
+            </div>
+            <p class="challenge-prompt">
+              Write a function <code>titleCase(str)</code> that takes a string of words and returns the string with the first letter of each word capitalized and the remaining letters in lowercase.
+            </p>
+            <div class="code-explanation">
+              <strong>Example:</strong> <code>titleCase("sHoRt AnD sToUt")</code> &rarr; <code>"Short And Stout"</code>
+            </div>
+            <details class="challenge-details">
+              <summary>&#128161; Need a Hint?</summary>
+              <p>Convert the entire string to lowercase first with <code>.toLowerCase()</code>, split the string into an array of words with <code>.split(' ')</code>, map over each word capitalizing the first character with <code>word[0].toUpperCase() + word.slice(1)</code>, and finally join the words back together with <code>.join(' ')</code>.</p>
+            </details>
+            <details class="challenge-details">
+              <summary>&#9989; View Full Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function titleCase(str) {
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map(word => {
+      if (!word) return '';
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}
+
+// Tests:
+console.log(titleCase("I'm a little tea pot")); // "I'm A Little Tea Pot"
+console.log(titleCase("sHoRt AnD sToUt"));       // "Short And Stout"</code></pre>
+            </details>
+          </div>
+
+          <!-- Challenge 2 (Easy CSS) -->
+          <div class="challenge-card" data-diff="easy" data-topic="css">
+            <div class="challenge-header">
+              <h3 class="challenge-title">2. Centering in Both Axes with CSS</h3>
+              <div class="challenge-tags">
+                <span class="exercise-difficulty diff-easy">Easy</span>
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">CSS Layout</span>
+              </div>
+            </div>
+            <p class="challenge-prompt">
+              Create a full-screen hero box where an inner modal card is perfectly centered both horizontally and vertically, regardless of screen dimensions.
+            </p>
+            <details class="challenge-details">
+              <summary>&#128161; Need a Hint?</summary>
+              <p>You can achieve perfect centering using either CSS Grid (<code>display: grid; place-items: center; min-height: 100vh;</code>) or CSS Flexbox (<code>display: flex; justify-content: center; align-items: center; min-height: 100vh;</code>).</p>
+            </details>
+            <details class="challenge-details">
+              <summary>&#9989; View Full Solution</summary>
+              <pre class="code-block" data-lang="css"><code>/* Method A: The 2-line Modern CSS Grid Technique */
+.hero-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #0f172a;
+}
+
+.center-card {
+  width: 90%;
+  max-width: 480px;
+  background: #1e293b;
+  padding: 30px;
+  border-radius: 8px;
+  color: white;
+}</code></pre>
+            </details>
+          </div>
+
+          <!-- Challenge 3 (Medium JS/DOM) -->
+          <div class="challenge-card" data-diff="medium" data-topic="dom">
+            <div class="challenge-header">
+              <h3 class="challenge-title">3. Filterable Contact List with Instant Search</h3>
+              <div class="challenge-tags">
+                <span class="exercise-difficulty diff-medium">Medium</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">DOM</span>
+              </div>
+            </div>
+            <p class="challenge-prompt">
+              Build an HTML input field and an unordered list of 10 contact names. Write JavaScript that listens to the <code>input</code> event and dynamically toggles the display of each list item so only matching contacts remain visible.
+            </p>
+            <details class="challenge-details">
+              <summary>&#128161; Need a Hint?</summary>
+              <p>Query all <code>&lt;li&gt;</code> elements with <code>document.querySelectorAll('li')</code>. On every input event, read <code>e.target.value.toLowerCase()</code>, loop through the list items, and set <code>li.style.display = text.includes(search) ? 'block' : 'none'</code>.</p>
+            </details>
+            <details class="challenge-details">
+              <summary>&#9989; View Full Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>const searchInput = document.getElementById("search-input");
+const contactItems = document.querySelectorAll("#contacts-list li");
+
+searchInput.addEventListener("input", function(e) {
+  const query = e.target.value.toLowerCase().trim();
+
+  contactItems.forEach(item => {
+    const name = item.textContent.toLowerCase();
+    if (name.includes(query)) {
+      item.style.display = ""; // Reset to default display
+    } else {
+      item.style.display = "none";
+    }
+  });
+});</code></pre>
+            </details>
+          </div>
+
+          <!-- Challenge 4 (Medium JS Logic) -->
+          <div class="challenge-card" data-diff="medium" data-topic="js">
+            <div class="challenge-header">
+              <h3 class="challenge-title">4. Deep Clone an Object without External Libraries</h3>
+              <div class="challenge-tags">
+                <span class="exercise-difficulty diff-medium">Medium</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">JavaScript</span>
+              </div>
+            </div>
+            <p class="challenge-prompt">
+              Write a recursive function <code>deepClone(obj)</code> that creates a truly independent deep copy of nested JavaScript objects and arrays without mutating the original structure.
+            </p>
+            <details class="challenge-details">
+              <summary>&#128161; Need a Hint?</summary>
+              <p>Check if the value is <code>null</code> or not an object (primitive). If primitive, return it as is. If an array, map over each element recursively. If an object, create a new object and recursively copy each key.</p>
+            </details>
+            <details class="challenge-details">
+              <summary>&#9989; View Full Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function deepClone(obj) {
+  // Primitives and null are copied by value
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+
+  // Handle Arrays
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item));
+  }
+
+  // Handle Objects
+  const cloned = {};
+  for (const key of Object.keys(obj)) {
+    cloned[key] = deepClone(obj[key]);
+  }
+  return cloned;
+}
+
+// In modern standard JS: structuredClone(obj) is also natively available!</code></pre>
+            </details>
+          </div>
+
+          <!-- Challenge 5 (Hard JS/DOM) -->
+          <div class="challenge-card" data-diff="hard" data-topic="dom">
+            <div class="challenge-header">
+              <h3 class="challenge-title">5. Infinite Scroll Loader with IntersectionObserver</h3>
+              <div class="challenge-tags">
+                <span class="exercise-difficulty diff-hard">Hard</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">Web APIs / DOM</span>
+              </div>
+            </div>
+            <p class="challenge-prompt">
+              Implement a high-performance infinite scroll feeds viewer. When the sentinel <code>&lt;div id="sentinel"&gt;</code> scrolls into the browser viewport, load the next batch of 10 items asynchronously without attaching laggy scroll event listeners!
+            </p>
+            <details class="challenge-details">
+              <summary>&#128161; Need a Hint?</summary>
+              <p>Create an <code>IntersectionObserver</code> with a callback: <code>new IntersectionObserver((entries) =&gt; { if (entries[0].isIntersecting) loadMore(); })</code> and observe the sentinel element at the bottom of the feed container.</p>
+            </details>
+            <details class="challenge-details">
+              <summary>&#9989; View Full Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>const feed = document.getElementById("feed-container");
+const sentinel = document.getElementById("scroll-sentinel");
+let page = 1;
+
+const observer = new IntersectionObserver(async (entries) => {
+  if (entries[0].isIntersecting) {
+    console.log("Loading page:", page);
+    await loadMoreItems(page);
+    page++;
+  }
+}, { rootMargin: "200px" }); // Preload 200px before reaching bottom
+
+observer.observe(sentinel);
+
+async function loadMoreItems(pageNum) {
+  for (let i = 1; i <= 5; i++) {
+    const card = document.createElement("div");
+    card.className = "post-card";
+    card.textContent = `Article Post #${(pageNum - 1) * 5 + i}`;
+    feed.insertBefore(card, sentinel);
+  }
+}</code></pre>
+            </details>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="../reference/colors-and-entities.html" class="nav-btn prev-btn">&larr; Colors &amp; Entities</a>
+          <a href="interview-questions.html" class="nav-btn next-btn">Interview Questions &amp; Answers &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    let activeDiff = 'all';
+    let activeTopic = 'all';
+
+    function setDiff(diff, btn) {
+      activeDiff = diff;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterChallenges();
+    }
+
+    function setTopic(top, btn) {
+      activeTopic = top;
+      document.querySelectorAll('.challenge-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterChallenges();
+    }
+
+    function filterChallenges() {
+      const cards = document.querySelectorAll('.challenge-card');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const d = card.getAttribute('data-diff');
+        const t = card.getAttribute('data-topic');
+
+        const matchDiff = (activeDiff === 'all' || d === activeDiff);
+        const matchTopic = (activeTopic === 'all' || t === activeTopic);
+
+        if (matchDiff && matchTopic) {
+          card.style.display = 'block';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('challenge-count').textContent = `Showing ${visible} challenges`;
+    }
+    filterChallenges();
+  </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Display, Visibility &amp; Overflow — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="06-display-visibility-overflow.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 14 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 06</span>
+          </div>
+          <h1 class="lesson-title">Display, Visibility &amp; Overflow</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Control element flow, master the three ways to hide things, and manage overflowing content gracefully.</span>
+            <span class="lang-hi">Element layout flow, elements ko hide karne ke 3 tareeqe, aur overflow content manage karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The fundamental flow modes: <code>block</code>, <code>inline</code>, and <code>inline-block</code>.</li>
+            <li>The crucial technical differences between <code>display: none</code>, <code>visibility: hidden</code>, and <code>opacity: 0</code>.</li>
+            <li>Preventing page-breaking horizontal spills with <code>overflow: hidden</code>, <code>scroll</code>, and <code>auto</code>.</li>
+            <li>Controlling directional overflow with <code>overflow-x</code> and <code>overflow-y</code>.</li>
+            <li>Modern mobile-friendly horizontal pill scrollers.</li>
+            <li>Accessibility implications of hiding content from screen readers.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="05-box-model.html">05. The CSS Box Model</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Restaurant Table and The Ghost</div>
+          <p>
+            <span class="lang-en">Imagine chairs and tables at a restaurant:
+            <br>&bull; <strong><code>display: none</code>:</strong> The restaurant manager removes the chair from the room completely. The remaining chairs slide over and fill the empty space as if that chair never existed.
+            <br>&bull; <strong><code>visibility: hidden</code>:</strong> An invisible ghost sits in the chair! You cannot see the ghost, but the chair is still occupying space, and nobody else can sit there.
+            <br>&bull; <strong><code>overflow: auto</code>:</strong> A glass with 200ml capacity holding 300ml of juice &mdash; instead of spilling all over the table, the glass gains a tiny elevator wheel allowing you to scroll through the juice!</span>
+            <span class="lang-hi">Restaurant ke table ki tarah sochiye: <code>display: none</code> ka matlab kursi ko kamre se poori tarah hata dena (space gayab). <code>visibility: hidden</code> ka matlab kursi wahi hai par adrishya (invisible) hai (space bacha rehta hai). <code>overflow: auto</code> ka matlab extra cheezon ke liye andar scrollbar de dena!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Block vs Inline vs Inline-Block</h2>
+        <p>
+          Every HTML element has a natural default display type. Understanding how these types participate in normal document flow is critical:
+        </p>
+
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Display Value</th>
+              <th style="padding:10px;">Starts New Line?</th>
+              <th style="padding:10px;">Respects Width / Height?</th>
+              <th style="padding:10px;">Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>block</code></td>
+              <td style="padding:10px; color:var(--c-success); font-weight:600;">Yes (100% width)</td>
+              <td style="padding:10px; color:var(--c-success); font-weight:600;">Yes</td>
+              <td style="padding:10px;"><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>, <code>&lt;section&gt;</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>inline</code></td>
+              <td style="padding:10px; color:var(--c-error); font-weight:600;">No (flows in text)</td>
+              <td style="padding:10px; color:var(--c-error); font-weight:600;">No (ignored!)</td>
+              <td style="padding:10px;"><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>inline-block</code></td>
+              <td style="padding:10px; color:var(--c-error); font-weight:600;">No (sits side-by-side)</td>
+              <td style="padding:10px; color:var(--c-success); font-weight:600;">Yes! (The Best of Both)</td>
+              <td style="padding:10px;"><code>&lt;button&gt;</code>, <code>&lt;input&gt;</code>, Custom badges</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Demonstrating Inline-Block Buttons</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Default <a> links are inline and ignore width, height, and top/bottom margin */
+a.nav-btn {
+  display: inline-block; /* Now respects dimensions! */
+  width: 140px;
+  height: 44px;
+  padding: 10px 20px;
+  margin-right: 12px;
+  text-align: center;
+  background-color: #2563eb;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+}</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Three Ways to Hide an Element</h2>
+        <p>
+          Developers often say "hide that element", but each CSS technique has profoundly different consequences for layout, clicks, and accessibility:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Three Hiding Strategies Compared</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Completely Gone from Layout and Accessibility Tree */
+.vanish {
+  display: none;
+  /* Occupies 0x0 space. Neighbors collapse into the empty spot.
+     Screen readers ignore it completely. Not clickable. */
+}
+
+/* 2. Invisible Ghost (Preserves Layout Space) */
+.ghost {
+  visibility: hidden;
+  /* Invisible, but still occupies its exact width and height!
+     Cannot be clicked. Screen readers ignore it. */
+}
+
+/* 3. Fully Transparent (Still Interactive!) */
+.glass {
+  opacity: 0;
+  /* Occupies full space. Still intercepts clicks and tab focus!
+     Screen readers still read its text aloud. */
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Managing Overflowing Content</h2>
+        <p>
+          When child elements or large paragraphs exceed the physical boundary of a fixed-size container, the <code>overflow</code> property dictates how the excess is handled:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Overflow Options in Practice</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. visible (Default): Spills out past borders onto neighboring elements */
+.box-visible {
+  overflow: visible;
+}
+
+/* 2. hidden: Crops content cleanly at the border edge; no scrollbars */
+.box-hidden {
+  overflow: hidden;
+  border-radius: 12px; /* Great for clipping rounded images */
+}
+
+/* 3. scroll: ALWAYS renders scrollbars (even if content fits!) */
+.box-scroll {
+  overflow: scroll; /* Often creates unwanted gray disabled scrollbars */
+}
+
+/* 4. auto (Senior Recommendation): Scrollbars appear ONLY when needed! */
+.box-auto {
+  max-height: 250px;
+  overflow-y: auto;  /* Vertical scrollbar only when overflowing */
+  overflow-x: hidden;/* Prevent accidental side scrolling */
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Mobile-Friendly Horizontal Carousel Pattern</h2>
+        <p>
+          A common mobile UI pattern is a horizontal row of tags or cards that scroll smoothly horizontally with swipe gestures:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Horizontal Scroll Row</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.tag-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;         /* Allow side scrolling */
+  overflow-y: hidden;       /* Clip vertical */
+  white-space: nowrap;      /* Keep pills on one continuous line */
+  padding-bottom: 8px;      /* Spacing so scrollbar doesn't touch pills */
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS Safari */
+}
+
+.tag-scroller .pill {
+  flex-shrink: 0;           /* Prevent pills from squishing! */
+  padding: 6px 16px;
+  background: #e2e8f0;
+  border-radius: 999px;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>5. Interactive Lab: Experiment with Display and Overflow</h2>
+        <p>
+          Test how changing <code>display</code> and <code>overflow</code> affects the container in real time below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Display &amp; Overflow Playground</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, sans-serif; padding: 20px; background: #f8fafc; }
+  
+  .card-stream {
+    width: 320px;
+    height: 180px;
+    border: 2px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    /* Try changing this to 'hidden', 'visible', or 'auto' */
+    overflow-y: auto;
+  }
+  
+  .item {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    background: #e0e7ff;
+    color: #3730a3;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <h3>Scrollable Notification Feed</h3>
+  <p style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Height is locked to 180px with overflow-y: auto.</p>
+  
+  <div class="card-stream">
+    <div class="item">&#128276; User Alice signed up</div>
+    <div class="item">&#128179; Payment received: $49.00</div>
+    <div class="item">&#128640; Project deployed to production</div>
+    <div class="item">&#128221; New blog post drafted</div>
+    <div class="item">&#128101; 5 new followers joined</div>
+    <div class="item">&#9881;&#65039; Backup completed successfully</div>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Using <code>overflow: scroll</code> instead of <code>overflow: auto</code>:</strong> <code>scroll</code> forces permanent gray scrollbars on Windows, even when content easily fits!</li>
+            <li><strong>Expecting <code>width</code> to work on <code>&lt;span&gt;</code>:</strong> Inline elements completely ignore <code>width</code> and <code>height</code>. Switch to <code>display: inline-block</code>.</li>
+            <li><strong>Forgetting <code>pointer-events: none</code> with <code>opacity: 0</code>:</strong> A transparent button with <code>opacity: 0</code> can still be clicked by unsuspecting users unless click events are disabled.</li>
+            <li><strong>Accidental mobile horizontal scrolling:</strong> An unconstrained image or fixed 800px table causes <code>overflow: visible</code> on the <code>&lt;body&gt;</code>, breaking mobile layouts.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Accessible screen-reader hiding (<code>.sr-only</code>):</strong> When you want an element hidden visually but read aloud by screen readers, do NOT use <code>display: none</code>. Use the industry-standard <code>.sr-only</code> clip technique.</li>
+            <li><strong>Pair <code>overflow: hidden</code> with <code>border-radius</code>:</strong> If you place an image inside a rounded card, the square corners of the image will poke outside unless the parent card has <code>overflow: hidden</code>.</li>
+            <li><strong>Use <code>overflow: clip</code>:</strong> A modern alternative to <code>overflow: hidden</code> that clips content without turning the element into a scroll container.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>block</code> takes 100% width and starts a new line; <code>inline</code> flows with text and ignores width/height; <code>inline-block</code> sits side-by-side and respects dimensions.</li>
+            <li><code>display: none</code> removes an element from layout entirely; <code>visibility: hidden</code> hides it but reserves its empty footprint.</li>
+            <li><code>opacity: 0</code> makes an element transparent while keeping it clickable and focused in tab order.</li>
+            <li>Always prefer <code>overflow: auto</code> over <code>overflow: scroll</code> to avoid phantom scrollbars.</li>
+            <li>Always add <code>flex-shrink: 0</code> to items inside horizontal scrollers to protect their min-width.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>6. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Make an Anchor Tag Sizable</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>You have an <code>&lt;a class="cta-link"&gt;</code> tag and want it to accept <code>width: 200px; height: 50px;</code> while remaining inline next to another link. What single CSS property is required?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Choose between block, inline, or inline-block.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>display: inline-block;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Create a Scrollable Message Box</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Create a <code>.chat-messages</code> container that caps its maximum height at 350px, shows a vertical scrollbar only if messages overflow, and never scrolls horizontally.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use max-height, overflow-y: auto, and overflow-x: hidden.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.chat-messages {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Completely Deactivate a Transparent Overlay</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>A modal backdrop has <code>opacity: 0</code> to fade out smoothly. How do you prevent it from blocking clicks on the page beneath it without using <code>display: none</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Inspect pointer-events.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>pointer-events: none;</code> (allows clicks to pass straight through the invisible layer to elements below).
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 06 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="display: none removes the element from rendering flow entirely, taking up 0 space.">
+            <div class="quiz-question-text">1. What happens to document layout when an element has 'display: none'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The element becomes transparent but keeps its empty space</div>
+              <div class="quiz-option"><span>B)</span> The element is completely removed from document flow and occupies zero space</div>
+              <div class="quiz-option"><span>C)</span> The element shrinks to 1 pixel</div>
+              <div class="quiz-option"><span>D)</span> The element turns into an inline span</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Inline elements ignore width and height; inline-block respects both while remaining in text flow.">
+            <div class="quiz-question-text">2. How does 'inline-block' differ from a standard 'inline' element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> inline-block forces a new line on both sides</div>
+              <div class="quiz-option"><span>B)</span> inline-block cannot have background colors</div>
+              <div class="quiz-option"><span>C)</span> inline-block sits inline with text but respects width, height, and all 4 margins/paddings</div>
+              <div class="quiz-option"><span>D)</span> inline-block only works inside tables</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="overflow: auto displays scrollbars only when the content actually exceeds the container.">
+            <div class="quiz-question-text">3. Why is 'overflow: auto' generally preferred over 'overflow: scroll'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It reveals scrollbars only when content actually overflows, avoiding unsightly permanent disabled scrollbars</div>
+              <div class="quiz-option"><span>B)</span> It renders faster in GPU memory</div>
+              <div class="quiz-option"><span>C)</span> It automatically compresses images</div>
+              <div class="quiz-option"><span>D)</span> It works without JavaScript</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="visibility: hidden hides the element visually, but its physical space remains reserved.">
+            <div class="quiz-question-text">4. Which property leaves an invisible gap in the page matching the element's exact dimensions?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> display: none</div>
+              <div class="quiz-option"><span>B)</span> clear: both</div>
+              <div class="quiz-option"><span>C)</span> float: none</div>
+              <div class="quiz-option"><span>D)</span> visibility: hidden</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="flex-shrink: 0 guarantees items retain their intrinsic width without getting crushed by flex container constraints.">
+            <div class="quiz-question-text">5. Inside a horizontal flex scroller, which property prevents pills or cards from squishing too narrow?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> display: block</div>
+              <div class="quiz-option"><span>B)</span> flex-shrink: 0</div>
+              <div class="quiz-option"><span>C)</span> margin: 0</div>
+              <div class="quiz-option"><span>D)</span> word-break: break-all</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a Collapsible FAQ Panel</h3>
+          <p>
+            In the live editor, create two state classes: <code>.answer.is-collapsed { display: none; }</code> and <code>.answer.is-expanded { display: block; }</code>. Observe how the surrounding cards smoothly move up and down to fill or yield space!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#display" class="ref-pill">Display &amp; Flow Properties Reference</a>
+            <a href="../reference/glossary.html#display" class="ref-pill">Glossary: Display</a>
+            <a href="../reference/glossary.html#overflow" class="ref-pill">Glossary: Overflow</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Layout Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="05-box-model.html" class="btn btn-outline">&larr; Previous: The Box Model</a>
+          <button class="mark-complete-btn" data-lesson-id="css-06">Mark as Complete</button>
+          <a href="07-position-z-index.html" class="btn btn-primary">Next: Positioning &amp; Z-Index &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

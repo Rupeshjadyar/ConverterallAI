@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Numbers, Booleans, Math & Advanced Operators — WebDev Academy</title>
+  <meta name="description" content="Master Python arithmetic operators, floor division (//) vs true division (/), modulo, bitwise operations, boolean short-circuit evaluation, the math module, and Python 3.8+ Walrus Operator (:=).">
+  <meta name="keywords" content="Python operators, arithmetic operators, floor division, modulo, bitwise Python, Walrus operator :=, math module">
+  <meta property="og:title" content="Python Numbers, Booleans, Math & Advanced Operators">
+  <meta property="og:description" content="Master Python arithmetic operators, floor division (//) vs true division (/), modulo, bitwise operations, boolean short-circuit evaluation, the math module, and Python 3.8+ Walrus Operator (:=).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="03-numbers-booleans-operators.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 03</span>
+          </div>
+          <h1 class="lesson-title">Python Numbers, Booleans, Math & Advanced Operators</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Python arithmetic operators, floor division (//) vs true division (/), modulo, bitwise operations, boolean short-circuit evaluation, the math module, and Python 3.8+ Walrus Operator (:=).</span>
+            <span class="lang-hi">Numbers, Booleans aur Operators seekhein: floor division (//), modulo (%), bitwise operators aur Walrus operator (:=) ka use.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Arithmetic operators: Addition, subtraction, multiplication, true division (/), and floor division (//).</li><li>The Modulo (%) and Exponentiation (**) operators.</li><li>Boolean short-circuit evaluation with and, or, and not.</li><li>Bitwise operators: AND (&), OR (|), XOR (^), NOT (~), and bit shifts (<<, >>).</li><li>The Walrus Operator (:=) for in-line assignment expressions introduced in Python 3.8.</li><li>Essential math functions: abs(), round(), min(), max(), and the math standard library.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 02: Variables & Dynamic Typing.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of division when sharing 7 slices of pizza between 2 people. <strong>True division (/) is using a pizza cutter</strong>: each person gets exactly 3.5 slices (a float). <strong>Floor division (//) is only giving out whole slices</strong>: each person gets 3 whole slices, and nobody gets fractions. <strong>Modulo (%) is checking how many leftover slices remain in the box</strong>: 7 % 2 = 1 slice leftover! <strong>The Walrus Operator (:=) is like measuring and cutting wood at the exact same moment</strong>: instead of measuring on line 1 and cutting on line 2, you measure and make the cut in one single motion!</span>
+            <span class="lang-hi">Pizza baatne ki misaal lein: 7 slices ko 2 logon me baantna hai. <strong>True division (/) cutter se kaatna hai</strong>: dono ko 3.5 slices mili (float). <strong>Floor division (//) sirf poori slice deta hai</strong>: dono ko 3-3 slices mili. <strong>Modulo (%) bachi hui slice batata hai</strong>: 1 slice box me bachi (7 % 2 = 1). <strong>Walrus operator (:=) measurement lene aur kaam karne ko ek hi line me jod deta hai</strong>!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>True Division (/) vs Floor Division (//):</strong> In Python 3, <code>/</code> always returns a <code>float</code> (e.g. <code>4 / 2</code> returns <code>2.0</code>). <code>//</code> performs floor division, rounding down to the nearest lower integer (e.g. <code>7 // 2 = 3</code>, and <code>-7 // 2 = -4</code>!).</li><li><strong>Boolean Short-Circuit Evaluation:</strong> In <code>A and B</code>, if <code>A</code> is False, Python never evaluates <code>B</code>. In <code>A or B</code>, if <code>A</code> is True, Python returns <code>A</code> immediately without evaluating <code>B</code>.</li><li><strong>The Walrus Operator (:=):</strong> Introduced in Python 3.8 (PEP 572), assignment expressions allow assigning values to variables inside expressions (e.g. <code>while (line := file.readline()):</code>).</li><li><strong>Identity (is) vs Equality (==):</strong> <code>==</code> checks equality of values; <code>is</code> checks if two operands refer to the exact same memory address.</li><li><strong>Float Precision Trap:</strong> <code>0.1 + 0.2 == 0.3</code> is False due to IEEE 754 binary floating point representation! Use <code>math.isclose(0.1 + 0.2, 0.3)</code> or the <code>decimal.Decimal</code> class.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Arithmetic Operators & Integer Math</h2>
+        <p>Python supports all standard arithmetic operations. Unlike legacy Python 2, Python 3 handles division with clean, predictable mathematical semantics:</p>
+        <p>• <code>+</code> (Add), <code>-</code> (Subtract), <code>*</code> (Multiply)<br>• <code>/</code> (True division &mdash; always produces float)<br>• <code>//</code> (Floor division &mdash; rounds down towards negative infinity)<br>• <code>%</code> (Modulo &mdash; remainder after division)<br>• <code>**</code> (Exponentiation &mdash; e.g. <code>2 ** 8 = 256</code>).</p>
+        
+        <h2>2. Logical Operators & Short-Circuit Evaluation</h2>
+        <p>Python uses readable English words <code>and</code>, <code>or</code>, and <code>not</code> instead of symbols like <code>&amp;&amp;</code>, <code>||</code>, and <code>!</code>.</p>
+        <p>Python logical operators return the actual operand object that determined the result, not just a raw boolean. For example: <code>'Apple' or 'Banana'</code> returns <code>'Apple'</code>!</p>
+        
+        <h2>3. The Python 3.8+ Walrus Operator (:=)</h2>
+        <p>The walrus operator <code>:=</code> (named because it looks like the eyes and tusks of a walrus) allows you to assign a variable while simultaneously checking its condition.</p>
+        <p>This eliminates redundant calculations in while loops, regex matching, and list comprehensions.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Division Semantics: True Division vs Floor Division vs Modulo</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># 1. True division always yields float
+print(f'8 / 2 = {8 / 2}')    # 4.0
+print(f'7 / 2 = {7 / 2}')    # 3.5
+
+# 2. Floor division rounds down
+print(f'7 // 2 = {7 // 2}')   # 3
+print(f'-7 // 2 = {-7 // 2}') # -4 (Notice it rounds towards negative infinity!)
+
+# 3. Modulo remainder
+print(f'7 % 2 = {7 % 2}')    # 1
+
+# 4. Exponentiation
+print(f'2 ** 10 = {2 ** 10}') # 1024</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice that <code>-7 // 2</code> evaluates to <code>-4</code> because floor division rounds towards negative infinity, not zero.
+        </div>
+        
+        <h3>Code Example 2: Boolean Short-Circuiting in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def expensive_database_call():
+    print('Executing heavy database query...')
+    return True
+
+# Short-circuit OR: First operand is True, second function NEVER runs!
+flag = True
+result = flag or expensive_database_call()
+print('OR evaluated without calling expensive function!')
+
+# Short-circuit AND: First operand is False, second function NEVER runs!
+flag_false = False
+result_and = flag_false and expensive_database_call()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Short-circuiting saves massive CPU and network latency by avoiding unnecessary function calls.
+        </div>
+        
+        <h3>Code Example 3: The Walrus Operator (:=) in Real-World Code</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Without Walrus operator (repetitive call to len):
+sentence = 'Python full-stack engineering is powerful'
+if len(sentence) &gt; 20:
+    print(f'Sentence is too long: {len(sentence)} chars')
+
+# With Walrus operator (evaluates and assigns in one clean step!):
+if (n := len(sentence)) &gt; 20:
+    print(f'Sentence length of {n} characters exceeds the 20-char threshold!')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>(n := len(sentence))</code> assigns the length to variable <code>n</code> and immediately evaluates <code>n &gt; 20</code>.
+        </div>
+        
+        <h3>Code Example 4: Floating Point Precision Trap and How to Fix It</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import math
+from decimal import Decimal
+
+# The famous IEEE 754 float quirk
+print(f'0.1 + 0.2 == 0.3: {0.1 + 0.2 == 0.3}')  # False!
+print(f'Actual value: {0.1 + 0.2}')             # 0.30000000000000004
+
+# Solution 1: math.isclose() for scientific calculations
+print(f'math.isclose: {math.isclose(0.1 + 0.2, 0.3)}')  # True
+
+# Solution 2: Decimal class for financial calculations
+a = Decimal('0.1')
+b = Decimal('0.2')
+print(f'Decimal exact sum: {a + b == Decimal("0.3")}')  # True!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Never use standard floats for billing systems or crypto wallets; always use <code>decimal.Decimal</code>.
+        </div>
+        
+        <h3>Code Example 5: Bitwise Operators in Systems Programming</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Bitwise flags for permissions: READ=4 (100), WRITE=2 (010), EXEC=1 (001)
+READ = 0b100
+WRITE = 0b010
+EXEC = 0b001
+
+# Grant Read and Write permissions using bitwise OR (|)
+user_perms = READ | WRITE
+print(f'User Perms Binary: {bin(user_perms)}')  # 0b110
+
+# Check if user has WRITE permission using bitwise AND (&amp;)
+has_write = bool(user_perms &amp; WRITE)
+print(f'Has write permission? {has_write}')  # True
+
+# Bit shift: multiplying or dividing by powers of 2
+print(f'5 shifted left by 1 (5 * 2): {5 &lt;&lt; 1}')  # 10</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Bitwise operators manipulate raw binary bits directly in CPU registers, enabling lightning-fast permission checks.
+        </div>
+        
+        <h3>Code Example 6: Useful Built-in Math Functions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import math
+
+numbers = [12, -45, 78, 3, 99, -15]
+print(f'Absolute of -45: {abs(-45)}')  # 45
+print(f'Max: {max(numbers)}, Min: {min(numbers)}')  # 99, -45
+print(f'Square root of 144: {math.isqrt(144)}')    # 12
+print(f'Ceil 4.2: {math.ceil(4.2)}, Floor 4.9: {math.floor(4.9)}') # 5, 4</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>math.isqrt()</code> computes integer square roots without floating point conversions.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Numbers, Booleans, Math & Advanced Operators</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Operators Sandbox
+item_cost = 45
+tax_rate = 0.08
+tip_rate = 0.15
+
+# Calculate total with Walrus operator
+if (total := item_cost * (1 + tax_rate + tip_rate)) > 50:
+    print(f'Premium purchase! Total with tax and tip: ${total:.2f}')
+else:
+    print(f'Standard purchase: ${total:.2f}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Expecting 0.1 + 0.2 == 0.3 to be True:</strong> Binary floats cannot represent 1/10 exactly. Use <code>math.isclose()</code> or <code>Decimal</code>.</li><li><strong>Confusing / and //:</strong> In Python 3, <code>4 / 2</code> returns float <code>2.0</code>, not integer <code>2</code>. If you need an integer result, use <code>4 // 2</code>.</li><li><strong>Forgetting negative floor division behavior:</strong> <code>-5 // 2</code> is <code>-3</code>, not <code>-2</code>, because it rounds down towards negative infinity!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Chained Comparisons:</strong> Python allows natural mathematical chaining: <code>if 10 &lt;= age &lt;= 20:</code> instead of <code>if age &gt;= 10 and age &lt;= 20:</code>. It is faster and reads like pure math!</li><li><strong>divmod() function:</strong> When you need both quotient and remainder, use <code>quotient, remainder = divmod(17, 5)</code> instead of calculating <code>//</code> and <code>%</code> separately.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>True division (/) always returns a float; floor division (//) rounds down to nearest lower integer.</li><li>Modulo (%) returns the division remainder.</li><li>Logical operators (and, or, not) short-circuit evaluation.</li><li>The Walrus operator (:=) enables assignment expressions inside conditions.</li><li>Use Decimal for currency calculations to prevent floating point drift.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python script that takes a total number of seconds (e.g. 3665) and calculates the hours, minutes, and remaining seconds using // and %.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> hours = total // 3600; remaining = total % 3600; minutes = remaining // 60; seconds = remaining % 60.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">total_seconds = 3665
+hours = total_seconds // 3600
+remaining_seconds = total_seconds % 3600
+minutes = remaining_seconds // 60
+seconds = remaining_seconds % 60
+print(f'{hours}h {minutes}m {seconds}s')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Rewrite this loop using the Walrus operator (:=) to avoid calculating <code>input_text.strip()</code> twice: <code>while True: val = input().strip(); if not val: break; print(val)</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use while (val := input().strip()): ...</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Mocking with a list for offline demonstration:
+inputs = ['apple', '  banana  ', '']
+for item in inputs:
+    if (clean := item.strip()):
+        print(f'Processed: {clean}')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain why <code>print('cat' or 'dog')</code> prints 'cat', while <code>print('cat' and 'dog')</code> prints 'dog' in Python.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain how Python returns the operand that determined short-circuit truth.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># In 'cat' or 'dog':
+# 'cat' is Truthy. For an OR operation, since the first operand is Truthy,
+# Python short-circuits and immediately returns the object 'cat'.
+
+# In 'cat' and 'dog':
+# For an AND operation, both operands must be evaluated. Since 'cat' is Truthy,
+# the outcome depends on the second operand, so Python returns 'dog'.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Floor division rounds down towards negative infinity: -4.5 rounded down is -5.">
+          <div class="quiz-question-text">1. What is the value of -9 // 2 in Python 3?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> -4</div><div class="quiz-option"><span>B)</span> -5</div><div class="quiz-option"><span>C)</span> -4.5</div><div class="quiz-option"><span>D)</span> Error</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>:=</code> allows you to assign a variable and evaluate an expression in one line.">
+          <div class="quiz-question-text">2. What is the Walrus Operator in Python 3.8+?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A special regex symbol</div><div class="quiz-option"><span>B)</span> The := symbol for assignment expressions inside conditions</div><div class="quiz-option"><span>C)</span> A comment character</div><div class="quiz-option"><span>D)</span> A database connector</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="In Python 3, true division <code>/</code> always returns a <code>float</code>, even when numbers divide evenly.">
+          <div class="quiz-question-text">3. What does 4 / 2 return in Python 3?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 2</div><div class="quiz-option"><span>B)</span> 2.0 (float)</div><div class="quiz-option"><span>C)</span> 4</div><div class="quiz-option"><span>D)</span> Error</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Binary hardware cannot represent decimal fractions like 1/10 exactly, producing 0.30000000000000004.">
+          <div class="quiz-question-text">4. Why is (0.1 + 0.2 == 0.3) False in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Because Python has a bug</div><div class="quiz-option"><span>B)</span> Because floating point numbers are represented in binary (IEEE 754) and suffer from infinitesimal rounding differences</div><div class="quiz-option"><span>C)</span> Because numbers must be capitalized</div><div class="quiz-option"><span>D)</span> Because == is not allowed for floats</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>divmod(a, b)</code> calculates floor quotient and remainder simultaneously as a tuple.">
+          <div class="quiz-question-text">5. What does the divmod(a, b) function return?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A string</div><div class="quiz-option"><span>B)</span> A tuple containing (a // b, a % b) quotient and remainder</div><div class="quiz-option"><span>C)</span> The square root</div><div class="quiz-option"><span>D)</span> A random number</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change item_cost to 100 and modify the condition to check if total > 120, running the code to verify!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#operator" class="ref-pill">Glossary: Operators</a><a href="../reference/glossary.html#walrus" class="ref-pill">Glossary: Walrus Operator</a><a href="04-strings-and-string-methods.html" class="ref-pill">Lesson 04: Strings & Methods</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="02-syntax-variables-datatypes.html" class="btn btn-outline">&larr; 02. Variables & Data Types</a>
+          <button class="mark-complete-btn" data-lesson-id="python-03">Mark as Complete</button>
+          <a href="04-strings-and-string-methods.html" class="btn btn-primary">04. Strings & String Methods &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

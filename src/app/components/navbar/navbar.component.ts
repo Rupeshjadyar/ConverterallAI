@@ -42,6 +42,10 @@ import { ToolItem } from '../../data/tools.data';
             </button>
 
             <!-- Analytics Dashboard -->
+            <a routerLink="/ai-chat" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill cyber-pill ai-nav-pill">
+              ✨ AI Chat
+            </a>
+
             <a routerLink="/dashboard" routerLinkActive="active" (click)="closeAllMenus()" class="nav-pill cyber-pill">
               📊 Analytics
             </a>
@@ -160,6 +164,7 @@ import { ToolItem } from '../../data/tools.data';
           </div>
           <div class="drawer-list">
             <a routerLink="/" (click)="closeAllMenus()" class="drawer-item">🏠 Home</a>
+            <a routerLink="/ai-chat" (click)="closeAllMenus()" class="drawer-item" style="color: #38bdf8; font-weight: 600;">✨ AI Chat Playground</a>
             <a routerLink="/dashboard" (click)="closeAllMenus()" class="drawer-item">📊 Live Analytics</a>
             <a routerLink="/about" (click)="closeAllMenus()" class="drawer-item">ℹ️ About Us</a>
             <a routerLink="/contact" (click)="closeAllMenus()" class="drawer-item">✉️ Contact Us</a>

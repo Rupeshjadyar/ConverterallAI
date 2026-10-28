@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Object-Oriented Python: Classes, Objects, self & Encapsulation — WebDev Academy</title>
+  <meta name="description" content="Master Object-Oriented Programming (OOP) in Python. Understand classes as blueprints, the __init__ constructor, the explicit self parameter, instance vs class variables, @classmethod, @staticmethod, and @property getters and setters.">
+  <meta name="keywords" content="Python OOP, Python classes, __init__ Python, self parameter, classmethod staticmethod, property getter setter, encapsulation Python">
+  <meta property="og:title" content="Object-Oriented Python: Classes, Objects, self & Encapsulation">
+  <meta property="og:description" content="Master Object-Oriented Programming (OOP) in Python. Understand classes as blueprints, the __init__ constructor, the explicit self parameter, instance vs class variables, @classmethod, @staticmethod, and @property getters and setters.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="09-oop-classes-objects.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 09</span>
+          </div>
+          <h1 class="lesson-title">Object-Oriented Python: Classes, Objects, self & Encapsulation</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Object-Oriented Programming (OOP) in Python. Understand classes as blueprints, the __init__ constructor, the explicit self parameter, instance vs class variables, @classmethod, @staticmethod, and @property getters and setters.</span>
+            <span class="lang-hi">Python OOP seekhein: Classes aur Objects, __init__ constructor, self parameter ka role, instance vs class variables aur @property getters/setters.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The concept of Classes as blueprints and Objects as concrete instances.</li><li>The __init__ constructor method and initializing instance state.</li><li>Demystifying 'self': Why Python requires an explicit instance reference.</li><li>Instance variables (unique per object) vs Class variables (shared across all instances).</li><li>The 3 method types: Instance methods, @classmethod (cls), and @staticmethod.</li><li>Encapsulation: Protected (_) and Private (__) attributes, name mangling, and @property.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 08: Functions, *args, **kwargs & Closures.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of building modern electric cars. <strong>A Class is the factory blueprint (schematic drawing) for a Tesla</strong>: it defines that every car will have a battery size, motor, color, and a drive() method. <strong>An Object is an actual physical car driving on the road</strong>: Car A is red with an 85kWh battery, Car B is white with a 100kWh battery. <strong>The 'self' parameter is the unique VIN chassis number stamped on the car</strong>: when you press the accelerator in Car A, 'self' ensures Car A speeds up, not Car B sitting parked across the street! <strong>A Class Variable is the company CEO name printed on all cars' manuals</strong> &mdash; shared by every car produced!</span>
+            <span class="lang-hi">Car factory ki misaal lein: <strong>Class car ka blueprint (naksha) hai</strong> jo batata hai car me kya kya hoga. <strong>Object sadak par chalne wali asli car hai</strong>: ek red car, ek white car. <strong>'self' car ke steering wheel jaisa hai</strong>: jab aap car A ka accelerator dabate ho, toh 'self' ensure karta hai ki car A hi aage badhe, padosi ki car B nahi! <strong>Class variable factory ka brand name hai</strong> jo saari cars par ek jaisa hota hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is 'self' in Python?</strong> <code>self</code> represents the specific instance of the class. Unlike C++ or Java where <code>this</code> is an implicit keyword, Python makes <code>self</code> an explicit first parameter in instance methods to maintain the Zen of Python ('Explicit is better than implicit').</li><li><strong>Instance Variable vs Class Variable:</strong><br>• <code>Instance Variable</code>: Defined inside methods (usually <code>__init__</code>) using <code>self.var</code>. Unique to each object instance.<br>• <code>Class Variable</code>: Defined directly inside the class body. Shared across ALL instances of that class.</li><li><strong>Instance Method vs @classmethod vs @staticmethod:</strong><br>• <code>Instance Method</code>: Receives <code>self</code>, can read/modify instance and class state.<br>• <code>@classmethod</code>: Receives <code>cls</code> (the class itself), used for alternative factory constructors.<br>• <code>@staticmethod</code>: Receives neither <code>self</code> nor <code>cls</code>. A plain utility function logically scoped inside a class.</li><li><strong>Name Mangling (Private Attributes __):</strong> Python does not have strict private access modifiers. Prefixing with double underscores (e.g. <code>__balance</code>) triggers name mangling, renaming it internally to <code>_ClassName__balance</code> to prevent accidental subclass overrides.</li><li><strong>Why use @property?</strong> It allows you to expose class attributes with clean attribute access syntax (<code>obj.balance</code>) while transparently intercepting reads and writes through validation methods (getters and setters).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a Class and an Object?</h2>
+        <p>Object-Oriented Programming (OOP) is a programming paradigm that organizes code around data models called <strong>Objects</strong> rather than standalone functions and logic.</p>
+        <p>A <strong>Class</strong> is a user-defined prototype or blueprint from which objects are created. Classes bundle data attributes and functions (called <em>methods</em>) into cohesive units.</p>
+        
+        <h2>2. The __init__ Constructor & The Role of 'self'</h2>
+        <p>When you instantiate a class (<code>car = Car('Red', 85)</code>), Python allocates memory for a new instance and automatically passes that instance to the <code>__init__</code> initialization method as the first argument, conventionally named <code>self</code>.</p>
+        <p>Inside <code>__init__</code>, you attach attributes to the new object: <code>self.color = color</code>.</p>
+        
+        <h2>3. Encapsulation & Python Properties (@property)</h2>
+        <p>In other languages, developers write verbose getter and setter methods like <code>getBalance()</code> and <code>setBalance(val)</code>.</p>
+        <p>Python provides the <strong>@property</strong> decorator, allowing you to use clean attribute access syntax (<code>account.balance = 500</code>) while running underlying validation methods to enforce business constraints.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Creating a Complete BankAccount Class with State & Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class BankAccount:
+    """Represents a real-world commercial bank account."""
+    
+    # Class Variable: Shared by ALL bank accounts
+    BANK_NAME = 'Apex Global Bank'
+    INTEREST_RATE = 0.04
+
+    def __init__(self, account_holder: str, initial_balance: float = 0.0) -&gt; None:
+        # Instance Variables: Unique to EACH individual account
+        self.account_holder = account_holder
+        self.balance = initial_balance
+
+    def deposit(self, amount: float) -&gt; None:
+        if amount &lt;= 0:
+            raise ValueError('Deposit amount must be strictly positive.')
+        self.balance += amount
+        print(f'Deposited ${amount:.2f}. New balance: ${self.balance:.2f}')
+
+    def withdraw(self, amount: float) -&gt; None:
+        if amount &gt; self.balance:
+            raise ValueError('Insufficient funds for withdrawal.')
+        self.balance -= amount
+        print(f'Withdrew ${amount:.2f}. Remaining balance: ${self.balance:.2f}')
+
+# Instantiate two distinct account objects
+acc1 = BankAccount('Aarav Sharma', 1000.00)
+acc2 = BankAccount('Priya Verma', 250.00)
+
+acc1.deposit(500.00)
+print(f'{acc1.account_holder} has ${acc1.balance:.2f} at {BankAccount.BANK_NAME}')
+print(f'{acc2.account_holder} has ${acc2.balance:.2f}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how <code>acc1</code> and <code>acc2</code> maintain completely independent balances while sharing <code>BANK_NAME</code>.
+        </div>
+        
+        <h3>Code Example 2: Instance Methods vs @classmethod vs @staticmethod</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import json
+
+class User:
+    def __init__(self, username: str, email: str) -&gt; None:
+        self.username = username
+        self.email = email
+
+    # 1. Instance Method: Receives self, accesses instance data
+    def get_info(self) -&gt; str:
+        return f'{self.username} &lt;{self.email}&gt;'
+
+    # 2. Class Method: Receives cls, commonly used as alternative constructors
+    @classmethod
+    def from_json(cls, json_str: str):
+        data = json.loads(json_str)
+        return cls(data['username'], data['email'])
+
+    # 3. Static Method: Plain utility function, receives neither self nor cls
+    @staticmethod
+    def is_valid_email(email: str) -&gt; bool:
+        return '@' in email and '.' in email
+
+# Create via standard constructor
+u1 = User('aarav', 'aarav@mail.com')
+
+# Create via factory class method
+u2 = User.from_json('{"username": "priya", "email": "priya@mail.com"}')
+
+print(u2.get_info())
+print(f'Is test@test.com valid? {User.is_valid_email("test@test.com")}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>@classmethod</code> acts as a factory constructor; <code>@staticmethod</code> groups utility logic inside the class namespace.
+        </div>
+        
+        <h3>Code Example 3: Encapsulation with @property Getters and Setters</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Thermostat:
+    def __init__(self, celsius: float) -&gt; None:
+        self._celsius = celsius  # Protected internal attribute
+
+    @property
+    def celsius(self) -&gt; float:
+        """Getter method for celsius temperature."""
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value: float) -&gt; None:
+        """Setter method enforcing physical absolute zero (-273.15C) validation."""
+        if value &lt; -273.15:
+            raise ValueError('Temperature cannot fall below absolute zero (-273.15 C)!')
+        self._celsius = value
+
+    @property
+    def fahrenheit(self) -&gt; float:
+        """Computed property calculated dynamically on read."""
+        return (self._celsius * 9/5) + 32
+
+t = Thermostat(25.0)
+print(f'{t.celsius} C = {t.fahrenheit} F')  # Clean attribute read
+t.celsius = 30.0                         # Clean attribute write with validation!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>@property</code> provides elegant attribute syntax while enforcing validation rules behind the scenes.
+        </div>
+        
+        <h3>Code Example 4: Name Mangling with Private Attributes (__)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Vault:
+    def __init__(self, secret_code: str) -&gt; None:
+        # Double underscore triggers private name mangling
+        self.__secret_code = secret_code
+
+v = Vault('SuperSecretKey123')
+
+try:
+    # Direct access fails with AttributeError!
+    print(v.__secret_code)
+except AttributeError:
+    print('Direct access blocked by name mangling!')
+
+# Python mangles the name to _ClassName__variableName
+print(f'Mangled internal name: {v._Vault__secret_code}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Python mangles <code>__var</code> to <code>_ClassName__var</code> to prevent accidental overwrites in subclasses.
+        </div>
+        
+        <h3>Code Example 5: Magic Methods: __str__ and __repr__</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Book:
+    def __init__(self, title: str, author: str, pages: int) -&gt; None:
+        self.title = title
+        self.author = author
+        self.pages = pages
+
+    def __str__(self) -&gt; str:
+        # Friendly string for end-users (used by print() and str())
+        return f'"{self.title}" by {self.author}'
+
+    def __repr__(self) -&gt; str:
+        # Unambiguous technical representation for developers/debugging
+        return f'Book(title={self.title!r}, author={self.author!r}, pages={self.pages})'
+
+b = Book('1984', 'George Orwell', 328)
+print(str(b))   # User view: "1984" by George Orwell
+print(repr(b))  # Developer view: Book(title='1984', author='George Orwell', pages=328)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>__str__</code> is for humans; <code>__repr__</code> is for developers and debugging.
+        </div>
+        
+        <h3>Code Example 6: Operator Overloading with __add__ and __eq__</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Vector2D:
+    def __init__(self, x: float, y: float) -&gt; None:
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        # Overloads the '+' operator!
+        return Vector2D(self.x + other.x, self.y + other.y)
+
+    def __eq__(self, other) -&gt; bool:
+        # Overloads the '==' operator!
+        return self.x == other.x and self.y == other.y
+
+    def __repr__(self) -&gt; str:
+        return f'Vector2D({self.x}, {self.y})'
+
+v1 = Vector2D(2, 3)
+v2 = Vector2D(5, 7)
+v3 = v1 + v2  # Calls v1.__add__(v2)
+print(f'Sum vector: {v3}')  # Vector2D(7, 10)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Python allows your custom classes to seamlessly integrate with native arithmetic and comparison operators.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Object-Oriented Python: Classes, Objects, self & Encapsulation</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive OOP Sandbox
+class Smartphone:
+    def __init__(self, brand: str, battery_level: int = 100):
+        self.brand = brand
+        self.battery_level = battery_level
+
+    def use_phone(self, minutes: int):
+        drain = minutes * 0.5
+        self.battery_level = max(0, int(self.battery_level - drain))
+        print(f'{self.brand}: Used for {minutes}m. Battery at {self.battery_level}%')
+
+phone = Smartphone('Pixel 8', 100)
+phone.use_phone(30)
+phone.use_phone(80)</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Forgetting self in method declarations:</strong> Writing <code>def drive():</code> inside a class raises <code>TypeError: drive() takes 0 positional arguments but 1 was given</code> when called on an instance.</li><li><strong>Mutating a class variable through an instance:</strong> Writing <code>self.CLASS_VAR = 10</code> creates an instance variable that shadows the class variable, rather than modifying the shared class variable!</li><li><strong>Confusing __str__ and __repr__:</strong> If you only implement one, implement <code>__repr__</code> because Python falls back to <code>__repr__</code> if <code>__str__</code> is missing.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>dataclasses for boilerplate-free classes:</strong> In Python 3.7+, use <code>@dataclass</code> from the standard library to automatically generate <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> methods without boilerplate code!</li><li><strong>Slots for memory optimization:</strong> In high-performance systems with millions of objects, define <code>__slots__ = ('x', 'y')</code> in your class to eliminate the internal instance <code>__dict__</code>, saving 40-50% RAM!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Classes are blueprints; Objects are instances containing state and behavior.</li><li>self explicitly represents the current instance.</li><li>Instance variables are unique per object; Class variables are shared.</li><li>@property provides Pythonic getters and setters with transparent validation.</li><li>Double underscore (__) triggers name mangling for private attributes.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python class <code>Rectangle</code> with attributes <code>width</code> and <code>height</code>, and a method <code>area()</code> that returns the rectangle's area.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Define def __init__(self, width, height): self.width = width; self.height = height. def area(self): return self.width * self.height.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">class Rectangle:
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    def area(self) -&gt; float:
+        return self.width * self.height
+
+r = Rectangle(10, 5)
+print(f'Area: {r.area()}')  # 50</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Enhance the Rectangle class using <code>@property</code> so that <code>width</code> and <code>height</code> can never be set to zero or negative numbers, raising a <code>ValueError</code> on invalid assignment.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use @property and @width.setter with validation checks.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">class Rectangle:
+    def __init__(self, width: float, height: float):
+        self.width = width
+        self.height = height
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, val):
+        if val &lt;= 0:
+            raise ValueError('Width must be positive')
+        self._width = val
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, val):
+        if val &lt;= 0:
+            raise ValueError('Height must be positive')
+        self._height = val
+
+    def area(self):
+        return self.width * self.height</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what <code>@classmethod</code> does and why it is commonly used to implement alternative factory constructors in Python.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Show how cls() is called inside the method.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># @classmethod receives the class object (cls) as its first argument instead of an instance (self).
+# It is widely used to create alternative constructors (e.g. from_dict, from_csv, from_json)
+# Example:
+# @classmethod
+# def from_csv_row(cls, row_str):
+#     name, age = row_str.split(',')
+#     return cls(name, int(age))  # Dynamically calls constructor of the current class (even subclasses!)</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>self</code> refers explicitly to the specific instance calling the method.">
+          <div class="quiz-question-text">1. What is the role of the 'self' parameter in Python class methods?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It is a keyword that imports standard libraries</div><div class="quiz-option"><span>B)</span> It represents the explicit instance of the object calling the method</div><div class="quiz-option"><span>C)</span> It allocates memory on the GPU</div><div class="quiz-option"><span>D)</span> It is optional and can be omitted from all methods</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Instance variables belong to individual objects (<code>self.x</code>); class variables are shared on the class prototype.">
+          <div class="quiz-question-text">2. What is the difference between an Instance Variable and a Class Variable?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Instance variables are strings; class variables are numbers</div><div class="quiz-option"><span>B)</span> Instance variables are unique per object instance; class variables are shared across all instances of the class</div><div class="quiz-option"><span>C)</span> There is no difference</div><div class="quiz-option"><span>D)</span> Class variables cannot be modified</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>@property</code> turns a method into a getter with transparent attribute access syntax.">
+          <div class="quiz-question-text">3. What does the @property decorator do?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Registers a copyright for the software</div><div class="quiz-option"><span>B)</span> Allows a method to be accessed like a clean attribute while enabling validation logic via getters and setters</div><div class="quiz-option"><span>C)</span> Converts the method into a database query</div><div class="quiz-option"><span>D)</span> Makes the class immutable</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Double underscores trigger name mangling to prevent accidental namespace collisions in subclasses.">
+          <div class="quiz-question-text">4. What happens when you prefix a class attribute with double underscores (__balance)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It encrypts the variable with AES</div><div class="quiz-option"><span>B)</span> Python triggers name mangling, internally renaming it to _ClassName__balance</div><div class="quiz-option"><span>C)</span> It deletes the variable on exit</div><div class="quiz-option"><span>D)</span> It turns into a static constant</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>__str__</code> returns the readable human-facing string representation of an object.">
+          <div class="quiz-question-text">5. Which magic method is called when you pass an object to print(obj) or str(obj)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> __repr__</div><div class="quiz-option"><span>B)</span> __str__</div><div class="quiz-option"><span>C)</span> __init__</div><div class="quiz-option"><span>D)</span> __print__</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, create a second phone 'iPhone 15' and use it for 50 minutes, observing how both phones maintain their own battery levels!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#class" class="ref-pill">Glossary: Class</a><a href="../reference/glossary.html#oop" class="ref-pill">Glossary: OOP</a><a href="10-oop-inheritance-polymorphism.html" class="ref-pill">Lesson 10: OOP: Inheritance & Polymorphism</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="08-functions-args-kwargs-lambda.html" class="btn btn-outline">&larr; 08. Functions & Lambdas</a>
+          <button class="mark-complete-btn" data-lesson-id="python-09">Mark as Complete</button>
+          <a href="10-oop-inheritance-polymorphism.html" class="btn btn-primary">10. OOP: Inheritance & Polymorphism &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

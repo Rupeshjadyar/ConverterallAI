@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Your First Webpage — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="getting-started" data-current-lesson="03-your-first-webpage.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- 1. Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--bg-subtle); color:var(--text-secondary);">Module 03</span>
+          </div>
+          <h1 class="lesson-title">Building and Opening Your Very First Webpage</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Write your first lines of HTML code, save the file to your drive, and watch it render in your browser.</span>
+            <span class="lang-hi">Apna pehla HTML code likhein, file save karein aur browser mein live chala ke dekhein.</span>
+          </p>
+        </div>
+
+        <!-- 2. What you will learn & Prerequisites -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The fundamental skeleton required by every valid HTML5 document.</li>
+            <li>The difference between head content (metadata) and body content (visible page).</li>
+            <li>Why the <code>file:///</code> protocol appears in your browser address bar.</li>
+            <li>How to edit code in your editor, save, and refresh your browser to view changes.</li>
+            <li>Nesting elements cleanly with proper indentation.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="02-setup-editor-and-browser.html">02. Setup Editor & Browser</a>.
+          </div>
+        </div>
+
+        <!-- 3. Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Architect's Blueprint vs The Physical House</div>
+          <p>
+            <span class="lang-en">An HTML file is not a finished poster; it is an architectural blueprint written in plain text instructions. Your web browser is the master construction crew. When you hand the browser your blueprint (<code>index.html</code>), the browser reads the instructions line by line, erects the structural walls (headings and paragraphs), installs the doors (hyperlinks), and hangs the artwork (images).</span>
+            <span class="lang-hi">HTML file ek architectural blueprint ki tarah hai jo plain text mein likhi hoti hai. Browser ek mistri ya construction team hai jo blueprint padh kar screen par deewarein (headings), darwaze (links) aur tasveerein (images) banata hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Minimal Working HTML5 Document</h2>
+        <p>
+          Every webpage on the internet, from simple personal blogs to multi-billion-dollar web applications, begins with the exact same core skeleton. Here is the absolute minimum valid HTML5 document:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Essential HTML5 Skeleton</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My First Webpage&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello, World!&lt;/h1&gt;
+    &lt;p&gt;I am now an official web developer in training.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>&lt;!DOCTYPE html&gt;</code>: Informs the browser that this document adheres to modern HTML5 standards. Always on line 1.<br>
+          &bull; <code>&lt;html lang="en"&gt;</code>: The root element wrapping everything on the page. <code>lang="en"</code> tells screen readers and search engines the language is English.<br>
+          &bull; <code>&lt;head&gt;</code>: Contains document metadata, character encoding, and the page title. <em>Nothing inside the head is painted onto the main page canvas!</em><br>
+          &bull; <code>&lt;title&gt;</code>: Sets the text visible on the browser tab and bookmarks.<br>
+          &bull; <code>&lt;body&gt;</code>: Contains everything the human user actually sees: text, buttons, images, cards, and videos.<br>
+          &bull; <code>&lt;h1&gt;</code>: Level 1 main heading.<br>
+          &bull; <code>&lt;p&gt;</code>: Standard text paragraph.
+        </div>
+
+        <!-- Section 2: Try it Yourself 1 -->
+        <h2>2. Live Experiment: Edit Your First Webpage</h2>
+        <p>Modify the title, heading, and paragraph below, then click <strong>Run Code</strong>:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Your First HTML Document</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Developer Portfolio</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px; line-height: 1.6;">
+  <h1 style="color: #2563eb;">Welcome to My First Webpage</h1>
+  <p>My name is <strong>Alex</strong>, and I am learning modern web development!</p>
+  <p>Today's goals:</p>
+  <ul>
+    <li>Understand HTML tags</li>
+    <li>Save local files</li>
+    <li>Test directly in the browser</li>
+  </ul>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Opening Your File: The <code>file:///</code> Protocol</h2>
+        <p>
+          When you open a file from your hard drive by double-clicking it, notice your browser address bar does not say <code>https://</code>. Instead, it looks like this:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Anatomy of a Local File URL</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">file:///C:/Users/YourName/Desktop/my-project/index.html   (Windows)
+file:///Users/YourName/Desktop/my-project/index.html      (macOS / Linux)</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Concept:</strong><br>
+          &bull; <code>file:///</code> tells the browser: "Do not send requests over Wi-Fi or cellular networks. Load the file directly from the computer's local storage drive."<br>
+          &bull; This is why your websites will work 100% offline on airplanes, remote cabins, or anywhere without an internet connection!
+        </div>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Understanding Tag Nesting and Indentation</h3>
+        <p>Tags must close in reverse order of opening &mdash; like Russian nesting dolls or onion layers:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- INCORRECT: Overlapping tags (tag soup) --&gt;
+&lt;p&gt;This is &lt;strong&gt;very important&lt;/p&gt;&lt;/strong&gt;  &lt;!-- BAD: strong closed after p! --&gt;
+
+&lt;!-- CORRECT: Properly nested hierarchy --&gt;
+&lt;p&gt;This is &lt;strong&gt;very important&lt;/strong&gt;&lt;/p&gt;  &lt;!-- CLEAN: strong opens and closes inside p --&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Indentation Rule:</strong> Every time you put an element inside another element, indent it by <strong>2 spaces</strong>. Clean indentation makes errors jump out at you immediately.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Adding Basic Inline Styles to Taste Modern Design</h3>
+        <p>While we will cover full CSS in the CSS course, HTML allows you to add quick visual styling using the <code>style</code> attribute:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body style="background-color: #0f172a; color: #f8fafc; font-family: sans-serif; padding: 40px;"&gt;
+  &lt;h1 style="color: #38bdf8;"&gt;Modern Dark Theme&lt;/h1&gt;
+  &lt;p style="color: #94a3b8; font-size: 1.1rem;"&gt;
+    Notice how simple styling attributes transform raw text into a sleek design.
+  &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>background-color: #0f172a</code>: Sets a deep modern slate navy background.<br>
+          &bull; <code>color: #f8fafc</code>: Sets crisp white text for high contrast readability.<br>
+          &bull; <code>font-family: sans-serif</code>: Replaces the outdated default Times New Roman with clean modern system fonts.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Writing Descriptive HTML Comments</h3>
+        <p>Comments are notes for yourself and your team. Browsers completely ignore them when rendering:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- This is an HTML comment. The browser will never display this on screen! --&gt;
+
+&lt;!-- HERO SECTION START --&gt;
+&lt;div class="hero"&gt;
+  &lt;h1&gt;Welcome to My Academy&lt;/h1&gt;
+&lt;/div&gt;
+&lt;!-- HERO SECTION END --&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Syntax:</strong> Comments always begin with <code>&lt;!--</code> and end with <code>--&gt;</code>. Shortcut in VS Code: <code>Ctrl + /</code>.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Verifying DOM Tree in JavaScript</h3>
+        <p>When the browser loads your HTML file, it builds an internal tree model called the <strong>DOM (Document Object Model)</strong>:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// The browser exposes the document object automatically
+console.log("Document Title:", document.title);
+console.log("Total Elements on Page:", document.querySelectorAll("*").length);
+console.log("Character Encoding:", document.characterSet);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this is awesome:</strong> This is the secret doorway that allows JavaScript to interact with, modify, and animate HTML elements on the fly.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Putting visible content inside <code>&lt;head&gt;</code>:</strong> Headings, paragraphs, and images belong inside <code>&lt;body&gt;</code>. If you put them in <code>&lt;head&gt;</code>, the browser gets confused and your document structure becomes invalid.</li>
+            <li><strong>Forgetting to close tags:</strong> Leaving off closing tags like <code>&lt;/p&gt;</code> or <code>&lt;/h1&gt;</code> causes styles and layouts to spill into subsequent elements.</li>
+            <li><strong>Editing in browser instead of editor:</strong> Clicking "Inspect" in Chrome lets you test styles temporarily, but to save permanent changes, you must edit your actual <code>.html</code> file in VS Code and save!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Always keep your editor and your browser side-by-side on your monitor (Windows shortcut: <strong>Win + Left Arrow</strong> for VS Code, <strong>Win + Right Arrow</strong> for your browser).</li>
+            <li>Press <strong>F5</strong> (or <strong>Ctrl + R</strong>) in your browser to reload and see your latest saved code immediately.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;!DOCTYPE html&gt;</code> declares modern HTML5.</li>
+            <li><code>&lt;html&gt;</code> wraps the entire page; <code>&lt;head&gt;</code> contains metadata; <code>&lt;body&gt;</code> contains visible content.</li>
+            <li>Tags must be cleanly nested without overlapping (<code>&lt;p&gt;&lt;strong&gt;&lt;/strong&gt;&lt;/p&gt;</code>).</li>
+            <li>Comments are written as <code>&lt;!-- comment --&gt;</code>.</li>
+            <li>Double-clicking an HTML file opens it via the offline <code>file:///</code> protocol.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Fix the Missing Closing Tag</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Look at this snippet: <code>&lt;h1&gt;Welcome to My Site&lt;p&gt;Glad you are here.&lt;/p&gt;</code>. What is missing?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Notice where the h1 starts, but does it ever finish?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The closing <code>&lt;/h1&gt;</code> tag is missing after "Welcome to My Site"! Corrected:<br>
+              <code>&lt;h1&gt;Welcome to My Site&lt;/h1&gt;&lt;p&gt;Glad you are here.&lt;/p&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Head vs Body Placement</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Where does the <code>&lt;title&gt;</code> tag go, and where does an <code>&lt;img&gt;</code> tag go in an HTML document?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: One is metadata for the tab, the other is visual content.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>&lt;title&gt;</code> MUST be placed inside the <code>&lt;head&gt;</code> section. The <code>&lt;img&gt;</code> tag MUST be placed inside the <code>&lt;body&gt;</code> section.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Fixing Nested Tags</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Refactor this broken line into valid, cleanly nested HTML: <code>&lt;p&gt;&lt;em&gt;Important announcement: &lt;strong&gt;No class tomorrow!&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look at the order strong and em close.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Because <code>&lt;strong&gt;</code> was opened last, it must be closed first!<br>
+              <code>&lt;p&gt;&lt;em&gt;Important announcement: &lt;strong&gt;No class tomorrow!&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 03 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="<!DOCTYPE html> informs the browser to render the page in standard modern HTML5 mode.">
+            <div class="quiz-question-text">1. What is the very first line of any modern HTML5 document?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;!DOCTYPE html&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;html version="5"&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;head&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;body&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="The text inside the <title> tag appears on the browser tab, window bar, and in search bookmarks.">
+            <div class="quiz-question-text">2. Where does the text placed inside the &lt;title&gt; tag appear?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> As the largest bold heading in the middle of the screen</div>
+              <div class="quiz-option"><span>B)</span> In the footer at the bottom of the page</div>
+              <div class="quiz-option"><span>C)</span> In the browser tab bar at the very top of the window</div>
+              <div class="quiz-option"><span>D)</span> Inside an alert popup</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="file:/// indicates a file loaded directly from the local filesystem without network requests.">
+            <div class="quiz-question-text">3. What does the file:/// prefix in a browser address bar mean?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The website is hosted by Google</div>
+              <div class="quiz-option"><span>B)</span> The file is being read directly from your local hard drive</div>
+              <div class="quiz-option"><span>C)</span> Your internet connection has broken</div>
+              <div class="quiz-option"><span>D)</span> The website has a security error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="HTML comments are written between <!-- and -->.">
+            <div class="quiz-question-text">4. Which of the following is the correct syntax for an HTML comment?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> // This is a comment</div>
+              <div class="quiz-option"><span>B)</span> /* This is a comment */</div>
+              <div class="quiz-option"><span>C)</span> # This is a comment</div>
+              <div class="quiz-option"><span>D)</span> &lt;!-- This is a comment --&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="The <body> tag encloses all visible elements such as text, images, buttons, and tables.">
+            <div class="quiz-question-text">5. Which major element contains all visible content displayed on a webpage?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;head&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;meta&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;body&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;title&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Bio Card</h3>
+          <p>
+            In the interactive editor above, add a second paragraph with <code>&lt;p&gt;</code> mentioning your 3 favorite hobbies, and make one hobby bold using <code>&lt;strong&gt;</code>. Hit <strong>Run Code</strong> to preview!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#doctype" class="ref-pill">&lt;!DOCTYPE&gt; Reference</a>
+            <a href="../reference/html-tags-reference.html#html" class="ref-pill">&lt;html&gt; Reference</a>
+            <a href="../reference/html-tags-reference.html#head" class="ref-pill">&lt;head&gt; Reference</a>
+            <a href="../reference/html-tags-reference.html#body" class="ref-pill">&lt;body&gt; Reference</a>
+            <a href="../reference/html-tags-reference.html#title" class="ref-pill">&lt;title&gt; Reference</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="02-setup-editor-and-browser.html" class="btn btn-outline">&larr; Previous: Setup Editor &amp; Browser</a>
+          <button class="mark-complete-btn" data-lesson-id="getting-started-03">Mark as Complete</button>
+          <a href="04-devtools-basics.html" class="btn btn-primary">Next: DevTools Basics &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

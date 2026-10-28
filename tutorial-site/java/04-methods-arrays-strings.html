@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="04">
+  <title>Java Methods, Arrays, String Immutability & String Pool (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Understand Java pass-by-value semantics, Array allocation, String Immutability, String Constant Pool (SCP), StringBuilder vs StringBuffer, and memory efficiency.">
+  <meta name="keywords" content="Java pass by value, String Pool SCP, String immutability, StringBuilder vs StringBuffer, Java arrays">
+  <meta property="og:title" content="Java Methods, Arrays, String Immutability & String Pool (Interview Ready)">
+  <meta property="og:description" content="Understand Java pass-by-value semantics, Array allocation, String Immutability, String Constant Pool (SCP), StringBuilder vs StringBuffer, and memory efficiency.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-warning">Intermediate</span>
+            <span class="badge badge-outline">⏱️ 18 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">04. Methods, Arrays, String Immutability & String Pool</h1>
+          <p class="lesson-subtitle">One of the most questioned topics in Java interviews: Why Strings are immutable, how the String Constant Pool works, and how Java is strictly pass-by-value.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 02 (Data Types & Memory Model).</p>
+            <ul>
+              <li>Prove why Java is strictly Pass-by-Value (even for object references!).</li><li>Master array declaration, memory layout in Heap, and fixed-size limitations.</li><li>Understand why `java.lang.String` is `final` and immutable.</li><li>Visualize the String Constant Pool (SCP) in Heap and the `intern()` method.</li><li>Compare `String` vs `StringBuilder` vs `StringBuffer` (Thread safety vs performance).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Photocopy of House Keys & The Stamp Analogy</h3>
+      <p><strong>1. Pass-by-Value:</strong> Imagine you have the keys to your apartment. When you pass an object to a Java method, Java does NOT hand over your real physical key. Instead, Java makes a brand new duplicate photocopy key and hands that copy to the method!</p>
+      <p>If the method uses that key to enter your apartment and paint the walls blue, your apartment walls are painted blue! BUT if the method throws that photocopy in the trash and buys a completely new house, your original apartment remains completely untouched.</p>
+      <p><strong>2. String Immutability:</strong> A Java String is like ink stamped onto an official government stamp paper. Once stamped, you cannot erase or change a single letter. If you want to change it, the government issues a brand new piece of stamp paper. The old stamp paper is never modified!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (घर की चाबी की फोटोकॉपी और स्टांप पेपर)</h3>
+      <p><strong>Java हमेशा Pass-by-Value होता है:</strong> जब आप किसी फंक्शन को कोई ऑब्जेक्ट भेजते हैं, तो जावा आपकी असली चाबी नहीं देता, बल्कि उसकी एक फोटोकॉपी बनाकर देता है। अगर फंक्शन उस चाबी से घर के अंदर जाकर सोफा बदल दे, तो सोफा बदल जाएगा। लेकिन अगर फंक्शन उस फोटोकॉपी को फेंककर नई चाबी बना ले, तो आपके पुराने घर पर कोई फर्क नहीं पड़ेगा!</p>
+      <p><strong>String क्यों नहीं बदलती (Immutability):</strong> जावा में स्ट्रिंग पत्थर पर लिखी लकीर जैसी है। अगर आप <code>"Hello" + " World"</code> करते हैं, तो पुराना "Hello" बदलता नहीं है, बल्कि हीप मेमोरी में एक बिल्कुल नया "Hello World" ऑब्जेक्ट बन जाता है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. Proof: Java is ALWAYS Strictly Pass-by-Value</h3>
+      <p>Many developers mistakenly think objects are "pass-by-reference". In Java, the reference address itself is copied by value!</p>
+      <div class="code-box">
+        <pre><code class="language-java">public class PassByValueProof {
+    public static void reassign(Dog d) {
+        d = new Dog("Tommy"); // Reassigning local copy of reference!
+    }
+
+    public static void modifyState(Dog d) {
+        d.setName("Sheru");   // Modifying the underlying object state
+    }
+
+    public static void main(String[] args) {
+        Dog myDog = new Dog("Buddy");
+        reassign(myDog);
+        System.out.println(myDog.getName()); // Still "Buddy"! (Original reference was NOT changed)
+
+        modifyState(myDog);
+        System.out.println(myDog.getName()); // "Sheru"! (State inside the object was modified)
+    }
+}</code></pre>
+      </div>
+
+      <h3>2. The String Constant Pool (SCP) Architecture</h3>
+      <p>Strings are cached in a special memory region within the Heap called the <strong>String Constant Pool</strong>:</p>
+      <div class="code-box">
+        <pre><code class="language-java">String s1 = "Java";               // Allocated in String Constant Pool
+String s2 = "Java";               // Reuses the identical pool reference!
+String s3 = new String("Java");   // Force-creates a brand new object in non-pool Heap!
+
+System.out.println(s1 == s2);      // true (Exact same memory reference in SCP)
+System.out.println(s1 == s3);      // false (s3 points to non-pool Heap object)
+System.out.println(s1.equals(s3)); // true (Content is identical)
+
+String s4 = s3.intern();           // Pulls/returns the SCP pooled reference
+System.out.println(s1 == s4);      // true!</code></pre>
+      </div>
+
+      <h3>3. String vs StringBuilder vs StringBuffer</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Mutability</th>
+            <th>Thread-Safe?</th>
+            <th>Performance</th>
+            <th>Recommended Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>String</code></td>
+            <td>Immutable (creates new object on change)</td>
+            <td>Yes (immutable objects are inherently thread-safe)</td>
+            <td>Slow for repeated concatenations</td>
+            <td>Constant text, keys, security tokens, entity fields</td>
+          </tr>
+          <tr>
+            <td><code>StringBuilder</code></td>
+            <td>Mutable</td>
+            <td>No (unsynchronized)</td>
+            <td>Extremely Fast</td>
+            <td>Single-threaded string construction & loops (Default choice!)</td>
+          </tr>
+          <tr>
+            <td><code>StringBuffer</code></td>
+            <td>Mutable</td>
+            <td>Yes (`synchronized` methods)</td>
+            <td>Slower due to lock overhead</td>
+            <td>Multi-threaded shared text buffers (rarely needed)</td>
+          </tr>
+        </tbody>
+      </table>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Why is String immutable in Java? Explain the security, caching, and multi-threading benefits."</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>String Constant Pool (SCP) Optimization:</strong> If Strings were mutable, changing string s1 would silently corrupt s2 when both point to the same pooled string literal in memory.</li><li><strong>Security & Class Loading:</strong> Strings are heavily used in network connections, database URLs, usernames, passwords, and ClassLoader parameters. Immutability guarantees that a malicious actor cannot alter a connection string after authentication validation.</li><li><strong>Thread Safety Without Synchronization:</strong> Because strings cannot be mutated, multiple concurrent threads can share string instances safely across cores without any locks or thread synchronization overhead.</li><li><strong>Safe HashCode Caching:</strong> Since strings are immutable, their hashcode is calculated once and cached (`hash` field). This makes String the premier key for `HashMap` and `HashSet` with blazing fast lookups.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "Strings are immutable because they are final and their underlying byte[] array cannot be modified. This enables the String Constant Pool, thread safety, secure class loading, and HashMap hashcode caching."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: The Performance Disaster of Concatenation in Loops</h4>
+        <div class="code-box">
+          <pre><code class="language-java">// BAD (O(N^2) memory allocations in heap):
+String result = "";
+for (int i = 0; i < 10000; i++) {
+    result += i; // Creates 10,000 intermediate String objects in Heap!
+}
+
+// GOOD (O(N) with single resizable buffer):
+StringBuilder sb = new StringBuilder(10000);
+for (int i = 0; i < 10000; i++) {
+    sb.append(i);
+}
+String finalOutput = sb.toString();</code></pre>
+        </div>
+        <p><strong>Benchmark Difference:</strong> The <code>StringBuilder</code> version completes in ~2 milliseconds, while <code>+=</code> takes hundreds of milliseconds and generates massive garbage collector pause pressure.</p>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: 1D and 2D Array Memory Allocation</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class ArrayDemo {
+    public static void main(String[] args) {
+        // Fixed-size array initialized in Heap
+        int[] scores = new int[5]; // Default values are 0
+        scores[0] = 98;
+        scores[1] = 85;
+
+        // Jagged array (array of arrays with differing row lengths)
+        int[][] matrix = new int[3][];
+        matrix[0] = new int[]{1, 2};
+        matrix[1] = new int[]{3, 4, 5, 6};
+        matrix[2] = new int[]{7};
+
+        System.out.println("Row 1 length: " + matrix[1].length); // 4
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('04')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-04" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class StringSandbox {
+    public static void main(String[] args) {
+        String a = "FullStack";
+        String b = "Full" + "Stack"; // Evaluated at compile-time to "FullStack"
+        String c = new String("FullStack");
+
+        System.out.println("a == b: " + (a == b));
+        System.out.println("a == c: " + (a == c));
+        System.out.println("a == c.intern(): " + (a == c.intern()));
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-04" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Using `+=` on String inside Large Loops:</strong> Creates thousands of abandoned Heap objects, triggering memory spikes and Garbage Collector lag.</li><li><strong>Confusing Array `.length` with String `.length()`:</strong> Arrays use the `.length` field without parentheses; Strings use the `.length()` method.</li><li><strong>Attempting to Resize an Array:</strong> Java arrays are fixed-capacity at birth. To have dynamic resizing, use `ArrayList<T>` instead.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Pre-size StringBuilder Capacity:</strong> If you know you are appending roughly 500 characters, instantiate `new StringBuilder(500)` to prevent internal array copy re-allocations.</li><li><strong>Use `.equalsIgnoreCase()` or `.compareTo()`:</strong> For case-insensitive or lexicographical sorting comparisons instead of multiple `.toLowerCase()` conversions.</li><li><strong>Use `String.format()` or Text Blocks ("""):</strong> In Java 15+, multi-line JSON or SQL queries are written cleanly using triple quotes without ugly `\n` escaping.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Java is strictly Pass-by-Value::</strong> Primitive values and object reference pointers are copied by value.</li><li><strong>Strings are immutable::</strong> Any change produces a new object; enables security, SCP caching, and multi-thread safety.</li><li><strong>String Constant Pool (SCP)::</strong> Reuses literal strings in Heap memory to save RAM.</li><li><strong>Use StringBuilder for string manipulation::</strong> Avoid `+` in loops.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Predict Number of String Objects Created</h4>
+        <p>How many String objects are created in memory by: <code>String s = new String("World");</code>?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> Exactly <strong>2 objects</strong> (assuming "World" was not already in the pool): one literal in the String Constant Pool (SCP), and one object in the non-pool Heap created by the <code>new</code> keyword.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Reverse a String without Built-in Reverse</h4>
+        <p>Implement an efficient method <code>String reverse(String input)</code> using <code>StringBuilder</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static String reverse(String input) {
+    if (input == null) return null;
+    StringBuilder sb = new StringBuilder(input.length());
+    for (int i = input.length() - 1; i >= 0; i--) {
+        sb.append(input.charAt(i));
+    }
+    return sb.toString();
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Prove Pass-by-Value with Swap</h4>
+        <p>Why does a method <code>void swap(Integer a, Integer b)</code> fail to swap the caller's variables?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The method receives copies of the reference pointers. Reassigning <code>a = b;</code> inside the method only alters the local method stack variables; the caller's original references outside the method continue pointing to their original objects.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: Is Java pass-by-reference or pass-by-value?</strong></p>
+        <label><input type="radio" name="q1" value="0"> Pass-by-reference for objects, pass-by-value for primitives</label><br>
+        <label><input type="radio" name="q1" value="1"> Strictly pass-by-value in all situations</label><br>
+        <label><input type="radio" name="q1" value="0"> Pass-by-reference always</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Where is the String Constant Pool located in modern Java?</strong></p>
+        <label><input type="radio" name="q2" value="1"> Inside the Heap memory</label><br>
+        <label><input type="radio" name="q2" value="0"> In the CPU Cache</label><br>
+        <label><input type="radio" name="q2" value="0"> In Stack memory</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Which class is mutable and unsynchronized for maximum string concatenation performance?</strong></p>
+        <label><input type="radio" name="q3" value="1"> StringBuilder</label><br>
+        <label><input type="radio" name="q3" value="0"> StringBuffer</label><br>
+        <label><input type="radio" name="q3" value="0"> String</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: What method pulls a String reference from the non-pool Heap into the String Constant Pool?</strong></p>
+        <label><input type="radio" name="q4" value="0"> pool()</label><br>
+        <label><input type="radio" name="q4" value="1"> intern()</label><br>
+        <label><input type="radio" name="q4" value="0"> attach()</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What is the default value of elements in a new `int[10]` array?</strong></p>
+        <label><input type="radio" name="q5" value="1"> 0</label><br>
+        <label><input type="radio" name="q5" value="0"> null</label><br>
+        <label><input type="radio" name="q5" value="0"> -1</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a High-Throughput Log Sanitizer Utility</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a method using StringBuilder that takes a raw log message, masks sensitive 16-digit credit card numbers with XXXX-XXXX-XXXX-1234, and removes extraneous whitespace.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public class LogSanitizer {
+    public static String sanitizeLog(String rawLog) {
+        // TODO: Use StringBuilder to mask sensitive digits and format cleanly
+        return "";
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="03-operators-control-flow.html" class="btn btn-outline">&larr; Prev: Operators & Control Flow</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-04')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="05-oop-classes-objects-constructors.html" class="btn btn-primary">Next: Classes, Objects & Encapsulation &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "a == b: true\na == c: false\na == c.intern(): true\nDemonstrating String Constant Pool (SCP) pointer reuse.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="01">
+  <title>JVM, JDK & JRE Architecture Explained (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Understand Java Virtual Machine (JVM), JDK, JRE, ClassLoader subsystems, Bytecode verification, Heap vs Stack memory, and the JIT compiler.">
+  <meta name="keywords" content="Java, JVM architecture, JDK vs JRE, ClassLoader, JIT compiler, Java bytecode, Java memory model, Stack vs Heap">
+  <meta property="og:title" content="JVM, JDK & JRE Architecture Explained (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Understand Java Virtual Machine (JVM), JDK, JRE, ClassLoader subsystems, Bytecode verification, Heap vs Stack memory, and the JIT compiler.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-primary">Beginner</span>
+            <span class="badge badge-outline">⏱️ 16 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">01. Java Architecture: JDK, JRE, JVM & Memory Model</h1>
+          <p class="lesson-subtitle">Write Once, Run Anywhere (WORA): Unraveling how Java compiles human code into Bytecode and executes with native machine speed.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> None. Absolute zero computer programming prerequisites.</p>
+            <ul>
+              <li>Distinguish between JDK (Developer Kit), JRE (Runtime), and JVM (Virtual Machine).</li><li>Visualize how .java source code converts to .class Bytecode and machine instructions.</li><li>Deep-dive into the ClassLoader subsystem (Loading, Linking, Initialization).</li><li>Master the JVM memory regions: Heap, Stack, Metaspace, PC Registers, Native Method Stack.</li><li>Understand JIT (Just-In-Time) compilation and Adaptive Profiling.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The International Chef & Universal Recipe Analogy</h3>
+      <p>Imagine you write an exquisite biryani recipe in English on paper (<strong>YourJavaCode.java</strong>). If you send this recipe to a chef in Tokyo or Berlin who doesn't read English, they cannot cook it directly.</p>
+      <p>So, a translator converts your recipe into a universal pictorial musical score called <strong>Bytecode (.class file)</strong>. Now, every restaurant in the world doesn't need to understand English; they simply hire a <strong>JVM (Java Virtual Machine)</strong> fluent in that pictorial score.</p>
+      <ul>
+        <li><strong>JDK (The Entire Culinary School):</strong> Includes writing utensils, translation compilers (`javac`), debugging tools, and testing kitchens.</li>
+        <li><strong>JRE (The Dining Hall & Kitchen):</strong> Contains the tables, plates, gas stoves, and libraries needed to cook and serve food.</li>
+        <li><strong>JVM (The Head Chef Engine):</strong> The actual master chef engine that reads bytecode line-by-line and feeds hot native electrical signals to the computer hardware.</li>
+      </ul>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (Universal Recipe Analogy)</h3>
+      <p>सोचिए आपने हिंदी में एक किताब लिखी (<strong>HelloWorld.java</strong>)। अब अमेरिका या जापान के कंप्यूटर को सीधे हिंदी समझ नहीं आती।</p>
+      <p>इसलिए <strong>javac (कम्पाइलर)</strong> आपकी हिंदी किताब को एक जादुई सीक्रेट कोड (<strong>Bytecode - .class</strong>) में बदल देता है। अब दुनिया का कोई भी कंप्यूटर (चाहे Windows हो, Mac हो या Linux) अगर उसके पास <strong>JVM</strong> है, तो वह उस जादुई कोड को अपने कंप्यूटर की मातृभाषा (Machine Code 0 and 1) में तुरंत चला लेता है! इसी को कहते हैं <em>"Write Once, Run Anywhere" (WORA)</em>.</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The JDK vs JRE vs JVM Venn Diagram</h3>
+      <p>A classic confusion in software engineering is the boundary between these three components:</p>
+      <pre><code>+-------------------------------------------------------------------------+
+| JDK (Java Development Kit)                                              |
+|  - Development Tools: javac, jdb, jar, javadoc, javap                    |
+|  +--------------------------------------------------------------------+ |
+|  | JRE (Java Runtime Environment)                                     | |
+|  |  - Core Class Libraries (java.lang, java.util, java.io)           | |
+|  |  +---------------------------------------------------------------+ | |
+|  |  | JVM (Java Virtual Machine)                                    | | |
+|  |  |  - ClassLoader Subsystem                                      | | |
+|  |  |  - Execution Engine (Interpreter + JIT Compiler + Garbage C.)  | | |
+|  |  |  - Memory (Heap, Stack, Metaspace, PC Register)               | | |
+|  |  +---------------------------------------------------------------+ | |
+|  +--------------------------------------------------------------------+ |
++-------------------------------------------------------------------------+</code></pre>
+
+      <h3>2. The Three Phases of the ClassLoader</h3>
+      <p>When you run <code>java App</code>, the JVM does not load all classes at once. It loads them on-demand via three phases:</p>
+      <ol class="styled-list">
+        <li><strong>Loading:</strong> Bootstrap ClassLoader (loads <code>rt.jar / java.base</code>) &rarr; Extension/Platform ClassLoader &rarr; Application/System ClassLoader. Follows the <em>Delegation Hierarchy Principle</em>.</li>
+        <li><strong>Linking:</strong> 
+          <ul>
+            <li><em>Verify:</em> Checks bytecode format against security constraints (no stack overflow, valid types).</li>
+            <li><em>Prepare:</em> Allocates memory for static variables and assigns default zero values.</li>
+            <li><em>Resolve:</em> Replaces symbolic references with direct memory addresses.</li>
+          </ul>
+        </li>
+        <li><strong>Initialization:</strong> Executes static initialization blocks (<code>static { ... }</code>) and assigns actual user values to static variables.</li>
+      </ol>
+
+      <h3>3. JVM Runtime Memory Areas (Stack vs Heap)</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Memory Region</th>
+            <th>Thread Safety</th>
+            <th>What It Stores</th>
+            <th>Error When Full</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Stack Memory</strong></td>
+            <td>Thread-Private (Each thread gets its own)</td>
+            <td>Method call frames, local primitive variables, references to objects</td>
+            <td><code>java.lang.StackOverflowError</code></td>
+          </tr>
+          <tr>
+            <td><strong>Heap Memory</strong></td>
+            <td>Shared across all threads</td>
+            <td>All Objects instantiated with <code>new</code>, instance variables, arrays</td>
+            <td><code>java.lang.OutOfMemoryError: Java heap space</code></td>
+          </tr>
+          <tr>
+            <td><strong>Metaspace (Java 8+)</strong></td>
+            <td>Shared across all threads</td>
+            <td>Class metadata, method bytecodes, static fields (native OS memory)</td>
+            <td><code>java.lang.OutOfMemoryError: Metaspace</code></td>
+          </tr>
+        </tbody>
+      </table>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Why is Java platform-independent, but JVM platform-dependent? Also explain JIT compiler."</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Bytecode Intermediary:</strong> Java source code is compiled by javac into platform-neutral Bytecode (.class), which adheres to the JVM specification regardless of CPU architecture.</li><li><strong>Platform Dependency of JVM:</strong> The JVM itself must be compiled natively for each OS (e.g. jvm.dll on Windows, libjvm.so on Linux) because it translates bytecode into OS-specific machine instructions.</li><li><strong>Interpreter vs JIT:</strong> The interpreter executes bytecode line-by-line immediately. The JIT (Just-In-Time) compiler identifies "Hot Spots" (frequently repeated loops or methods) and compiles them directly into native machine assembly code, caching them for near C++ performance.</li><li><strong>Stack vs Heap Allocation:</strong> Primitives declared inside methods live on thread-private Stack frames and are deallocated instantly when the method finishes. Objects always live in the shared Heap and are reclaimed asynchronously by the Garbage Collector (GC).</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always state: "Java programs are platform-independent because of bytecode; JVM is platform-dependent because it interacts with the underlying OS kernel and CPU registers directly."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Classic Structure of a Java Program</h4>
+        <div class="code-box">
+          <pre><code class="language-java">// HelloWorld.java
+public class HelloWorld {
+    // Execution entry point required by JVM
+    public static void main(String[] args) {
+        System.out.println("Hello, Enterprise Java World!");
+    }
+}</code></pre>
+        </div>
+        <p><strong>Deconstruction:</strong> <code>public</code> allows JVM to invoke main from anywhere outside the package. <code>static</code> permits execution without instantiating an object of class <code>HelloWorld</code>. <code>void</code> indicates no return value. <code>String[] args</code> receives command-line parameters.</p>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Visualizing Stack vs Heap in Memory</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class MemoryDemo {
+    public static void main(String[] args) {
+        int age = 25;                       // Stored directly on Stack
+        String title = new String("Dev");   // 'title' reference on Stack; "Dev" object on Heap
+        Student s1 = new Student("Aarav");  // 's1' reference on Stack; Student object on Heap
+        printInfo(s1);
+    }
+
+    static void printInfo(Student s) {
+        System.out.println(s.getName());    // Stack frame for printInfo created & destroyed
+    }
+}
+
+class Student {
+    private String name; // Stored inside the Student object on the Heap
+    public Student(String name) { this.name = name; }
+    public String getName() { return this.name; }
+}</code></pre>
+        </div>
+        <p><strong>Memory Tracing:</strong> When <code>main()</code> is invoked, a stack frame is allocated. When <code>printInfo()</code> is called, a secondary stack frame is pushed. When it returns, its frame is immediately popped, but the <code>Student</code> object remains in heap memory.</p>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('01')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-01" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class ArchitectureDemo {
+    public static void main(String[] args) {
+        System.out.println("--- JVM Runtime Info ---");
+        System.out.println("Java Version: " + System.getProperty("java.version"));
+        System.out.println("OS Name: " + System.getProperty("os.name"));
+        System.out.println("Available Processors: " + Runtime.getRuntime().availableProcessors());
+        long maxMemoryMB = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        System.out.println("Max Heap Memory: " + maxMemoryMB + " MB");
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-01" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Confusing JDK with JRE:</strong> Installing only JRE and wondering why `javac` command not found occurs when trying to compile programs.</li><li><strong>Creating Unnecessary Objects in Loops:</strong> Instantiating new objects inside massive loops fills the Heap rapidly, triggering frequent Young Generation GC pauses.</li><li><strong>Catching StackOverflowError blindly:</strong> Treating infinite recursive calls as ordinary exceptions instead of fixing the missing base recursion condition.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use `javap -c` to Inspect Bytecode:</strong> Run `javap -c MyClass.class` in terminal to see the exact JVM opcode instructions like `iload`, `invokevirtual`, and `areturn`.</li><li><strong>Tune JVM Heap with Flags:</strong> Use `-Xms` (initial heap) and `-Xmx` (max heap) to prevent memory resizing thrashing in production environments.</li><li><strong>Understand Metaspace:</strong> Java 8 replaced PermGen with Metaspace, which dynamically auto-sizes using native operating system memory.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>JDK = JRE + Development Tools (`javac`, `jar`, `javadoc`).:</strong> The complete environment needed to code and debug Java.</li><li><strong>JRE = JVM + Class Libraries.:</strong> The minimal runtime needed to execute pre-compiled bytecode.</li><li><strong>JVM executes Bytecode via Interpreter + JIT.:</strong> JIT turns hot paths into native machine code for maximum speed.</li><li><strong>Stack stores method frames and local variables;:</strong> Heap stores all created objects and arrays.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Identify Stack vs Heap Elements</h4>
+        <p>In the statement <code>int score = 95; Person p = new Person("Ravi");</code>, which variable lives on the stack and what lives on the heap?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The primitive variable <code>score</code> (value 95) and the object reference variable <code>p</code> live on the <strong>Stack</strong>. The actual <code>Person</code> object and the string <code>"Ravi"</code> live in the <strong>Heap</strong>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Triggering a StackOverflowError vs OutOfMemoryError</h4>
+        <p>Write two minimal methods: one that causes <code>StackOverflowError</code> and one that causes <code>OutOfMemoryError</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">// Causes StackOverflowError (recursive stack exhaustion)
+void recursive() { recursive(); }
+
+// Causes OutOfMemoryError (exhausting the heap)
+void exhaustHeap() {
+    java.util.List&lt;byte[]&gt; list = new java.util.ArrayList&lt;&gt;();
+    while(true) { list.add(new byte[1024 * 1024 * 100]); }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): ClassLoader Order</h4>
+        <p>If you create a class named <code>java.lang.String</code> in your project, will JVM load yours or the core Java one? Explain why.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The JVM will load the official core <code>java.lang.String</code> because of the <strong>Delegation Parent-First Model</strong>. The Application ClassLoader delegates the request up to Platform, and Platform delegates to the Bootstrap ClassLoader, which loads the genuine String class from the runtime library first. Your custom class is safely ignored, preventing security vulnerabilities.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What does the `javac` tool produce?</strong></p>
+        <label><input type="radio" name="q1" value="0"> Machine Code (Binary zeros and ones for Windows)</label><br>
+        <label><input type="radio" name="q1" value="1"> Platform-independent Bytecode (.class file)</label><br>
+        <label><input type="radio" name="q1" value="0"> C++ Source Code</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Where are Java Objects created using `new` allocated?</strong></p>
+        <label><input type="radio" name="q2" value="0"> In CPU Registers</label><br>
+        <label><input type="radio" name="q2" value="1"> In Heap Memory</label><br>
+        <label><input type="radio" name="q2" value="0"> In Stack Memory</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What component translates bytecode hot spots into native machine code at runtime?</strong></p>
+        <label><input type="radio" name="q3" value="1"> JIT (Just-In-Time) Compiler</label><br>
+        <label><input type="radio" name="q3" value="0"> Bytecode Verifier</label><br>
+        <label><input type="radio" name="q3" value="0"> ClassLoader</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Which memory area is shared among all threads in a Java application?</strong></p>
+        <label><input type="radio" name="q4" value="0"> Program Counter (PC) Register</label><br>
+        <label><input type="radio" name="q4" value="0"> Stack Memory</label><br>
+        <label><input type="radio" name="q4" value="1"> Heap Memory</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What replaced PermGen in Java 8 for storing class metadata?</strong></p>
+        <label><input type="radio" name="q5" value="1"> Metaspace</label><br>
+        <label><input type="radio" name="q5" value="0"> Flash Memory</label><br>
+        <label><input type="radio" name="q5" value="0"> Extended Heap</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a JVM Environment Diagnostics Utility</strong>
+            </div>
+            <div class="callout-body">
+              <p>Write a self-contained Java class that prints: Java vendor, Java runtime version, max memory, total memory, and free memory in megabytes.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public class SystemDiagnostic {
+    public static void main(String[] args) {
+        // TODO: Query System.getProperty and Runtime.getRuntime()
+        // Print memory stats formatted cleanly in Megabytes (MB)
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="index.html" class="btn btn-outline">&larr; Java Course Overview</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-01')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="02-syntax-data-types-variables.html" class="btn btn-primary">Next: Data Types & Variables &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "--- JVM Runtime Info ---\nJava Version: 21.0.2 (LTS)\nOS Name: Windows 11 / Linux (Cross-Platform)\nAvailable Processors: 8 Cores\nMax Heap Memory: 4096 MB\nExecution Completed with Exit Code 0.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

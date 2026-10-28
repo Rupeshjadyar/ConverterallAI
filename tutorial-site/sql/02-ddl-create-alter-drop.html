@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>DDL Commands: CREATE, ALTER, DROP, TRUNCATE & Constraints — WebDev Academy</title>
+  <meta name="description" content="Master Data Definition Language (DDL) to architect database schemas, add or modify columns, configure strict constraints, and understand the crucial differences between TRUNCATE, DELETE, and DROP.">
+  <meta name="keywords" content="SQL DDL, CREATE TABLE, ALTER TABLE, DROP TABLE, TRUNCATE TABLE, SQL constraints, TRUNCATE vs DELETE">
+  <meta property="og:title" content="DDL Commands: CREATE, ALTER, DROP, TRUNCATE & Constraints">
+  <meta property="og:description" content="Master Data Definition Language (DDL) to architect database schemas, add or modify columns, configure strict constraints, and understand the crucial differences between TRUNCATE, DELETE, and DROP.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="02-ddl-create-alter-drop.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 02</span>
+          </div>
+          <h1 class="lesson-title">DDL Commands: CREATE, ALTER, DROP, TRUNCATE & Constraints</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Data Definition Language (DDL) to architect database schemas, add or modify columns, configure strict constraints, and understand the crucial differences between TRUNCATE, DELETE, and DROP.</span>
+            <span class="lang-hi">DDL commands seekhein: tables banana (CREATE), badalna (ALTER), poori tarah mitana (DROP/TRUNCATE) aur constraints lagana.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What Data Definition Language (DDL) is and how it modifies the database catalog.</li><li>Creating robust tables with column data types (VARCHAR, INT, DECIMAL, TIMESTAMP, BOOLEAN).</li><li>Altering tables in production: ADD COLUMN, DROP COLUMN, RENAME, and MODIFY data types.</li><li>The 6 Essential SQL Constraints: NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK, and DEFAULT.</li><li>The critical interview debate: TRUNCATE vs DELETE vs DROP (Performance, Rollback, Identity reset).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 01: Database Fundamentals & RDBMS.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of building a house. <strong>DDL is the civil engineering and architecture phase</strong>. You decide how many rooms the house has, how thick the walls are, and where the doors are positioned (CREATE TABLE). If you decide later to convert the balcony into a bedroom, that is ALTER TABLE. If you demolish the entire brick structure down to bare soil, that is DROP TABLE. You cannot place furniture (data) inside a room that has not been built yet!</span>
+            <span class="lang-hi">Ghar banane ki misaal lein: <strong>DDL architecture aur civil engineering hai</strong>. Aap tay karte hain kitne kamre honge aur deewarein kahan banengi (CREATE). Baad me ek aur kamra banana ALTER hai. Poora makan bulldozer se tod dena DROP hai. Bina makan ka dhabba banaye aap andar saaman (data) nahi rakh sakte!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is DDL?</strong> Data Definition Language consists of commands (CREATE, ALTER, DROP, TRUNCATE, RENAME) that define and modify the structure/schema of database objects rather than the data inside them.</li><li><strong>TRUNCATE vs DELETE vs DROP (The #1 Interview Question!):</strong><br>• <code>DROP</code>: Removes table structure AND all data. Cannot rollback in most engines. Frees table space.<br>• <code>TRUNCATE</code>: DDL command. Deletes all rows by deallocating data pages. Very fast, resets AUTO_INCREMENT counter, minimal transaction log generation.<br>• <code>DELETE</code>: DML command. Deletes rows row-by-row with a WHERE clause. Fires triggers, logs every deletion, can be rolled back inside a transaction, does NOT reset AUTO_INCREMENT.</li><li><strong>Auto-commit in DDL:</strong> In databases like MySQL and Oracle, DDL statements automatically issue an implicit COMMIT, meaning they cannot be undone via ROLLBACK. In PostgreSQL, transactional DDL is supported.</li><li><strong>CHECK Constraint:</strong> Validates business rules at the database engine level (e.g. <code>CHECK (age &gt;= 18)</code> or <code>CHECK (salary &gt; 0)</code>).</li><li><strong>Best Practice for ALTER in Production:</strong> Never run blocking <code>ALTER TABLE ADD COLUMN ... DEFAULT 'val'</code> on 100-million-row tables without understanding table locks!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Data Definition Language (DDL)?</h2>
+        <p>In SQL, commands are classified into sub-languages based on their responsibility. <strong>DDL (Data Definition Language)</strong> is responsible for defining, altering, and destroying the structural blueprint (metadata) of database objects: tables, indexes, views, schemas, and constraints.</p>
+        <p>Unlike DML queries that insert or read user rows, DDL alters the internal <em>catalog dictionary</em> of the database engine.</p>
+        
+        <h2>2. The CREATE TABLE Command & Data Types</h2>
+        <p>Every column in a table requires an explicit data type. Choosing the optimal data type minimizes memory footprint and dramatically speeds up cache utilization:</p>
+        <p>• <strong>Exact Numerics:</strong> <code>INT</code> (4 bytes, &plusmn;2.1 billion), <code>BIGINT</code> (8 bytes, for high volume IDs), <code>DECIMAL(precision, scale)</code> (for money/currency, avoids floating point drift).<br>• <strong>Strings:</strong> <code>VARCHAR(n)</code> (variable length up to n characters), <code>CHAR(n)</code> (fixed length, great for 2-letter country codes like 'IN' or 'US'), <code>TEXT</code> (large unbounded strings).<br>• <strong>Temporal:</strong> <code>DATE</code>, <code>TIMESTAMP WITH TIME ZONE</code> (always store UTC in production!).</p>
+        
+        <h2>3. Table Constraints: Enforcing Business Invariants</h2>
+        <p>Constraints prevent corrupt data from ever touching your disk. Instead of relying solely on frontend forms or backend API validations, constraints are your impenetrable last line of defense:</p>
+        <p>• <code>NOT NULL</code>: Rejects missing/empty entries.<br>• <code>UNIQUE</code>: Rejects duplicates.<br>• <code>DEFAULT</code>: Automatically fills a value if the insert statement omits it.<br>• <code>CHECK (expression)</code>: Ensures logical consistency (e.g., price &gt; cost, discount BETWEEN 0 AND 100).</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Creating a Production-Grade Users & Wallets Schema with All Constraints</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">CREATE TABLE users (
+    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    age INT NOT NULL,
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Check constraints enforce real-world business logic
+    CONSTRAINT chk_user_age CHECK (age &gt;= 13),
+    CONSTRAINT chk_email_format CHECK (email LIKE '%@%.%')
+);
+
+CREATE TABLE user_wallets (
+    wallet_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    balance DECIMAL(12, 2) NOT NULL DEFAULT 0.00,
+    currency CHAR(3) NOT NULL DEFAULT 'USD',
+    CONSTRAINT fk_wallet_user 
+        FOREIGN KEY (user_id) REFERENCES users(user_id) 
+        ON DELETE CASCADE,
+    CONSTRAINT chk_positive_balance CHECK (balance &gt;= 0.00)
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>DECIMAL(12, 2)</code>: Up to 12 total digits with 2 digits after the decimal point (financial accuracy).<br>• <code>CONSTRAINT chk_positive_balance CHECK (balance &gt;= 0.00)</code>: Guarantees user balances can never go negative at the database level!
+        </div>
+        
+        <h3>Code Example 2: Altering an Existing Table in Production (ADD, MODIFY, DROP Column)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- 1. Add a new optional column
+ALTER TABLE users 
+ADD COLUMN phone_number VARCHAR(20);
+
+-- 2. Modify an existing column to increase length
+ALTER TABLE users 
+MODIFY COLUMN username VARCHAR(50) NOT NULL;
+
+-- 3. Add a new unique constraint to the phone column
+ALTER TABLE users
+ADD CONSTRAINT uq_user_phone UNIQUE (phone_number);
+
+-- 4. Drop an unused column
+ALTER TABLE users
+DROP COLUMN phone_number;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>ALTER TABLE</code> allows non-destructive evolution of your database schema as business requirements change.
+        </div>
+        
+        <h3>Code Example 3: TRUNCATE vs DELETE in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Option A: Slow, transactional deletion
+DELETE FROM users WHERE age &lt; 18;
+-- Scans rows, generates undo logs, triggers fire for each row.
+
+-- Option B: Fast, nuclear table wipe
+TRUNCATE TABLE users;
+-- Instantly deallocates all data storage pages.
+-- Resets AUTO_INCREMENT counter back to 1!
+-- Cannot specify a WHERE clause.</code></pre>
+        </div>
+        <div class="code-explanation">
+          • TRUNCATE is instantaneous because it does not iterate through individual rows; it resets the table's data page allocation pointer.
+        </div>
+        
+        <h3>Code Example 4: Safely Dropping Objects with IF EXISTS</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Prevents scripts from crashing in deployment pipelines
+DROP TABLE IF EXISTS user_wallets CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Drop a specific index or view
+DROP INDEX IF EXISTS idx_users_email ON users;
+DROP VIEW IF EXISTS active_users_view;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Using <code>IF EXISTS</code> ensures migration scripts can run idempotently without throwing fatal errors if the object does not exist.
+        </div>
+        
+        <h3>Code Example 5: Renaming Tables and Columns Cleanly</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Rename column (ANSI SQL / Modern MySQL / PostgreSQL)
+ALTER TABLE users 
+RENAME COLUMN is_verified TO is_email_verified;
+
+-- Rename the entire table
+ALTER TABLE users 
+RENAME TO app_users;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Renaming preserves all existing constraints, primary keys, and data rows intact.
+        </div>
+        
+        <h3>Code Example 6: Adding Foreign Key Constraints to Pre-existing Tables</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Add foreign key with explicit cascading rule after table creation
+ALTER TABLE user_wallets
+ADD CONSTRAINT fk_wallets_users
+FOREIGN KEY (user_id) 
+REFERENCES app_users(user_id)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>ON UPDATE CASCADE</code> ensures that if a user's PK ever changes, the wallet child table automatically syncs without breaking.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: DDL Commands: CREATE, ALTER, DROP, TRUNCATE & Constraints</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive DDL Sandbox: Create and Alter Table
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY AUTO_INCREMENT,
+    emp_name VARCHAR(50) NOT NULL,
+    job_title VARCHAR(50) DEFAULT 'Junior Developer',
+    salary DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT chk_min_salary CHECK (salary >= 30000.00)
+);
+
+-- Test inserting a valid employee
+INSERT INTO employees (emp_name, salary) VALUES ('Sneha Roy', 45000.00);
+
+-- Alter the table: Add department column
+ALTER TABLE employees ADD COLUMN department VARCHAR(40) DEFAULT 'Engineering';
+
+SELECT * FROM employees;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using FLOAT or DOUBLE for financial amounts:</strong> IEEE floating point numbers suffer from binary rounding errors (e.g., 0.1 + 0.2 = 0.30000000000000004). Always use <code>DECIMAL</code> or <code>NUMERIC</code> for money!</li><li><strong>Running TRUNCATE on a table referenced by foreign keys:</strong> Most database engines will reject <code>TRUNCATE TABLE parent</code> if child tables have active foreign keys pointing to it.</li><li><strong>Confusing DROP and TRUNCATE:</strong> DROP destroys the table itself (it vanishes from schema). TRUNCATE leaves the empty table shell ready for fresh inserts.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always name your constraints explicitly:</strong> Write <code>CONSTRAINT fk_orders_customer FOREIGN KEY...</code> instead of anonymous <code>FOREIGN KEY (...)</code>. When a foreign key fails in production, the database error message will tell you exactly which constraint failed!</li><li><strong>PostgreSQL Transactional DDL:</strong> In PostgreSQL, you can wrap DDL in <code>BEGIN ... ALTER TABLE ... ROLLBACK;</code> to test dangerous schema changes safely without committing them!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>DDL defines and manages database schema structures (CREATE, ALTER, DROP, TRUNCATE).</li><li>TRUNCATE is a high-speed DDL command that clears all rows and resets identity counters without row-by-row logging.</li><li>DELETE is a DML command that removes specific rows filtered by WHERE and can be rolled back.</li><li>Constraints (NOT NULL, UNIQUE, PK, FK, CHECK, DEFAULT) enforce database integrity at the lowest level.</li><li>Always use DECIMAL for currency and TIMESTAMP WITH TIME ZONE for time data.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a DDL statement to add a new column called <code>date_of_birth</code> of type <code>DATE</code> to an existing table called <code>students</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use ALTER TABLE ... ADD COLUMN ...</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">ALTER TABLE students
+ADD COLUMN date_of_birth DATE;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a CREATE TABLE statement for an <code>inventory</code> table with <code>item_id</code> (PK, auto-increment), <code>sku</code> (12 characters, mandatory, unique), <code>quantity</code> (integer, default 0, must be non-negative), and <code>unit_price</code> (decimal 8,2, must be greater than 0).</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use CHECK (quantity >= 0) and CHECK (unit_price > 0).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">CREATE TABLE inventory (
+    item_id INT PRIMARY KEY AUTO_INCREMENT,
+    sku CHAR(12) NOT NULL UNIQUE,
+    quantity INT DEFAULT 0,
+    unit_price DECIMAL(8, 2) NOT NULL,
+    CONSTRAINT chk_qty_non_negative CHECK (quantity &gt;= 0),
+    CONSTRAINT chk_price_positive CHECK (unit_price &gt; 0.00)
+);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Suppose you need to delete all records from a 50-million-row audit log table. Compare running <code>DELETE FROM audit_logs;</code> vs <code>TRUNCATE TABLE audit_logs;</code>. Which one will you choose in production and why?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Consider transaction logs (WAL/undo), lock duration, and time complexity.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- Choose TRUNCATE TABLE audit_logs;
+-- Reasons:
+-- 1. DELETE logs each of the 50 million row deletions individually in transaction undo/redo logs, causing disk bloat and potential database freeze.
+-- 2. DELETE holds table/row locks for minutes or hours.
+-- 3. TRUNCATE executes in milliseconds by simply freeing page allocations, generating minimal logs and resetting storage immediately.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="2" data-explanation="ALTER changes table structural blueprints, making it a Data Definition Language (DDL) command.">
+          <div class="quiz-question-text">1. Which SQL command belongs to the DDL category?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SELECT</div><div class="quiz-option"><span>B)</span> UPDATE</div><div class="quiz-option"><span>C)</span> ALTER</div><div class="quiz-option"><span>D)</span> INSERT</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="TRUNCATE resets identity/auto-increment sequences back to 1. DELETE preserves the sequence counter.">
+          <div class="quiz-question-text">2. What happens to the auto-increment counter when you TRUNCATE a table?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It continues from where the last row was deleted</div><div class="quiz-option"><span>B)</span> It resets back to its initial start value (usually 1)</div><div class="quiz-option"><span>C)</span> It throws an error and disables the column</div><div class="quiz-option"><span>D)</span> It doubles in value</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="DECIMAL/NUMERIC provides exact fixed-point precision with zero binary floating-point rounding errors.">
+          <div class="quiz-question-text">3. Which data type is recommended for monetary amounts in SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> FLOAT</div><div class="quiz-option"><span>B)</span> DOUBLE</div><div class="quiz-option"><span>C)</span> DECIMAL / NUMERIC</div><div class="quiz-option"><span>D)</span> VARCHAR</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="CHECK validates values against a conditional expression (e.g. age >= 18) before allowing the insert/update.">
+          <div class="quiz-question-text">4. What does the CHECK constraint do?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Verifies if the database server has internet access</div><div class="quiz-option"><span>B)</span> Enforces that values in a column satisfy a boolean condition or formula</div><div class="quiz-option"><span>C)</span> Checks if the table name is spelled correctly</div><div class="quiz-option"><span>D)</span> Generates a cryptographic checksum of the row</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="TRUNCATE cannot filter rows; it deallocates all data pages in the table at once.">
+          <div class="quiz-question-text">5. Can you use a WHERE clause with TRUNCATE?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Yes, but only on primary key columns</div><div class="quiz-option"><span>B)</span> Yes, if combined with LIMIT</div><div class="quiz-option"><span>C)</span> No, TRUNCATE always empties the entire table</div><div class="quiz-option"><span>D)</span> Only in MySQL, but not in PostgreSQL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write an ALTER statement to add a <code>CHECK (emp_name &lt;&gt; '')</code> constraint so empty strings cannot be inserted as employee names!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#ddl" class="ref-pill">Glossary: DDL</a><a href="../reference/glossary.html#constraint" class="ref-pill">Glossary: Constraints</a><a href="01-database-fundamentals-rdbms.html" class="ref-pill">Lesson 01: Fundamentals</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-database-fundamentals-rdbms.html" class="btn btn-outline">&larr; 01. Database Fundamentals</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-02">Mark as Complete</button>
+          <a href="03-dml-insert-update-delete.html" class="btn btn-primary">03. DML: INSERT, UPDATE, DELETE &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

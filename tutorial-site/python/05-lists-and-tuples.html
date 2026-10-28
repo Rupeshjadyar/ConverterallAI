@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Data Types: Lists & Tuples in Depth — WebDev Academy</title>
+  <meta name="description" content="Master Python's foundational sequence types: Mutable Lists vs Immutable Tuples. Learn dynamic array memory resizing, slicing, list comprehensions, sorting (sort vs sorted), tuple unpacking, and why tuples can be dictionary keys.">
+  <meta name="keywords" content="Python list, Python tuple, list vs tuple, list comprehension, tuple unpacking, mutable immutable, Python data structures">
+  <meta property="og:title" content="Python Data Types: Lists & Tuples in Depth">
+  <meta property="og:description" content="Master Python's foundational sequence types: Mutable Lists vs Immutable Tuples. Learn dynamic array memory resizing, slicing, list comprehensions, sorting (sort vs sorted), tuple unpacking, and why tuples can be dictionary keys.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="05-lists-and-tuples.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 05</span>
+          </div>
+          <h1 class="lesson-title">Python Data Types: Lists & Tuples in Depth</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Python's foundational sequence types: Mutable Lists vs Immutable Tuples. Learn dynamic array memory resizing, slicing, list comprehensions, sorting (sort vs sorted), tuple unpacking, and why tuples can be dictionary keys.</span>
+            <span class="lang-hi">Python Data Types: Lists aur Tuples deep-dive. Jaanein Mutable vs Immutable ka farak, List Comprehensions, sorting aur Tuples ka memory advantage.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The architectural difference between Lists (mutable dynamic arrays) and Tuples (immutable fixed arrays).</li><li>How Python lists resize dynamically in memory with over-allocation (append is amortized O(1)).</li><li>List methods: append, extend, insert, pop, remove, and clear.</li><li>Writing high-speed, Pythonic List Comprehensions with filtering conditions.</li><li>Sorting: In-place .sort() vs built-in sorted() with custom key functions.</li><li>Tuples: Immutability, memory efficiency, packing, unpacking, and using tuples as dictionary keys.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 04: Strings & String Methods.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of keeping notes. <strong>A List is a loose-leaf ring binder notebook</strong>: you can tear out a page (pop/remove), insert a new page in the middle (insert), or add 50 more pages at the end (append/extend). It is flexible and mutable, but the binder rings are slightly heavy and bulky (memory overhead). <strong>A Tuple is a hardcover printed photograph album</strong>: once bound, you cannot add or remove a page without destroying the book. Because it is fixed and immutable, it is lighter, faster to carry, and can be given an official wax seal (hashable & used as a dictionary key)!</span>
+            <span class="lang-hi">Notes likhne ki diary ki misaal lein: <strong>List ek spiral ring wali notebook hai</strong> jisme se panna faad sakte ho (pop), beech me naya panna daal sakte ho (insert), ya aakhiri me jod sakte ho (append). Yeh mutable hai. <strong>Tuple ek hard-bound printed book jaisi hai</strong>: banne ke baad na panna judega na hatega. Kyunki yeh badalti nahi hai, isliye yeh memory kam leti hai aur super fast hoti hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>List vs Tuple (The Classic Interview Question):</strong><br>• <strong>Mutability:</strong> Lists are mutable; Tuples are immutable.<br>• <strong>Memory &amp; Speed:</strong> Tuples allocate exact memory chunks in CPython and have zero over-allocation overhead, making them faster to construct and iterate.<br>• <strong>Hashability:</strong> Tuples containing immutable elements are hashable and can be used as dictionary keys or set elements; Lists are unhashable and cannot be dict keys.</li><li><strong>How does list.append() achieve amortized O(1) time?</strong> CPython uses dynamic array over-allocation: when a list fills up, it allocates a new buffer that is ~12.5% to 50% larger than needed. Resizing occurs infrequently, making the average append cost constant O(1).</li><li><strong>list.pop() vs list.pop(0):</strong> <code>list.pop()</code> removes the last element in O(1) time. <code>list.pop(0)</code> removes the first element and shifts all N remaining elements left, running in slow O(N) time! For FIFO queues, use <code>collections.deque</code>.</li><li><strong>Shallow Copy vs Deep Copy:</strong> <code>list.copy()</code> or <code>lst[:]</code> copies the outer list container but shares references to inner nested objects. <code>copy.deepcopy()</code> recursively duplicates all nested structures.</li><li><strong>sort() vs sorted():</strong> <code>lst.sort()</code> sorts the list in-place and returns <code>None</code>. <code>sorted(iterable)</code> returns a brand new sorted list leaving the original unchanged.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Lists: Mutable Dynamic Arrays</h2>
+        <p>A <strong>List</strong> is an ordered, mutable collection of items enclosed in square brackets <code>[]</code>. Lists can hold heterogeneous elements (numbers, strings, booleans, other lists, and custom objects).</p>
+        <p>Because lists are mutable, you can change individual items (<code>lst[0] = 99</code>), grow them dynamically with <code>.append()</code>, and delete items without creating a new list object.</p>
+        
+        <h2>2. List Comprehensions: The Pythonic Way</h2>
+        <p>In other languages, transforming a collection requires creating an empty list, writing a for-loop, and calling append.</p>
+        <p>In Python, <strong>List Comprehensions</strong> provide a concise, readable syntax that executes in C-level speed: <code>[expression for item in iterable if condition]</code>.</p>
+        
+        <h2>3. Tuples: Lightweight, Immutable Sequences</h2>
+        <p>A <strong>Tuple</strong> is an ordered, immutable collection enclosed in parentheses <code>()</code>.</p>
+        <p>Once created, a tuple's elements cannot be modified, added, or removed. This immutability provides security against accidental data corruption and enables tuples to be <em>hashable</em>.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: List Mutation, Methods and Operations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">fruits = ['Apple', 'Banana', 'Cherry']
+
+# 1. Appending and inserting
+fruits.append('Mango')        # Adds to end: O(1)
+fruits.insert(1, 'Blueberry')  # Inserts at index 1: O(N)
+print(f'After insertions: {fruits}')
+
+# 2. Removing elements
+popped_item = fruits.pop()    # Removes and returns last item ('Mango')
+fruits.remove('Apple')        # Removes first matching value
+print(f'Popped: {popped_item}, Remaining: {fruits}')
+
+# 3. Extending with another list
+fruits.extend(['Kiwi', 'Orange'])
+print(f'Extended: {fruits}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>extend()</code> unpacks and appends elements from another iterable, while <code>append()</code> would add the entire list as a single nested element.
+        </div>
+        
+        <h3>Code Example 2: Mastering List Comprehensions (Transform & Filter)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# 1. Square only the even numbers
+even_squares = [n ** 2 for n in numbers if n % 2 == 0]
+print(f'Even squares: {even_squares}')  # [4, 16, 36, 64, 100]
+
+# 2. Transforming text strings
+names = ['aarav', 'priya', 'rohan']
+clean_titles = [name.capitalize() for name in names]
+print(f'Capitalized: {clean_titles}')  # ['Aarav', 'Priya', 'Rohan']</code></pre>
+        </div>
+        <div class="code-explanation">
+          • List comprehensions replace verbose 4-line loops with a single, expressive, high-speed line.
+        </div>
+        
+        <h3>Code Example 3: In-Place sort() vs Built-in sorted() with Custom Key</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">students = [
+    {'name': 'Aarav', 'score': 88},
+    {'name': 'Priya', 'score': 95},
+    {'name': 'Rohan', 'score': 72}
+]
+
+# Sort by score descending using a lambda key
+sorted_students = sorted(students, key=lambda s: s['score'], reverse=True)
+print(f'Top student: {sorted_students[0]["name"]} with {sorted_students[0]["score"]}')
+
+# Original list was not modified
+print(f'Original preserved: {students[0]["name"]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>sorted()</code> returns a new list; <code>.sort()</code> mutates in place and returns <code>None</code>.
+        </div>
+        
+        <h3>Code Example 4: Tuples: Creation, Single-Item Gotcha, and Immutability</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># 1. Standard tuple
+coordinates = (37.7749, -122.4194)  # San Francisco Lat/Long
+
+# 2. Single-item tuple GOTCHA: The trailing comma is mandatory!
+not_a_tuple = ('hello')   # This is just a string in parentheses!
+real_tuple = ('hello',)   # This is a 1-item tuple
+print(f'Type 1: {type(not_a_tuple)}, Type 2: {type(real_tuple)}')
+
+# 3. Immutability protection
+try:
+    coordinates[0] = 40.7128
+except TypeError as err:
+    print(f'Caught tuple protection: {err}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • A single value in parentheses <code>(val)</code> is an expression, not a tuple. A trailing comma <code>(val,)</code> creates a single-item tuple.
+        </div>
+        
+        <h3>Code Example 5: Tuple Unpacking with Star (*) Operator</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Unpack first, middle elements, and last
+record = ('IND', 2024, 'Quarter 1', 50000, 62000, 71000, 'AUDITED')
+country, year, quarter, *sales_months, status = record
+
+print(f'Region: {country} {year} ({quarter})')
+print(f'Quarterly sales data: {sales_months}')  # [50000, 62000, 71000]
+print(f'Status: {status}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The star operator <code>*sales_months</code> captures all middle items into a list automatically.
+        </div>
+        
+        <h3>Code Example 6: Tuples as Dictionary Keys vs Unhashable Lists</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Geographical grid matrix mapping (Lat, Long) -&gt; City Name
+world_cities = {
+    (40.7128, -74.0060): 'New York City',
+    (28.6139, 77.2090): 'New Delhi',
+    (51.5074, -0.1278): 'London'
+}
+
+# Lookup by tuple key in O(1) time!
+my_coords = (28.6139, 77.2090)
+print(f'City at {my_coords}: {world_cities[my_coords]}')
+
+# Lists CANNOT be used as keys!
+try:
+    invalid_dict = {[1, 2]: 'Fails!'}
+except TypeError as err:
+    print(f'Lists are unhashable: {err}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Because tuples are immutable, their hash never changes, making them valid dictionary keys.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Data Types: Lists & Tuples in Depth</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Lists & Tuples Sandbox
+scores = [78, 92, 85, 99, 64, 88]
+
+# 1. Filter high scores using list comprehension
+honor_roll = [s for s in scores if s >= 85]
+print(f'Honor roll scores: {honor_roll}')
+
+# 2. Immutable GPS waypoint tuple
+waypoint = ('Waypoint Alpha', 12.9716, 77.5946)
+name, lat, lon = waypoint
+print(f'Navigating to {name} at ({lat}, {lon})')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Forgetting the comma in a single-item tuple:</strong> Writing <code>x = ('apple')</code> creates a <code>str</code>, not a tuple! You must write <code>x = ('apple',)</code>.</li><li><strong>Using a mutable object as default argument:</strong> Writing <code>def add_item(item, lst=[]):</code> causes all function calls to share the EXACT same list in memory! Always use <code>lst=None</code>.</li><li><strong>Modifying a list while iterating over it:</strong> Deleting elements from a list during a <code>for x in lst:</code> loop skips items because the index pointer shifts. Iterate over a copy: <code>for x in lst[:]:</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use Tuples for heterogeneous fixed records:</strong> If a record has a fixed schema (e.g. <code>(id, name, email)</code>), use a tuple (or <code>namedtuple</code>). If it's a homogeneous growing collection, use a list.</li><li><strong>Pre-allocate with deque for FIFO queues:</strong> Never use <code>list.pop(0)</code> for queues. Use <code>collections.deque</code> which supports O(1) appends and pops from both ends.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Lists are mutable dynamic arrays; Tuples are immutable fixed sequences.</li><li>Tuples are faster, use less memory, and can serve as dictionary keys.</li><li>List comprehensions ([x for x in iterable if cond]) are idiomatic and fast.</li><li>Always include a trailing comma for 1-item tuples: ('value',).</li><li>sort() mutates in place; sorted() returns a new sorted collection.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a list comprehension that takes a list of temperatures in Celsius <code>[0, 20, 37, 100]</code> and converts them to Fahrenheit using the formula <code>(c * 9/5) + 32</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use [(c * 9/5) + 32 for c in celsius].</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">celsius = [0, 20, 37, 100]
+fahrenheit = [(c * 9/5) + 32 for c in celsius]
+print(fahrenheit)  # [32.0, 68.0, 98.6, 212.0]</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Python function <code>flatten(matrix)</code> that flattens a 2D list (e.g. <code>[[1, 2], [3, 4], [5, 6]]</code>) into a 1D list <code>[1, 2, 3, 4, 5, 6]</code> using a nested list comprehension.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use [item for row in matrix for item in row].</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def flatten(matrix):
+    return [item for row in matrix for item in row]
+
+print(flatten([[1, 2], [3, 4], [5, 6]]))</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain what happens if a tuple contains a mutable list: <code>t = (1, 2, [3, 4])</code>. Can you modify the list inside the tuple? Can this tuple be used as a dictionary key?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about reference immutability vs inner object mutability.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># 1. Yes, you can modify the inner list: t[2].append(5) works!
+# The tuple itself is immutable (its pointers cannot change), but the object it points to is mutable.
+
+# 2. Can it be used as a dictionary key? NO!
+# Because the inner list is unhashable, hash(t) raises a TypeError: unhashable type: 'list'.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Lists can be modified in place (mutable); Tuples cannot be changed once created (immutable).">
+          <div class="quiz-question-text">1. What is the fundamental difference between a List and a Tuple in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Lists only hold numbers; Tuples only hold text</div><div class="quiz-option"><span>B)</span> Lists are mutable (modifiable); Tuples are immutable (cannot be modified)</div><div class="quiz-option"><span>C)</span> Tuples are deprecated in Python 3</div><div class="quiz-option"><span>D)</span> Lists cannot be sorted</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Without a trailing comma, parentheses are treated as an arithmetic grouping. <code>(42)</code> is an <code>int</code>. <code>(42,)</code> is a tuple.">
+          <div class="quiz-question-text">2. What is the type of variable x = (42)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> tuple</div><div class="quiz-option"><span>B)</span> int</div><div class="quiz-option"><span>C)</span> list</div><div class="quiz-option"><span>D)</span> error</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Due to dynamic array over-allocation, list append operates in amortized constant O(1) time.">
+          <div class="quiz-question-text">3. What is the time complexity of list.append(x) in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> O(N)</div><div class="quiz-option"><span>B)</span> Amortized O(1)</div><div class="quiz-option"><span>C)</span> O(log N)</div><div class="quiz-option"><span>D)</span> O(N^2)</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Dictionary keys require a constant hash value (hashable). Mutable objects like lists are unhashable.">
+          <div class="quiz-question-text">4. Why can a Tuple be used as a dictionary key, but a List cannot?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Because Tuples are older than Lists</div><div class="quiz-option"><span>B)</span> Tuples containing immutable elements are hashable; Lists are mutable and unhashable</div><div class="quiz-option"><span>C)</span> Dictionaries only accept tuples</div><div class="quiz-option"><span>D)</span> Lists take up too much disk space</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Odd numbers in range(5) are 1 and 3. Their squares are 1 and 9.">
+          <div class="quiz-question-text">5. What does the expression [x**2 for x in range(5) if x % 2 != 0] produce?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> [0, 1, 4, 9, 16]</div><div class="quiz-option"><span>B)</span> [1, 9]</div><div class="quiz-option"><span>C)</span> [0, 4, 16]</div><div class="quiz-option"><span>D)</span> [1, 3]</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, add a new score 100 to the scores list and re-run to see how honor_roll updates automatically!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#list" class="ref-pill">Glossary: List</a><a href="../reference/glossary.html#tuple" class="ref-pill">Glossary: Tuple</a><a href="06-dictionaries-and-sets.html" class="ref-pill">Lesson 06: Dictionaries & Sets</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="04-strings-and-string-methods.html" class="btn btn-outline">&larr; 04. Strings & Methods</a>
+          <button class="mark-complete-btn" data-lesson-id="python-05">Mark as Complete</button>
+          <a href="06-dictionaries-and-sets.html" class="btn btn-primary">06. Data Types: Dictionaries & Sets &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

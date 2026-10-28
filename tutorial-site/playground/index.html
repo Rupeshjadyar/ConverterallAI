@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Offline Web Playground — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .playground-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - var(--nav-height) - 40px);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .playground-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .toolbar-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-tool {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-tool:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+    }
+    .btn-run-main {
+      background: #10b981 !important;
+      color: #0f172a !important;
+      border-color: #10b981 !important;
+      font-weight: 700;
+    }
+    .btn-run-main:hover {
+      background: #059669 !important;
+    }
+    .playground-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+    .editor-tabs-container {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      min-height: 0;
+    }
+    .editor-tab-bar {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .tab-item {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-item.active {
+      color: var(--text-main);
+      background: var(--bg-card);
+      border-bottom-color: var(--c-primary);
+    }
+    .tab-badge {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .tab-html .tab-badge { background: var(--c-html); }
+    .tab-css .tab-badge { background: var(--c-css); }
+    .tab-js .tab-badge { background: var(--c-js); }
+    .code-editor-area {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+    }
+    .code-pane {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      background: var(--bg-card);
+      color: #f8fafc;
+      font-family: var(--font-code);
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 16px;
+      border: none;
+      resize: none;
+      outline: none;
+      display: none;
+    }
+    .code-pane.active {
+      display: block;
+    }
+    .preview-console-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+    .preview-box {
+      flex: 2;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      min-height: 200px;
+    }
+    .preview-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+    .console-box {
+      flex: 1;
+      background: #0a0f1d;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 120px;
+    }
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid #1e293b;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .console-logs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      font-family: var(--font-code);
+      font-size: 13px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+    .log-entry {
+      padding: 2px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .log-error { color: #f87171; }
+    .log-warn { color: #fbbf24; }
+    .log-info { color: #38bdf8; }
+    @media (max-width: 860px) {
+      .playground-main-grid {
+        grid-template-columns: 1fr;
+      }
+      .playground-wrapper {
+        height: auto;
+      }
+      .editor-tabs-container {
+        height: 350px;
+      }
+      .preview-box {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body data-course="playground" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner" style="max-width: 100%;">
+
+        <!-- Header -->
+        <div class="lesson-header" style="margin-bottom: 12px;">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-primary-light); color:var(--c-primary);">&#9889; Sandbox</span>
+            <span class="reading-time">100% Offline Live Runner</span>
+          </div>
+          <h1 class="lesson-title" style="margin-bottom: 4px;">Triple-Pane Live Web Playground</h1>
+          <p class="lesson-subtitle" style="font-size: 14px;">
+            <span class="lang-en">Write HTML, CSS, and JavaScript in real-time with an in-browser sandboxed compiler, virtual console log stream, project exporter, and local persistence.</span>
+            <span class="lang-hi">HTML, CSS, aur JavaScript ka live triple-pane playground. Live preview, console logger, aur project download.</span>
+          </p>
+        </div>
+
+        <!-- Playground Application -->
+        <div class="playground-wrapper">
+
+          <!-- Top Toolbar -->
+          <div class="playground-toolbar">
+            <div class="toolbar-group">
+              <button class="btn-tool btn-run-main" onclick="runPlayground()">&#9654; Run Code (Ctrl+Enter)</button>
+              <button class="btn-tool" onclick="saveProject()">&#128190; Save Project</button>
+              <select id="saved-projects" class="btn-tool" onchange="loadProject(this.value)">
+                <option value="">-- Load Saved Project --</option>
+              </select>
+            </div>
+            <div class="toolbar-group">
+              <button class="btn-tool" onclick="exportHtmlFile()">&#11015; Export .html</button>
+              <label class="btn-tool" style="margin:0;">
+                &#128194; Import .html
+                <input type="file" id="import-file" accept=".html,.htm" style="display:none;" onchange="importHtmlFile(this)">
+              </label>
+              <button class="btn-tool" onclick="resetToStarter()">&#8635; Starter Template</button>
+            </div>
+          </div>
+
+          <!-- Main Split Panes -->
+          <div class="playground-main-grid">
+
+            <!-- Left: Tabbed Code Editors -->
+            <div class="editor-tabs-container">
+              <div class="editor-tab-bar">
+                <div class="tab-item tab-html active" onclick="switchEditorTab('html', this)">
+                  <span class="tab-badge"></span> HTML
+                </div>
+                <div class="tab-item tab-css" onclick="switchEditorTab('css', this)">
+                  <span class="tab-badge"></span> CSS
+                </div>
+                <div class="tab-item tab-js" onclick="switchEditorTab('js', this)">
+                  <span class="tab-badge"></span> JavaScript
+                </div>
+              </div>
+
+              <div class="code-editor-area">
+                <textarea id="code-html" class="code-pane active" spellcheck="false" placeholder="Enter HTML markup here..."></textarea>
+                <textarea id="code-css" class="code-pane" spellcheck="false" placeholder="Enter CSS styles here..."></textarea>
+                <textarea id="code-js" class="code-pane" spellcheck="false" placeholder="Enter JavaScript code here..."></textarea>
+              </div>
+            </div>
+
+            <!-- Right: Live Preview & Console Output -->
+            <div class="preview-console-container">
+              <!-- Live Preview Frame -->
+              <div class="preview-box">
+                <iframe id="preview-iframe" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+
+              <!-- Virtual Console Output -->
+              <div class="console-box">
+                <div class="console-header">
+                  <span>&#128187; Playground Virtual Console</span>
+                  <button class="btn-tool" style="padding: 2px 8px; font-size: 11px;" onclick="clearConsole()">Clear Console</button>
+                </div>
+                <div class="console-logs" id="console-output">
+                  <div class="log-entry log-info">&gt; Sandbox initialized. Press "Run Code" or Ctrl+Enter to evaluate...</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+
+  <script>
+    const DEFAULT_HTML = `<div class="card">
+  <h1>Welcome to WebDev Academy Playground!</h1>
+  <p>Modify HTML, CSS, or JavaScript and click <strong>Run Code</strong> (or press <strong>Ctrl+Enter</strong>).</p>
+  <button id="counter-btn">Clicks: 0</button>
+</div>`;
+
+    const DEFAULT_CSS = `body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0f172a;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+h1 {
+  color: #38bdf8;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+p {
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+button {
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+button:hover {
+  background: #0ea5e9;
+  transform: translateY(-2px);
+}`;
+
+    const DEFAULT_JS = `console.log("Playground script mounted successfully!");
+
+let clicks = 0;
+const btn = document.getElementById("counter-btn");
+
+btn.addEventListener("click", () => {
+  clicks++;
+  btn.textContent = "Clicks: " + clicks;
+  console.log("Button clicked! Total counter value:", clicks);
+});`;
+
+    function initPlayground() {
+      document.getElementById('code-html').value = DEFAULT_HTML;
+      document.getElementById('code-css').value = DEFAULT_CSS;
+      document.getElementById('code-js').value = DEFAULT_JS;
+      updateSavedDropdown();
+      runPlayground();
+    }
+
+    function switchEditorTab(tab, btn) {
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.code-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`code-${tab}`).classList.add('active');
+      document.getElementById(`code-${tab}`).focus();
+    }
+
+    function appendConsoleLog(type, message) {
+      const out = document.getElementById('console-output');
+      const div = document.createElement('div');
+      div.className = `log-entry log-${type}`;
+      div.textContent = `> ${message}`;
+      out.appendChild(div);
+      out.scrollTop = out.scrollHeight;
+    }
+
+    function clearConsole() {
+      document.getElementById('console-output').innerHTML = '';
+    }
+
+    function runPlayground() {
+      const html = document.getElementById('code-html').value;
+      const css = document.getElementById('code-css').value;
+      const js = document.getElementById('code-js').value;
+      const iframe = document.getElementById('preview-iframe');
+
+      // Console capture bridge script
+      const consoleScript = `
+        <script>
+          (function() {
+            const originalLog = console.log;
+            const originalWarn = console.warn;
+            const originalError = console.error;
+
+            function send(type, args) {
+              const text = Array.from(args).map(a => {
+                if (typeof a === 'object') {
+                  try { return JSON.stringify(a); } catch(e) { return String(a); }
+                }
+                return String(a);
+              }).join(' ');
+              window.parent.postMessage({ type: 'PLAYGROUND_CONSOLE', logType: type, msg: text }, '*');
+            }
+
+            console.log = function(...args) { originalLog.apply(console, args); send('info', args); };
+            console.warn = function(...args) { originalWarn.apply(console, args); send('warn', args); };
+            console.error = function(...args) { originalError.apply(console, args); send('error', args); };
+
+            window.onerror = function(msg, url, line) {
+              send('error', ['Uncaught Error: ' + msg + ' (Line ' + line + ')']);
+            };
+          })();
+        <\/script>
+      `;
+
+      const docContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>${css}</style>
+          ${consoleScript}
+        </head>
+        <body>
+          ${html}
+          <script>${js}<\/script>
+        </body>
+        </html>
+      `;
+
+      iframe.srcdoc = docContent;
+    }
+
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'PLAYGROUND_CONSOLE') {
+        appendConsoleLog(e.data.logType, e.data.msg);
+      }
+    });
+
+    // Keyboard shortcut: Ctrl + Enter
+    window.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        runPlayground();
+      }
+    });
+
+    // Save & Load
+    function saveProject() {
+      const name = prompt("Enter a project name to save in browser LocalStorage:", "My Project " + new Date().toLocaleDateString());
+      if (!name) return;
+
+      const project = {
+        html: document.getElementById('code-html').value,
+        css: document.getElementById('code-css').value,
+        js: document.getElementById('code-js').value,
+        date: new Date().toISOString()
+      };
+
+      const existing = JSON.parse(localStorage.getItem('wda_playground_saved') || '{}');
+      existing[name] = project;
+      localStorage.setItem('wda_playground_saved', JSON.stringify(existing));
+      updateSavedDropdown();
+      alert(`Project "${name}" saved to LocalStorage!`);
+    }
+
+    function updateSavedDropdown() {
+      const dropdown = document.getElementById('saved-projects');
+      dropdown.innerHTML = '<option value="">-- Load Saved Project --</option>';
+      const existing = JSON.parse(localStorage.getItem('wda_playground_saved') || '{}');
+      for (const name of Object.keys(existing)) {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        dropdown.appendChild(opt);
+      }
+    }
+
+    function loadProject(name) {
+      if (!name) return;
+      const existing = JSON.parse(localStorage.getItem('wda_playground_saved') || '{}');
+      if (existing[name]) {
+        document.getElementById('code-html').value = existing[name].html;
+        document.getElementById('code-css').value = existing[name].css;
+        document.getElementById('code-js').value = existing[name].js;
+        runPlayground();
+      }
+    }
+
+    function resetToStarter() {
+      if (confirm("Reset editor to starter template? Any unsaved edits will be lost.")) {
+        initPlayground();
+      }
+    }
+
+    function exportHtmlFile() {
+      const html = document.getElementById('code-html').value;
+      const css = document.getElementById('code-css').value;
+      const js = document.getElementById('code-js').value;
+
+      const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exported Project — WebDev Academy</title>
+  <style>
+${css}
+  </style>
+</head>
+<body>
+${html}
+  <script>
+${js}
+  <\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'webdev-playground-project.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function importHtmlFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        // Parse out style, body, script
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        const styleEl = doc.querySelector('style');
+        const scriptEl = doc.querySelector('body script') || doc.querySelector('script');
+
+        const css = styleEl ? styleEl.textContent : '';
+        const js = scriptEl ? scriptEl.textContent : '';
+        if (scriptEl) scriptEl.remove();
+
+        const html = doc.body ? doc.body.innerHTML : text;
+
+        document.getElementById('code-html').value = html.trim();
+        document.getElementById('code-css').value = css.trim();
+        document.getElementById('code-js').value = js.trim();
+        runPlayground();
+        alert("Project successfully imported!");
+      };
+      reader.readAsText(file);
+      input.value = '';
+    }
+
+    initPlayground();
+  </script>
+</body>
+</html>

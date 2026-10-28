@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Advanced Window Functions: OVER, PARTITION BY, RANK & LEAD/LAG — WebDev Academy</title>
+  <meta name="description" content="Master the most powerful analytic feature in modern SQL: Window Functions. Learn the OVER clause, PARTITION BY, ROW_NUMBER vs RANK vs DENSE_RANK, and access prior/future rows using LAG and LEAD.">
+  <meta name="keywords" content="SQL window functions, OVER clause, PARTITION BY, ROW_NUMBER, RANK vs DENSE_RANK, LEAD and LAG, running total SQL, advanced SQL interview">
+  <meta property="og:title" content="Advanced Window Functions: OVER, PARTITION BY, RANK & LEAD/LAG">
+  <meta property="og:description" content="Master the most powerful analytic feature in modern SQL: Window Functions. Learn the OVER clause, PARTITION BY, ROW_NUMBER vs RANK vs DENSE_RANK, and access prior/future rows using LAG and LEAD.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="08-window-functions.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 19 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 08</span>
+          </div>
+          <h1 class="lesson-title">Advanced Window Functions: OVER, PARTITION BY, RANK & LEAD/LAG</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the most powerful analytic feature in modern SQL: Window Functions. Learn the OVER clause, PARTITION BY, ROW_NUMBER vs RANK vs DENSE_RANK, and access prior/future rows using LAG and LEAD.</span>
+            <span class="lang-hi">Advanced Window Functions seekhein: OVER, PARTITION BY, ROW_NUMBER, RANK aur DENSE_RANK ka farak, aur LAG / LEAD se running totals aur trends calculate karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How Window Functions differ from GROUP BY: performing calculations across a set of rows without collapsing them into a single row.</li><li>The anatomy of the OVER() clause: PARTITION BY and ORDER BY.</li><li>The Big Three Ranking Functions: ROW_NUMBER(), RANK(), and DENSE_RANK().</li><li>Accessing preceding and subsequent rows without self-joins using LAG() and LEAD().</li><li>Calculating Running Totals and Rolling Averages using window frame specifications (ROWS BETWEEN).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 07: Subqueries & CTEs.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a marathon race with 10,000 runners. If you run <code>GROUP BY age_group</code>, the database collapses all runners into a single average time per age group &mdash; the individual runners disappear! <strong>A Window Function is like assigning a digital race certificate to EVERY individual runner</strong>. Each runner stays on the screen with their name and time, but their certificate also shows: 'You ranked 4th in your age group (RANK)', 'You were 12 seconds behind the runner in front of you (LAG)', and 'The cumulative time of your team so far is 4 hours (Running Total)'. No runners are collapsed!</span>
+            <span class="lang-hi">Marathon daud ki misaal lein: GROUP BY karne se saare daudne wale gayab ho jaate hain aur bas har category ka ek average number bachta hai. <strong>Window Function har runner ki row ko bachaye rakhta hai</strong>: har runner ka naam dikhega, aur sath me ek extra column me dikhega ki 'Aap apni category me 2nd rank par ho (DENSE_RANK)' aur 'Aapse aage wala runner kitna aage tha (LAG)'. Data collapse nahi hota!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Window Function vs GROUP BY:</strong> <code>GROUP BY</code> collapses multiple rows into a single summary row per group. A Window Function performs calculations across a set of related rows but preserves the individual identity of every original row.</li><li><strong>ROW_NUMBER vs RANK vs DENSE_RANK (Top #1 Interview Question!):</strong><br>Suppose three students tie with score 95: (100, 95, 95, 80).<br>• <code>ROW_NUMBER()</code>: Assigns strictly sequential unique integers: 1, 2, 3, 4.<br>• <code>RANK()</code>: Assigns identical ranks to ties, then SKIPS the next rank: 1, 2, 2, 4 (rank 3 is skipped!).<br>• <code>DENSE_RANK()</code>: Assigns identical ranks to ties, but DOES NOT SKIP: 1, 2, 2, 3.</li><li><strong>LAG and LEAD:</strong> <code>LAG(col, 1)</code> accesses the value from the previous row; <code>LEAD(col, 1)</code> accesses the value from the following row. Eliminates slow, painful self-joins.</li><li><strong>Default Window Frame:</strong> When <code>ORDER BY</code> is present inside <code>OVER()</code>, the default frame is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>. For true physical running totals, specify <code>ROWS BETWEEN ...</code>.</li><li><strong>Can you use Window Functions in a WHERE clause?</strong> NO! Window functions execute after the WHERE, GROUP BY, and HAVING clauses. To filter on a window calculation, wrap it in a CTE or derived table subquery!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a Window Function?</h2>
+        <p>In standard SQL, you face a dilemma: if you use aggregate functions like <code>SUM()</code> or <code>AVG()</code> with <code>GROUP BY</code>, you lose the individual row details.</p>
+        <p><strong>Window Functions</strong> solve this by computing an aggregate or analytic value over a 'window' (subset) of rows while retaining every individual row in the final result set.</p>
+        
+        <h2>2. The OVER Clause and PARTITION BY</h2>
+        <p>The <code>OVER</code> clause defines the window of rows that the function operates on. It accepts two primary clauses:</p>
+        <p>• <code>PARTITION BY column</code>: Divides the rows into groups (windows). The calculation resets at the start of each partition.<br>• <code>ORDER BY column</code>: Specifies the sequence in which rows are processed inside each partition.</p>
+        
+        <h2>3. Value Functions: LAG() and LEAD()</h2>
+        <p>In time-series analysis and financial reporting, you frequently need to compare the current month's sales with the previous month's sales to calculate growth rates.</p>
+        <p>Before window functions, developers had to write messy, slow SELF JOINs on dates. With <code>LAG()</code> and <code>LEAD()</code>, you look backward or forward in the result set in a single line of code.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Demonstrating ROW_NUMBER(), RANK(), and DENSE_RANK() on Ties</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    student_name,
+    score,
+    ROW_NUMBER() OVER (ORDER BY score DESC) AS row_num,
+    RANK()       OVER (ORDER BY score DESC) AS rnk,
+    DENSE_RANK() OVER (ORDER BY score DESC) AS dense_rnk
+FROM exam_scores;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how ties are handled: ROW_NUMBER gives 1,2,3; RANK gives 1,2,2,4; DENSE_RANK gives 1,2,2,3.
+        </div>
+        
+        <h3>Code Example 2: Partitioning by Category: Top Earners per Department</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">WITH ranked_employees AS (
+    SELECT 
+        emp_id,
+        emp_name,
+        department,
+        salary,
+        DENSE_RANK() OVER (
+            PARTITION BY department 
+            ORDER BY salary DESC
+        ) AS dept_salary_rank
+    FROM employees
+)
+SELECT * 
+FROM ranked_employees
+WHERE dept_salary_rank &lt;= 2; -- Top 2 highest-paid employees in EVERY department!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>PARTITION BY department</code> resets the rank back to 1 for each department. The CTE allows filtering on <code>dept_salary_rank</code> in the outer WHERE clause.
+        </div>
+        
+        <h3>Code Example 3: Month-Over-Month Revenue Growth with LAG()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    sales_month,
+    revenue,
+    LAG(revenue, 1) OVER (ORDER BY sales_month) AS prev_month_revenue,
+    ROUND(
+        ((revenue - LAG(revenue, 1) OVER (ORDER BY sales_month)) / 
+          LAG(revenue, 1) OVER (ORDER BY sales_month)) * 100, 
+        2
+    ) AS mom_growth_percent
+FROM monthly_financials;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>LAG(revenue, 1)</code> fetches the previous row's revenue, allowing instant percentage growth calculations without a self-join.
+        </div>
+        
+        <h3>Code Example 4: Cumulative Running Total with Window Frames</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    order_id,
+    order_date,
+    order_amount,
+    -- Running total calculated from the start of time up to the current row
+    SUM(order_amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS cumulative_running_total
+FROM orders;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • As the query scans down the table, each row displays the rolling accumulated sum of all prior orders.
+        </div>
+        
+        <h3>Code Example 5: 7-Day Moving Average for Analytics Dashboards</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    metric_date,
+    active_users,
+    ROUND(AVG(active_users) OVER (
+        ORDER BY metric_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ), 2) AS moving_avg_7_day
+FROM daily_metrics;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>ROWS BETWEEN 6 PRECEDING AND CURRENT ROW</code> smooths out weekend dips by averaging the last 7 daily data points.
+        </div>
+        
+        <h3>Code Example 6: Comparing Individual Row to Department Average in the Same Query</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    emp_name,
+    department,
+    salary,
+    ROUND(AVG(salary) OVER (PARTITION BY department), 2) AS dept_avg_salary,
+    salary - ROUND(AVG(salary) OVER (PARTITION BY department), 2) AS diff_from_dept_avg
+FROM employees;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Every employee row displays their personal salary right next to their department average.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Advanced Window Functions: OVER, PARTITION BY, RANK & LEAD/LAG</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Window Functions Sandbox
+CREATE TABLE leaderboard (
+    player_name VARCHAR(50),
+    game_score INT
+);
+
+INSERT INTO leaderboard VALUES
+('Aarav', 950),
+('Priya', 950),
+('Rohan', 880),
+('Sneha', 810),
+('Vikram', 750);
+
+-- Compare ROW_NUMBER, RANK, and DENSE_RANK on tied scores
+SELECT 
+    player_name,
+    game_score,
+    ROW_NUMBER() OVER (ORDER BY game_score DESC) AS row_num,
+    RANK()       OVER (ORDER BY game_score DESC) AS rnk,
+    DENSE_RANK() OVER (ORDER BY game_score DESC) AS dense_rnk
+FROM leaderboard;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Trying to use Window Functions in a WHERE clause:</strong> Writing <code>WHERE ROW_NUMBER() OVER (...) &lt;= 3</code> is illegal because WHERE runs before window functions. Always wrap in a CTE!</li><li><strong>Confusing RANK() and DENSE_RANK():</strong> Using RANK() when you need sequential ranking leads to skipped ranks when ties occur (e.g. 1st, 2nd, 2nd, 4th). Use DENSE_RANK() to avoid gaps.</li><li><strong>Omitting ORDER BY in running totals:</strong> If you write <code>SUM(amount) OVER (PARTITION BY customer)</code> without ORDER BY, the engine computes the grand total for the customer on every row, rather than a running incremental total!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>WINDOW clause reusability:</strong> If multiple window functions use the same window specification, name it using the <code>WINDOW</code> clause: <code>WINDOW w AS (PARTITION BY dept ORDER BY salary DESC)</code> and reuse it as <code>OVER w</code>.</li><li><strong>The Nth Highest Salary Pattern:</strong> The cleanest way to solve LeetCode 177/178 (Nth highest salary) is <code>WITH r AS (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank FROM emp) SELECT DISTINCT salary FROM r WHERE rank = N;</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Window functions perform analytical calculations without collapsing individual rows.</li><li>ROW_NUMBER produces consecutive unique numbers (1,2,3,4).</li><li>RANK assigns ties equal values and skips subsequent numbers (1,2,2,4).</li><li>DENSE_RANK assigns ties equal values without skipping (1,2,2,3).</li><li>LAG() looks backward; LEAD() looks forward in the result set.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a query to assign a sequential row number to every product in the <code>products</code> table, ordered by price descending.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use ROW_NUMBER() OVER (ORDER BY price DESC).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    product_name,
+    price,
+    ROW_NUMBER() OVER (ORDER BY price DESC) AS price_rank
+FROM products;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a query using a CTE and DENSE_RANK() to find the 2nd highest salary in the entire <code>employees</code> table.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WITH ranked AS (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk FROM employees) SELECT DISTINCT salary FROM ranked WHERE rnk = 2.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">WITH ranked_salaries AS (
+    SELECT 
+        salary,
+        DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank
+    FROM employees
+)
+SELECT DISTINCT salary AS second_highest_salary
+FROM ranked_salaries
+WHERE salary_rank = 2;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Given a table <code>daily_sales (sale_date, amount)</code>, write a query that outputs <code>sale_date</code>, <code>amount</code>, <code>prev_day_amount</code>, and <code>daily_change</code> (current day amount minus previous day amount).</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use LAG(amount, 1) OVER (ORDER BY sale_date).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    sale_date,
+    amount,
+    LAG(amount, 1) OVER (ORDER BY sale_date) AS prev_day_amount,
+    amount - LAG(amount, 1) OVER (ORDER BY sale_date) AS daily_change
+FROM daily_sales
+ORDER BY sale_date ASC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="GROUP BY reduces row count to one per group; Window functions evaluate across a partition while retaining every row.">
+          <div class="quiz-question-text">1. What is the fundamental difference between a Window Function and GROUP BY?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Window functions only work on numbers</div><div class="quiz-option"><span>B)</span> GROUP BY collapses rows into a summary; Window functions preserve every individual row</div><div class="quiz-option"><span>C)</span> Window functions are deprecated</div><div class="quiz-option"><span>D)</span> GROUP BY cannot use SUM</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="RANK() skips positions after a tie: 1, 2, 2, 4. DENSE_RANK() would assign 1, 2, 2, 3.">
+          <div class="quiz-question-text">2. If three candidates tie for 2nd place with score 90, what ranks will RANK() assign to the first 4 runners?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 1, 2, 3, 4</div><div class="quiz-option"><span>B)</span> 1, 2, 2, 4 (skips 3)</div><div class="quiz-option"><span>C)</span> 1, 2, 2, 3 (no skip)</div><div class="quiz-option"><span>D)</span> 1, 1, 1, 1</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>LAG()</code> accesses earlier rows in the specified window order.">
+          <div class="quiz-question-text">3. Which function allows you to retrieve values from the immediately preceding row?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> LEAD()</div><div class="quiz-option"><span>B)</span> LAG()</div><div class="quiz-option"><span>C)</span> PREV()</div><div class="quiz-option"><span>D)</span> PRIOR()</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="WHERE filters source rows before window functions evaluate; you must wrap the window function in a CTE or subquery to filter on it.">
+          <div class="quiz-question-text">4. Can you filter by a window function directly inside the WHERE clause?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Yes, in all SQL databases</div><div class="quiz-option"><span>B)</span> No, because WHERE executes before Window Functions are computed (must wrap in CTE or subquery)</div><div class="quiz-option"><span>C)</span> Only if using SQLite</div><div class="quiz-option"><span>D)</span> Only with integer columns</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="PARTITION BY divides rows into analytical groups so that ranks and totals reset for each partition.">
+          <div class="quiz-question-text">5. What does PARTITION BY do inside the OVER() clause?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Partitions the physical hard drive</div><div class="quiz-option"><span>B)</span> Splits the dataset into separate analytical windows where calculations reset</div><div class="quiz-option"><span>C)</span> Deletes rows matching a condition</div><div class="quiz-option"><span>D)</span> Creates an index</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change the query to PARTITION BY player_name and observe how each player becomes their own individual window!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#window-function" class="ref-pill">Glossary: Window Function</a><a href="../reference/glossary.html#dense-rank" class="ref-pill">Glossary: DENSE_RANK</a><a href="09-indexing-and-performance.html" class="ref-pill">Lesson 09: Indexing & Performance</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="07-subqueries-and-ctes.html" class="btn btn-outline">&larr; 07. Subqueries & CTEs</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-08">Mark as Complete</button>
+          <a href="09-indexing-and-performance.html" class="btn btn-primary">09. Indexing & Performance &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Named Colors &amp; HTML Entities — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-bottom: 30px; }
+    .color-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; }
+    .color-swatch { height: 75px; width: 100%; border-bottom: 1px solid var(--border-color); }
+    .color-info { padding: 10px 12px; }
+    .color-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .color-hex { font-family: var(--font-code); font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+    .btn-copy-sm { background: transparent; border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 6px; font-size: 11px; cursor: pointer; color: var(--text-muted); }
+    .btn-copy-sm:hover { background: var(--c-primary); color: white; border-color: var(--c-primary); }
+    .entity-table { width: 100%; border-collapse: collapse; margin-top: 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
+    .entity-table th, .entity-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-color); text-align: left; }
+    .entity-char { font-size: 20px; font-weight: bold; width: 60px; text-align: center; }
+  </style>
+</head>
+<body data-course="reference" data-current-lesson="colors-and-entities.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-reference-light); color:var(--c-reference); border:1px solid var(--c-reference-border);">&#128218; Built-in Reference</span>
+            <span class="reading-time">&#127912; Visual Palette &amp; Symbols</span>
+          </div>
+          <h1 class="lesson-title">CSS Named Colors &amp; HTML Entity Codes</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">A visual reference of standard web colors with one-click hex copying, alongside essential HTML special characters, currency signs, and mathematical symbols.</span>
+            <span class="lang-hi">CSS standard colors ka visual palette aur HTML special entities (copyright, currency, arrows) ka complete offline table.</span>
+          </p>
+        </div>
+
+        <!-- Section 1: Colors -->
+        <h2>1. Standard Web Colors (Curated Palette)</h2>
+        <p>Click "Copy" to immediately grab the hex value for any color:</p>
+        <div class="color-grid">
+          <!-- Colors -->
+          <div class="color-card">
+            <div class="color-swatch" style="background:#0f172a;"></div>
+            <div class="color-info"><div class="color-name">Slate Dark (Navy)</div><div class="color-hex"><span>#0f172a</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#0f172a')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#38bdf8;"></div>
+            <div class="color-info"><div class="color-name">Sky Blue (Accent)</div><div class="color-hex"><span>#38bdf8</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#38bdf8')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#e34f26;"></div>
+            <div class="color-info"><div class="color-name">HTML Orange</div><div class="color-hex"><span>#e34f26</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#e34f26')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#1572b6;"></div>
+            <div class="color-info"><div class="color-name">CSS Blue</div><div class="color-hex"><span>#1572b6</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#1572b6')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#f7df1e;"></div>
+            <div class="color-info"><div class="color-name">JavaScript Yellow</div><div class="color-hex"><span>#f7df1e</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#f7df1e')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#10b981;"></div>
+            <div class="color-info"><div class="color-name">Emerald Green</div><div class="color-hex"><span>#10b981</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#10b981')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#ef4444;"></div>
+            <div class="color-info"><div class="color-name">Danger Red</div><div class="color-hex"><span>#ef4444</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#ef4444')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#a855f7;"></div>
+            <div class="color-info"><div class="color-name">Purple Glow</div><div class="color-hex"><span>#a855f7</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#a855f7')">Copy</button></div></div>
+          </div>
+          <div class="color-card">
+            <div class="color-swatch" style="background:#ffffff; border:1px solid #ccc;"></div>
+            <div class="color-info"><div class="color-name">Pure White</div><div class="color-hex"><span>#ffffff</span><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('#ffffff')">Copy</button></div></div>
+          </div>
+        </div>
+
+        <!-- Section 2: HTML Entities -->
+        <h2>2. Essential HTML Character Entities</h2>
+        <p>Reserved characters like <code>&lt;</code> and <code>&gt;</code> cannot be written directly into HTML text without causing parsing errors. Use their entity names or decimal codes:</p>
+
+        <div class="table-responsive">
+          <table class="entity-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Description</th>
+                <th>Entity Name</th>
+                <th>Decimal Code</th>
+                <th>Copy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="entity-char">&copy;</td><td>Copyright symbol</td><td><code>&amp;copy;</code></td><td><code>&amp;#169;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&copy;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&trade;</td><td>Trademark symbol</td><td><code>&amp;trade;</code></td><td><code>&amp;#8482;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&trade;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&reg;</td><td>Registered symbol</td><td><code>&amp;reg;</code></td><td><code>&amp;#174;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&reg;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&lt;</td><td>Less than (strictly reserved)</td><td><code>&amp;lt;</code></td><td><code>&amp;#60;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&lt;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&gt;</td><td>Greater than (strictly reserved)</td><td><code>&amp;gt;</code></td><td><code>&amp;#62;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&gt;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&amp;</td><td>Ampersand (strictly reserved)</td><td><code>&amp;amp;</code></td><td><code>&amp;#38;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&amp;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&euro;</td><td>Euro currency</td><td><code>&amp;euro;</code></td><td><code>&amp;#8364;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&euro;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&#8377;</td><td>Indian Rupee currency</td><td><code>&amp;#8377;</code></td><td><code>&amp;#8377;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&#8377;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&rarr;</td><td>Right arrow</td><td><code>&amp;rarr;</code></td><td><code>&amp;#8594;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&rarr;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&larr;</td><td>Left arrow</td><td><code>&amp;larr;</code></td><td><code>&amp;#8592;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&larr;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&check;</td><td>Check mark</td><td><code>&amp;check;</code></td><td><code>&amp;#10003;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&check;')">Copy</button></td></tr>
+              <tr><td class="entity-char">&bull;</td><td>Bullet point</td><td><code>&amp;bull;</code></td><td><code>&amp;#8226;</code></td><td><button class="btn-copy-sm" onclick="navigator.clipboard.writeText('&bull;')">Copy</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="cheatsheets.html" class="nav-btn prev-btn">&larr; Cheatsheets</a>
+          <a href="../practice/index.html" class="nav-btn next-btn">Practice Challenges &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

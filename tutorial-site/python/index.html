@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python 3 Masterclass &amp; AI Engineering — WebDev Academy</title>
+  <meta name="description" content="Complete, self-contained Python 3 curriculum from absolute zero to advanced production: Core syntax, Data Types tree, OOP, Web APIs (Flask/FastAPI), Django MVT, Data Science (NumPy/Pandas/Matplotlib), Machine Learning, Deep Learning, NLP, CV, and 100+ Interview Questions.">
+  <meta name="keywords" content="Python course, learn Python, Python tutorial, FastAPI, Django, NumPy, Pandas, Scikit-Learn, Deep Learning, Computer Vision, Python certification">
+  <meta property="og:title" content="Python 3 Masterclass & AI Engineering — WebDev Academy">
+  <meta property="og:description" content="Master Python 3 from zero to production AI. 100% offline, zero dependencies.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Course Hero Banner -->
+        <div class="course-hero" style="background: linear-gradient(135deg, var(--c-python-light) 0%, var(--bg-surface) 100%); border: 1px solid var(--c-python-border); border-radius: var(--radius-lg); padding: 2.5rem 2rem; margin-bottom: 2rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom: 0.75rem;">
+            <span class="badge" style="background:var(--c-python); color:#fff; font-weight:700;">Complete Track</span>
+            <span style="font-size:0.85rem; color:var(--text-muted);">&#128338; ~8 Hours to Complete</span>
+            <span style="font-size:0.85rem; color:var(--text-muted);">&#128218; 20 In-Depth Lessons</span>
+          </div>
+          <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem;">
+            Python 3 Masterclass, Web APIs &amp; AI Engineering
+          </h1>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); max-width: 850px; margin-bottom: 1.5rem;">
+            Go from absolute zero to production-grade Python engineering. Master core syntax, hierarchical data structures (Lists, Tuples, Dicts, Sets), Object-Oriented Architecture, Web Frameworks (Flask, FastAPI, Django), Data Science (NumPy, Pandas, Matplotlib), Machine Learning, Deep Learning, and 100+ Interview Questions.
+          </p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="01-introduction-setup.html" class="btn btn-primary" style="background:var(--c-python); border-color:var(--c-python);">Start Course: Lesson 01 &rarr;</a>
+            <a href="#course-exam" class="btn btn-outline">Take Final Certification Exam (20 MCQs)</a>
+            <a href="20-python-interview-guide.html" class="btn btn-outline">🎯 Top 100 Interview Q&amp;A</a>
+          </div>
+        </div>
+
+        <!-- 4-Stage Learning Roadmap -->
+        <h2>The 4-Stage Python Curriculum Roadmap</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0 2.5rem 0;">
+          <div class="card" style="border-top: 4px solid var(--c-python);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-python); text-transform:uppercase;">Phase 1 &bull; Foundations</div>
+            <h4 style="margin: 0.35rem 0;">Core &amp; Data Types Tree</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">Syntax, dynamic typing, operators, strings, and the hierarchical sequence tree: Lists, Tuples, Dictionaries, and Sets.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-python);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-python); text-transform:uppercase;">Phase 2 &bull; Architecture</div>
+            <h4 style="margin: 0.35rem 0;">OOP &amp; Systems</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">Conditionals, loops, *args/**kwargs, closures, OOP classes, inheritance, MRO, exception handling, and packages.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-python);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-python); text-transform:uppercase;">Phase 3 &bull; Full-Stack</div>
+            <h4 style="margin: 0.35rem 0;">Web APIs &amp; Databases</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">SQLite, PostgreSQL, SQLAlchemy ORM, microservices with Flask, async APIs with FastAPI, and full-stack Django MVT.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-python);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-python); text-transform:uppercase;">Phase 4 &bull; Intelligence</div>
+            <h4 style="margin: 0.35rem 0;">Data Science &amp; AI</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">NumPy vectorization, Pandas DataFrames, Matplotlib visuals, Scikit-Learn ML, Deep Learning, OpenCV, and NLP.</p>
+          </div>
+        </div>
+
+        <!-- Curriculum Table -->
+        <h2>Full Lesson Directory</h2>
+        <div class="curriculum-list" style="margin: 1.5rem 0 3rem 0; display:flex; flex-direction:column; gap:0.75rem;">
+          
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 14 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="01-introduction-setup.html" style="color:var(--text-primary); text-decoration:none;">01. Python 3 Introduction, Setup &amp; Virtual Environments</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Bytecode, PVM execution, PEP 8 style guide, and isolated venv management.</p>
+            </div>
+            <a href="01-introduction-setup.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 15 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="02-syntax-variables-datatypes.html" style="color:var(--text-primary); text-decoration:none;">02. Python Variables, Dynamic Typing &amp; Primitive Data Types</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Reference labels, memory id(), type casting, small integer caching (-5 to 256), and garbage collection.</p>
+            </div>
+            <a href="02-syntax-variables-datatypes.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 15 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="03-numbers-booleans-operators.html" style="color:var(--text-primary); text-decoration:none;">03. Python Numbers, Booleans, Math &amp; Advanced Operators</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">True division (/), floor division (//), bitwise operators, math module, and the Walrus operator (:=).</p>
+            </div>
+            <a href="03-numbers-booleans-operators.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 16 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="04-strings-and-string-methods.html" style="color:var(--text-primary); text-decoration:none;">04. Python Strings, String Slicing &amp; Core Built-in Methods</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Immutability, advanced slicing [start:stop:step], f-strings formatting, and string methods.</p>
+            </div>
+            <a href="04-strings-and-string-methods.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md); border-left:4px solid var(--c-python);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Data Types Tree &bull; 1 &amp; 2</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="05-lists-and-tuples.html" style="color:var(--text-primary); text-decoration:none;">05. Python Data Types: Lists &amp; Tuples in Depth</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Mutable vs immutable, dynamic arrays, list comprehensions, sorting, and tuple keys.</p>
+            </div>
+            <a href="05-lists-and-tuples.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md); border-left:4px solid var(--c-python);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Data Types Tree &bull; 3 &amp; 4</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="06-dictionaries-and-sets.html" style="color:var(--text-primary); text-decoration:none;">06. Python Data Types: Dictionaries &amp; Sets in Depth</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Hashmaps, O(1) lookups, dictionary comprehensions, merging (|), and set Venn operations.</p>
+            </div>
+            <a href="06-dictionaries-and-sets.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 16 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="07-conditionals-and-loops.html" style="color:var(--text-primary); text-decoration:none;">07. Control Flow: Conditionals, Match-Case &amp; Iteration Loops</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Pattern matching (match-case), enumerate, zip, and the loop 'else' clause.</p>
+            </div>
+            <a href="07-conditionals-and-loops.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 17 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="08-functions-args-kwargs-lambda.html" style="color:var(--text-primary); text-decoration:none;">08. Functions, *args, **kwargs, Closures &amp; Lambda Expressions</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Arbitrary arguments, mutable default argument trap, closures, and lambdas.</p>
+            </div>
+            <a href="08-functions-args-kwargs-lambda.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="09-oop-classes-objects.html" style="color:var(--text-primary); text-decoration:none;">09. Object-Oriented Python: Classes, Objects, self &amp; Encapsulation</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Constructors, explicit self, @classmethod, @staticmethod, and @property getters/setters.</p>
+            </div>
+            <a href="09-oop-classes-objects.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 19 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="10-oop-inheritance-polymorphism.html" style="color:var(--text-primary); text-decoration:none;">10. OOP Inheritance, Polymorphism, super() &amp; Abstract Base Classes</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Multiple inheritance, MRO C3 Linearization, Duck Typing, and abc.ABC contracts.</p>
+            </div>
+            <a href="10-oop-inheritance-polymorphism.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="11-error-handling-and-files.html" style="color:var(--text-primary); text-decoration:none;">11. Exception Handling, Custom Errors &amp; Context Managers (with)</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">try/except/else/finally, custom exceptions, UTF-8 file I/O, and custom context managers.</p>
+            </div>
+            <a href="11-error-handling-and-files.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 16 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="12-modules-packages-pip.html" style="color:var(--text-primary); text-decoration:none;">12. Python Modules, Packages, __name__ &amp; Dependency Management</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">sys.path resolution, __name__ == '__main__', __init__.py, and requirements.txt.</p>
+            </div>
+            <a href="12-modules-packages-pip.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="13-database-sqlite-postgres.html" style="color:var(--text-primary); text-decoration:none;">13. Python Database Connectivity: SQLite, PostgreSQL &amp; SQLAlchemy</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">DB-API 2.0, parameterized queries stopping SQL injection, and modern SQLAlchemy 2.0.</p>
+            </div>
+            <a href="13-database-sqlite-postgres.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 19 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="14-flask-and-fastapi.html" style="color:var(--text-primary); text-decoration:none;">14. Modern Web APIs: Flask vs High-Performance Async FastAPI</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">WSGI vs ASGI, async/await, Pydantic validation, and Swagger OpenAPI auto-docs.</p>
+            </div>
+            <a href="14-flask-and-fastapi.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 20 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="15-django-fundamentals.html" style="color:var(--text-primary); text-decoration:none;">15. Full-Stack Web Development with Django &amp; The MVT Architecture</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">MVT architecture, Django ORM, migrations, auto-generated Admin dashboard, and DRF.</p>
+            </div>
+            <a href="15-django-fundamentals.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 20 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="16-numpy-and-pandas.html" style="color:var(--text-primary); text-decoration:none;">16. Data Science Foundations: Vectorized Computing with NumPy &amp; Pandas</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">ndarrays, broadcasting, DataFrames, .loc vs .iloc indexing, and groupby analytics.</p>
+            </div>
+            <a href="16-numpy-and-pandas.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="17-data-visualization-matplotlib.html" style="color:var(--text-primary); text-decoration:none;">17. Data Visualization: Matplotlib Architecture, Charts &amp; Aesthetics</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Figure &amp; Axes OO plotting, multi-plot subplots grids, and Seaborn statistical visuals.</p>
+            </div>
+            <a href="17-data-visualization-matplotlib.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 21 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="18-machine-learning-scikit-learn.html" style="color:var(--text-primary); text-decoration:none;">18. Machine Learning with Scikit-Learn: Models, Pipelines &amp; Metrics</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Supervised pipelines, train_test_split, StandardScaler, Regression, and Confusion Matrix.</p>
+            </div>
+            <a href="18-machine-learning-scikit-learn.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 22 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="19-deep-learning-nlp-cv.html" style="color:var(--text-primary); text-decoration:none;">19. Deep Learning, Natural Language Processing &amp; Computer Vision (OpenCV)</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Neural networks, backpropagation, CNNs for vision, NLP tokenization, and Transformers.</p>
+            </div>
+            <a href="19-deep-learning-nlp-cv.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced" style="background:var(--c-python); color:#fff;">Interview Prep</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 25 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="20-python-interview-guide.html" style="color:var(--text-primary); text-decoration:none;">20. 🎯 Top 100 Python Interview Questions, GIL Deep-Dive &amp; LeetCode</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">GIL internals, memory management, LRU Cache, Two Sum, generators, and metaclasses.</p>
+            </div>
+            <a href="20-python-interview-guide.html" class="btn btn-primary btn-sm" style="background:var(--c-python); border-color:var(--c-python);">Study Guide &rarr;</a>
+          </div>
+
+        </div>
+
+        <!-- 20-Question Final Certification Exam -->
+        <h2 id="course-exam">Python Master Certification Exam (20 MCQs)</h2>
+        <p>Test your comprehensive Python engineering proficiency. Score 80% or higher (16/20) to unlock your official Certificate of Completion!</p>
+
+        <div class="quiz-container" id="python-course-exam">
+          
+          <div class="quiz-question-item" data-correct="1" data-explanation="Python source (.py) is compiled into bytecode (.pyc) and then interpreted by the Python Virtual Machine (PVM).">
+            <div class="quiz-question-text">1. Is Python interpreted or compiled?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Purely interpreted directly from human text</div>
+              <div class="quiz-option"><span>B)</span> Both: source code is compiled into intermediate bytecode (.pyc) and interpreted by the PVM</div>
+              <div class="quiz-option"><span>C)</span> Purely compiled to native x86 machine binary</div>
+              <div class="quiz-option"><span>D)</span> Neither</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="PEP 8 prescribes 4 spaces per indentation level.">
+            <div class="quiz-question-text">2. What is the standard indentation recommended by PEP 8?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 2 spaces</div>
+              <div class="quiz-option"><span>B)</span> 4 spaces</div>
+              <div class="quiz-option"><span>C)</span> 1 tab character</div>
+              <div class="quiz-option"><span>D)</span> 8 spaces</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="== checks value equality; 'is' checks whether operands share the exact same physical memory address.">
+            <div class="quiz-question-text">3. What is the difference between '==' and 'is' in Python?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They are exact synonyms</div>
+              <div class="quiz-option"><span>B)</span> '==' checks value equality; 'is' checks memory identity (address)</div>
+              <div class="quiz-option"><span>C)</span> 'is' only works on strings</div>
+              <div class="quiz-option"><span>D)</span> '==' is deprecated</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Floor division // rounds down towards negative infinity, so -7 // 2 = -4.">
+            <div class="quiz-question-text">4. What does the expression -7 // 2 evaluate to in Python 3?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> -3</div>
+              <div class="quiz-option"><span>B)</span> -4</div>
+              <div class="quiz-option"><span>C)</span> -3.5</div>
+              <div class="quiz-option"><span>D)</span> Error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="s[::-1] uses a step of -1 to reverse any sequence in Python in O(N) time.">
+            <div class="quiz-question-text">5. Which slicing expression reverses a string in Python?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> s[1:0:-1]</div>
+              <div class="quiz-option"><span>B)</span> s[::-1]</div>
+              <div class="quiz-option"><span>C)</span> s[-1:0]</div>
+              <div class="quiz-option"><span>D)</span> s.reverse()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Lists are mutable; Tuples are immutable.">
+            <div class="quiz-question-text">6. What is the fundamental difference between a List and a Tuple?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Lists only store numbers</div>
+              <div class="quiz-option"><span>B)</span> Lists are mutable; Tuples are immutable</div>
+              <div class="quiz-option"><span>C)</span> Tuples cannot be indexed</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="{} creates an empty dict. You must write set() to create an empty set.">
+            <div class="quiz-question-text">7. How do you create an empty Set in Python?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> s = {}</div>
+              <div class="quiz-option"><span>B)</span> s = set()</div>
+              <div class="quiz-option"><span>C)</span> s = []</div>
+              <div class="quiz-option"><span>D)</span> s = ()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="The loop else clause runs only if the loop exhausted all iterations without hitting a break.">
+            <div class="quiz-question-text">8. When does the 'else' block attached to a for-loop execute?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Only if an error occurs</div>
+              <div class="quiz-option"><span>B)</span> Only when the loop finishes naturally without encountering a break</div>
+              <div class="quiz-option"><span>C)</span> Every time the loop iterates</div>
+              <div class="quiz-option"><span>D)</span> If the list was empty</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Default arguments are evaluated once at function definition time, sharing the mutable list across all calls.">
+            <div class="quiz-question-text">9. Why is 'def append_to(item, lst=[]):' dangerous in Python?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It causes a syntax error</div>
+              <div class="quiz-option"><span>B)</span> The default list is created once at function definition time and shared across all calls</div>
+              <div class="quiz-option"><span>C)</span> It deletes the list on return</div>
+              <div class="quiz-option"><span>D)</span> Lists cannot be arguments</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="*args captures arbitrary positional arguments as a tuple; **kwargs captures keyword arguments as a dict.">
+            <div class="quiz-question-text">10. What types do *args and **kwargs unpack into inside a function?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> list and tuple</div>
+              <div class="quiz-option"><span>B)</span> tuple and dict</div>
+              <div class="quiz-option"><span>C)</span> set and list</div>
+              <div class="quiz-option"><span>D)</span> string and number</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="self refers explicitly to the specific instance of the class executing the method.">
+            <div class="quiz-question-text">11. What is the 'self' parameter in class instance methods?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A global keyword</div>
+              <div class="quiz-option"><span>B)</span> An explicit reference to the current object instance</div>
+              <div class="quiz-option"><span>C)</span> A garbage collector variable</div>
+              <div class="quiz-option"><span>D)</span> A type annotation</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="super() delegates method calls to the next class in the Method Resolution Order (MRO).">
+            <div class="quiz-question-text">12. What does super() do in Python inheritance?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Overrides computer permissions</div>
+              <div class="quiz-option"><span>B)</span> Delegates method calls to parent classes following the Method Resolution Order (MRO)</div>
+              <div class="quiz-option"><span>C)</span> Destroys child classes</div>
+              <div class="quiz-option"><span>D)</span> Imports packages</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Context Managers implement __enter__ and __exit__ to ensure automatic resource cleanup.">
+            <div class="quiz-question-text">13. What methods must a class implement to be used with the 'with' statement?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> __init__ and __del__</div>
+              <div class="quiz-option"><span>B)</span> __enter__ and __exit__</div>
+              <div class="quiz-option"><span>C)</span> __open__ and __close__</div>
+              <div class="quiz-option"><span>D)</span> __start__ and __stop__</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="0" data-explanation="When run directly from terminal, __name__ is set to '__main__'.">
+            <div class="quiz-question-text">14. What is __name__ set to when a file is executed directly?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> '__main__'</div>
+              <div class="quiz-option"><span>B)</span> The file's name</div>
+              <div class="quiz-option"><span>C)</span> 'root'</div>
+              <div class="quiz-option"><span>D)</span> None</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Parameterized queries pass parameters separately from the SQL statement, neutralizing injection.">
+            <div class="quiz-question-text">15. How do you prevent SQL Injection when querying databases in Python?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Use f-strings</div>
+              <div class="quiz-option"><span>B)</span> Use parameterized queries passing values as tuples to cursor.execute()</div>
+              <div class="quiz-option"><span>C)</span> Use uppercase letters in queries</div>
+              <div class="quiz-option"><span>D)</span> Disable database passwords</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="FastAPI uses Pydantic for data parsing, type validation, and serialization.">
+            <div class="quiz-question-text">16. What library does FastAPI use for data validation and OpenAPI schema generation?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> SQLAlchemy</div>
+              <div class="quiz-option"><span>B)</span> Pydantic</div>
+              <div class="quiz-option"><span>C)</span> NumPy</div>
+              <div class="quiz-option"><span>D)</span> Django</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="select_related() performs an SQL JOIN on ForeignKey fields to eliminate the N+1 query problem.">
+            <div class="quiz-question-text">17. In Django ORM, how do you solve the N+1 query problem for ForeignKeys?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Use raw SQL</div>
+              <div class="quiz-option"><span>B)</span> Use select_related() to perform an SQL JOIN</div>
+              <div class="quiz-option"><span>C)</span> Disable migrations</div>
+              <div class="quiz-option"><span>D)</span> Call .all() twice</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation=".loc is label-based; .iloc is integer position-based.">
+            <div class="quiz-question-text">18. What is the difference between .loc and .iloc in Pandas?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> There is no difference</div>
+              <div class="quiz-option"><span>B)</span> .loc uses row/column labels; .iloc uses 0-based integer positions</div>
+              <div class="quiz-option"><span>C)</span> .loc only works on numbers</div>
+              <div class="quiz-option"><span>D)</span> .iloc is deprecated</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Recall measures the percentage of actual positive cases successfully caught by the model.">
+            <div class="quiz-question-text">19. In Machine Learning, what metric measures the proportion of actual positive cases correctly detected?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Precision</div>
+              <div class="quiz-option"><span>B)</span> Recall</div>
+              <div class="quiz-option"><span>C)</span> Accuracy</div>
+              <div class="quiz-option"><span>D)</span> Specificity</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="The GIL protects CPython's reference counting memory management from multi-thread race conditions.">
+            <div class="quiz-question-text">20. What is the primary purpose of the Python GIL (Global Interpreter Lock)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To speed up file writing</div>
+              <div class="quiz-option"><span>B)</span> To protect CPython's reference counting memory management by preventing multiple threads from executing bytecode simultaneously</div>
+              <div class="quiz-option"><span>C)</span> To encrypt code</div>
+              <div class="quiz-option"><span>D)</span> To prevent Python from using RAM</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <div style="margin-top: 2.5rem; padding: 2rem; background: var(--bg-surface); border: 2px dashed var(--c-python-border); border-radius: var(--radius-lg); text-align: center;">
+          <h3 style="color:var(--c-python);">&#127891; Claim Your Python 3 Masterclass Certificate</h3>
+          <p style="color:var(--text-secondary); max-width:600px; margin: 0.5rem auto 1.5rem auto;">
+            Score 16 or higher on the exam above, then generate your personalized, verifiable certificate of completion.
+          </p>
+          <a href="../certificate/index.html?course=python" class="btn btn-primary" style="background:var(--c-python); border-color:var(--c-python);">Generate Course Certificate &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

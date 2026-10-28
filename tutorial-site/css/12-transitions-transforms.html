@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Transitions &amp; Transforms — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="12-transitions-transforms.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 12</span>
+          </div>
+          <h1 class="lesson-title">CSS Transitions &amp; 2D/3D Transforms</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Bring interfaces to life with silky smooth 60fps GPU-accelerated motion and spatial transformations.</span>
+            <span class="lang-hi">Silky smooth 60fps motion: Transitions, 2D/3D Transforms (translate, rotate, scale) aur GPU acceleration seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 4 transition properties: property, duration, timing function, and delay.</li>
+            <li>The Golden Rule of Performance: Why animating <code>transform</code> and <code>opacity</code> guarantees 60fps, while animating <code>top</code> or <code>width</code> stutters.</li>
+            <li>2D spatial manipulations: <code>translate</code>, <code>rotate</code>, <code>scale</code>, and <code>skew</code>.</li>
+            <li>Altering the pivot point with <code>transform-origin</code>.</li>
+            <li>Chaining multiple transforms in a single declaration.</li>
+            <li>Building the famous tactile "Card Lift &amp; Shadow Glow" hover interaction.</li>
+            <li>Hardware acceleration hints with <code>will-change</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="11-pseudo-classes-pseudo-elements.html">11. Pseudo-Classes &amp; Pseudo-Elements</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Teleporting Light Switch vs Dimmer Slider</div>
+          <p>
+            <span class="lang-en">Imagine turning on a room light:
+            <br>&bull; <strong>No Transition:</strong> A binary light switch. One millisecond it is pitch black, the next it is blinding bright. It feels harsh, jarring, and unnatural.
+            <br>&bull; <strong>CSS Transition:</strong> A modern smart dimmer dial! When switched on, the light gently ramps up over 200 milliseconds. Your eyes feel soothed and guided.
+            <br>&bull; <strong>CSS Transform:</strong> Picking up a paper photograph with your fingers. You can slide it across the table (<code>translate</code>), spin it (<code>rotate</code>), or bring it closer to your eyes (<code>scale</code>) &mdash; all without altering the physical furniture of the room!</span>
+            <span class="lang-hi">Light switch aur Dimmer knob ki tarah sochiye: Bina transition ke light achanak jal jati hai jo jhatka deti hai. Transition ke sath roshni dheere-dheere smooth tarike se badhti hai. Transform ek photo ko ghumane ya aage-peeche karne jaisa hai bina room ke furniture ko hilaye!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Anatomy of a CSS Transition</h2>
+        <p>
+          A transition interpolates property changes smoothly over time rather than jumping abruptly. The shorthand syntax requires 4 values:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-css); border-radius:var(--radius-sm); font-family:var(--font-mono);">
+          transition: [property] [duration] [timing-function] [delay];
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Full Transition Syntax</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.interactive-btn {
+  background-color: #2563eb;
+  transform: translateY(0);
+  
+  /* Transition only what changes! */
+  transition: 
+    background-color 0.2s ease-in-out,
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px); /* Slight lift */
+}</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Timing Functions: The Curve of Speed</h2>
+        <p>
+          Physical real-world objects have mass and inertia; they do not start or stop instantaneously at full velocity:
+        </p>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Timing Function</th>
+              <th style="padding:10px;">Feel / Physical Behavior</th>
+              <th style="padding:10px;">Best Used For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>linear</code></td>
+              <td style="padding:10px;">Robotic, constant speed from start to finish</td>
+              <td style="padding:10px;">Spinners, continuous rotating wheels</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>ease-out</code></td>
+              <td style="padding:10px;">Starts fast, decelerates gently at the end</td>
+              <td style="padding:10px;">Entering elements (modals sliding into screen)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>ease-in</code></td>
+              <td style="padding:10px;">Starts slow, accelerates toward the finish</td>
+              <td style="padding:10px;">Exiting elements (popups closing off-screen)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>ease-in-out</code></td>
+              <td style="padding:10px;">Smooth acceleration and smooth deceleration</td>
+              <td style="padding:10px;">Hover color fades, card lifts</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Section 3 -->
+        <h2>3. CSS Transforms: The 4 Fundamental Operations</h2>
+        <p>
+          Transforms modify the coordinate space of an element without causing the browser to recalculate the page layout (reflow). This makes them lightning fast:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Transform Quadrant</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. TRANSLATE: Move along X, Y, or Z axis */
+.moved {
+  transform: translate(20px, -10px); /* 20px right, 10px up */
+}
+
+/* 2. SCALE: Resize proportionally without shifting neighbors */
+.zoomed {
+  transform: scale(1.1); /* 10% larger */
+}
+
+/* 3. ROTATE: Spin around origin in degrees */
+.spun {
+  transform: rotate(45deg); /* 45 degrees clockwise */
+}
+
+/* 4. SKEW: Slant along X or Y axis */
+.slanted {
+  transform: skewX(-10deg);
+}
+
+/* 5. CHAINING: Multiple transforms combined (Applied Right-to-Left) */
+.hero-card:hover {
+  transform: translateY(-6px) scale(1.02) rotate(1deg);
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Performance Law: GPU vs CPU Animation</h2>
+        <p>
+          The browser pipeline consists of: <strong>Layout (Reflow) &rarr; Paint (Repaint) &rarr; Composite (GPU)</strong>.
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-error); border-radius:var(--radius-sm);">
+          <strong>The Golden Rule:</strong> NEVER animate properties that trigger Layout (e.g. <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, <code>margin</code>, <code>padding</code>). They force the CPU to recalculate the positions of every element on the page, causing battery drain and frame drops.
+          <br><br>
+          ONLY animate <strong>Composite Properties</strong> handled directly by the GPU: <code>transform</code> and <code>opacity</code>!
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Laggy vs 60fps Smooth Motion</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* BAD (Laggy, CPU Reflow!): */
+.bad-modal {
+  top: -100px;
+  transition: top 0.3s ease; /* Triggers reflow on every frame */
+}
+.bad-modal.active {
+  top: 50px;
+}
+
+/* GOOD (Silky Smooth 60fps GPU Composite!): */
+.good-modal {
+  transform: translateY(-100px);
+  transition: transform 0.3s ease; /* Zero reflow! GPU moves pixel texture */
+}
+.good-modal.active {
+  transform: translateY(0);
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Real-World Recipe: The Tactile 3D Hover Card</h2>
+        <p>
+          Notice how modern enterprise web applications (Stripe, GitHub) make cards feel physically responsive to human touch:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The Elevated Card Hover Recipe</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.interactive-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+
+  /* Explicitly declare hardware composite transition */
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform; /* Tells GPU to create a dedicated composite layer */
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px); /* Clean upward physical lift */
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.12); /* Deep atmospheric shadow */
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Experiment with Transforms</h2>
+        <p>
+          Hover over the card below and adjust rotation or scale:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: 60fps Motion Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    background: #f1f5f9;
+  }
+
+  .card {
+    width: 240px;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card:hover {
+    /* Try changing translateY(-6px) or scale(1.05) */
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 16px 24px -6px rgba(59, 130, 246, 0.25);
+    border-color: #3b82f6;
+  }
+
+  .icon {
+    font-size: 2.5rem;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .icon {
+    transform: rotate(15deg) scale(1.2);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">&#128640;</div>
+    <h3 style="margin-top:12px;">Cloud Launch</h3>
+    <p style="color:#64748b; font-size:0.85rem; margin-top:6px;">Instant deployment in seconds.</p>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Using <code>transition: all 0.3s</code>:</strong> <code>all</code> forces the browser to evaluate every single CSS property for changes on every frame. Always name exact properties: <code>transition: transform 0.2s, opacity 0.2s;</code>.</li>
+            <li><strong>Overusing long durations:</strong> Transitions longer than <code>0.3s</code> (300ms) make websites feel sluggish and unresponsive. Keep micro-interactions between <code>150ms</code> and <code>250ms</code>.</li>
+            <li><strong>Animating inline elements:</strong> Transforms do NOT work on <code>&lt;span&gt;</code> or <code>&lt;a&gt;</code> by default! You must set <code>display: inline-block</code> or <code>display: block</code> first.</li>
+            <li><strong>Abusing <code>will-change</code>:</strong> Declaring <code>will-change: transform</code> on hundreds of elements consumes huge amounts of GPU VRAM memory. Use it sparingly on primary interactive elements only.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Transform-Origin for accordion carets:</strong> When rotating an arrow dropdown icon from pointing down to pointing up, set <code>transform: rotate(180deg); transform-origin: center;</code> for seamless symmetry.</li>
+            <li><strong>Cubic-Bezier for bouncy buttons:</strong> <code>cubic-bezier(0.34, 1.56, 0.64, 1)</code> adds a tiny natural bounce overshoot that feels delightfully tactile.</li>
+            <li><strong>Centering with translate:</strong> Combine <code>position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);</code> to center elements of unknown width and height relative to their parent!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Transitions smooth out state changes: <code>transition: [prop] [duration] [timing] [delay]</code>.</li>
+            <li>Only animate composite properties: <code>transform</code> and <code>opacity</code> for 60fps GPU smoothness.</li>
+            <li>Transforms do not alter page flow: <code>translate</code>, <code>rotate</code>, <code>scale</code>, <code>skew</code>.</li>
+            <li>Transforms require block or inline-block formatting contexts.</li>
+            <li>Micro-interaction golden standard duration is 150ms to 250ms.</li>
+            <li>Never use <code>transition: all</code> in production CSS.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Smooth Button Hover</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the transition declaration on <code>.btn</code> to animate its <code>background-color</code> over 200ms using the <code>ease</code> timing curve.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: transition: background-color 0.2s ease;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>transition: background-color 0.2s ease;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Flip an Accordion Arrow</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>An arrow icon <code>.arrow</code> has <code>display: inline-block;</code> and <code>transition: transform 0.2s ease;</code>. Write the CSS selector to rotate the arrow 180 degrees when its parent <code>.accordion.open</code> has the open class.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: .accordion.open .arrow { transform: rotate(180deg); }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.accordion.open .arrow {
+  transform: rotate(180deg);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): GPU-Accelerated Slide-In Drawer</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the CSS for a mobile drawer <code>.mobile-drawer</code> that is hidden 100% off the left edge of the screen using transforms, and slides smoothly onto the screen when given the class <code>.is-open</code> without using <code>left</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: transform: translateX(-100%); and translateX(0).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-drawer.is-open {
+  transform: translateX(0);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 12 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="transform and opacity are handled entirely on the GPU composite layer without causing CPU layout reflows.">
+            <div class="quiz-question-text">1. Which pair of CSS properties should you prioritize animating for peak 60fps performance?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> width and height</div>
+              <div class="quiz-option"><span>B)</span> transform and opacity</div>
+              <div class="quiz-option"><span>C)</span> top and left</div>
+              <div class="quiz-option"><span>D)</span> margin and padding</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Inline elements do not have a transformable bounding box; display must be inline-block or block.">
+            <div class="quiz-question-text">2. Why does applying 'transform: rotate(45deg)' to a raw &lt;span&gt; have no effect?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Rotate only accepts radians</div>
+              <div class="quiz-option"><span>B)</span> 45 degrees is too small</div>
+              <div class="quiz-option"><span>C)</span> Spans only support 3D transforms</div>
+              <div class="quiz-option"><span>D)</span> Inline elements do not support CSS transforms unless converted to inline-block or block</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="transition: all tests every single CSS property for changes, dragging down performance.">
+            <div class="quiz-question-text">3. Why do senior developers advise AGAINST using 'transition: all 0.3s'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It forces the browser to calculate potential transitions for every single property, harming performance</div>
+              <div class="quiz-option"><span>B)</span> It triggers automatic JavaScript popups</div>
+              <div class="quiz-option"><span>C)</span> It is deprecated in CSS3</div>
+              <div class="quiz-option"><span>D)</span> It stops fonts from loading</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="150ms to 250ms provides clear visual feedback without feeling sluggish or tedious.">
+            <div class="quiz-question-text">4. What is the recommended ideal duration for UI micro-interactions (button clicks, hovers)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 2 seconds</div>
+              <div class="quiz-option"><span>B)</span> 800 milliseconds</div>
+              <div class="quiz-option"><span>C)</span> 150 to 250 milliseconds</div>
+              <div class="quiz-option"><span>D)</span> 0 milliseconds</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="translate moves elements relative to their current coordinates without pushing sibling elements.">
+            <div class="quiz-question-text">5. What happens to surrounding sibling elements when an element has 'transform: translateY(-10px)'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They jump upwards by 10px</div>
+              <div class="quiz-option"><span>B)</span> Nothing; sibling elements stay in their original positions because transforms do not trigger reflow</div>
+              <div class="quiz-option"><span>C)</span> They become transparent</div>
+              <div class="quiz-option"><span>D)</span> They collapse to 0 width</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Shaking Error Input</h3>
+          <p>
+            In the live editor, create an <code>.input-error</code> class that uses <code>transform: translateX(4px)</code> with a fast <code>0.1s</code> transition to mimic a subtle password rejection nudge!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#transitions" class="ref-pill">Transitions &amp; Transforms Reference</a>
+            <a href="../reference/glossary.html#transition" class="ref-pill">Glossary: Transition</a>
+            <a href="../reference/glossary.html#transform" class="ref-pill">Glossary: Transform</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Animation Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="11-pseudo-classes-pseudo-elements.html" class="btn btn-outline">&larr; Previous: Pseudo-Classes &amp; Pseudo-Elements</a>
+          <button class="mark-complete-btn" data-lesson-id="css-12">Mark as Complete</button>
+          <a href="13-animations-keyframes.html" class="btn btn-primary">Next: CSS Animations &amp; Keyframes &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

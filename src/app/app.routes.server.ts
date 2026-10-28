@@ -87,6 +87,7 @@ export const STATIC_PRERENDER_ROUTES: string[] = [
   'games/tic-tac-toe',
   'games/brick-breaker',
   'games/pong',
+  'typing-speed-test',
   'typing-master',
   'resume-builder',
   'about',
@@ -113,7 +114,9 @@ export const STATIC_PRERENDER_ROUTES: string[] = [
   'developer-tools/sql/subqueries',
   'developer-tools/sql/foreign-keys',
   'developer-tools/sql/views',
-  'developer-tools/sql/playground'
+  'developer-tools/sql/playground',
+  'developer-tools/web-tutorials',
+  'ai-chat'
 ];
 
 export const serverRoutes: ServerRoute[] = [

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Data Visualization: Matplotlib Architecture, Charts & Aesthetics — WebDev Academy</title>
+  <meta name="description" content="Turn numbers into actionable visual stories. Master Matplotlib's Figure and Axes object-oriented architecture, line charts, bar plots, scatter plots, histograms, subplots grids, and modern statistical aesthetics with Seaborn.">
+  <meta name="keywords" content="Matplotlib tutorial, Python data visualization, Figure Axes Matplotlib, bar chart Python, scatter plot, histograms, Seaborn Python">
+  <meta property="og:title" content="Data Visualization: Matplotlib Architecture, Charts & Aesthetics">
+  <meta property="og:description" content="Turn numbers into actionable visual stories. Master Matplotlib's Figure and Axes object-oriented architecture, line charts, bar plots, scatter plots, histograms, subplots grids, and modern statistical aesthetics with Seaborn.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="17-data-visualization-matplotlib.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 17</span>
+          </div>
+          <h1 class="lesson-title">Data Visualization: Matplotlib Architecture, Charts & Aesthetics</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Turn numbers into actionable visual stories. Master Matplotlib's Figure and Axes object-oriented architecture, line charts, bar plots, scatter plots, histograms, subplots grids, and modern statistical aesthetics with Seaborn.</span>
+            <span class="lang-hi">Data Visualization seekhein: Matplotlib Figure aur Axes architecture, Line/Bar/Scatter charts, Histograms, Subplots grid aur Seaborn styling.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The architecture of Matplotlib: Figure (the canvas) vs Axes (the individual plot).</li><li>The Object-Oriented interface vs the legacy pyplot stateful interface.</li><li>Creating core visualization types: Line plots, Bar charts, Scatter plots, and Histograms.</li><li>Architecting multi-chart dashboards using plt.subplots(nrows, ncols).</li><li>Customizing charts: Titles, labels, legends, grid lines, colors, and annotations.</li><li>Elevating aesthetic beauty with Seaborn styles and statistical distribution plots.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 16: Data Science: NumPy & Pandas.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of an art exhibition. <strong>The Matplotlib Figure is the physical wooden frame on the wall</strong> &mdash; it defines the overall size and canvas border. <strong>The Axes is the actual canvas painting inside the frame</strong> &mdash; it holds the X-axis, the Y-axis, the colors, data points, and labels. A single wooden frame (Figure) can hold 4 separate canvas paintings side-by-side (Subplots)! <strong>Seaborn is like hiring an Italian interior designer</strong>: instead of raw black-and-white lines, it applies elegant color palettes, stylish backgrounds, and statistical curves with a single line of code!</span>
+            <span class="lang-hi">Art exhibition ki misaal lein: <strong>Figure deewar par laga hua photo frame hai</strong> (jo overall size decide karta hai). <strong>Axes frame ke andar ki drawing hai</strong> jisme X-axis, Y-axis aur chart bane hote hain. Ek frame ke andar 4 alag alag paintings bhi ho sakti hain (Subplots)! <strong>Seaborn ek professional artist jaisa hai</strong> jo aam charts ko khoobsurat colors aur statistical graphs me convert kar deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Figure vs Axes in Matplotlib (The #1 Confusion):</strong><br>• <code>Figure</code>: The top-level bounding window/canvas that holds all elements, subplots, and titles.<br>• <code>Axes</code>: The actual plot area containing the data, coordinate systems, tick marks, labels, and geometry. A Figure can contain one or multiple Axes.</li><li><strong>Pyplot (Stateful) vs Object-Oriented (OO) API:</strong> The legacy <code>plt.plot()</code> interface relies on a hidden global state. Senior engineers use the <strong>Object-Oriented API</strong> (<code>fig, ax = plt.subplots()</code>), which is explicit, modular, and essential for complex multi-plot figures.</li><li><strong>Choosing the right chart type:</strong><br>• <strong>Line Chart:</strong> Continuous time-series trends.<br>• <strong>Bar Chart:</strong> Comparing categorical metrics.<br>• <strong>Scatter Plot:</strong> Correlation between two continuous variables.<br>• <strong>Histogram:</strong> Frequency distribution of a single continuous variable.<br>• <strong>Box Plot:</strong> Outliers and quartile distributions.</li><li><strong>Exporting High-Resolution Figures:</strong> Always export using <code>fig.savefig('plot.png', dpi=300, bbox_inches='tight')</code> for crisp print/publication quality with zero clipped labels.</li><li><strong>plt.close(fig):</strong> In web applications or automated reporting pipelines, always call <code>plt.close(fig)</code> after rendering to release memory and avoid severe memory leaks!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Matplotlib and How is it Structured?</h2>
+        <p>Created by John D. Hunter in 2003, <strong>Matplotlib</strong> is Python's most widely used 2D plotting library. It provides complete, pixel-level control over every visual element.</p>
+        <p>Understanding the hierarchy between the top-level <strong>Figure</strong> and the data-bearing <strong>Axes</strong> is the key to mastering Matplotlib.</p>
+        
+        <h2>2. The Object-Oriented Interface: fig, ax = plt.subplots()</h2>
+        <p>While tutorials often show quick scripts using <code>plt.plot()</code>, production applications and data pipelines use the Object-Oriented interface.</p>
+        <p><code>fig, ax = plt.subplots()</code> explicitly separates the canvas (<code>fig</code>) from the plotting coordinate system (<code>ax</code>), making code modular and reusable.</p>
+        
+        <h2>3. Enhancing Visuals with Seaborn</h2>
+        <p>Built on top of Matplotlib, <strong>Seaborn</strong> integrates directly with Pandas DataFrames.</p>
+        <p>It provides modern color palettes, publication-ready themes, and complex statistical charts (heatmaps, violin plots, regression plots) with minimal code.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Object-Oriented Line Chart with Styling and Annotations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import matplotlib.pyplot as plt
+# import numpy as np
+# 
+# months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+# revenue = [45000, 52000, 61000, 58000, 72000, 85000]
+# 
+# # Object-Oriented initialization
+# fig, ax = plt.subplots(figsize=(8, 4.5))
+# 
+# # Plot line with markers
+# ax.plot(months, revenue, color='#2563eb', marker='o', linewidth=2.5, label='2024 Revenue')
+# 
+# # Customization
+# ax.set_title('Monthly Revenue Growth', fontsize=14, fontweight='bold')
+# ax.set_xlabel('Month', fontsize=11)
+# ax.set_ylabel('Revenue in USD ($)', fontsize=11)
+# ax.grid(True, linestyle='--', alpha=0.5)
+# ax.legend(loc='upper left')
+# 
+# # Annotate peak month
+# ax.annotate('Record High!', xy=('Jun', 85000), xytext=('Apr', 80000),
+#             arrowprops=dict(facecolor='black', shrink=0.05, width=1))
+# 
+# plt.show()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The Object-Oriented syntax (<code>ax.set_title</code>, <code>ax.plot</code>) keeps plot customization clear and modular.
+        </div>
+        
+        <h3>Code Example 2: Creating Categorical Bar Charts</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import matplotlib.pyplot as plt
+# 
+# languages = ['Python', 'JavaScript', 'Java', 'SQL', 'C++']
+# developers_count = [3200, 2800, 2100, 2600, 1400]
+# colors = ['#38bdf8', '#facc15', '#f97316', '#2dd4bf', '#a855f7']
+# 
+# fig, ax = plt.subplots(figsize=(7, 4))
+# bars = ax.bar(languages, developers_count, color=colors, width=0.6)
+# 
+# # Add value labels on top of bars
+# ax.bar_label(bars, padding=3)
+# ax.set_title('Developer Language Adoption')
+# ax.set_ylim(0, 3600)
+# plt.show()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>ax.bar_label()</code> automatically calculates and renders value labels above each bar.
+        </div>
+        
+        <h3>Code Example 3: Multi-Plot Dashboard Grids with plt.subplots(2, 2)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import matplotlib.pyplot as plt
+# import numpy as np
+# 
+# x = np.linspace(0, 10, 100)
+# 
+# # Create a 2x2 grid of subplots in a single figure!
+# fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+# 
+# axes[0, 0].plot(x, np.sin(x), 'r-'); axes[0, 0].set_title('Sine Wave')
+# axes[0, 1].plot(x, np.cos(x), 'b-'); axes[0, 1].set_title('Cosine Wave')
+# axes[1, 0].scatter(x[::5], np.random.randn(20), color='g'); axes[1, 0].set_title('Scatter Noise')
+# axes[1, 1].hist(np.random.randn(500), bins=20, color='purple'); axes[1, 1].set_title('Normal Distribution')
+# 
+# fig.tight_layout()  # Automatically adjusts subplot spacing
+# plt.show()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>plt.subplots(2, 2)</code> returns an array of Axes, allowing complex dashboard layouts in a single figure.
+        </div>
+        
+        <h3>Code Example 4: Histogram for Frequency Distributions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import matplotlib.pyplot as plt
+# import numpy as np
+# 
+# exam_scores = np.random.normal(loc=75, scale=10, size=1000)
+# 
+# fig, ax = plt.subplots(figsize=(7, 4))
+# ax.hist(exam_scores, bins=25, edgecolor='black', color='#38bdf8', alpha=0.7)
+# ax.set_title('Distribution of Exam Scores (Normal Bell Curve)')
+# ax.set_xlabel('Score')
+# ax.set_ylabel('Student Frequency')
+# plt.show()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Histograms divide continuous metrics into bins to reveal underlying frequency distributions.
+        </div>
+        
+        <h3>Code Example 5: Scatter Plot for Correlation Analysis</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import matplotlib.pyplot as plt
+# 
+# study_hours = [2, 3, 5, 7, 8, 10, 12, 14, 15]
+# exam_grade =  [52, 58, 67, 78, 80, 88, 92, 95, 98]
+# 
+# fig, ax = plt.subplots(figsize=(6, 4))
+# ax.scatter(study_hours, exam_grade, color='#2563eb', s=60, alpha=0.8)
+# ax.set_title('Study Hours vs Exam Score Correlation')
+# ax.set_xlabel('Hours Studied')
+# ax.set_ylabel('Grade Achieved')
+# plt.show()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Scatter plots reveal positive, negative, or nonlinear correlations between continuous variables.
+        </div>
+        
+        <h3>Code Example 6: Saving High-Resolution Figures for Reports</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Save as crisp 300 DPI vector-like graphic with no cropped labels
+# fig.savefig('quarterly_analytics.png', dpi=300, bbox_inches='tight')
+# 
+# # Crucial cleanup in web servers / automated tasks:
+# plt.close(fig)  # Frees figure RAM immediately!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>dpi=300</code> and <code>bbox_inches='tight'</code> produce publication-quality exports without chopped margins.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Data Visualization: Matplotlib Architecture, Charts & Aesthetics</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Visualization Simulator
+# Generate simulated ASCII bar chart
+categories = ['Python', 'SQL', 'FastAPI', 'HTML', 'CSS']
+popularity = [95, 88, 82, 90, 85]
+
+print('=== Developer Technology Popularity ===')
+for cat, pop in zip(categories, popularity):
+    bar = '█' * (pop // 5)
+    print(f'{cat:<10} | {bar} ({pop}%)')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Mixing plt.plot() and ax.plot():</strong> Mixing the procedural pyplot state with object-oriented Axes methods leads to labels appearing on the wrong subplot.</li><li><strong>Forgetting plt.close(fig) in servers:</strong> Matplotlib keeps figures in memory. Generating 1,000 PDF charts in a backend job without <code>plt.close(fig)</code> causes catastrophic out-of-memory crashes.</li><li><strong>Overcrowded subplots without tight_layout():</strong> Subplots overlapping axis labels can be fixed instantly with <code>fig.tight_layout()</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use Seaborn context styles:</strong> Call <code>sns.set_theme(style='whitegrid', palette='muted')</code> at the top of your scripts for instant modern aesthetics.</li><li><strong>Save as PDF or SVG for vector sharpness:</strong> If printing or embedding in documents, save as <code>.pdf</code> or <code>.svg</code> for infinite resolution vector scaling without pixelation!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Figure is the canvas container; Axes is the individual coordinate plot.</li><li>Use the Object-Oriented interface (fig, ax = plt.subplots()) for clean architecture.</li><li>Line plots show trends; Bar plots compare categories; Scatters show correlation; Histograms show distributions.</li><li>Always call fig.tight_layout() to prevent subplot label collisions.</li><li>Always call plt.close(fig) in automated scripts to prevent memory leaks.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What is the difference between a Figure and an Axes in Matplotlib?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> One is the frame/canvas; the other is the graph.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Figure is the top-level canvas window/container that holds all subplots and titles.
+# Axes is the actual individual plot area with X and Y axes, ticks, labels, and charted data.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write the Python code to create a 1x2 side-by-side subplot layout with figure size 10x4, and set the title of the first plot to 'Training Loss' and the second to 'Accuracy'.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4)).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+# ax1.set_title('Training Loss')
+# ax2.set_title('Accuracy')
+# fig.tight_layout()</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Why should backend web applications (like FastAPI/Django) always execute <code>plt.close(fig)</code> after saving or streaming a generated chart image?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about global references and server RAM.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Matplotlib maintains internal global references to every created Figure object
+# in its pyplot state machine so that plt.show() knows what to display.
+# In a web server handling 10,000 requests, these figure objects accumulate in RAM,
+# creating a massive memory leak that eventually crashes the server process unless plt.close(fig) is called.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Figure is the canvas frame; Axes is the individual plot coordinate system.">
+          <div class="quiz-question-text">1. What is the fundamental difference between a Figure and an Axes in Matplotlib?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Figure is for 3D; Axes is for 2D</div><div class="quiz-option"><span>B)</span> Figure is the overall canvas window; Axes is the actual plot containing axes, ticks, and data points</div><div class="quiz-option"><span>C)</span> There is no difference</div><div class="quiz-option"><span>D)</span> Axes is deprecated in modern Python</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Histograms group continuous data into bins to visualize probability distributions.">
+          <div class="quiz-question-text">2. What chart type is ideal for displaying the frequency distribution of a continuous variable (like exam scores)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Pie Chart</div><div class="quiz-option"><span>B)</span> Histogram</div><div class="quiz-option"><span>C)</span> Line Chart</div><div class="quiz-option"><span>D)</span> Gantt Chart</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="0" data-explanation="<code>fig.tight_layout()</code> automatically calculates padding to prevent label overlap.">
+          <div class="quiz-question-text">3. What command automatically prevents overlapping titles and labels in multi-plot subplots?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> fig.tight_layout()</div><div class="quiz-option"><span>B)</span> plt.clean()</div><div class="quiz-option"><span>C)</span> ax.fix_overlap()</div><div class="quiz-option"><span>D)</span> fig.resize()</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Without <code>plt.close(fig)</code>, Matplotlib retains all figure objects in memory indefinitely.">
+          <div class="quiz-question-text">4. Why is plt.close(fig) mandatory in backend reporting pipelines?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It turns off the monitor</div><div class="quiz-option"><span>B)</span> It releases figure memory and prevents fatal server Out Of Memory (OOM) memory leaks</div><div class="quiz-option"><span>C)</span> It deletes the image file</div><div class="quiz-option"><span>D)</span> It prints the image to paper</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Seaborn provides high-level statistical plotting and aesthetic themes on top of Matplotlib.">
+          <div class="quiz-question-text">5. What Python library builds on top of Matplotlib to provide high-level statistical themes and palettes?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Pygame</div><div class="quiz-option"><span>B)</span> Seaborn</div><div class="quiz-option"><span>C)</span> Flask</div><div class="quiz-option"><span>D)</span> SciPy</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change the popularity of Python to 100 and observe how the ASCII bar stretches to 20 blocks!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#visualization" class="ref-pill">Glossary: Data Visualization</a><a href="../reference/glossary.html#matplotlib" class="ref-pill">Glossary: Matplotlib</a><a href="18-machine-learning-scikit-learn.html" class="ref-pill">Lesson 18: Machine Learning: Scikit-Learn</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="16-numpy-and-pandas.html" class="btn btn-outline">&larr; 16. Data Science: NumPy & Pandas</a>
+          <button class="mark-complete-btn" data-lesson-id="python-17">Mark as Complete</button>
+          <a href="18-machine-learning-scikit-learn.html" class="btn btn-primary">18. Machine Learning: Scikit-Learn &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

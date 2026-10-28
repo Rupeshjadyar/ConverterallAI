@@ -4209,6 +4209,52 @@ export const TOOLS_DATA: ToolItem[] = [
     "privacyNote": "Files are processed 100% locally in your browser and never uploaded to any server."
   },
   {
+    "id": "ai-chat",
+    "name": "AI Chat Playground",
+    "slug": "/ai-chat",
+    "categoryId": "developer-tools",
+    "shortDesc": "Multi-LLM AI chat with Groq, Gemini & OpenRouter featuring auto 429 failover and pristine code highlighting.",
+    "fullDesc": "Universal free AI chat interface with Groq (14.4k RPD), Google Gemini Flash, OpenRouter, and Hugging Face. Automatic rate-limit failover and clean code copying.",
+    "icon": "🤖",
+    "badge": "NEW",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": true,
+    "seoTitle": "Free AI Chat - Groq & Gemini Auto-Failover | ConverterAllAI",
+    "seoDescription": "Chat with top free AI models: Groq, Gemini 1.5 Flash, DeepSeek R1, and OpenRouter with auto 429 rate-limit failover and clean code syntax highlighting.",
+    "keywords": "free ai chat, groq playground, gemini flash free, openrouter deepseek r1, ai failover, ai code generator",
+    "h1": "AI Chat Playground & Multi-Model Code Sandbox",
+    "intro": "Experience high-speed AI conversations and code generation with automatic HTTP 429 rate limit failover across Groq, Gemini Flash, OpenRouter, and Hugging Face.",
+    "howToSteps": [
+      "Select an AI provider or keep Auto (Smart Free Routing) enabled.",
+      "Choose your preferred model or context window.",
+      "Type a technical prompt, question, or paste code to debug.",
+      "If a provider hits a rate limit, the system automatically routes to the next model without losing context."
+    ],
+    "features": [
+      "Smart priority routing starting with Groq (14,400 requests/day at 500+ tok/s)",
+      "Automated HTTP 429 failover to Google Gemini 1.5 Flash (1,500 requests/day)",
+      "Pristine syntax highlighting and one-click copy for TypeScript, Python, SQL, and HTML",
+      "100% client-side privacy: API keys never leave your browser"
+    ],
+    "faqs": [
+      {
+        "q": "Is this AI Chat Playground completely free?",
+        "a": "Yes! Both Groq and Google AI Studio offer generous free developer tiers with no credit card required."
+      },
+      {
+        "q": "What happens when a provider hits its rate limit?",
+        "a": "The unified failover service catches the 429 error and immediately routes the request to the next available provider in the chain."
+      }
+    ],
+    "relatedToolPaths": [
+      "/developer-tools/json-formatter",
+      "/developer-tools/sql",
+      "/typing-master"
+    ],
+    "privacyNote": "Your chats and API keys are stored 100% locally in your browser and never uploaded to our servers."
+  },
+  {
     "id": "json-formatter",
     "name": "JSON Formatter & Validator",
     "slug": "/developer-tools/json-formatter",
@@ -4261,6 +4307,52 @@ export const TOOLS_DATA: ToolItem[] = [
       "/pdf-processing/pdf-to-text"
     ],
     "privacyNote": "Payloads are parsed locally in your browser and never transmitted to any server."
+  },
+  {
+    "id": "web-tutorials",
+    "name": "Learn through ConverterAllAI",
+    "slug": "/developer-tools/web-tutorials",
+    "categoryId": "developer-tools",
+    "shortDesc": "Interactive coding tutorials for HTML, CSS, JavaScript, Java, Python, and SQL with live code runner.",
+    "fullDesc": "Comprehensive coding masterclass covering HTML5, CSS3, JavaScript, Java, Python, and SQL with interactive sidebar navigation, live code execution, and certifications powered by ConverterAllAI.",
+    "icon": "🌐",
+    "badge": "HOT",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "Web Coding Tutorials - HTML CSS JS Python | ConverterAllAI",
+    "seoDescription": "Master HTML, CSS, JavaScript, Java, Python, and SQL with complete interactive tutorials, live code runner, and step-by-step developer guides on ConverterAllAI.",
+    "keywords": "learn through converterallai, html tutorial, css tutorial, javascript tutorial, java tutorial, python tutorial, sql tutorial, learn web development, code runner",
+    "h1": "Learn through ConverterAllAI - Developer Tutorials & Interactive Code Runner",
+    "intro": "Learn HTML, CSS, and JavaScript step by step. Switch between technologies easily with language tabs, explore all topic chapters in the accordion sidebar, and test code live.",
+    "howToSteps": [
+      "Select HTML, CSS, or JavaScript from the top navigation tabs.",
+      "Browse chapters and topics from the left accordion sidebar.",
+      "Study concept definitions and inspect example source code.",
+      "Click Try it Yourself to run and preview code instantly in your browser."
+    ],
+    "features": [
+      "Full HTML, CSS, and JavaScript curriculum with 80+ comprehensive topics",
+      "Interactive Try-it-yourself sandbox with real-time browser preview",
+      "Instant topic search and filter functionality",
+      "Dark and light theme support with auto-saving preferences"
+    ],
+    "faqs": [
+      {
+        "q": "Are these web developer tutorials free to use?",
+        "a": "Yes, all tutorials, code examples, and the interactive sandbox are 100% free with no account required."
+      },
+      {
+        "q": "Can I test my own HTML, CSS, and JS code?",
+        "a": "Yes, clicking the Try it Yourself button opens an in-browser live output preview."
+      }
+    ],
+    "relatedToolPaths": [
+      "/developer-tools/sql",
+      "/developer-tools/json-formatter",
+      "/typing-master"
+    ],
+    "privacyNote": "All code is previewed and executed locally inside your browser."
   },
   {
     "id": "sql-masterclass",
@@ -4418,11 +4510,73 @@ export const TOOLS_DATA: ToolItem[] = [
       }
     ],
     "relatedToolPaths": [
+      "/typing-speed-test",
       "/developer-tools/sql",
       "/developer-tools/json-formatter",
       "/resume-builder",
       "/games/spelling-bee"
     ],
     "privacyNote": "Typing keystrokes and metrics are calculated locally inside your browser."
+  },
+  {
+    "id": "typing-speed-test",
+    "name": "Typing Speed Test (WPM)",
+    "slug": "/typing-speed-test",
+    "categoryId": "developer-tools",
+    "shortDesc": "Accurately test and measure your typing speed (WPM) and keystroke accuracy with instant scorecard.",
+    "fullDesc": "Free online typing speed test with real-time Words Per Minute (WPM), accuracy, and consistency tracking. Includes 1-minute, 3-minute, and 5-minute tests, custom word sets, quotes, and downloadable scorecards.",
+    "icon": "⚡",
+    "badge": "HOT",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "Typing Speed Test Free - 1 Min WPM Test | ConverterAllAI",
+    "seoDescription": "Check your typing speed (WPM) and accuracy online for free. Real-time words-per-minute counter, error diagnostics, 1-min & 3-min tests, and certified scorecards.",
+    "keywords": "typing speed test, typing test online free, 1 minute typing test, wpm test, words per minute test, keyboard speed test, check typing speed, typing speed test 60 seconds",
+    "h1": "Free Online Typing Speed Test (WPM Test)",
+    "intro": "Measure your keyboard typing speed and precision in real-time. Practice 1-minute, 3-minute, or 5-minute tests with live speed graphs, certified scorecards, and zero ads.",
+    "howToSteps": [
+      "Select your test duration (15s, 30s, 60s / 1 min, or 3-5 minutes) or word count mode.",
+      "Choose your preferred vocabulary (English Easy/Medium/Hard, Hinglish, or Code snippets).",
+      "Start typing immediately into the active text stream—the timer begins on your first keystroke.",
+      "Review your post-test report displaying Net WPM, accuracy, consistency, and error analysis, then download your certified scorecard."
+    ],
+    "features": [
+      "100% in-browser zero-latency client typing engine with smooth animated caret",
+      "Real-time Net WPM, Gross WPM, Accuracy %, and Consistency % tracking",
+      "Dynamic HTML5 speed trajectory chart displaying WPM progression and error markers",
+      "Instant high-resolution PNG Certificate Scorecard generator for sharing achievements",
+      "Diverse practice datasets including 1000+ English words, Roman Hindi (Hinglish), and code snippets",
+      "Web Audio API mechanical keyboard and typewriter sound synthesizers with zero external audio assets"
+    ],
+    "faqs": [
+      {
+        "q": "How is Words Per Minute (WPM) calculated accurately?",
+        "a": "In standard typing metrics, one word equals exactly 5 keystrokes (including letters, punctuation, and spaces). Gross WPM is calculated as (Total Characters Typed / 5) divided by time in minutes. Net WPM subtracts uncorrected errors: Net WPM = ((Correct Characters / 5) / Elapsed Minutes). Net WPM is the true metric for typing competence."
+      },
+      {
+        "q": "What is considered a good typing speed on a 1-minute test?",
+        "a": "The worldwide average typing speed is 38 to 41 WPM. A speed of 50-65 WPM is considered good for office productivity. Software engineers and writers commonly hit 70-85 WPM. Speeds above 90 WPM place you in the top 5% of typists globally."
+      },
+      {
+        "q": "Should I prioritize typing accuracy or typing speed first?",
+        "a": "Always prioritize accuracy above 95% first! Typing fast with high errors forces frequent backspacing, which cripples overall velocity. Once finger muscle memory becomes instinctual and errors drop, speed naturally and effortlessly increases."
+      },
+      {
+        "q": "Can I take typing speed tests in Hinglish or Code mode?",
+        "a": "Yes! ConverterAllAI features dedicated Roman Hindi (Hinglish) word banks (300+ conversational words) as well as a JavaScript/CSS Code snippet mode designed specifically for programmers."
+      },
+      {
+        "q": "How do I generate and download a certified typing scorecard?",
+        "a": "After completing any typing test, click the 'Download Certificate' button. The tool automatically draws a high-resolution, watermark-free PNG certificate with your Net WPM, accuracy, time duration, and verified skill tier."
+      }
+    ],
+    "relatedToolPaths": [
+      "/typing-master",
+      "/developer-tools/web-tutorials",
+      "/developer-tools/json-formatter",
+      "/resume-builder"
+    ],
+    "privacyNote": "All typing inputs and speed calculations are processed 100% locally in your browser."
   }
 ];

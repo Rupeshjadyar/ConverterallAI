@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Database Indexing, B-Trees & Query Optimization — WebDev Academy</title>
+  <meta name="description" content="Understand how database search engines work under the hood. Learn B-Tree index anatomy, Clustered vs Non-Clustered indexes, Composite Indexes with the Leftmost Prefix Rule, and how to read EXPLAIN execution plans.">
+  <meta name="keywords" content="SQL indexing, B-Tree index, clustered index, non-clustered index, EXPLAIN ANALYZE, query optimization, composite index leftmost prefix, SQL interview">
+  <meta property="og:title" content="Database Indexing, B-Trees & Query Optimization">
+  <meta property="og:description" content="Understand how database search engines work under the hood. Learn B-Tree index anatomy, Clustered vs Non-Clustered indexes, Composite Indexes with the Leftmost Prefix Rule, and how to read EXPLAIN execution plans.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="09-indexing-and-performance.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 09</span>
+          </div>
+          <h1 class="lesson-title">Database Indexing, B-Trees & Query Optimization</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Understand how database search engines work under the hood. Learn B-Tree index anatomy, Clustered vs Non-Clustered indexes, Composite Indexes with the Leftmost Prefix Rule, and how to read EXPLAIN execution plans.</span>
+            <span class="lang-hi">Database Indexing aur Performance seekhein: B-Tree index kaise kaam karta hai, Clustered vs Non-Clustered index, aur EXPLAIN se queries optimize karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How databases read data from disk: Full Table Scan O(N) vs Index Seek O(log N).</li><li>The internal anatomy of a B+ Tree index: Root node, intermediate branch nodes, and leaf pages.</li><li>Clustered Index (physical table ordering) vs Non-Clustered Index (secondary pointer index).</li><li>Composite (Multi-column) Indexes and the Leftmost Prefix Rule.</li><li>Reading EXPLAIN and EXPLAIN ANALYZE execution plans to diagnose slow queries.</li><li>Index anti-patterns: Why wrapping columns in functions (WHERE YEAR(date) = 2024) disables indexes!</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 08: Window Functions.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a 1,200-page encyclopedia. If you want to find information about 'Jupiter' and there is NO index, you have to start on page 1 and read every single word on all 1,200 pages until you find it &mdash; that is a <strong>Full Table Scan</strong>. <strong>An Index is the alphabetical glossary at the back of the book</strong>. You flip straight to the letter 'J', find 'Jupiter', see 'page 482', and jump directly to that page &mdash; that is an <strong>Index Seek</strong>! Instead of 1,200 page reads, it took 3 seconds!</span>
+            <span class="lang-hi">Ek 1200 panno ki moti kitaab ki misaal lein: agar aapko 'Jupiter' ke baare me dhoondna hai aur index nahi hai, toh page 1 se aakhiri page tak padhna padega (Full Table Scan). <strong>Index kitaab ke peeche di hui alphabetical dictionary jaisa hai</strong>: 'J' par gaye, Jupiter ke aage likha tha 'Page 482', aur seedha wahan pahunch gaye (Index Seek). 1200 page scan karne ke badle 2 second me kaam ho gaya!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>How does a B-Tree Index achieve O(log N) search speed?</strong> A balanced tree divides data into sorted pages. Starting at the root, the engine follows binary/multi-way pointers through branch nodes directly down to leaf nodes, locating records among 100 million rows in just 3 to 4 disk page reads.</li><li><strong>Clustered vs Non-Clustered Index (Major Interview Question!):</strong><br>• <code>Clustered Index</code>: Dictates the physical storage order of rows on disk (only ONE per table, usually the Primary Key). The leaf nodes contain the actual data rows.<br>• <code>Non-Clustered Index</code>: A separate structure sorted alphabetically or numerically that contains index keys and row pointers (RID or clustered key) pointing back to the physical table.</li><li><strong>Leftmost Prefix Rule:</strong> If an index is created on <code>(A, B, C)</code>, it can accelerate queries filtering on <code>(A)</code>, <code>(A, B)</code>, and <code>(A, B, C)</code>. It CANNOT be used for queries filtering only on <code>(B)</code> or <code>(C)</code>!</li><li><strong>Why does <code>WHERE UPPER(email) = 'USER@MAIL.COM'</code> fail to use an index?</strong> Because the database must compute <code>UPPER()</code> on every single row in the table before comparing. Fix by creating a Function-based Index (Expression Index) or storing normalized lowercase text.</li><li><strong>Covering Index:</strong> An index that contains all columns requested by a query (e.g. in SELECT, WHERE, and JOIN). The database engine serves the entire query directly from RAM cache without ever visiting the underlying table (zero table lookups)!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. The Anatomy of an Index: Full Table Scan vs Index Seek</h2>
+        <p>Without an index, the database engine must perform a <strong>Sequential Scan (Full Table Scan)</strong>: reading every single data block from disk into memory. For a table with 10 million rows, this takes seconds or minutes and saturates server I/O.</p>
+        <p>An <strong>Index</strong> is a specialized, sorted data structure (typically a B+ Tree) that enables logarithmic search time <code>O(log N)</code>, finding matching rows in milliseconds.</p>
+        
+        <h2>2. Clustered vs Non-Clustered Indexes</h2>
+        <p>In databases like MySQL InnoDB and Microsoft SQL Server, the <strong>Clustered Index</strong> defines the physical arrangement of the table on disk. Because rows can only be physically sorted in one way, you can have only ONE clustered index per table (almost always your Primary Key).</p>
+        <p><strong>Non-Clustered Indexes (Secondary Indexes)</strong> are auxiliary structures stored separately. The leaf nodes hold the indexed column values along with a pointer back to the clustered row.</p>
+        
+        <h2>3. Diagnosing Queries with EXPLAIN & EXPLAIN ANALYZE</h2>
+        <p>You should never guess whether your query is fast; always verify it using <code>EXPLAIN</code>. EXPLAIN displays the execution plan chosen by the query optimizer:</p>
+        <p>• <code>Seq Scan / ALL</code>: Red flag! Full table scan.<br>• <code>Index Scan / Index Seek</code>: Great! Traversing index tree directly.<br>• <code>Index Only Scan</code>: Optimal! The query is completely covered by the index.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Creating Single-Column and Composite Indexes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- 1. Single column index on frequently searched email field
+CREATE INDEX idx_users_email ON users(email);
+
+-- 2. Composite (Multi-column) index on tenant_id and status
+CREATE INDEX idx_orders_tenant_status 
+ON orders(tenant_id, order_status, order_date DESC);
+
+-- 3. Unique index (enforces uniqueness while indexing)
+CREATE UNIQUE INDEX idx_unique_account_num ON accounts(account_number);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Multi-column index ordering matters: put highest cardinality / equality filter columns first!
+        </div>
+        
+        <h3>Code Example 2: Demonstrating the Leftmost Prefix Rule on Composite Indexes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Index is on (country, state, city)
+
+-- Query 1: USES INDEX (matches leftmost prefix 'country')
+SELECT * FROM locations WHERE country = 'India';
+
+-- Query 2: USES INDEX (matches 'country' and 'state')
+SELECT * FROM locations WHERE country = 'India' AND state = 'Maharashtra';
+
+-- Query 3: CANNOT USE INDEX! (Missing leftmost column 'country')
+-- Forces full table scan!
+SELECT * FROM locations WHERE city = 'Mumbai';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Think of a phonebook sorted by (LastName, FirstName). You can search 'Sharma', or 'Sharma, Rahul', but you cannot search by 'Rahul' alone without reading the whole book!
+        </div>
+        
+        <h3>Code Example 3: Creating a Covering Index (Index Only Scan)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- In PostgreSQL:
+CREATE INDEX idx_users_covering 
+ON users(department_id) 
+INCLUDE (first_name, last_name, salary);
+
+-- This query reads ONLY from the index; never touches table disk blocks!
+SELECT first_name, last_name, salary
+FROM users
+WHERE department_id = 4;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>INCLUDE</code> stores payload columns in the leaf nodes, eliminating secondary table lookups.
+        </div>
+        
+        <h3>Code Example 4: Inspecting Query Plans with EXPLAIN ANALYZE</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- In PostgreSQL:
+EXPLAIN ANALYZE
+SELECT customer_id, order_total
+FROM orders
+WHERE customer_id = 89201;
+
+-- Sample Output Analysis:
+-- Index Scan using idx_orders_cust_id on orders (cost=0.42..8.44 rows=5 width=16) 
+-- Actual time=0.034..0.041 ms
+-- Execution Time: 0.065 ms  &lt;-- Blazing fast 65 microseconds!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>EXPLAIN ANALYZE</code> physically executes the query and reports actual execution time in milliseconds alongside estimated cost.
+        </div>
+        
+        <h3>Code Example 5: The Function Trap (SARGability: Search Argument Able)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- BAD ANTI-PATTERN (Non-SARGable): Disables index on order_date!
+SELECT * FROM orders WHERE YEAR(order_date) = 2024;
+
+-- OPTIMIZED (SARGable): Uses standard B-Tree range scan!
+SELECT * FROM orders 
+WHERE order_date &gt;= '2024-01-01' 
+  AND order_date &lt; '2025-01-01';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Always keep the indexed column bare on one side of the operator so the engine can search the B-Tree directly.
+        </div>
+        
+        <h3>Code Example 6: Creating Partial Indexes (Filtered Indexes)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Only index unpaid invoices (e.g. 2% of the table) to save 98% index RAM!
+CREATE INDEX idx_unpaid_invoices 
+ON invoices(customer_id, due_date)
+WHERE payment_status = 'UNPAID';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Partial indexes save massive disk space and RAM by only indexing rows matching a WHERE clause.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Database Indexing, B-Trees & Query Optimization</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Indexing Sandbox
+CREATE TABLE app_logs (
+    log_id INT PRIMARY KEY,
+    severity VARCHAR(20),
+    message VARCHAR(200),
+    created_at TIMESTAMP
+);
+
+CREATE INDEX idx_logs_severity ON app_logs(severity);
+
+INSERT INTO app_logs VALUES
+(1, 'ERROR', 'Database timeout', NOW()),
+(2, 'INFO',  'User login', NOW()),
+(3, 'ERROR', 'Null pointer exception', NOW());
+
+-- Inspect filtered search
+SELECT log_id, severity, message FROM app_logs WHERE severity = 'ERROR';</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Over-indexing every column:</strong> Every index speeds up reads but SLOWS DOWN writes (INSERT, UPDATE, DELETE) because the database must update every index on disk for every write!</li><li><strong>Wrapping indexed columns in functions (e.g. LOWER(col)):</strong> Forces full table scans unless you create an expression index.</li><li><strong>Indexing small tables:</strong> For tables with fewer than 500 rows, a sequential scan in memory is actually faster than traversing an index tree.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always index Foreign Key columns:</strong> Primary keys are indexed automatically, but foreign keys are NOT in MySQL/PostgreSQL. Missing FK indexes cause full table locks during parent record deletions!</li><li><strong>Monitor Unused Indexes:</strong> In PostgreSQL, query <code>pg_stat_user_indexes</code> periodically and drop indexes with <code>idx_scan = 0</code> to recover storage and accelerate inserts.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>B-Tree indexes provide logarithmic search speed O(log N) instead of linear table scans O(N).</li><li>A Clustered index defines the physical storage order on disk (one per table).</li><li>Non-clustered indexes contain key copies and pointers to rows.</li><li>Composite indexes obey the Leftmost Prefix Rule.</li><li>Always keep indexed columns free of function wrappers to maintain SARGability.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a SQL statement to create an index called <code>idx_cust_phone</code> on the <code>phone_number</code> column of the <code>customers</code> table.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use CREATE INDEX ... ON ...</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">CREATE INDEX idx_cust_phone 
+ON customers(phone_number);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Given an index on <code>(department, role, hire_date)</code>, determine which of the following queries can use the index: A) <code>WHERE department = 'Sales'</code> B) <code>WHERE role = 'Manager'</code> C) <code>WHERE department = 'HR' AND role = 'Recruiter'</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Apply the Leftmost Prefix Rule.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- Queries A and C CAN use the index because they filter starting with the leftmost column 'department'.
+-- Query B CANNOT use the index efficiently because 'department' is missing.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Rewrite this slow query so that it can use a standard B-Tree index on <code>created_at</code>: <code>SELECT * FROM audit_logs WHERE DATE(created_at) = '2024-05-15';</code></h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Change the equality to a range comparison covering the entire day.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT * 
+FROM audit_logs
+WHERE created_at &gt;= '2024-05-15 00:00:00'
+  AND created_at &lt; '2024-05-16 00:00:00';</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="B-Tree indexes provide logarithmic O(log N) search performance by halving/subdividing search branches at each tree level.">
+          <div class="quiz-question-text">1. What is the time complexity of searching a record in a B-Tree index with N rows?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> O(1)</div><div class="quiz-option"><span>B)</span> O(log N)</div><div class="quiz-option"><span>C)</span> O(N)</div><div class="quiz-option"><span>D)</span> O(N^2)</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Because a clustered index determines the physical storage layout on disk, a table can only have ONE clustered index.">
+          <div class="quiz-question-text">2. How many Clustered Indexes can a single relational table have?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> As many as you want</div><div class="quiz-option"><span>B)</span> Exactly one, because physical table rows can only be sorted on disk in one order</div><div class="quiz-option"><span>C)</span> Up to 16</div><div class="quiz-option"><span>D)</span> Zero</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="Every index must be updated whenever a row is inserted, updated, or deleted, adding disk I/O overhead to write operations.">
+          <div class="quiz-question-text">3. What is the trade-off of adding too many indexes to a table?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> The database will refuse to start</div><div class="quiz-option"><span>B)</span> Read queries slow down</div><div class="quiz-option"><span>C)</span> Write performance (INSERT, UPDATE, DELETE) degrades because all indexes must be updated</div><div class="quiz-option"><span>D)</span> Tables become read-only</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="An index on (A, B, C) can only be used if the leftmost column 'A' is included in the filter.">
+          <div class="quiz-question-text">4. Under the Leftmost Prefix Rule, an index on (A, B, C) can accelerate which filter?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> WHERE B = 10</div><div class="quiz-option"><span>B)</span> WHERE C = 'Active'</div><div class="quiz-option"><span>C)</span> WHERE A = 5 AND B = 10</div><div class="quiz-option"><span>D)</span> WHERE B = 10 AND C = 'Active'</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="EXPLAIN ANALYZE runs the query and prints the database optimizer's execution plan with real millisecond timings.">
+          <div class="quiz-question-text">5. What does 'EXPLAIN ANALYZE' do?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Translates SQL to Python</div><div class="quiz-option"><span>B)</span> Executes the query and displays actual run times alongside the query execution plan</div><div class="quiz-option"><span>C)</span> Compresses table data</div><div class="quiz-option"><span>D)</span> Sends error logs to your email</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write an EXPLAIN statement to inspect how the database plans to search for error logs!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#index" class="ref-pill">Glossary: Index</a><a href="../reference/glossary.html#b-tree" class="ref-pill">Glossary: B-Tree</a><a href="10-transactions-acid-normalization.html" class="ref-pill">Lesson 10: ACID & Normalization</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="08-window-functions.html" class="btn btn-outline">&larr; 08. Window Functions</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-09">Mark as Complete</button>
+          <a href="10-transactions-acid-normalization.html" class="btn btn-primary">10. ACID & Normalization &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

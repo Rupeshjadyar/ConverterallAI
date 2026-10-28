@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="02">
+  <title>Java Data Types, Primitives & Literals (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Java 8 primitive types, Wrapper classes, Autoboxing/Unboxing, primitive memory sizes, type casting (widening vs narrowing), and literals.">
+  <meta name="keywords" content="Java primitives, byte short int long float double char boolean, Wrapper classes, Autoboxing, Type casting, Widening narrowing">
+  <meta property="og:title" content="Java Data Types, Primitives & Literals (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Master Java 8 primitive types, Wrapper classes, Autoboxing/Unboxing, primitive memory sizes, type casting (widening vs narrowing), and literals.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-primary">Beginner</span>
+            <span class="badge badge-outline">⏱️ 15 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">02. Data Types, Primitives, Wrappers & Type Casting</h1>
+          <p class="lesson-subtitle">The building blocks of Java memory: 8 primitives, their exact bit allocations, wrapper classes, autoboxing, and casting rules.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 01 (JVM & Memory Architecture).</p>
+            <ul>
+              <li>Memorize the 8 primitive data types, default values, and exact bit ranges.</li><li>Understand Widening (implicit) vs Narrowing (explicit) type casting with overflow.</li><li>Compare Primitives vs Wrapper Objects (`Integer`, `Double`, `Boolean`).</li><li>Master Autoboxing, Unboxing, and the Integer Cache (-128 to 127).</li><li>Learn Java 10+ local variable type inference with `var`.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Measuring Cups & Sealed Tupperware Analogy</h3>
+      <p>Think of primitive data types as different sized measuring spoons and cups in a kitchen:</p>
+      <ul>
+        <li><code>byte</code> (1 byte = 8 bits): A tiny medicine spoon (holds numbers from -128 to 127).</li>
+        <li><code>short</code> (2 bytes = 16 bits): A tea cup (up to 32,767).</li>
+        <li><code>int</code> (4 bytes = 32 bits): A standard water glass (up to 2.14 billion) &mdash; Java's default integer cup!</li>
+        <li><code>long</code> (8 bytes = 64 bits): A giant water jug (up to 9 quintillion).</li>
+      </ul>
+      <p>Pouring water from a tiny spoon into a giant jug is completely safe (<strong>Widening Casting</strong> &mdash; zero risk of spilling). But pouring water from a giant jug into a tiny spoon will spill everywhere (<strong>Narrowing Casting</strong> &mdash; data overflow!).</p>
+      <p><strong>Wrappers:</strong> When you need to ship your water through courier (like Java Collections), you can't just send bare water. You package the water inside a sealed branded Tupperware container (<code>Integer</code> wrapping an <code>int</code>).</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (बाल्टी और गिलास का नियम)</h3>
+      <p>मान लीजिए आपके पास एक 1 लीटर का गिलास है (<code>int</code>) और एक 20 लीटर की बड़ी बाल्टी (<code>long</code>)।</p>
+      <p>अगर आप गिलास का पानी बाल्टी में डालेंगे, तो कोई पानी नहीं गिरेगा (Implicit / Widening Casting - सुरक्षित)। लेकिन अगर भरी हुई 20 लीटर बाल्टी का पानी 1 लीटर के गिलास में जबरदस्ती ठूंसेंगे, तो 19 लीटर पानी बाहर बह जाएगा! इसी को कहते हैं <strong>Narrowing Casting</strong> और डेटा लॉस (Data Overflow)।</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The 8 Java Primitive Types Spectrum</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Size (Bits)</th>
+            <th>Range</th>
+            <th>Default Value</th>
+            <th>Wrapper Class</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>byte</code></td><td>8-bit</td><td>-128 to 127</td><td>0</td><td><code>Byte</code></td></tr>
+          <tr><td><code>short</code></td><td>16-bit</td><td>-32,768 to 32,767</td><td>0</td><td><code>Short</code></td></tr>
+          <tr><td><code>int</code></td><td>32-bit</td><td>-2^31 to 2^31 - 1 (~2.14B)</td><td>0</td><td><code>Integer</code></td></tr>
+          <tr><td><code>long</code></td><td>64-bit</td><td>-2^63 to 2^63 - 1</td><td>0L</td><td><code>Long</code></td></tr>
+          <tr><td><code>float</code></td><td>32-bit</td><td>Single precision IEEE 754</td><td>0.0f</td><td><code>Float</code></td></tr>
+          <tr><td><code>double</code></td><td>64-bit</td><td>Double precision IEEE 754</td><td>0.0d</td><td><code>Double</code></td></tr>
+          <tr><td><code>char</code></td><td>16-bit</td><td>Unicode characters (0 to 65,535)</td><td>'\u0000'</td><td><code>Character</code></td></tr>
+          <tr><td><code>boolean</code></td><td>JVM-spec</td><td><code>true</code> or <code>false</code></td><td>false</td><td><code>Boolean</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. The Java Integer Cache Trap (-128 to 127)</h3>
+      <p>For memory optimization, Java pre-caches instances of <code>Integer</code> objects for values ranging from <code>-128 to 127</code>.</p>
+      <div class="code-box">
+        <pre><code class="language-java">Integer a = 100;
+Integer b = 100;
+System.out.println(a == b); // true (Both point to the same cached object in memory!)
+
+Integer x = 500;
+Integer y = 500;
+System.out.println(x == y); // false! (Exceeds cache, so two distinct Heap objects are allocated)
+System.out.println(x.equals(y)); // true (Always use .equals for object values!)</code></pre>
+      </div>
+
+      <h3>3. Java 10+ Local Variable Type Inference (`var`)</h3>
+      <p>Introduced in Java 10, the <code>var</code> keyword instructs the compiler to infer the type automatically at compile-time based on the right-hand initialization. Java remains 100% statically typed!</p>
+      <div class="code-box">
+        <pre><code class="language-java">var count = 10;                     // Inferred as int
+var message = "Enterprise Ready";   // Inferred as String
+var map = new HashMap&lt;String, List&lt;Integer&gt;&gt;(); // Clean syntax avoiding boilerplate!</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is the difference between Primitive and Wrapper types? Explain Autoboxing, Unboxing, and the Integer Cache."</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Storage & Memory Overhead:</strong> Primitives store raw binary values directly on the stack without object headers (e.g. 4 bytes for int). Wrappers are complete objects on the heap with 16-24 bytes of overhead (object header, padding, reference).</li><li><strong>Nullability:</strong> Primitives cannot be null (int defaults to 0). Wrappers are references and can be null, meaning unboxing a null Integer causes NullPointerException.</li><li><strong>Java Collections Compatibility:</strong> Java Collections (like List<T>, Map<K,V>) only accept objects, so primitives must be boxed into wrappers (List<Integer>, not List<int>).</li><li><strong>Integer Cache Mechanism:</strong> Integer.valueOf() reuses pre-cached flyweight objects for values -128 to 127, causing == to evaluate to true within this range but false outside.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always emphasize: "Never use == to compare Wrapper objects because it checks memory reference equality. Always use .equals() or unbox to primitives first."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Widening vs Narrowing Type Casting</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class CastingDemo {
+    public static void main(String[] args) {
+        // Widening (Implicit / Automatic) - byte -> int -> double
+        int smallNum = 100;
+        double bigNum = smallNum; 
+        System.out.println("Widened: " + bigNum); // 100.0
+
+        // Narrowing (Explicit / Manual) - Possible data overflow!
+        int largeValue = 130;
+        byte truncatedByte = (byte) largeValue; // 130 wraps around byte range (-128 to 127)
+        System.out.println("Truncated Byte: " + truncatedByte); // -126 !
+    }
+}</code></pre>
+        </div>
+        <p><strong>Overflow Explanation:</strong> 130 in 32-bit binary is <code>00000000 00000000 00000000 10000010</code>. When truncated to an 8-bit signed byte, it becomes <code>10000010</code>, which in two's complement is <strong>-126</strong>.</p>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Autoboxing, Unboxing & NullPointerException Trap</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class BoxingDemo {
+    public static void main(String[] args) {
+        // Autoboxing: primitive int -> Integer object
+        Integer boxed = 42; 
+
+        // Unboxing: Integer object -> primitive int
+        int unboxed = boxed;
+
+        // The Silent NPE Trap:
+        Integer nullValue = null;
+        try {
+            int crash = nullValue; // Implicitly invokes nullValue.intValue() -> NPE!
+        } catch (NullPointerException e) {
+            System.out.println("Caught dangerous Unboxing NPE!");
+        }
+    }
+}</code></pre>
+        </div>
+        <p><strong>Production Lesson:</strong> When working with database entities or DTOs where numeric fields can be null, always check for null before performing arithmetic or unboxing.</p>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('02')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-02" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class DataTypesSandbox {
+    public static void main(String[] args) {
+        byte b = 127;
+        b++; // Overflow in action!
+        System.out.println("Byte overflow (127 + 1): " + b);
+
+        Integer i1 = 127;
+        Integer i2 = 127;
+        System.out.println("Cached i1 == i2: " + (i1 == i2));
+
+        Integer i3 = 128;
+        Integer i4 = 128;
+        System.out.println("Uncached i3 == i4: " + (i3 == i4));
+        System.out.println("Value equality i3.equals(i4): " + i3.equals(i4));
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-02" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Comparing Wrapper Objects with ==:</strong> Writing `if (userCount == 1000)` where `userCount` is `Integer`, leading to intermittent bugs when count exceeds 127.</li><li><strong>Using float/double for Financial Calculations:</strong> Binary floating-point types (`0.1 + 0.2 != 0.3`) introduce precision rounding errors. Always use `BigDecimal` for currency!</li><li><strong>Assigning long without trailing L:</strong> Writing `long balance = 3000000000;` triggers compile error because integer literals default to 32-bit int. Must write `3000000000L;`.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Always Use BigDecimal for Money:</strong> Never use `double` for e-commerce or banking. Use `BigDecimal` with `RoundingMode.HALF_UP`.</li><li><strong>Use Underscores in Numeric Literals:</strong> Java allows `int million = 1_000_000;` for enhanced readability without affecting the value at runtime.</li><li><strong>Prefer Primitives in High-Throughput Paths:</strong> Avoid wrapper objects in hot performance loops to prevent unnecessary Garbage Collection memory pressure.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>8 Primitives in Java::</strong> byte, short, int, long, float, double, char, boolean.</li><li><strong>Widening (small to big) is automatic;:</strong> Narrowing (big to small) requires explicit cast and may overflow.</li><li><strong>Integer Cache (-128 to 127)::</strong> Reuses cached objects so == returns true; always use .equals() for objects.</li><li><strong>Java 10 var keyword::</strong> Type is inferred at compile-time; retains 100% static type safety.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Fix the Long Literal</h4>
+        <p>Why does <code>long population = 8000000000;</code> fail to compile, and how do you fix it?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> In Java, numeric integer literals are treated as 32-bit <code>int</code> by default. Since 8 billion exceeds the max <code>int</code> value (~2.14 billion), you must append an <code>L</code> or <code>l</code>: <code>long population = 8000000000L;</code>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Predict the Output</h4>
+        <p>What is printed by: <code>double d = 0.1 + 0.2; System.out.println(d == 0.3);</code>?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> It prints <code>false</code>! Floating-point numbers cannot represent fractional decimal values like 0.1 and 0.2 with complete precision in base-2 binary, resulting in <code>0.30000000000000004</code>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Safe Unboxing Function</h4>
+        <p>Write a utility method <code>int safeUnbox(Integer val, int defaultVal)</code> that safely returns the primitive value without risking a <code>NullPointerException</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static int safeUnbox(Integer val, int defaultVal) {
+    return (val != null) ? val : defaultVal;
+}</code></pre>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What is the default value of a boolean instance variable in a Java class?</strong></p>
+        <label><input type="radio" name="q1" value="0"> true</label><br>
+        <label><input type="radio" name="q1" value="1"> false</label><br>
+        <label><input type="radio" name="q1" value="0"> null</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: What is the range of values pre-cached by the Java Integer Cache?</strong></p>
+        <label><input type="radio" name="q2" value="0"> 0 to 100</label><br>
+        <label><input type="radio" name="q2" value="1"> -128 to 127</label><br>
+        <label><input type="radio" name="q2" value="0"> -256 to 255</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Which Java class should always be used for monetary calculations?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Double</label><br>
+        <label><input type="radio" name="q3" value="1"> BigDecimal</label><br>
+        <label><input type="radio" name="q3" value="0"> Float</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: What happens if you unbox an `Integer` variable whose value is `null`?</strong></p>
+        <label><input type="radio" name="q4" value="0"> Returns 0</label><br>
+        <label><input type="radio" name="q4" value="1"> Throws NullPointerException</label><br>
+        <label><input type="radio" name="q4" value="0"> Compiler error</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Can `var` be used as a class-level instance variable type in Java?</strong></p>
+        <label><input type="radio" name="q5" value="0"> Yes, anywhere</label><br>
+        <label><input type="radio" name="q5" value="1"> No, only for local variables inside methods</label><br>
+        <label><input type="radio" name="q5" value="0"> Only in abstract classes</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Safe Currency & Temperature Converter</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a class with methods that convert temperatures between Celsius and Fahrenheit using precise double formulas, and demonstrate type casting of large sensor reading arrays.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public class UnitConverter {
+    public static double celsiusToFahrenheit(double celsius) {
+        // formula: (celsius * 9/5) + 32
+        return 0.0;
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="01-introduction-jvm-jdk-jre.html" class="btn btn-outline">&larr; Prev: JVM Architecture</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-02')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="03-operators-control-flow.html" class="btn btn-primary">Next: Operators & Control Flow &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Byte overflow (127 + 1): -128\nCached i1 == i2: true\nUncached i3 == i4: false\nValue equality i3.equals(i4): true";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

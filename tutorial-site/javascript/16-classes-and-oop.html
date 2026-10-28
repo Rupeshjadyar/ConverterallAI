@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Classes &amp; OOP — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="16-classes-and-oop.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 16</span>
+          </div>
+          <h1 class="lesson-title">Classes &amp; Object-Oriented Programming (OOP)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Model real-world systems with reusable blueprints. Master constructors, inheritance (extends/super), getters/setters, and private fields.</span>
+            <span class="lang-hi">OOP aur ES6 Classes: constructor, inheritance (extends, super), getters/setters, static methods, aur private fields (#) seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 4 Pillars of Object-Oriented Programming: Encapsulation, Abstraction, Inheritance, Polymorphism.</li>
+            <li>Declaring classes and executing the <code>constructor()</code> method.</li>
+            <li>Inheriting behavior across hierarchies using <code>extends</code> and <code>super()</code>.</li>
+            <li>Data integrity with Getters (<code>get</code>) and Setters (<code>set</code>).</li>
+            <li>Class-level utility functions using <code>static</code> methods.</li>
+            <li>Hard native data privacy with modern <strong>Private Fields (<code>#privateField</code>)</strong>.</li>
+            <li>How JavaScript classes map to prototypes under the hood.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="15-es6-destructuring-spread-modules.html">15. Modern ES6+: Destructuring &amp; Spread</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Automotive Architectural Blueprint</div>
+          <p>
+            <span class="lang-en">Think of an automotive engineering firm:
+            <br>&bull; <strong>The Class (<code>class Vehicle</code>):</strong> The detailed architectural blueprint drawn on paper. You cannot drive a blueprint to the supermarket.
+            <br>&bull; <strong>The Instance (<code>const myCar = new Vehicle()</code>):</strong> The physical steel vehicle manufactured on the factory floor from that blueprint. You can produce 10,000 unique cars from one single blueprint!
+            <br>&bull; <strong>Inheritance (<code>class ElectricCar extends Vehicle</code>):</strong> An electric car inherits the wheels, steering wheel, and brakes of the base vehicle blueprint, but adds a high-voltage lithium battery pack!</span>
+            <span class="lang-hi">Car factory ke blueprint ki tarah sochiye: <strong>Class</strong> ek nakshe (blueprint) ki tarah hai. Jab aap <code>new Car()</code> likhte hain, toh us nakshe se ek asli physical gaadi (Instance) banti hai. Aur <code>extends</code> se aap ek basic gaadi ke features le kar usme electric battery add kar sakte hain (Inheritance)!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Defining Classes &amp; The `constructor()`</h2>
+        <p>
+          Introduced in ES6, the <code>class</code> keyword provides clean, familiar syntax for object-oriented design:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Basic Class Structure</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">class User {
+  // The constructor runs automatically the microsecond 'new User()' is called!
+  constructor(name, email, role = "student") {
+    this.name = name;
+    this.email = email;
+    this.role = role;
+    this.createdAt = new Date();
+  }
+
+  // Instance Method (Shared on the prototype for zero memory duplication):
+  greet() {
+    return `Hello, I am ${this.name} (${this.role})`;
+  }
+
+  updateEmail(newEmail) {
+    this.email = newEmail;
+    console.log(`Email updated for ${this.name}: ${this.email}`);
+  }
+}
+
+// Instantiating objects using 'new':
+const userA = new User("Alice", "alice@example.com", "admin");
+const userB = new User("Bob", "bob@example.com");
+
+console.log(userA.greet()); // "Hello, I am Alice (admin)"
+console.log(userB.greet()); // "Hello, I am Bob (student)"</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Class Inheritance with `extends` and `super()`</h2>
+        <p>
+          Inheritance allows a child subclass to absorb all methods and properties from a parent class while introducing specialized functionality:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Subclassing and Method Overriding</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// Subclass extending parent User class
+class Instructor extends User {
+  constructor(name, email, coursesTeaching = []) {
+    // Crucial: super() calls the PARENT constructor!
+    // Must be called BEFORE accessing 'this' in constructor!
+    super(name, email, "instructor");
+    this.coursesTeaching = coursesTeaching;
+  }
+
+  // Adding a specialized subclass method:
+  assignCourse(courseName) {
+    this.coursesTeaching.push(courseName);
+    console.log(`${this.name} is now teaching: ${courseName}`);
+  }
+
+  // METHOD OVERRIDING (Polymorphism):
+  // Replaces parent greet() method with specialized behavior:
+  greet() {
+    return `Professor ${this.name} reporting for duty! Teaching ${this.coursesTeaching.length} courses.`;
+  }
+}
+
+const prof = new Instructor("Dr. Henderson", "henderson@univ.edu", ["Data Structures"]);
+console.log(prof.greet()); // Overridden greeting!
+prof.assignCourse("Advanced Algorithms");</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Data Validation with Getters and Setters</h2>
+        <p>
+          Getters and setters allow you to intercept property reads and writes, enabling data validation and computed properties that look like standard variables:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Getters &amp; Setters</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">class Temperature {
+  constructor(celsius) {
+    this._celsius = celsius; // Underscore indicates internal property
+  }
+
+  // GETTER: Computed read property
+  get fahrenheit() {
+    return (this._celsius * 9/5) + 32;
+  }
+
+  // SETTER: Validated write property
+  set celsius(val) {
+    if (val < -273.15) {
+      throw new RangeError("Temperature below absolute zero is physically impossible!");
+    }
+    this._celsius = val;
+  }
+}
+
+const temp = new Temperature(25);
+// Notice we access fahrenheit as a property WITHOUT parentheses!
+console.log(`${temp.fahrenheit}°F`); // 77°F
+
+temp.celsius = 30; // Triggers setter!
+console.log(`${temp.fahrenheit}°F`); // 86°F</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Static Methods &amp; Properties</h2>
+        <p>
+          The <code>static</code> keyword defines methods or constants that belong directly to the <strong>Class itself</strong> rather than individual instances (e.g. factory creators or helpers):
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Static Utility Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">class MathHelper {
+  // Static Constant:
+  static PI = 3.14159265359;
+
+  // Static Factory Method:
+  static calculateCircleArea(radius) {
+    return this.PI * (radius ** 2);
+  }
+}
+
+// Call directly on the Class constructor WITHOUT creating 'new':
+console.log(MathHelper.calculateCircleArea(10)); // ~314.159
+
+// An instance CANNOT access static methods directly:
+// const helper = new MathHelper();
+// helper.calculateCircleArea(10); // TypeError: helper.calculateCircleArea is not a function!</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Hard Native Privacy: Private Class Fields (`#`)</h2>
+        <p>
+          Historically, JavaScript developers used convention prefixes (like <code>_privateVar</code>) that were still accessible from outside. Modern JavaScript includes <strong>True Native Private Fields</strong> using the hashtag (<code>#</code>) prefix:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Private Fields</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">class BankVault {
+  // 1. Declare private fields with '#'
+  #pinCode;
+  #balance;
+
+  constructor(initialPin, initialDeposit) {
+    this.#pinCode = initialPin;
+    this.#balance = initialDeposit;
+  }
+
+  // Public method with authorization gatekeeper:
+  withdraw(pin, amount) {
+    if (pin !== this.#pinCode) {
+      return "ACCESS DENIED: Incorrect PIN code.";
+    }
+    if (amount > this.#balance) {
+      return "TRANSACTION FAILED: Overdraft limit exceeded.";
+    }
+    this.#balance -= amount;
+    return `Withdrawal successful. Remaining: $${this.#balance}`;
+  }
+}
+
+const vault = new BankVault(1234, 1000);
+
+// ATTEMPTING TO READ PRIVATE FIELDS CRASHES WITH SYNTAX ERROR:
+// console.log(vault.#pinCode); // SyntaxError: Private field '#pinCode' must be declared in an enclosing class!
+console.log(vault.withdraw(1234, 200)); // "Withdrawal successful..."</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Class Architecture Studio</h2>
+        <p>
+          Interact with a subclassed shopping cart item model below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: OOP Simulator</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h3>OOP Class Hierarchy Output</h3>
+  <div id="output" style="font-family:monospace; background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:8px;"></div>
+
+  <script>
+    const el = document.getElementById("output");
+
+    // Base Class
+    class Product {
+      constructor(name, price) {
+        this.name = name;
+        this.price = price;
+      }
+      getFormattedPrice() {
+        return `$${this.price.toFixed(2)}`;
+      }
+    }
+
+    // Subclass
+    class DigitalProduct extends Product {
+      constructor(name, price, downloadUrl) {
+        super(name, price);
+        this.downloadUrl = downloadUrl;
+      }
+      getFormattedPrice() {
+        return `${super.getFormattedPrice()} (Instant Digital Delivery)`;
+      }
+    }
+
+    const ebook = new DigitalProduct("Mastering Vanilla JS", 29.99, "https://download.com/book.pdf");
+    
+    console.log("Product:", ebook.name);
+    console.log("Price Info:", ebook.getFormattedPrice());
+
+    el.innerHTML = `
+      <strong>Product Name:</strong> ${ebook.name}<br>
+      <strong>Price:</strong> ${ebook.getFormattedPrice()}<br>
+      <strong>Download Link:</strong> ${ebook.downloadUrl}
+    `;
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>super()</code> in subclass constructors:</strong> If a class uses <code>extends</code>, its constructor MUST invoke <code>super(...)</code> before accessing <code>this</code>. Failing to do so throws a fatal <code>ReferenceError</code>!</li>
+            <li><strong>Invoking getters like methods:</strong> Writing <code>temp.fahrenheit()</code> throws <code>TypeError: temp.fahrenheit is not a function</code>! Getters are accessed as properties: <code>temp.fahrenheit</code>.</li>
+            <li><strong>Recursion bug in setters:</strong> Writing <code>set age(val) { this.age = val; }</code> causes an infinite loop and stack overflow because assignment inside setter invokes the setter again! Store in a different property (like <code>this.#age</code> or <code>this._age</code>).</li>
+            <li><strong>Assuming classes are hoisted:</strong> Unlike function declarations, class declarations are NOT hoisted! You cannot instantiate <code>new Car()</code> before its class definition line.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Prefer Composition over Inheritance:</strong> While inheritance (<code>extends</code>) is useful, deep multi-level inheritance hierarchies (5+ levels) become fragile. Prefer composing small modular objects where possible.</li>
+            <li><strong>Static factory patterns:</strong> Use static methods like <code>User.fromJSON(rawString)</code> to cleanly parse and construct class instances from external API payloads.</li>
+            <li><strong><code>instanceof</code> Operator:</strong> Use <code>myCar instanceof Vehicle</code> to check if an object was built from a specific class constructor or its parent hierarchy.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Classes serve as blueprints for producing multiple instances using <code>new</code>.</li>
+            <li>The <code>constructor()</code> executes automatically during instantiation.</li>
+            <li>Subclasses use <code>extends</code> and must call <code>super()</code> before accessing <code>this</code>.</li>
+            <li>Getters (<code>get</code>) and setters (<code>set</code>) provide controlled computed properties.</li>
+            <li><code>static</code> methods belong directly to the constructor, not instances.</li>
+            <li>Private fields use the hashtag syntax <code>#fieldName</code> for native encapsulation.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Basic Class Construction</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write a class <code>Book</code> with a constructor that takes <code>title</code> and <code>author</code>, and a method <code>getSummary()</code> returning <code>"[title] by [author]"</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: class Book { constructor(title, author) { ... } getSummary() { ... } }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>class Book {
+  constructor(title, author) {
+    this.title = title;
+    this.author = author;
+  }
+  getSummary() {
+    return `${this.title} by ${this.author}`;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Subclassing with Super</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Extend the <code>Book</code> class from Exercise 1 with an <code>EBook</code> class that accepts an extra parameter <code>fileSizeMB</code> and sets it on the instance.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: class EBook extends Book { constructor(title, author, fileSizeMB) { super(title, author); ... } }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>class EBook extends Book {
+  constructor(title, author, fileSizeMB) {
+    super(title, author);
+    this.fileSizeMB = fileSizeMB;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Private Balance Wallet</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Create a <code>Wallet</code> class with a private field <code>#cash</code> initialized in the constructor. Provide a getter <code>balance</code> and a method <code>addCash(amount)</code> that validates <code>amount &gt; 0</code> before adding.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: #cash = 0; get balance() { return this.#cash; }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>class Wallet {
+  #cash = 0;
+
+  constructor(initialCash = 0) {
+    this.#cash = initialCash;
+  }
+
+  get balance() {
+    return this.#cash;
+  }
+
+  addCash(amount) {
+    if (amount > 0) {
+      this.#cash += amount;
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 16 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="super() invokes the parent class constructor and initializes the inheritance binding.">
+            <div class="quiz-question-text">1. What does 'super()' do inside a derived subclass constructor?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Deletes the parent class</div>
+              <div class="quiz-option"><span>B)</span> Calls the constructor of the parent class and binds 'this'</div>
+              <div class="quiz-option"><span>C)</span> Compiles code into WebAssembly</div>
+              <div class="quiz-option"><span>D)</span> Makes all properties public</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Modern JavaScript uses the hashtag prefix (#) to denote truly private class fields.">
+            <div class="quiz-question-text">2. Which syntax designates a private class field in modern JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> private fieldName;</div>
+              <div class="quiz-option"><span>B)</span> _fieldName;</div>
+              <div class="quiz-option"><span>C)</span> #fieldName;</div>
+              <div class="quiz-option"><span>D)</span> @fieldName;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Static methods belong directly to the constructor class itself and cannot be called on instances.">
+            <div class="quiz-question-text">3. How are 'static' methods invoked in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Directly on the Class constructor itself (e.g. MyClass.staticMethod())</div>
+              <div class="quiz-option"><span>B)</span> On individual instances created with 'new'</div>
+              <div class="quiz-option"><span>C)</span> Only inside an HTML button</div>
+              <div class="quiz-option"><span>D)</span> Automatically upon page load</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Getters are accessed as standard properties without parentheses.">
+            <div class="quiz-question-text">4. If a class defines 'get fullName() { ... }', how is it accessed on an instance 'user'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> user.fullName()</div>
+              <div class="quiz-option"><span>B)</span> user.get('fullName')</div>
+              <div class="quiz-option"><span>C)</span> user->fullName</div>
+              <div class="quiz-option"><span>D)</span> user.fullName (without parentheses)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Class declarations reside in the Temporal Dead Zone and cannot be accessed before declaration.">
+            <div class="quiz-question-text">5. Are ES6 Class Declarations hoisted like function declarations?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, classes can be instantiated anywhere before definition</div>
+              <div class="quiz-option"><span>B)</span> No, classes are not hoisted and cannot be accessed prior to declaration</div>
+              <div class="quiz-option"><span>C)</span> Only if strict mode is off</div>
+              <div class="quiz-option"><span>D)</span> Only subclasses are hoisted</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Vehicle Speedometer Class</h3>
+          <p>
+            In the live editor, create a <code>Vehicle</code> class with private field <code>#speed = 0</code>, methods <code>accelerate(amount)</code> and <code>brake(amount)</code>, and a getter <code>currentSpeed</code> that logs speeds without allowing negative values!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#classes" class="ref-pill">ES6 Classes Reference</a>
+            <a href="../reference/glossary.html#class" class="ref-pill">Glossary: Class</a>
+            <a href="../reference/glossary.html#inheritance" class="ref-pill">Glossary: Inheritance</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript OOP Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="15-es6-destructuring-spread-modules.html" class="btn btn-outline">&larr; Previous: Modern ES6+: Destructuring &amp; Spread</a>
+          <button class="mark-complete-btn" data-lesson-id="js-16">Mark as Complete</button>
+          <a href="17-error-handling.html" class="btn btn-primary">Next: Error Handling &amp; Debugging &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

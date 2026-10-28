@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 01: Personal Developer Portfolio — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="01-personal-portfolio.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 25 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 01</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Personal Developer Portfolio</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build your real-world showcase website from scratch. Master semantic layout landmarks, responsive project cards, mobile navigation, and interactive contact forms.</span>
+            <span class="lang-hi">Apna portfolio website banayein: Semantic HTML5, modern CSS Grid/Flexbox, responsive design aur contact form validation vanilla JavaScript ke saath.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Build</div>
+          <ul>
+            <li>A sticky responsive navbar with auto-collapsing mobile links and smooth section jumping.</li>
+            <li>A high-impact Hero banner with your bio, call-to-action buttons, and social pills.</li>
+            <li>A categorized Skills grid highlighting your frontend languages and tooling.</li>
+            <li>A responsive Projects showcase grid using CSS Grid (<code>repeat(auto-fit, minmax(...))</code>).</li>
+            <li>A contact form with client-side input validation, error tooltips, and success confirmation.</li>
+          </ul>
+        </div>
+
+        <!-- Phase 1 -->
+        <section id="phase-1-html">
+          <h2>Phase 1: Semantic HTML5 Markup</h2>
+          <p>
+            <span class="lang-en">We avoid generic <code>&lt;div&gt;</code> nesting by structuring the page using accessible HTML5 landmarks: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;footer&gt;</code>.</span>
+            <span class="lang-hi">Shuruat semantic HTML5 landmarks se karein taaki screen readers aur SEO dono ke liye code readable ho:</span>
+          </p>
+
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">HTML — index.html Structure</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="html"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Aarav Sharma — Frontend Developer&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- Navigation --&gt;
+  &lt;header class="site-header"&gt;
+    &lt;div class="nav-container"&gt;
+      &lt;a href="#" class="logo"&gt;Aarav&lt;span&gt;.dev&lt;/span&gt;&lt;/a&gt;
+      &lt;nav class="nav-links"&gt;
+        &lt;a href="#about"&gt;About&lt;/a&gt;
+        &lt;a href="#skills"&gt;Skills&lt;/a&gt;
+        &lt;a href="#projects"&gt;Projects&lt;/a&gt;
+        &lt;a href="#contact" class="btn-contact-nav"&gt;Contact&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;!-- Hero Section --&gt;
+    &lt;section id="about" class="hero"&gt;
+      &lt;h1&gt;Hi, I'm &lt;span class="highlight"&gt;Aarav Sharma&lt;/span&gt;&lt;/h1&gt;
+      &lt;p class="hero-sub"&gt;Frontend Engineer specializing in clean, accessible, zero-dependency web interfaces.&lt;/p&gt;
+      &lt;div class="hero-btns"&gt;
+        &lt;a href="#projects" class="btn btn-primary"&gt;View Projects&lt;/a&gt;
+        &lt;a href="#contact" class="btn btn-secondary"&gt;Get in Touch&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- Projects Section --&gt;
+    &lt;section id="projects" class="section-container"&gt;
+      &lt;h2 class="section-heading"&gt;Featured Projects&lt;/h2&gt;
+      &lt;div class="projects-grid"&gt;
+        &lt;article class="card"&gt;
+          &lt;h3&gt;Interactive Scientific Calculator&lt;/h3&gt;
+          &lt;p&gt;Built in Vanilla JS with full keyboard bindings and history log.&lt;/p&gt;
+          &lt;div class="tags"&gt;&lt;span&gt;JavaScript&lt;/span&gt;&lt;span&gt;CSS Grid&lt;/span&gt;&lt;/div&gt;
+        &lt;/article&gt;
+        &lt;article class="card"&gt;
+          &lt;h3&gt;Offline Weather Tracker&lt;/h3&gt;
+          &lt;p&gt;Simulated asynchronous API with interactive weather forecast cards.&lt;/p&gt;
+          &lt;div class="tags"&gt;&lt;span&gt;Async/Await&lt;/span&gt;&lt;span&gt;Mock API&lt;/span&gt;&lt;/div&gt;
+        &lt;/article&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- Contact Section --&gt;
+    &lt;section id="contact" class="section-container"&gt;
+      &lt;h2 class="section-heading"&gt;Let's Connect&lt;/h2&gt;
+      &lt;form id="portfolio-contact" class="contact-form"&gt;
+        &lt;div class="form-group"&gt;
+          &lt;label for="client-name"&gt;Your Name&lt;/label&gt;
+          &lt;input type="text" id="client-name" required placeholder="Priya Patel"&gt;
+        &lt;/div&gt;
+        &lt;div class="form-group"&gt;
+          &lt;label for="client-email"&gt;Email Address&lt;/label&gt;
+          &lt;input type="email" id="client-email" required placeholder="priya@example.com"&gt;
+        &lt;/div&gt;
+        &lt;div class="form-group"&gt;
+          &lt;label for="client-msg"&gt;Message&lt;/label&gt;
+          &lt;textarea id="client-msg" rows="4" required placeholder="Tell me about your project..."&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+        &lt;button type="submit" class="btn btn-primary"&gt;Send Message&lt;/button&gt;
+        &lt;div id="form-feedback" class="feedback-msg"&gt;&lt;/div&gt;
+      &lt;/form&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+
+  &lt;footer class="site-footer"&gt;
+    &lt;p&gt;&copy; 2026 Aarav Sharma. Built 100% offline with semantic HTML, CSS, &amp; JS.&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+        </section>
+
+        <!-- Phase 2 -->
+        <section id="phase-2-css">
+          <h2>Phase 2: Modern Responsive CSS3</h2>
+          <p>
+            <span class="lang-en">We implement CSS custom properties for theming, CSS Flexbox for navigation, and CSS Grid for the project cards:</span>
+            <span class="lang-hi">CSS custom properties aur Flexbox/Grid use karke responsive layout styling karein:</span>
+          </p>
+
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">CSS — style.css</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="css"><code>:root {
+  --bg-primary: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f8fafc;
+  --text-sub: #94a3b8;
+  --accent: #38bdf8;
+  --border: #334155;
+  --font-stack: system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-stack); background: var(--bg-primary); color: var(--text-main); line-height: 1.6; }
+
+/* Sticky Navbar */
+.site-header { position: sticky; top: 0; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 100; }
+.nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; }
+.logo { font-size: 20px; font-weight: 800; color: white; text-decoration: none; }
+.logo span { color: var(--accent); }
+.nav-links a { color: var(--text-sub); text-decoration: none; margin-left: 20px; font-weight: 600; font-size: 14px; transition: color 0.2s; }
+.nav-links a:hover { color: var(--accent); }
+
+/* Hero */
+.hero { text-align: center; padding: 90px 20px; max-width: 800px; margin: 0 auto; }
+.hero h1 { font-size: 2.8rem; margin-bottom: 16px; }
+.hero .highlight { color: var(--accent); }
+.hero-sub { font-size: 1.2rem; color: var(--text-sub); margin-bottom: 24px; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; }
+
+.btn { display: inline-block; padding: 10px 22px; border-radius: 6px; font-weight: 700; text-decoration: none; cursor: pointer; border: none; font-size: 14px; transition: opacity 0.2s; }
+.btn-primary { background: var(--accent); color: #0f172a; }
+.btn-secondary { background: transparent; color: white; border: 1px solid var(--border); }
+.btn:hover { opacity: 0.9; }
+
+/* Projects Grid */
+.section-container { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+.section-heading { font-size: 1.8rem; margin-bottom: 24px; text-align: center; }
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; transition: transform 0.2s; }
+.card:hover { transform: translateY(-4px); }
+.tags { display: flex; gap: 6px; margin-top: 14px; }
+.tags span { font-size: 11px; background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+
+/* Contact Form */
+.contact-form { max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 30px; border-radius: 8px; border: 1px solid var(--border); }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.form-group input, .form-group textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: white; font-family: inherit; }
+.feedback-msg { margin-top: 12px; font-size: 13px; display: none; }
+
+.site-footer { text-align: center; padding: 30px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-sub); }</code></pre>
+          </div>
+        </section>
+
+        <!-- Phase 3 -->
+        <section id="phase-3-js">
+          <h2>Phase 3: Vanilla JavaScript Interaction</h2>
+          <p>
+            <span class="lang-en">We wire up client-side form validation and success handling without any third-party dependencies:</span>
+            <span class="lang-hi">Contact form submission handle karne ke liye vanilla JavaScript add karein:</span>
+          </p>
+
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — app.js</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>document.getElementById('portfolio-contact').addEventListener('submit', function(e) {
+  e.preventDefault(); // Prevent page reload
+
+  const name = document.getElementById('client-name').value.trim();
+  const email = document.getElementById('client-email').value.trim();
+  const msg = document.getElementById('client-msg').value.trim();
+  const feedback = document.getElementById('form-feedback');
+
+  if (!name || !email || !msg) {
+    feedback.style.display = 'block';
+    feedback.style.color = '#ef4444';
+    feedback.textContent = 'Please fill out all required fields!';
+    return;
+  }
+
+  // Simulated submission
+  feedback.style.display = 'block';
+  feedback.style.color = '#10b981';
+  feedback.textContent = `Thank you, ${name}! Your message has been received.`;
+  this.reset();
+});</code></pre>
+          </div>
+        </section>
+
+        <!-- Live Try-It Editor -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Portfolio</h2>
+          <p>
+            <span class="lang-en">Run, modify, and test the full working portfolio directly inside the live runner below:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me poora portfolio website test karein aur interact karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-portfolio">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Portfolio Builder Sandbox</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-portfolio')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-portfolio')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; line-height: 1.5; padding-bottom: 30px; }
+    header { background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
+    .logo { font-weight: bold; font-size: 16px; color: #38bdf8; }
+    nav a { color: #94a3b8; text-decoration: none; margin-left: 14px; font-size: 13px; font-weight: 600; }
+    nav a:hover { color: white; }
+    .hero { text-align: center; padding: 40px 15px; }
+    .hero h1 { font-size: 24px; margin-bottom: 8px; }
+    .hero h1 span { color: #38bdf8; }
+    .hero p { color: #94a3b8; font-size: 14px; max-width: 400px; margin: 0 auto 16px; }
+    .btn { display: inline-block; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; background: #38bdf8; color: #0f172a; border: none; cursor: pointer; text-decoration: none; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; max-width: 500px; margin: 0 auto; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 14px; }
+    .card h4 { font-size: 14px; margin-bottom: 4px; }
+    .card p { font-size: 12px; color: #94a3b8; }
+    .contact-box { max-width: 500px; margin: 30px auto 0; padding: 15px; background: #1e293b; border-radius: 6px; border: 1px solid #334155; }
+    input, textarea { width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; border-radius: 4px; color: white; margin: 6px 0 10px; font-size: 13px; box-sizing: border-box; }
+    #msg-out { font-size: 12px; color: #34d399; margin-top: 8px; display: none; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;div class="logo"&gt;Aarav.dev&lt;/div&gt;
+    &lt;nav&gt;
+      &lt;a href="#about"&gt;About&lt;/a&gt;
+      &lt;a href="#projects"&gt;Projects&lt;/a&gt;
+      &lt;a href="#contact"&gt;Contact&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;div class="hero" id="about"&gt;
+    &lt;h1&gt;Hi, I'm &lt;span&gt;Aarav Sharma&lt;/span&gt;&lt;/h1&gt;
+    &lt;p&gt;Frontend Developer passionate about crafting elegant, fast, zero-dependency web applications.&lt;/p&gt;
+    &lt;a href="#contact" class="btn"&gt;Hire Me&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;h3 style="text-align:center; margin-bottom:12px; font-size:16px;" id="projects"&gt;Featured Projects&lt;/h3&gt;
+  &lt;div class="grid"&gt;
+    &lt;div class="card"&gt;
+      &lt;h4&gt;Scientific Calculator&lt;/h4&gt;
+      &lt;p&gt;Vanilla JS calculator with memory.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card"&gt;
+      &lt;h4&gt;Weather App&lt;/h4&gt;
+      &lt;p&gt;Simulated async REST API client.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="contact-box" id="contact"&gt;
+    &lt;h4 style="margin-bottom:8px;"&gt;Contact Me&lt;/h4&gt;
+    &lt;input id="c-name" placeholder="Your Name"&gt;
+    &lt;input id="c-email" placeholder="Your Email"&gt;
+    &lt;button class="btn" style="width:100%;" onclick="sendMsg()"&gt;Send Message&lt;/button&gt;
+    &lt;div id="msg-out"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    function sendMsg() {
+      const name = document.getElementById('c-name').value.trim();
+      const out = document.getElementById('msg-out');
+      if (name) {
+        out.style.display = 'block';
+        out.textContent = `Thank you, ${name}! Your inquiry has been dispatched.`;
+      }
+    }
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="index.html" class="nav-btn prev-btn">&larr; Projects Hub</a>
+          <button class="btn-complete" onclick="markLessonComplete('01-personal-portfolio.html')">&#10003; Mark as Complete</button>
+          <a href="02-responsive-landing-page.html" class="nav-btn next-btn">Project 02: Landing Page &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

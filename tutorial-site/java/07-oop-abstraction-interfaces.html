@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="07">
+  <title>Java Abstraction, Interfaces & Sealed Classes (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Understand Abstract Classes vs Interfaces, default and static interface methods, Functional Interfaces, and modern Java 17 Sealed Classes (sealed, permits).">
+  <meta name="keywords" content="Java interfaces, abstract classes, default methods, sealed classes java 17, permits, functional interface">
+  <meta property="og:title" content="Java Abstraction, Interfaces & Sealed Classes (Interview Ready)">
+  <meta property="og:description" content="Understand Abstract Classes vs Interfaces, default and static interface methods, Functional Interfaces, and modern Java 17 Sealed Classes (sealed, permits).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-warning">Intermediate</span>
+            <span class="badge badge-outline">⏱️ 18 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">07. Abstraction, Interfaces & Modern Sealed Classes</h1>
+          <p class="lesson-subtitle">Decoupling contracts from implementation: Abstract classes, interfaces, default/static methods, and Java 17 pattern-matching sealed hierarchies.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 06 (Inheritance & Polymorphism).</p>
+            <ul>
+              <li>Compare Abstract Classes vs Interfaces (When to choose which).</li><li>Master Interface evolution with `default` and `static` methods (Java 8+).</li><li>Resolve multiple inheritance conflicts with `super` in default methods.</li><li>Understand Functional Interfaces (`@FunctionalInterface`) with Single Abstract Method (SAM).</li><li>Learn Java 17 Sealed Classes and Interfaces (`sealed`, `permits`, `final`, `non-sealed`).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Government USB-C Standard & The Half-Built Car Analogy</h3>
+      <p><strong>Interface (A Pure Legal Contract):</strong> Think of the European Union's USB-C law. The law does not make phone batteries or chips; it simply states: <em>"Any phone sold in Europe MUST have a port that fits this exact 24-pin shape and supports 5 Volts."</em> Apple, Samsung, and Google can build whatever internals they want, as long as they implement that exact USB-C contract!</p>
+      <p><strong>Abstract Class (A Half-Built Car Chassis):</strong> An automaker builds an engine, 4 wheels, and a chassis on the assembly line (shared concrete code). But they leave the seats and badges off (abstract methods). The luxury division extends that chassis to put in leather seats; the budget division puts in fabric seats.</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (बिजली का सॉकेट और कार का ढांचा)</h3>
+      <p><strong>Interface (एक सरकारी नियम):</strong> आपके घर की दीवार में जो 3-पिन वाला बिजली का सॉकेट है, वह एक <strong>Interface</strong> है। सॉकेट को फर्क नहीं पड़ता कि आप उसमें फ्रिज लगा रहे हैं, पंखा लगा रहे हैं या मोबाइल चार्जर। जब तक आपके प्लग में 3 पिन हैं (Contract पूरा है), बिजली चालू हो जाएगी!</p>
+      <p><strong>Abstract Class:</strong> यह एक आधा बना हुआ घर है जिसमें छत और दीवारें (Concrete Methods) तो बनी हैं, लेकिन रंग और दरवाजे (Abstract Methods) अभी बाकी हैं, जो बाद में रहने वाला अपनी पसंद से लगाएगा!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. Abstract Class vs Interface (The Modern Comparison)</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Abstract Class</th>
+            <th>Interface (Java 8 to 21)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Multiple Inheritance</strong></td><td>No (Can only extend 1 class)</td><td>Yes (Can implement multiple interfaces)</td></tr>
+          <tr><td><strong>Instance Variables</strong></td><td>Can have any state (private, protected, non-final)</td><td>Only <code>public static final</code> constants</td></tr>
+          <tr><td><strong>Constructors</strong></td><td>Yes (invoked by subclass via <code>super()</code>)</td><td>No constructors allowed</td></tr>
+          <tr><td><strong>Method Implementations</strong></td><td>Can have fully implemented concrete methods</td><td>Can have <code>default</code>, <code>static</code>, and <code>private</code> helper methods</td></tr>
+          <tr><td><strong>Design Philosophy</strong></td><td>"IS-A" identity with shared state/code</td><td>"CAN-DO" contract / capability specification</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. Default Methods & Diamond Conflict Resolution</h3>
+      <p>If a class implements two interfaces that provide the same default method signature, the compiler forces you to override and disambiguate:</p>
+      <div class="code-box">
+        <pre><code class="language-java">interface Printer {
+    default void log() { System.out.println("Printer log"); }
+}
+
+interface Scanner {
+    default void log() { System.out.println("Scanner log"); }
+}
+
+class AllInOneMachine implements Printer, Scanner {
+    @Override
+    public void log() {
+        // Disambiguate which parent default method to invoke
+        Printer.super.log(); 
+    }
+}</code></pre>
+      </div>
+
+      <h3>3. Java 17 Sealed Classes (`sealed` & `permits`)</h3>
+      <p>In older Java, a class was either wide open for anyone to inherit, or <code>final</code> (closed to everyone). Java 17 introduces <strong>Sealed Classes</strong>, giving you fine-grained control over exactly which classes can extend your hierarchy:</p>
+      <div class="code-box">
+        <pre><code class="language-java">// Only Circle, Square, and Triangle can extend Shape!
+public sealed class Shape permits Circle, Square, Triangle {
+}
+
+public final class Circle extends Shape {}
+public final class Square extends Shape {}
+public non-sealed class Triangle extends Shape {} // Triangle re-opens for extension</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Why were default methods introduced in Java 8 interfaces? How do Sealed Classes improve domain modeling in Java 17?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Interface Evolution & Backward Compatibility:</strong> Prior to Java 8, adding a new method to an existing interface broke all implementing classes. Default methods allowed the Java team to add `stream()` and `forEach()` to the Collection interface without breaking billions of lines of legacy code.</li><li><strong>Functional Interfaces (SAM):</strong> An interface with exactly one abstract method is a Functional Interface (`@FunctionalInterface`), making it eligible to be instantiated via modern Lambda expressions and Method References.</li><li><strong>Sealed Classes in Java 17:</strong> Sealed classes allow a superclass to declare a finite, exhaustive list of permitted subclasses. This empowers compile-time exhaustiveness checking in modern pattern matching switch expressions.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "Default methods enable backward-compatible interface evolution. Sealed classes restrict inheritance to a known set of subclasses, creating secure, closed algebraic domain types."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Complete Interface Design with Default and Static Methods</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public interface AuditableRepository<T> {
+    // Abstract method (Contract)
+    void save(T entity);
+
+    // Default method (Provided implementation)
+    default void saveWithAudit(T entity) {
+        System.out.println("[AUDIT] Timestamp: " + System.currentTimeMillis());
+        save(entity);
+    }
+
+    // Static utility method
+    static boolean isValidId(Long id) {
+        return id != null && id > 0;
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Java 17 Sealed Class Hierarchy with Pattern Matching Switch</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public sealed interface ApiResponse permits SuccessResponse, ErrorResponse {}
+
+public record SuccessResponse(String data) implements ApiResponse {}
+public record ErrorResponse(int errorCode, String message) implements ApiResponse {}
+
+public class ResponseHandler {
+    public static String handle(ApiResponse response) {
+        // Compiler knows ONLY SuccessResponse and ErrorResponse exist! No default needed!
+        return switch (response) {
+            case SuccessResponse s -> "200 OK: " + s.data();
+            case ErrorResponse e   -> "Error " + e.errorCode() + ": " + e.message();
+        };
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('07')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-07" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class InterfaceSandbox {
+    public static void main(String[] args) {
+        Notifier email = msg -> System.out.println("Email: " + msg);
+        email.send("Server Deployment Successful");
+        email.sendUrgent("Database Connection Lost");
+    }
+}
+
+@FunctionalInterface
+interface Notifier {
+    void send(String msg); // Single abstract method
+    
+    default void sendUrgent(String msg) {
+        System.out.println("🚨 URGENT ALERT: " + msg);
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-07" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Attempting to Instantiate an Abstract Class or Interface:</strong> Writing `new Shape()` fails compilation because abstract types have incomplete contracts.</li><li><strong>Declaring Non-Final Instance Variables in Interfaces:</strong> All variables declared in interfaces are implicitly `public static final`. Attempting to treat them as mutable instance variables fails.</li><li><strong>Creating Unnecessary Abstract Classes:</strong> Using an abstract class where an interface suffices limits the implementing class to single inheritance unnecessarily.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Program to Interfaces, Not Implementations:</strong> Declare `List<String> list = new ArrayList<>()` instead of `ArrayList<String> list`. This decouples your code and allows swapping implementations effortlessly.</li><li><strong>Use `@FunctionalInterface` Everywhere Applicable:</strong> Annotating SAM interfaces enables the compiler to prevent accidental addition of a second abstract method.</li><li><strong>Leverage Java 17 Records with Sealed Interfaces:</strong> Records implement sealed interfaces with zero boilerplate, providing immutable Domain-Driven Data Transfer Objects (DTOs).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Interfaces specify "what" to do;:</strong> classes specify "how" to do it.</li><li><strong>Java 8 added `default` and `static` methods to interfaces:</strong> for backward compatibility.</li><li><strong>Functional Interfaces have exactly 1 abstract method:</strong> and work seamlessly with Lambdas.</li><li><strong>Java 17 Sealed Classes control inheritance:</strong> using `sealed` and `permits`.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Create a Functional Interface</h4>
+        <p>Declare a valid functional interface <code>StringTransformer</code> that accepts a String and returns a modified String.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">@FunctionalInterface
+public interface StringTransformer {
+    String transform(String input);
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Resolving Interface Diamond Conflict</h4>
+        <p>Two interfaces A and B provide default method <code>show()</code>. Write class C implementing both and resolving the clash.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">class C implements A, B {
+    @Override
+    public void show() {
+        A.super.show(); // Explicitly calls A's default method
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Sealed Hierarchy Subclass Rules</h4>
+        <p>What three modifier keywords must any class that extends a <code>sealed</code> class choose from?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> A permitted subclass of a sealed class MUST be declared as one of: <code>final</code> (cannot be extended further), <code>sealed</code> (continues sealing with its own permits list), or <code>non-sealed</code> (re-opens for unbounded inheritance).</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What are the implicit modifiers for all variables declared in an interface?</strong></p>
+        <label><input type="radio" name="q1" value="0"> private final</label><br>
+        <label><input type="radio" name="q1" value="1"> public static final</label><br>
+        <label><input type="radio" name="q1" value="0"> protected volatile</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: What is an interface with exactly one abstract method called?</strong></p>
+        <label><input type="radio" name="q2" value="1"> Functional Interface (SAM)</label><br>
+        <label><input type="radio" name="q2" value="0"> Marker Interface</label><br>
+        <label><input type="radio" name="q2" value="0"> Dynamic Interface</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Which keyword in Java 17 lists the exact permitted subclasses of a sealed class?</strong></p>
+        <label><input type="radio" name="q3" value="0"> allows</label><br>
+        <label><input type="radio" name="q3" value="1"> permits</label><br>
+        <label><input type="radio" name="q3" value="0"> restricts</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Can an abstract class have a constructor?</strong></p>
+        <label><input type="radio" name="q4" value="1"> Yes, and it is called via super() from subclass constructors</label><br>
+        <label><input type="radio" name="q4" value="0"> No, abstract classes cannot have constructors</label><br>
+        <label><input type="radio" name="q4" value="0"> Only if all methods are static</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Can an interface have `private` helper methods in modern Java (Java 9+)?</strong></p>
+        <label><input type="radio" name="q5" value="1"> Yes, to share code between default methods</label><br>
+        <label><input type="radio" name="q5" value="0"> No, interfaces only allow public methods</label><br>
+        <label><input type="radio" name="q5" value="0"> Only in Java 21</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Model a Banking Transaction Engine with Sealed Classes</strong>
+            </div>
+            <div class="callout-body">
+              <p>Design a sealed hierarchy for Transaction with subclasses Deposit, Withdrawal, and Transfer, and write an evaluator that prints transaction audit logs.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public sealed interface Transaction permits Deposit, Withdrawal {}
+// TODO: Implement permitted records and evaluation method</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="06-oop-inheritance-polymorphism.html" class="btn btn-outline">&larr; Prev: Inheritance & Polymorphism</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-07')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="08-exception-handling.html" class="btn btn-primary">Next: Exception Handling Deep-Dive &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Email: Server Deployment Successful\n🚨 URGENT ALERT: Database Connection Lost\nDemonstrating Functional Interface + default method.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

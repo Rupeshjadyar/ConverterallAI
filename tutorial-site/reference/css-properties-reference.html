@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Properties Encyclopedic Reference — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .ref-search-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .ref-search-input { flex: 1; min-width: 260px; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-size: 15px; }
+    .ref-category-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .filter-btn { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: var(--c-css); color: white; border-color: var(--c-css); }
+    .ref-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; transition: border-color 0.2s, box-shadow 0.2s; }
+    .ref-card:hover { border-color: var(--c-css); box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+    .ref-card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .ref-prop-title { font-size: 20px; font-weight: 700; color: var(--c-css); font-family: var(--font-code); }
+    .ref-badges { display: flex; gap: 6px; }
+    .ref-meta-row { display: flex; gap: 16px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px; flex-wrap: wrap; }
+    .ref-meta-item strong { color: var(--text-main); }
+  </style>
+</head>
+<body data-course="reference" data-current-lesson="css-properties-reference.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Reference Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">&#128218; Built-in Reference</span>
+            <span class="reading-time">&#128338; Complete Encyclopedia</span>
+          </div>
+          <h1 class="lesson-title">CSS3 Properties &amp; Syntax Reference</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">The comprehensive offline directory of standard CSS properties. Instant search, valid values, defaults, animation support, and copyable examples.</span>
+            <span class="lang-hi">CSS3 properties ki complete offline dictionary. Syntax, valid values, defaults aur copyable code examples.</span>
+          </p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="ref-search-bar">
+          <input type="text" id="prop-search" class="ref-search-input" placeholder="&#128269; Search any CSS property (e.g. flex, grid, border, transition, opacity)..." oninput="filterProps()">
+        </div>
+
+        <div class="ref-category-filters">
+          <button class="filter-btn active" onclick="setCategory('all', this)">All Properties</button>
+          <button class="filter-btn" onclick="setCategory('layout', this)">Flexbox &amp; Layout</button>
+          <button class="filter-btn" onclick="setCategory('grid', this)">CSS Grid</button>
+          <button class="filter-btn" onclick="setCategory('box', this)">Box Model &amp; Spacing</button>
+          <button class="filter-btn" onclick="setCategory('typography', this)">Typography &amp; Fonts</button>
+          <button class="filter-btn" onclick="setCategory('colors', this)">Colors &amp; Backgrounds</button>
+          <button class="filter-btn" onclick="setCategory('animation', this)">Animations &amp; Transforms</button>
+        </div>
+
+        <div id="prop-count" style="margin-bottom:16px; font-size:14px; color:var(--text-muted); font-weight:600;">Showing CSS properties</div>
+
+        <!-- Properties Container -->
+        <div id="props-container">
+
+          <!-- display -->
+          <div class="ref-card" data-category="layout" data-prop="display flex grid inline block none">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">display</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Layout</span>
+                <span class="badge">Non-Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Specifies the rendering box type of an element and sets the formatting context for its children (block, inline, flex container, grid container, or completely hidden with none).</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Values:</strong> <code>block</code> | <code>inline</code> | <code>inline-block</code> | <code>flex</code> | <code>grid</code> | <code>none</code> | <code>contents</code></span>
+              <span class="ref-meta-item"><strong>Default:</strong> <code>inline</code> (or browser user-agent default)</span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/06-display-visibility-overflow.html">06. Display &amp; Visibility</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- flex -->
+          <div class="ref-card" data-category="layout" data-prop="flex flex-grow flex-shrink flex-basis">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">flex (Shorthand)</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Flexbox</span>
+                <span class="badge">Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Shorthand property for <code>flex-grow</code>, <code>flex-shrink</code>, and <code>flex-basis</code>. Determines how a flex item sizes itself and absorbs or gives up free space.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Common Values:</strong> <code>flex: 1;</code> (grow equally) | <code>flex: 0 0 250px;</code> (fixed width) | <code>flex: auto;</code></span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/08-flexbox.html">08. Flexbox Mastery</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.main-content {
+  flex: 1 1 auto; /* Grow to fill space, shrink if needed */
+}
+.sidebar {
+  flex: 0 0 260px; /* Fixed 260px width, never shrink */
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- grid-template-columns -->
+          <div class="ref-card" data-category="grid" data-prop="grid-template-columns repeat minmax fr">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">grid-template-columns</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">CSS Grid</span>
+                <span class="badge">Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Defines the track sizing and column count of a CSS Grid container using fractions (<code>fr</code>), pixels, percentages, or the auto-fill pattern.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/09-grid.html">09. CSS Grid Masterclass</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>/* The Holy Grail responsive auto-wrapping grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- position -->
+          <div class="ref-card" data-category="layout" data-prop="position static relative absolute fixed sticky top left">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">position</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Positioning</span>
+                <span class="badge">Non-Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Controls how an element is positioned in the document flow and establishes the positioning reference context for <code>top</code>, <code>right</code>, <code>bottom</code>, and <code>left</code>.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Values:</strong> <code>static</code> (default) | <code>relative</code> | <code>absolute</code> | <code>fixed</code> | <code>sticky</code></span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/07-position-z-index.html">07. Positioning &amp; Z-Index</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.sticky-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-card);
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- box-sizing -->
+          <div class="ref-card" data-category="box" data-prop="box-sizing border-box content-box">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">box-sizing</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Box Model</span>
+                <span class="badge">Essential Reset</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Defines how total width and height of an element are calculated. Setting to <code>border-box</code> causes padding and borders to be included inside the width, eliminating unwanted overflow.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/05-box-model.html">05. The Box Model</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>*, *::before, *::after {
+  box-sizing: border-box;
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- margin & padding -->
+          <div class="ref-card" data-category="box" data-prop="margin padding spacing box-model">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">margin &amp; padding</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Spacing</span>
+                <span class="badge">Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> <code>margin</code> generates external space around an element (outside the border); <code>padding</code> generates internal whitespace within an element (inside the border).</p>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.card {
+  padding: 24px;       /* Top, Right, Bottom, Left */
+  margin: 0 auto 30px; /* Center horizontally with auto */
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- background -->
+          <div class="ref-card" data-category="colors" data-prop="background background-color background-image linear-gradient">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">background &amp; background-color</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Visual</span>
+                <span class="badge">Animatable</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Sets background colors, gradients (<code>linear-gradient</code>, <code>radial-gradient</code>), and images on an element.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/03-colors-units-backgrounds.html">03. Colors &amp; Backgrounds</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.hero-banner {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- transition -->
+          <div class="ref-card" data-category="animation" data-prop="transition transform hover animation ease">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">transition</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Transitions</span>
+                <span class="badge">Interactive</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Smoothly animates property changes over a specified duration rather than snapping immediately. Shorthand for: property, duration, timing-function, delay.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/12-transitions-transforms.html">12. Transitions &amp; Transforms</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>.btn {
+  background: #38bdf8;
+  transform: translateY(0);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn:hover {
+  background: #0ea5e9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- CSS Variables -->
+          <div class="ref-card" data-category="colors" data-prop="custom properties var() css variables calc clamp">
+            <div class="ref-card-header">
+              <span class="ref-prop-title">CSS Custom Properties (--var) &amp; calc()</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">Modern CSS</span>
+                <span class="badge">Theming</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Reusable design tokens declared with <code>--variable-name</code> and consumed using <code>var(--variable-name)</code>. Dynamically calculated with <code>calc()</code> and <code>clamp()</code>.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../css/14-css-variables-calc-clamp.html">14. CSS Variables, Calc &amp; Clamp</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">CSS</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="css"><code>:root {
+  --brand-primary: #38bdf8;
+  --sidebar-w: 260px;
+}
+.content {
+  width: calc(100% - var(--sidebar-w));
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+}</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="html-tags-reference.html" class="nav-btn prev-btn">&larr; HTML Tags Reference</a>
+          <a href="js-reference.html" class="nav-btn next-btn">JavaScript Standard Reference &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    let activeCategory = 'all';
+
+    function setCategory(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterProps();
+    }
+
+    function filterProps() {
+      const q = document.getElementById('prop-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.ref-card');
+      let count = 0;
+
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const tags = card.getAttribute('data-prop') || '';
+        const title = card.querySelector('.ref-prop-title').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+
+        const matchCat = (activeCategory === 'all' || cat === activeCategory);
+        const matchSearch = (!q || title.includes(q) || desc.includes(q) || tags.includes(q));
+
+        if (matchCat && matchSearch) {
+          card.style.display = 'block';
+          count++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('prop-count').textContent = `Showing ${count} CSS properties`;
+    }
+    filterProps();
+  </script>
+</body>
+</html>

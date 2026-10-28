@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Database Transactions, ACID Properties & Normalization (1NF to BCNF) — WebDev Academy</title>
+  <meta name="description" content="Master the twin pillars of database engineering: ACID transactions (Atomicity, Consistency, Isolation, Durability) with isolation levels, and Database Normalization (1NF, 2NF, 3NF, BCNF) to eliminate anomalies.">
+  <meta name="keywords" content="SQL transactions, ACID properties, isolation levels, dirty read, phantom read, normalization 1NF 2NF 3NF BCNF, database anomalies, SQL interview">
+  <meta property="og:title" content="Database Transactions, ACID Properties & Normalization (1NF to BCNF)">
+  <meta property="og:description" content="Master the twin pillars of database engineering: ACID transactions (Atomicity, Consistency, Isolation, Durability) with isolation levels, and Database Normalization (1NF, 2NF, 3NF, BCNF) to eliminate anomalies.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="10-transactions-acid-normalization.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 20 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 10</span>
+          </div>
+          <h1 class="lesson-title">Database Transactions, ACID Properties & Normalization (1NF to BCNF)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the twin pillars of database engineering: ACID transactions (Atomicity, Consistency, Isolation, Durability) with isolation levels, and Database Normalization (1NF, 2NF, 3NF, BCNF) to eliminate anomalies.</span>
+            <span class="lang-hi">Database Transactions (ACID properties), isolation levels (Dirty/Phantom reads) aur Database Normalization (1NF, 2NF, 3NF, BCNF) seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What a Transaction is: BEGIN, COMMIT, ROLLBACK, and SAVEPOINT.</li><li>The 4 ACID Pillars explained with real-world banking transfer analogies.</li><li>Concurrency phenomena: Dirty Reads, Non-Repeatable Reads, and Phantom Reads.</li><li>The 4 Transaction Isolation Levels: Read Uncommitted, Read Committed, Repeatable Read, and Serializable.</li><li>Database Normalization: Insertion, Update, and Deletion Anomalies.</li><li>Step-by-step walkthrough of 1NF, 2NF, 3NF, and Boyce-Codd Normal Form (BCNF).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 09: Indexing & Performance.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of an ATM bank transfer. You want to transfer $100 to your friend. <strong>Step 1: Deduct $100 from your account</strong>. <strong>Step 2: Add $100 to your friend's account</strong>. What happens if the power cuts out right between Step 1 and Step 2? Your $100 vanishes into thin air! <strong>ACID Atomicity guarantees 'All or Nothing'</strong>: either both steps complete 100%, or if anything fails, the database automatically rewinds (ROLLBACK) so neither account changes. <strong>Normalization</strong> is like organizing your wardrobe: shirts go in the shirt drawer, socks in the sock drawer. If you dump everything into one giant basket, whenever you pull out a pair of socks, 5 shirts fall on the floor and get dirty (Data Anomalies)!</span>
+            <span class="lang-hi">ATM se bank transfer ki misaal lein: aapne dost ko 500 rupaye bheje. Pehle aapke account se 500 kate, fir dost ke account me 500 judne the. Agar beech me light chali gayi toh kya paise gayab ho jayenge? <strong>ACID ka Atomicity rule 'All or Nothing' hota hai</strong>: ya toh dono kaam poore honge (COMMIT), ya fir pehle wala kaam bhi cancel ho jayega (ROLLBACK) taaki paisa safe rahe! <strong>Normalization</strong> alag alag cheezon ko sahi tareeqe se alag dabbon me rakhna hai taaki ek cheez badalne par doosri kharab na ho!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Explain ACID (The Most Asked Database Interview Question!):</strong><br>• <strong>Atomicity:</strong> All-or-nothing. If any operation within a transaction fails, the entire transaction is rolled back.<br>• <strong>Consistency:</strong> The database transitions from one valid state to another, satisfying all constraints, cascades, and triggers.<br>• <strong>Isolation:</strong> Concurrent transactions execute without interfering with one another, as if executed sequentially.<br>• <strong>Durability:</strong> Once committed, data changes survive system crashes, power failures, or server restarts (written to WAL/redo logs).</li><li><strong>Concurrency Phenomena:</strong><br>• <code>Dirty Read</code>: Reading uncommitted data from another transaction that might later be rolled back.<br>• <code>Non-Repeatable Read</code>: Re-reading the same row within a transaction and seeing modified values because another transaction committed an update.<br>• <code>Phantom Read</code>: Re-running a range query (e.g. WHERE age &gt; 25) and seeing newly inserted rows from another committed transaction.</li><li><strong>The 4 Isolation Levels:</strong><br>1. <code>Read Uncommitted</code> (allows dirty reads)<br>2. <code>Read Committed</code> (default in PostgreSQL/Oracle; prevents dirty reads)<br>3. <code>Repeatable Read</code> (default in MySQL InnoDB; prevents dirty &amp; non-repeatable reads)<br>4. <code>Serializable</code> (strict serial execution, highest safety, lowest concurrency).</li><li><strong>Database Normalization Rules:</strong><br>• <strong>1NF:</strong> Atomic values (no comma-separated lists), unique rows with a Primary Key.<br>• <strong>2NF:</strong> In 1NF + No Partial Dependency (every non-key attribute must depend on the WHOLE primary key, not part of a composite key).<br>• <strong>3NF:</strong> In 2NF + No Transitive Dependency (non-key columns cannot depend on other non-key columns).<br>• <strong>BCNF:</strong> For every functional dependency X &rarr; Y, X must be a Super Key.</li><li><strong>Denormalization:</strong> Deliberately re-introducing redundancy into tables in high-read analytical databases (OLAP/Data Warehouses) to reduce expensive joins.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a Database Transaction?</h2>
+        <p>A <strong>Transaction</strong> is a single logical unit of work consisting of one or more SQL operations that must be executed together. Transactions are controlled by three commands:</p>
+        <p>• <code>BEGIN / START TRANSACTION</code>: Starts the boundary.<br>• <code>COMMIT</code>: Permanently saves all modifications to disk.<br>• <code>ROLLBACK</code>: Undoes all changes back to the start of the transaction.</p>
+        
+        <h2>2. Concurrency Phenomena & Transaction Isolation Levels</h2>
+        <p>When hundreds of thousands of users read and write simultaneously, database engines must prevent race conditions without locking the entire database.</p>
+        <p>ANSI SQL defines 4 isolation levels that balance concurrency speed against data anomalies, utilizing locking mechanisms and <strong>Multi-Version Concurrency Control (MVCC)</strong>.</p>
+        
+        <h2>3. Database Normalization: 1NF to BCNF</h2>
+        <p>Poorly designed databases suffer from <strong>Data Anomalies</strong>: Insertion anomaly (cannot add data without missing fields), Update anomaly (updating in one place creates conflicting data), and Deletion anomaly (deleting one fact accidentally deletes unrelated data).</p>
+        <p>Normalization systematically decomposes unorganized tables into clean, mathematically sound relations up to Third Normal Form (3NF) and BCNF.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: A Safe Bank Transfer Transaction with ROLLBACK on Error</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">BEGIN;
+
+-- Step 1: Check balance and deduct from Sender
+UPDATE accounts 
+SET balance = balance - 500.00 
+WHERE account_id = 101 AND balance &gt;= 500.00;
+
+-- Step 2: Add to Receiver
+UPDATE accounts 
+SET balance = balance + 500.00 
+WHERE account_id = 202;
+
+-- If any error occurs or validation fails: ROLLBACK;
+-- Otherwise, persist permanently:
+COMMIT;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Wrapping the transfer in BEGIN and COMMIT ensures money cannot vanish if a server crashes between steps.
+        </div>
+        
+        <h3>Code Example 2: Using SAVEPOINT for Partial Rollbacks</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">BEGIN;
+
+INSERT INTO orders (order_id, customer_id, total) VALUES (1, 55, 120.00);
+
+SAVEPOINT before_discount;
+
+-- Try applying promo code
+UPDATE orders SET total = total - 30.00 WHERE order_id = 1;
+
+-- Suppose promo code was expired: Rollback ONLY to savepoint!
+ROLLBACK TO SAVEPOINT before_discount;
+
+-- The original order insertion is preserved!
+COMMIT;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>SAVEPOINT</code> allows fine-grained rollback checkpoints within long-running transactions.
+        </div>
+        
+        <h3>Code Example 3: Configuring Transaction Isolation Levels</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- In PostgreSQL / MySQL:
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+BEGIN;
+-- Queries here are guaranteed to execute in complete isolation
+SELECT SUM(balance) FROM bank_accounts;
+COMMIT;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Serializable isolation prevents all concurrency anomalies by verifying read/write dependency graphs.
+        </div>
+        
+        <h3>Code Example 4: Normalization Step 1: Converting Unnormalized Data to 1NF</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- BAD (Violates 1NF: Multi-valued comma separated hobbies!)
+-- (student_id: 1, name: 'Aarav', hobbies: 'Cricket, Reading, Chess')
+
+-- GOOD (1NF Compliant: Atomic single values, Primary Key)
+CREATE TABLE student_hobbies (
+    student_id INT,
+    hobby_name VARCHAR(50),
+    PRIMARY KEY (student_id, hobby_name)
+);
+-- Rows: (1, 'Cricket'), (1, 'Reading'), (1, 'Chess')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • First Normal Form requires all column values to be atomic (indivisible) with no repeating multi-valued arrays.
+        </div>
+        
+        <h3>Code Example 5: Normalization Step 2: Eliminating Partial Dependency (2NF)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- BAD (Composite PK: student_id + course_id)
+-- Table: (student_id, course_id, student_name, course_name, grade)
+-- Problem: student_name depends ONLY on student_id, NOT on the full composite key!
+
+-- GOOD (2NF Compliant: Split into separate tables)
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(100)
+);
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100)
+);
+CREATE TABLE enrollments (
+    student_id INT REFERENCES students(student_id),
+    course_id INT REFERENCES courses(course_id),
+    grade CHAR(2),
+    PRIMARY KEY (student_id, course_id)
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • 2NF ensures every non-key column depends on the ENTIRE primary key, eliminating partial dependencies.
+        </div>
+        
+        <h3>Code Example 6: Normalization Step 3: Eliminating Transitive Dependency (3NF)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- BAD (Table: employees (emp_id, emp_name, dept_id, dept_name, dept_head))
+-- Problem: dept_name and dept_head depend on dept_id, which depends on emp_id!
+-- This is a transitive dependency (X -&gt; Y -&gt; Z)!
+
+-- GOOD (3NF Compliant: Decouple department into its own relation)
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(100),
+    department_head VARCHAR(100)
+);
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(100),
+    department_id INT REFERENCES departments(department_id)
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • 3NF ensures that non-key columns depend on 'the key, the whole key, and nothing but the key'!
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Database Transactions, ACID Properties & Normalization (1NF to BCNF)</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Transactions Sandbox
+CREATE TABLE accounts (
+    acc_id INT PRIMARY KEY,
+    holder VARCHAR(50),
+    balance DECIMAL(10,2)
+);
+
+INSERT INTO accounts VALUES (1, 'Alice', 1000.00), (2, 'Bob', 500.00);
+
+-- Simulate transaction
+BEGIN;
+UPDATE accounts SET balance = balance - 200 WHERE acc_id = 1;
+UPDATE accounts SET balance = balance + 200 WHERE acc_id = 2;
+COMMIT;
+
+SELECT * FROM accounts;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Leaving transactions uncommitted (idle in transaction):</strong> Opening a transaction and forgetting to COMMIT or ROLLBACK holds table/row locks indefinitely, eventually freezing the entire database application.</li><li><strong>Confusing 2NF and 3NF:</strong> 2NF eliminates dependencies on part of a composite key. 3NF eliminates dependencies between two non-key columns.</li><li><strong>Over-normalizing OLAP data warehouses:</strong> Normalizing up to BCNF in reporting warehouses creates queries with 25 table joins that crawl to a halt. Analytics systems prefer denormalized Star Schemas.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Keep transactions as short as humanly possible:</strong> Perform network calls, third-party API requests, and email sending OUTSIDE the transaction boundary. Never hold a database transaction open while waiting for Stripe or PayPal!</li><li><strong>MVCC (Multi-Version Concurrency Control):</strong> Modern engines like PostgreSQL never block readers when writing: 'Readers do not block writers, and writers do not block readers' thanks to MVCC snapshotting!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>ACID guarantees: Atomicity (all-or-nothing), Consistency (rules intact), Isolation (independent concurrency), Durability (persisted to disk).</li><li>Isolation levels range from Read Uncommitted to Serializable.</li><li>Dirty reads see uncommitted data; Phantom reads see newly inserted rows in range queries.</li><li>1NF enforces atomic values; 2NF eliminates partial dependencies; 3NF eliminates transitive dependencies.</li><li>Denormalization is used deliberately in data warehouses to optimize read performance.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What happens if a database server experiences a sudden power blackout in the middle of a transaction that has not issued a COMMIT?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about Atomicity and Rollback.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- Upon restarting, the database engine inspects its write-ahead logs (WAL).
+-- Because the transaction never committed, it is automatically ROLLED BACK, restoring the exact state prior to the transaction.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Identify which normal form is violated if a table <code>orders</code> contains columns <code>(order_id, customer_id, customer_address, total_price)</code> where <code>order_id</code> is the primary key.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Does customer_address depend on order_id or customer_id?</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- It violates Third Normal Form (3NF).
+-- customer_address depends on customer_id, which depends on order_id.
+-- This is a Transitive Dependency (order_id -&gt; customer_id -&gt; customer_address).
+-- Fix: Move customer_address to a separate customers table.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the difference between a 'Non-Repeatable Read' and a 'Phantom Read' in concurrency control.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> One modifies existing rows; the other inserts new rows.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">-- Non-Repeatable Read: Transaction A reads row X (e.g. salary = 50k). Transaction B updates row X (salary = 60k) and commits. Transaction A re-reads row X and sees a DIFFERENT value.
+-- Phantom Read: Transaction A executes a range query (e.g. count of orders with total &gt; 100) and gets 5. Transaction B inserts a NEW row with total = 150 and commits. Transaction A re-runs the range query and gets 6 (a phantom row appeared).</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Atomicity ensures that a transaction is treated as an indivisible unit: either all modifications succeed, or none do.">
+          <div class="quiz-question-text">1. What does 'Atomicity' in ACID guarantee?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Data is stored at the molecular level</div><div class="quiz-option"><span>B)</span> All statements in a transaction complete successfully, or all changes are completely rolled back ('All or Nothing')</div><div class="quiz-option"><span>C)</span> Queries run in less than an atom of time</div><div class="quiz-option"><span>D)</span> Only one user can use the database</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="A dirty read occurs when a transaction reads changes made by another uncommitted transaction that could still be rolled back.">
+          <div class="quiz-question-text">2. What is a 'Dirty Read'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Reading data on a dusty computer monitor</div><div class="quiz-option"><span>B)</span> Reading uncommitted data from another transaction that might later be rolled back</div><div class="quiz-option"><span>C)</span> Reading data without an index</div><div class="quiz-option"><span>D)</span> Reading deleted files</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="2NF removes partial functional dependencies on composite primary keys.">
+          <div class="quiz-question-text">3. What is eliminated to achieve Second Normal Form (2NF)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Duplicate rows</div><div class="quiz-option"><span>B)</span> Partial Dependency (where a non-key column depends on only part of a composite primary key)</div><div class="quiz-option"><span>C)</span> Transitive Dependency</div><div class="quiz-option"><span>D)</span> NULL values</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Coined by Bill Kent: 'The key, the whole key (2NF), and nothing but the key (3NF), so help me Codd'.">
+          <div class="quiz-question-text">4. What famous phrase summarizes the requirement for Third Normal Form (3NF)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Speed over safety</div><div class="quiz-option"><span>B)</span> Every non-key attribute must depend on the key, the whole key, and nothing but the key</div><div class="quiz-option"><span>C)</span> More tables, fewer queries</div><div class="quiz-option"><span>D)</span> Never use foreign keys</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="PostgreSQL and Oracle default to Read Committed, preventing dirty reads.">
+          <div class="quiz-question-text">5. What is the default transaction isolation level in PostgreSQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Read Uncommitted</div><div class="quiz-option"><span>B)</span> Read Committed</div><div class="quiz-option"><span>C)</span> Repeatable Read</div><div class="quiz-option"><span>D)</span> Serializable</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change the transaction to ROLLBACK instead of COMMIT and verify that Alice and Bob's balances remain completely unchanged!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#acid" class="ref-pill">Glossary: ACID</a><a href="../reference/glossary.html#normalization" class="ref-pill">Glossary: Normalization</a><a href="11-sql-interview-guide.html" class="ref-pill">Lesson 11: Top 75 SQL Interview Q&A</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="09-indexing-and-performance.html" class="btn btn-outline">&larr; 09. Indexing & Performance</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-10">Mark as Complete</button>
+          <a href="11-sql-interview-guide.html" class="btn btn-primary">11. 🎯 Top 75 SQL Interview Q&A &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="13">
+  <title>Java JDBC & Database Persistence (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master JDBC: DriverManager, Connection, Statement vs PreparedStatement, SQL Injection prevention, ResultSet traversal, ACID transaction management, and HikariCP pooling.">
+  <meta name="keywords" content="Java JDBC, PreparedStatement vs Statement, SQL injection Java, ResultSet, JDBC transactions commit rollback, HikariCP connection pool">
+  <meta property="og:title" content="Java JDBC & Database Persistence (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Master JDBC: DriverManager, Connection, Statement vs PreparedStatement, SQL Injection prevention, ResultSet traversal, ACID transaction management, and HikariCP pooling.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 19 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">13. JDBC Persistence, PreparedStatements & Connection Pooling</h1>
+          <p class="lesson-subtitle">The bridge between Java and relational databases: Connection lifecycle, stopping SQL injection cold with PreparedStatement, transaction rollbacks, and HikariCP.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 08 (Exception Handling) & SQL Track.</p>
+            <ul>
+              <li>Understand the 4 core JDBC interfaces: `Driver`, `Connection`, `PreparedStatement`, `ResultSet`.</li><li>Demonstrate how `Statement` string concatenation causes catastrophic SQL Injection.</li><li>Prove why `PreparedStatement` provides SQL injection immunity and pre-compiled query performance.</li><li>Manage programmatic database transactions with `setAutoCommit(false)`, `commit()`, and `rollback()`.</li><li>Understand why production apps must use connection pooling like HikariCP.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Telephone Cable & Safe Cargo Container Analogy</h3>
+      <p><strong>JDBC:</strong> JDBC is like an international telephone cable connecting your Java app in New York with a PostgreSQL database in London. A <strong>Driver</strong> translates Java questions into native database network protocols.</p>
+      <p><strong>Statement vs PreparedStatement:</strong></p>
+      <ul>
+        <li><strong>Statement (Unchecked Raw Letter):</strong> You let the user write whatever they want on a postcard. If a hacker writes <em>"Send me all passwords OR 1=1; DROP TABLE users;"</em>, the database naively obeys and destroys your company!</li>
+        <li><strong>PreparedStatement (A Pre-Approved Official Form):</strong> The database already compiles the blueprint of the query with placeholders (<code>?</code>). When user data arrives, the database treats it <strong>strictly as harmless text data</strong>, never as executable SQL instructions. Even if the user types SQL commands, it is treated like an innocent search string!</li>
+      </ul>
+      <p><strong>Connection Pool (The Taxi Stand):</strong> Opening a physical TCP socket connection to a database takes 50-100ms (handshakes, TLS, authentication). Instead of buying a new car every time a passenger needs a ride and crushing it in a junkyard immediately afterwards, you maintain a fleet of 10 running taxis parked at the stand (<strong>HikariCP Connection Pool</strong>). Taxis are rented and returned in 1ms!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (कॉल सेंटर और सुरक्षित फॉर्म)</h3>
+      <p><strong>JDBC क्या है:</strong> यह जावा और डेटाबेस के बीच बात करने का फोन तार है।</p>
+      <p><strong>PreparedStatement क्यों जरूरी है (SQL Injection से बचाव):</strong> अगर आप यूजर से नाम मांगते हैं और वह शातिर चोर है, तो वह नाम की जगह <code>' OR '1'='1</code> लिखकर आपकी पूरी टेबल डिलीट कर सकता है (Statement में)। लेकिन <code>PreparedStatement</code> में सवाल का ढांचा पहले से फिक्स होता है (<code>?</code>)। यूजर चाहे कुछ भी लिखे, डेटाबेस उसे सिर्फ एक सादा शब्द ही मानेगा, कभी कोड की तरह नहीं चलाएगा!</p>
+      <p><strong>Connection Pool (टैक्सी स्टैंड):</strong> हर यूजर के लिए नया कनेक्शन बनाना बहुत धीमा होता है। HikariCP 10 कनेक्शन पहले से तैयार रखता है। काम खत्म होते ही कनेक्शन वापस स्टैंड पर आ जाता है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The 5 Steps of Pure JDBC Execution</h3>
+      <ol class="styled-list">
+        <li><strong>Load Driver:</strong> Register database driver (automatic in modern JDBC 4+ via SPI).</li>
+        <li><strong>Establish Connection:</strong> <code>Connection conn = DriverManager.getConnection(url, user, pass);</code></li>
+        <li><strong>Create PreparedStatement:</strong> <code>PreparedStatement ps = conn.prepareStatement(sql);</code></li>
+        <li><strong>Execute Query:</strong> <code>ResultSet rs = ps.executeQuery();</code> or <code>int rows = ps.executeUpdate();</code></li>
+        <li><strong>Close Resources:</strong> Handled cleanly by <code>try-with-resources</code>.</li>
+      </ol>
+
+      <h3>2. Why PreparedStatement Stops SQL Injection</h3>
+      <p>With <code>PreparedStatement</code>, the database engine compiles the SQL query's Abstract Syntax Tree (AST) <strong>before</strong> parameter values are bound:</p>
+      <div class="code-box">
+        <pre><code class="language-java">// VULNERABLE TO SQL INJECTION (DO NOT USE!):
+String sql = "SELECT * FROM users WHERE username = '" + userInput + "'";
+// If userInput is: admin' --
+// Query becomes: SELECT * FROM users WHERE username = 'admin' --' (Logs in as admin!)
+
+// BULLETPROOF (PreparedStatement):
+String safeSql = "SELECT * FROM users WHERE username = ? AND password = ?";
+try (PreparedStatement ps = conn.prepareStatement(safeSql)) {
+    ps.setString(1, userInput); // Bound as literal parameter, impossible to alter AST!
+    ps.setString(2, passInput);
+    ResultSet rs = ps.executeQuery();
+}</code></pre>
+      </div>
+
+      <h3>3. Transaction Management (ACID)</h3>
+      <div class="code-box">
+        <pre><code class="language-java">try (Connection conn = dataSource.getConnection()) {
+    conn.setAutoCommit(false); // Begin Transaction
+
+    // Deduct from Sender
+    deductBalance(conn, fromAccount, amount);
+    // Add to Receiver
+    addBalance(conn, toAccount, amount);
+
+    conn.commit(); // Commit all changes atomically!
+    System.out.println("Funds transferred successfully.");
+} catch (SQLException e) {
+    conn.rollback(); // Rollback everything if any error occurs!
+    throw e;
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is the difference between Statement and PreparedStatement? How do you manage transactions in JDBC?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>SQL Injection Immunity:</strong> PreparedStatement uses parameterized queries where placeholders (?) are separated from the SQL parsing logic. User input is strictly treated as data values, preventing malicious query manipulation.</li><li><strong>Pre-Compilation Performance:</strong> The database compiles the query execution plan once and reuses it for subsequent executions with different parameter values, resulting in dramatic performance gains for batch operations.</li><li><strong>Binary Data Support:</strong> PreparedStatement easily binds binary streams (BLOBs), dates, and null values through setBinaryStream(), setTimestamp(), and setNull().</li><li><strong>Transaction Demarcation:</strong> By default, JDBC auto-commits every query. To execute multiple queries atomically, set `conn.setAutoCommit(false)`. Execute your updates, call `conn.commit()`, and always catch SQLExceptions to call `conn.rollback()` before re-enabling auto-commit.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always emphasize: "Never use Statement for queries that incorporate user input. Always use PreparedStatement to eliminate SQL injection and enable query plan caching."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Complete Safe CRUD Operation with PreparedStatement</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.sql.*;
+
+public class UserRepository {
+    private final String url = "jdbc:postgresql://localhost:5432/appdb";
+    private final String user = "postgres";
+    private final String pass = "secret";
+
+    public void insertUser(String username, String email) throws SQLException {
+        String sql = "INSERT INTO users (username, email) VALUES (?, ?)";
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, email);
+            int rowsAffected = ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    long generatedId = keys.getLong(1);
+                    System.out.println("User inserted with Generated ID: " + generatedId);
+                }
+            }
+        }
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: HikariCP Connection Pool Setup</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.Connection;
+
+public class DatabaseManager {
+    private static final HikariDataSource dataSource;
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:postgresql://localhost:5432/appdb");
+        config.setUsername("postgres");
+        config.setPassword("secret");
+        config.setMaximumPoolSize(10); // Maintain up to 10 pooled connections
+        config.setConnectionTimeout(30000);
+        dataSource = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws Exception {
+        return dataSource.getConnection(); // Borrow connection from pool in microseconds!
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('13')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-13" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class JdbcSandbox {
+    public static void main(String[] args) {
+        System.out.println("Simulating JDBC Transaction Flow:");
+        System.out.println("1. conn.setAutoCommit(false)");
+        System.out.println("2. UPDATE accounts SET balance = balance - 100 WHERE id = 1");
+        System.out.println("3. UPDATE accounts SET balance = balance + 100 WHERE id = 2");
+        System.out.println("4. conn.commit() -> Transaction Committed Atomically!");
+        System.out.println("5. Try-with-resources auto-returns connection to HikariCP pool.");
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-13" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Concatenating Strings into Queries:</strong> Writing `"WHERE user =  + input + "` opens your enterprise directly to catastrophic SQL injection attacks.</li><li><strong>Creating New Connections on Every Web Request:</strong> Without a connection pool like HikariCP, database TCP socket connections exhaust OS ports within minutes under traffic load.</li><li><strong>Forgetting to Close ResultSet or PreparedStatement:</strong> Failing to close JDBC resources leaks cursor handles and memory on the database server. Always use try-with-resources!</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use HikariCP as Standard:</strong> HikariCP is the default connection pool in Spring Boot due to bytecode generation and ultra-fast micro-benchmarks.</li><li><strong>Batch Inserts with `ps.addBatch()`:</strong> Execute thousands of rows in a single network round-trip using `ps.addBatch()` and `ps.executeBatch()`.</li><li><strong>Always Set Read-Only Flag for Queries:</strong> Calling `conn.setReadOnly(true)` allows the database engine and driver to optimize transaction logging and route to replica nodes.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>JDBC connects Java to relational databases via standard SQL.:</strong> Core interfaces: Connection, PreparedStatement, ResultSet.</li><li><strong>PreparedStatement eliminates SQL injection:</strong> and improves speed via pre-compiled query caching.</li><li><strong>Transactions are controlled via `setAutoCommit(false)`, `commit()`, and `rollback()`.:</strong> Ensures ACID consistency.</li><li><strong>Connection pools (HikariCP) reuse connections:</strong> preventing costly TCP connection overhead.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Identify SQL Injection Vulnerability</h4>
+        <p>Explain why <code>"SELECT * FROM items WHERE category = '" + cat + "'"</code> is vulnerable if cat is <code>' OR '1'='1</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The string concatenation changes the SQL syntax structure. <code>'1'='1'</code> is always true, so the WHERE clause evaluates to true for every single row in the database, leaking the entire table's confidential contents.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Safe ResultSet Traversal</h4>
+        <p>Write a code snippet iterating through a ResultSet extracting <code>id</code> (int) and <code>username</code> (String).</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">while (rs.next()) {
+    int id = rs.getInt("id");
+    String name = rs.getString("username");
+    System.out.println("User #" + id + ": " + name);
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Rollback in Catch Block</h4>
+        <p>Write the proper pattern to ensure <code>conn.rollback()</code> executes if an exception occurs during a transfer.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">try {
+    conn.setAutoCommit(false);
+    // Execute updates...
+    conn.commit();
+} catch (SQLException e) {
+    if (conn != null) {
+        conn.rollback(); // Undo everything safely
+    }
+    throw e;
+}</code></pre>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: Why does PreparedStatement protect against SQL Injection?</strong></p>
+        <label><input type="radio" name="q1" value="1"> The query structure is pre-compiled, and parameters are treated strictly as data</label><br>
+        <label><input type="radio" name="q1" value="0"> It encrypts parameters using AES-256</label><br>
+        <label><input type="radio" name="q1" value="0"> It removes spaces automatically</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: How do you initiate a multi-statement transaction in JDBC?</strong></p>
+        <label><input type="radio" name="q2" value="0"> conn.startTransaction()</label><br>
+        <label><input type="radio" name="q2" value="1"> conn.setAutoCommit(false)</label><br>
+        <label><input type="radio" name="q2" value="0"> conn.begin()</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What does calling `rs.next()` do on a ResultSet?</strong></p>
+        <label><input type="radio" name="q3" value="1"> Moves the cursor to the next row and returns true if a row exists</label><br>
+        <label><input type="radio" name="q3" value="0"> Fetches the next SQL query</label><br>
+        <label><input type="radio" name="q3" value="0"> Closes the result set</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: What is the primary benefit of using HikariCP?</strong></p>
+        <label><input type="radio" name="q4" value="1"> High-speed connection pooling that reuses database sockets</label><br>
+        <label><input type="radio" name="q4" value="0"> It translates Java code directly into HTML</label><br>
+        <label><input type="radio" name="q4" value="0"> It replaces PostgreSQL with MySQL</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What method is called on a Connection when all queries in a transaction succeed?</strong></p>
+        <label><input type="radio" name="q5" value="1"> conn.commit()</label><br>
+        <label><input type="radio" name="q5" value="0"> conn.save()</label><br>
+        <label><input type="radio" name="q5" value="0"> conn.push()</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Complete JDBC Data Access Object (DAO)</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a ProductDao class implementing findById(long id), save(Product p), and delete(long id) using PreparedStatement with clean resource handling.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.sql.*;
+
+public class ProductDao {
+    // TODO: Implement safe CRUD methods using PreparedStatement
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="12-java-8-streams-and-lambdas.html" class="btn btn-outline">&larr; Prev: Streams & Lambdas</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-13')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="14-spring-core-and-ioc.html" class="btn btn-primary">Next: Spring Core, IoC & DI &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Simulating JDBC Transaction Flow:\n1. conn.setAutoCommit(false)\n2. UPDATE accounts SET balance = balance - 100 WHERE id = 1\n3. UPDATE accounts SET balance = balance + 100 WHERE id = 2\n4. conn.commit() -> Transaction Committed Atomically!\n5. Try-with-resources auto-returns connection to HikariCP pool.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

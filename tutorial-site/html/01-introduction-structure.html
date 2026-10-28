@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Introduction & Document Structure — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="01-introduction-structure.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 01</span>
+          </div>
+          <h1 class="lesson-title">HTML Introduction &amp; Document Structure</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Learn what HTML is, understand the anatomy of tags, and master the standard document skeleton every website requires.</span>
+            <span class="lang-hi">HTML kya hai, tags kaise kaam karte hain aur har webpage ka standard skeleton kaise banta hai.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What HyperText Markup Language truly means and how browsers interpret it.</li>
+            <li>The anatomy of an HTML element (opening tag, content, attributes, closing tag).</li>
+            <li>The fundamental roles of <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, and <code>&lt;body&gt;</code>.</li>
+            <li>Configuring document character encoding with <code>&lt;meta charset="UTF-8"&gt;</code>.</li>
+            <li>Setting the browser window title and favicon links.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="../getting-started/03-your-first-webpage.html">Getting Started: Your First Webpage</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Human Body Framework</div>
+          <p>
+            <span class="lang-en">Think of building a human being. <strong>HTML is the skeleton</strong> &mdash; the ribs, skull, and spine that give form and structure to everything. <strong>CSS is the skin, hair, clothes, and makeup</strong> that determine how that body looks. <strong>JavaScript is the nervous system and muscles</strong> that allow the body to move, react to touch, and think. You cannot put clothes on a person without a skeleton, and you cannot style a web page without HTML!</span>
+            <span class="lang-hi">Ek insaan ki misaal lein: <strong>HTML kankaal (skeleton) hai</strong> jo sharir ko aakaar deta hai. <strong>CSS twacha aur kapde hain</strong> jo use khoobsurat banate hain. <strong>JavaScript dimag aur nasein hain</strong> jo movement aur sochne ki taqat deti hain. Bina kankaal ke kapde nahi pehnaye ja sakte!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. What is HTML?</h2>
+        <p>
+          HTML stands for <strong>HyperText Markup Language</strong>:
+        </p>
+        <ul>
+          <li><strong>HyperText:</strong> Text that contains clickable connections (hyperlinks) to other pieces of text, whether on the same page or across a computer on the other side of the planet.</li>
+          <li><strong>Markup:</strong> Annotating raw text with special marker labels (tags) that tell the software how to interpret that text. Think of an editor marking up a draft manuscript with red pen: <em>"make this bold"</em>, <em>"this is a chapter title"</em>, <em>"this is a photograph"</em>.</li>
+          <li><strong>Language:</strong> A codified set of syntax rules that computers and browsers understand universally.</li>
+        </ul>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Anatomy of an HTML Tag and Element</h3>
+        <p>An HTML element is made up of distinct parts:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!--  Opening Tag    Content            Closing Tag  --&gt;
+      &lt;p class="lead"&gt;Welcome to my website.&lt;/p&gt;
+&lt;!--  |        |                 |               |
+      Tag     Attribute Name    Element         Closing Slash
+      Name    & Value           Content                       --&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Terminology:</strong><br>
+          &bull; <strong>Opening Tag (<code>&lt;p class="lead"&gt;</code>):</strong> Signals to the browser where an element begins.<br>
+          &bull; <strong>Attribute (<code>class="lead"</code>):</strong> Extra configuration properties written inside the opening tag.<br>
+          &bull; <strong>Content (<code>Welcome to my website.</code>):</strong> The text or other child elements enclosed within.<br>
+          &bull; <strong>Closing Tag (<code>&lt;/p&gt;</code>):</strong> Signals where the element ends. Note the forward slash (<code>/</code>).<br>
+          &bull; <strong>Element:</strong> The entire package: opening tag + content + closing tag combined.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Mandatory HTML5 Skeleton</h2>
+        <p>
+          Every valid webpage in the world has four structural foundation pillars that must appear in this exact hierarchy:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Standard Production Boilerplate</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Mastering HTML Structure&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;HTML Skeleton Verified&lt;/h1&gt;
+    &lt;p&gt;This document passes all W3C validation checks.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Detailed Breakdown:</strong><br>
+          &bull; <code>&lt;!DOCTYPE html&gt;</code>: Must be on line 1, column 1. Tells modern browsers to render in "standards mode" instead of legacy 1990s "quirks mode".<br>
+          &bull; <code>&lt;html lang="en"&gt;</code>: The root wrapper element. The <code>lang</code> attribute enables accessibility tools and translation software.<br>
+          &bull; <code>&lt;head&gt;</code>: The brain of the document. Holds non-visual configuration, page title, character sets, and stylesheet links.<br>
+          &bull; <code>&lt;body&gt;</code>: The visible body of the document. Every visible heading, paragraph, card, and button lives here.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Live Try-it Editor: Modify the Document Skeleton</h2>
+        <p>Test changing the title and body content. Notice how the page renders cleanly inside the sandbox:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Document Structure Live</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Personal Journal</title>
+</head>
+<body style="font-family: system-ui, sans-serif; padding: 24px; color: #1e293b;">
+  <h1 style="color: #e44d26; border-bottom: 2px solid #f8c2b5; padding-bottom: 8px;">Day 1: HTML Architecture</h1>
+  <p>I have learned that the <code>&lt;head&gt;</code> contains metadata while the <code>&lt;body&gt;</code> contains all visual content.</p>
+  <div style="background: #fff1ed; border: 1px solid #f8c2b5; padding: 12px 16px; border-radius: 6px;">
+    <strong>Tip:</strong> Always declare character set as UTF-8 so emojis like &#128640; and &#128150; render properly!
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Deep Dive: Inside the <code>&lt;head&gt;</code> Section</h2>
+        <p>
+          Students often ask: <em>"Why do we need a <code>&lt;head&gt;</code> tag if nobody can see what's inside it?"</em> The answer is that the head tells the browser how to interpret everything else.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Essential Head Tags Explained</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;head&gt;
+  &lt;!-- 1. Character encoding: Always UTF-8 --&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+  &lt;!-- 2. Responsive mobile viewport configuration --&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+
+  &lt;!-- 3. Search Engine description snippet --&gt;
+  &lt;meta name="description" content="A comprehensive beginner-to-advanced HTML tutorial."&gt;
+
+  &lt;!-- 4. Browser tab title --&gt;
+  &lt;title&gt;WebDev Academy - HTML Structure&lt;/title&gt;
+
+  &lt;!-- 5. External CSS stylesheet link --&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why each is critical:</strong><br>
+          &bull; Without <code>charset="UTF-8"</code>, accents (like &eacute;), non-English characters (&ntilde;, &#2349;&#2366;&#2352;&#2340;), and emojis will turn into question marks or broken symbols (&ldquo;&amp;#65533;&rdquo;).<br>
+          &bull; Without <code>viewport</code>, mobile phones pretend to be 980-pixel wide desktop screens and zoom everything out to microscopic proportions.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Void (Self-Closing) Elements vs Container Elements</h3>
+        <p>Some elements enclose text; others stand alone without a closing tag:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Container Elements: Must have a closing tag --&gt;
+&lt;h1&gt;Heading Content&lt;/h1&gt;
+&lt;p&gt;Paragraph Content&lt;/p&gt;
+&lt;button&gt;Click Me&lt;/button&gt;
+
+&lt;!-- 2. Void Elements: Never have a closing tag or inner content --&gt;
+&lt;img src="profile.jpg" alt="Profile"&gt;
+&lt;input type="text" placeholder="Your Name"&gt;
+&lt;br&gt;   &lt;!-- Line break --&gt;
+&lt;hr&gt;   &lt;!-- Horizontal thematic divider --&gt;
+&lt;meta charset="UTF-8"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Rule to Remember:</strong> In modern HTML5, void elements do not require a trailing slash (<code>&lt;br&gt;</code> is preferred over XHTML's old <code>&lt;br /&gt;</code>).
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Proper Nesting and Indentation Architecture</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- CLEAN: Clear parent-child indentation hierarchy --&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;nav&gt;
+      &lt;a href="index.html"&gt;Home&lt;/a&gt;
+      &lt;a href="about.html"&gt;About&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;h2&gt;Nesting Rules&lt;/h2&gt;
+      &lt;p&gt;Always close the innermost tag first.&lt;/p&gt;
+    &lt;/article&gt;
+  &lt;/main&gt;
+&lt;/body&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Hierarchy Rule:</strong> Every child element is indented 2 spaces inward from its parent. If you look vertically down the opening and closing brackets, they should align cleanly like matching columns.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting the DOM Root with JavaScript</h3>
+        <p>JavaScript can inspect the HTML root node dynamically:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Accessing the root document elements directly in JS
+console.log("Root HTML Node:", document.documentElement.tagName); // "HTML"
+console.log("Document Language:", document.documentElement.lang); // "en"
+console.log("Document Title:", document.title);
+console.log("Body Children Count:", document.body.children.length);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Insight:</strong> <code>document.documentElement</code> represents the <code>&lt;html&gt;</code> tag, <code>document.head</code> represents the <code>&lt;head&gt;</code>, and <code>document.body</code> represents the <code>&lt;body&gt;</code>.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Omitting <code>&lt;!DOCTYPE html&gt;</code>:</strong> Without it, browsers trigger "quirks mode", rendering CSS layout bugs intentionally to emulate Internet Explorer from 1999!</li>
+            <li><strong>Placing text or headings inside <code>&lt;head&gt;</code>:</strong> The head is strictly for metadata. If you write <code>&lt;h1&gt;</code> in the head, the browser is forced to prematurely close the head and create a broken DOM structure.</li>
+            <li><strong>Putting multiple <code>&lt;body&gt;</code> tags on one page:</strong> An HTML document can have only ONE body element.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Always specify the language on the root tag: <code>&lt;html lang="en"&gt;</code>. This aids accessibility screen readers with accurate pronunciation.</li>
+            <li>Use descriptive, unique <code>&lt;title&gt;</code> tags for every page on your site &mdash; it is the most important factor in search engine ranking and bookmark clarity.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>HTML provides the structural skeleton for all web documents.</li>
+            <li>An element consists of an opening tag, optional attributes, content, and a closing tag.</li>
+            <li><code>&lt;!DOCTYPE html&gt;</code> tells the browser to run standard modern HTML5.</li>
+            <li><code>&lt;head&gt;</code> contains metadata (charset, viewport, title, links).</li>
+            <li><code>&lt;body&gt;</code> contains all visible elements (headings, text, images, forms).</li>
+            <li>Void elements (like <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;br&gt;</code>) do not have closing tags.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify the Missing Structural Tag</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Examine this structure. What critical top-level container element is missing between <code>&lt;head&gt;</code> and the end of the document?</p>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;h1&gt;Hello World&lt;/h1&gt;
+  &lt;p&gt;Welcome to my site.&lt;/p&gt;
+&lt;/html&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Where are visible elements supposed to live?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The <code>&lt;body&gt;</code> element is missing! The <code>&lt;h1&gt;</code> and <code>&lt;p&gt;</code> tags must be wrapped inside <code>&lt;body&gt;</code> and <code>&lt;/body&gt;</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Container vs Void Element Classification</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Classify each of the following into Container elements or Void (self-closing) elements: <code>&lt;p&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;br&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Can you put text between an opening and closing tag of that type?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              &bull; <strong>Container Elements:</strong> <code>&lt;p&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;a&gt;</code> (all require a closing tag like <code>&lt;/p&gt;</code>).<br>
+              &bull; <strong>Void Elements:</strong> <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;br&gt;</code> (never have closing tags).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Fixing Broken Tag Interleaving</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Fix the syntax errors in this broken HTML fragment: <code>&lt;div class="box"&gt;&lt;h3&gt;Title&lt;p&gt;Text description&lt;/h3&gt;&lt;/p&gt;&lt;/div&gt;</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: h3 was opened before p, but p was opened inside h3.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> A heading should not contain a paragraph! They should be sibling elements:<br>
+              <code>&lt;div class="box"&gt;&lt;h3&gt;Title&lt;/h3&gt;&lt;p&gt;Text description&lt;/p&gt;&lt;/div&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 01 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="<!DOCTYPE html> triggers standards mode in modern browsers for HTML5.">
+            <div class="quiz-question-text">1. What is the consequence of omitting &lt;!DOCTYPE html&gt; from an HTML file?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The browser will refuse to display any text</div>
+              <div class="quiz-option"><span>B)</span> The browser enters quirks mode, risking visual layout bugs</div>
+              <div class="quiz-option"><span>C)</span> JavaScript is completely disabled</div>
+              <div class="quiz-option"><span>D)</span> The file cannot be saved to disk</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="UTF-8 is the universal standard character encoding covering all world languages, symbols, and emojis.">
+            <div class="quiz-question-text">2. Why is &lt;meta charset="UTF-8"&gt; strongly recommended in every &lt;head&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It makes web pages load 10x faster</div>
+              <div class="quiz-option"><span>B)</span> It encrypts the website against hackers</div>
+              <div class="quiz-option"><span>C)</span> It supports all global characters, symbols, and emojis without garbled text</div>
+              <div class="quiz-option"><span>D)</span> It allows you to use external fonts</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The lang attribute on <html> specifies the primary spoken/written language of the content.">
+            <div class="quiz-question-text">3. What does the attribute lang="en" inside the &lt;html&gt; tag communicate?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The content of the document is in English</div>
+              <div class="quiz-option"><span>B)</span> The user must be located in England</div>
+              <div class="quiz-option"><span>C)</span> It enables English subtitles on all videos</div>
+              <div class="quiz-option"><span>D)</span> It forces the browser font to Arial</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Void elements have no content and thus cannot have a closing tag.">
+            <div class="quiz-question-text">4. Which of the following is true about void elements like &lt;img&gt; and &lt;input&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They must always have a matching closing tag like &lt;/img&gt;</div>
+              <div class="quiz-option"><span>B)</span> They can only contain text</div>
+              <div class="quiz-option"><span>C)</span> They are deprecated in modern HTML5</div>
+              <div class="quiz-option"><span>D)</span> They cannot contain child elements or closing tags</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="<head> holds metadata; <body> holds visible content.">
+            <div class="quiz-question-text">5. Where should you place visible headings, paragraphs, and buttons?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Inside &lt;head&gt;</div>
+              <div class="quiz-option"><span>B)</span> Inside &lt;body&gt;</div>
+              <div class="quiz-option"><span>C)</span> Directly inside &lt;!DOCTYPE html&gt;</div>
+              <div class="quiz-option"><span>D)</span> Outside the &lt;html&gt; tag</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a Personal Status Card</h3>
+          <p>
+            In the live editor above, change the title to "Student Status", add a second heading using <code>&lt;h2&gt;Current Level: Rookie&lt;/h2&gt;</code>, and add a horizontal line dividing the two sections using <code>&lt;hr&gt;</code>. Click <strong>Run Code</strong> to test your build!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#doctype" class="ref-pill">&lt;!DOCTYPE&gt;</a>
+            <a href="../reference/html-tags-reference.html#html" class="ref-pill">&lt;html&gt;</a>
+            <a href="../reference/html-tags-reference.html#head" class="ref-pill">&lt;head&gt;</a>
+            <a href="../reference/html-tags-reference.html#body" class="ref-pill">&lt;body&gt;</a>
+            <a href="../reference/html-tags-reference.html#meta" class="ref-pill">&lt;meta&gt;</a>
+            <a href="../reference/glossary.html#element" class="ref-pill">Glossary: Element</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="index.html" class="btn btn-outline">&larr; Course Index</a>
+          <button class="mark-complete-btn" data-lesson-id="html-01">Mark as Complete</button>
+          <a href="02-elements-attributes.html" class="btn btn-primary">Next: Elements &amp; Attributes &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

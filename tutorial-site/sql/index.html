@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>SQL &amp; Relational Database Mastery — WebDev Academy</title>
+  <meta name="description" content="Complete, self-contained SQL and relational database engineering course from zero to advanced: RDBMS, DDL, DML, DQL, Joins, CTEs, Window Functions, B-Tree Indexing, ACID, and 75+ Interview Questions.">
+  <meta name="keywords" content="SQL course, SQL tutorial, learn SQL, RDBMS, database engineering, SQL joins, window functions, indexing, ACID, SQL certification">
+  <meta property="og:title" content="SQL & Relational Database Mastery — WebDev Academy">
+  <meta property="og:description" content="Master SQL and Database Systems from zero to production. 100% offline, zero dependencies.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Course Hero Banner -->
+        <div class="course-hero" style="background: linear-gradient(135deg, var(--c-sql-light) 0%, var(--bg-surface) 100%); border: 1px solid var(--c-sql-border); border-radius: var(--radius-lg); padding: 2.5rem 2rem; margin-bottom: 2rem;">
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom: 0.75rem;">
+            <span class="badge" style="background:var(--c-sql); color:#fff; font-weight:700;">Complete Track</span>
+            <span style="font-size:0.85rem; color:var(--text-muted);">&#128338; ~4.5 Hours to Complete</span>
+            <span style="font-size:0.85rem; color:var(--text-muted);">&#128218; 11 In-Depth Lessons</span>
+          </div>
+          <h1 style="font-size: 2.3rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem;">
+            SQL &amp; Relational Database Architecture
+          </h1>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); max-width: 850px; margin-bottom: 1.5rem;">
+            Master relational databases, schema design, and query optimization from absolute fundamentals to FAANG interview mastery. Written with intuitive 10th-grade analogies, point-wise speaking notes for job interviews, and zero external dependencies.
+          </p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="01-database-fundamentals-rdbms.html" class="btn btn-primary" style="background:var(--c-sql); border-color:var(--c-sql);">Start Course: Lesson 01 &rarr;</a>
+            <a href="#course-exam" class="btn btn-outline">Take Final Certification Exam (20 MCQs)</a>
+            <a href="11-sql-interview-guide.html" class="btn btn-outline">🎯 Top 75 Interview Q&amp;A</a>
+          </div>
+        </div>
+
+        <!-- 4-Stage Learning Roadmap -->
+        <h2>The 4-Stage SQL Curriculum Roadmap</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0 2.5rem 0;">
+          <div class="card" style="border-top: 4px solid var(--c-sql);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-sql); text-transform:uppercase;">Phase 1 &bull; Foundations</div>
+            <h4 style="margin: 0.35rem 0;">Database &amp; RDBMS</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">Relational theory, tables, schemas, primary keys, foreign keys, and referential integrity constraints.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-sql);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-sql); text-transform:uppercase;">Phase 2 &bull; Core SQL</div>
+            <h4 style="margin: 0.35rem 0;">DDL, DML &amp; DQL</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">CREATE, ALTER, DROP, TRUNCATE, INSERT, UPDATE with WHERE, SELECT, and filtering operators.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-sql);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-sql); text-transform:uppercase;">Phase 3 &bull; Analytics</div>
+            <h4 style="margin: 0.35rem 0;">Joins, CTEs &amp; Windows</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">INNER/LEFT/FULL/SELF joins, subqueries, Common Table Expressions (WITH), and Window Functions.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--c-sql);">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--c-sql); text-transform:uppercase;">Phase 4 &bull; Architecture</div>
+            <h4 style="margin: 0.35rem 0;">Indexing, ACID &amp; Prep</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">B-Tree indexing, execution plans (EXPLAIN), transactions, normalization (1NF-BCNF), and interview patterns.</p>
+          </div>
+        </div>
+
+        <!-- Curriculum Table -->
+        <h2>Full Lesson Directory</h2>
+        <div class="curriculum-list" style="margin: 1.5rem 0 3rem 0; display:flex; flex-direction:column; gap:0.75rem;">
+          
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 14 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="01-database-fundamentals-rdbms.html" style="color:var(--text-primary); text-decoration:none;">01. SQL &amp; RDBMS Database Fundamentals</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Relational model, tables, columns, rows, primary vs foreign keys, and Codd's rules.</p>
+            </div>
+            <a href="01-database-fundamentals-rdbms.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 15 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="02-ddl-create-alter-drop.html" style="color:var(--text-primary); text-decoration:none;">02. DDL Commands: CREATE, ALTER, DROP, TRUNCATE &amp; Constraints</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Table schemas, data types, constraints (NOT NULL, UNIQUE, CHECK), and TRUNCATE vs DELETE.</p>
+            </div>
+            <a href="02-ddl-create-alter-drop.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 14 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="03-dml-insert-update-delete.html" style="color:var(--text-primary); text-decoration:none;">03. DML Commands: INSERT, UPDATE, DELETE &amp; UPSERT</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Bulk insertions, safe updates, DELETE safeguards, and ON CONFLICT / ON DUPLICATE KEY UPDATE.</p>
+            </div>
+            <a href="03-dml-insert-update-delete.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-beginner">Beginner</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 16 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="04-dql-select-where-operators.html" style="color:var(--text-primary); text-decoration:none;">04. DQL Mastery: SELECT, WHERE, Operators &amp; Execution Order</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Filtering with LIKE, IN, BETWEEN, Three-Valued Logic (NULLs), and true query execution sequence.</p>
+            </div>
+            <a href="04-dql-select-where-operators.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 15 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="05-aggregations-group-by-having.html" style="color:var(--text-primary); text-decoration:none;">05. Aggregations, GROUP BY &amp; The Crucial HAVING Clause</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">COUNT, SUM, AVG, MIN, MAX, GROUP BY categories, and the #1 interview distinction: WHERE vs HAVING.</p>
+            </div>
+            <a href="05-aggregations-group-by-having.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="06-joins-in-depth.html" style="color:var(--text-primary); text-decoration:none;">06. SQL Joins Masterclass: INNER, LEFT, RIGHT, FULL &amp; SELF JOIN</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Relational combinations, anti-joins, Cartesian CROSS joins, and organizational SELF joins.</p>
+            </div>
+            <a href="06-joins-in-depth.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-intermediate">Intermediate</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 17 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="07-subqueries-and-ctes.html" style="color:var(--text-primary); text-decoration:none;">07. Subqueries, Correlated Subqueries &amp; CTEs (WITH Clause)</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Scalar subqueries, correlated row-by-row lookups, EXISTS vs IN, and Recursive CTEs.</p>
+            </div>
+            <a href="07-subqueries-and-ctes.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 19 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="08-window-functions.html" style="color:var(--text-primary); text-decoration:none;">08. Advanced Window Functions: OVER, PARTITION BY, RANK &amp; LEAD/LAG</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">ROW_NUMBER, RANK vs DENSE_RANK, trend analysis with LAG/LEAD, and running totals.</p>
+            </div>
+            <a href="08-window-functions.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 18 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="09-indexing-and-performance.html" style="color:var(--text-primary); text-decoration:none;">09. Database Indexing, B-Trees &amp; Query Optimization</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">B-Tree internals, clustered vs non-clustered, Leftmost Prefix Rule, and EXPLAIN ANALYZE plans.</p>
+            </div>
+            <a href="09-indexing-and-performance.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced">Advanced</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 20 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="10-transactions-acid-normalization.html" style="color:var(--text-primary); text-decoration:none;">10. Database Transactions, ACID Properties &amp; Normalization (1NF-BCNF)</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">ACID transactions, isolation levels, dirty reads, and eliminating insertion/update anomalies.</p>
+            </div>
+            <a href="10-transactions-acid-normalization.html" class="btn btn-outline btn-sm">Start &rarr;</a>
+          </div>
+
+          <div class="lesson-card" style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md);">
+            <div>
+              <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                <span class="badge badge-advanced" style="background:var(--c-sql); color:#fff;">Interview Prep</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">&#128338; 25 min</span>
+              </div>
+              <h4 style="margin:0;"><a href="11-sql-interview-guide.html" style="color:var(--text-primary); text-decoration:none;">11. 🎯 Top 75 SQL Interview Questions &amp; LeetCode Query Patterns</a></h4>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.2rem;">Nth highest salary, delete duplicate records, gaps and islands, rolling sums, and system design.</p>
+            </div>
+            <a href="11-sql-interview-guide.html" class="btn btn-primary btn-sm" style="background:var(--c-sql); border-color:var(--c-sql);">Study Guide &rarr;</a>
+          </div>
+
+        </div>
+
+        <!-- 20-Question Final Certification Exam -->
+        <h2 id="course-exam">SQL Master Certification Exam (20 MCQs)</h2>
+        <p>Test your comprehensive database knowledge. Score 80% or higher (16/20) to unlock your official Certificate of Completion!</p>
+
+        <div class="quiz-container" id="sql-course-exam">
+          
+          <div class="quiz-question-item" data-correct="1" data-explanation="A Primary Key uniquely identifies rows and strictly forbids NULLs. Unique Keys allow NULL values.">
+            <div class="quiz-question-text">1. What is the fundamental difference between a Primary Key and a Unique Key?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Primary Key can have duplicates, Unique Key cannot</div>
+              <div class="quiz-option"><span>B)</span> Primary Key forbids NULLs entirely; Unique Key allows NULLs</div>
+              <div class="quiz-option"><span>C)</span> There can be multiple Primary Keys per table</div>
+              <div class="quiz-option"><span>D)</span> Unique Keys are only used in NoSQL</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="2" data-explanation="TRUNCATE is high-speed DDL that deallocates storage pages and resets sequences without row-by-row logging.">
+            <div class="quiz-question-text">2. How does TRUNCATE TABLE differ from DELETE FROM table?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> DELETE resets identity counters; TRUNCATE does not</div>
+              <div class="quiz-option"><span>B)</span> TRUNCATE only deletes the first 100 rows</div>
+              <div class="quiz-option"><span>C)</span> TRUNCATE is DDL that resets identity sequences and deallocates data pages with minimal logging; DELETE is DML that deletes row-by-row</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="If WHERE is omitted, SQL modifies every single row in the target table.">
+            <div class="quiz-question-text">3. What happens if you execute an UPDATE statement without a WHERE clause?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Only the first row is updated</div>
+              <div class="quiz-option"><span>B)</span> Every row in the table is updated</div>
+              <div class="quiz-option"><span>C)</span> The database rolls back with a missing where error</div>
+              <div class="quiz-option"><span>D)</span> The table is deleted</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="In SQL three-valued logic, any comparison with NULL evaluates to UNKNOWN. You must use IS NULL.">
+            <div class="quiz-question-text">4. What does the expression (col = NULL) evaluate to in SQL?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> TRUE</div>
+              <div class="quiz-option"><span>B)</span> UNKNOWN (treated as false in WHERE)</div>
+              <div class="quiz-option"><span>C)</span> FALSE always</div>
+              <div class="quiz-option"><span>D)</span> Syntax Error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="FROM and WHERE execute first, followed by GROUP BY, HAVING, SELECT projections, and finally ORDER BY and LIMIT.">
+            <div class="quiz-question-text">5. What is the true internal order of query execution in SQL?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> SELECT -> FROM -> WHERE -> ORDER BY</div>
+              <div class="quiz-option"><span>B)</span> FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT</div>
+              <div class="quiz-option"><span>C)</span> WHERE -> FROM -> SELECT -> LIMIT</div>
+              <div class="quiz-option"><span>D)</span> ORDER BY -> SELECT -> FROM -> WHERE</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="WHERE filters source rows before aggregation; HAVING filters group summaries after aggregation.">
+            <div class="quiz-question-text">6. Why can you not write WHERE AVG(salary) > 50000?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because AVG is not a valid SQL function</div>
+              <div class="quiz-option"><span>B)</span> Because WHERE executes before rows are grouped and aggregated; you must use HAVING instead</div>
+              <div class="quiz-option"><span>C)</span> Because WHERE only works on text</div>
+              <div class="quiz-option"><span>D)</span> Because salaries cannot be averaged</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="A LEFT JOIN preserves all left records, and unmatched right columns are filled with NULL.">
+            <div class="quiz-question-text">7. How does an Anti-Join find customers who have never placed an order?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Using INNER JOIN on customer_id</div>
+              <div class="quiz-option"><span>B)</span> Using LEFT JOIN orders ON ... WHERE orders.order_id IS NULL</div>
+              <div class="quiz-option"><span>C)</span> Using CROSS JOIN</div>
+              <div class="quiz-option"><span>D)</span> Using TRUNCATE orders</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="A Self Join references the same table twice using two distinct table aliases (e.g. employee and manager).">
+            <div class="quiz-question-text">8. What is a SELF JOIN?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A query with no tables</div>
+              <div class="quiz-option"><span>B)</span> Joining a table with itself using distinct aliases to resolve hierarchies</div>
+              <div class="quiz-option"><span>C)</span> Joining tables on different computers</div>
+              <div class="quiz-option"><span>D)</span> An automatic join with no ON clause</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="CTEs declared with the WITH clause make queries modular, readable, and sequential.">
+            <div class="quiz-question-text">9. What is a Common Table Expression (CTE)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A permanent table stored on hard drive</div>
+              <div class="quiz-option"><span>B)</span> A named temporary result set declared using the WITH clause</div>
+              <div class="quiz-option"><span>C)</span> An index type</div>
+              <div class="quiz-option"><span>D)</span> A foreign key constraint</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Comparing with NULL via NOT IN causes the entire condition to evaluate to UNKNOWN, returning 0 rows.">
+            <div class="quiz-question-text">10. Why is NOT EXISTS preferred over NOT IN for subqueries?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> NOT IN is deprecated</div>
+              <div class="quiz-option"><span>B)</span> If the subquery contains even one NULL value, NOT IN evaluates to UNKNOWN and returns zero rows</div>
+              <div class="quiz-option"><span>C)</span> NOT EXISTS is only available in Oracle</div>
+              <div class="quiz-option"><span>D)</span> NOT IN requires an index</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="RANK skips positions on ties (1,2,2,4); DENSE_RANK never skips ranks (1,2,2,3).">
+            <div class="quiz-question-text">11. What is the difference between RANK() and DENSE_RANK()?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> DENSE_RANK skips numbers; RANK does not</div>
+              <div class="quiz-option"><span>B)</span> RANK skips subsequent rank positions after ties; DENSE_RANK assigns consecutive numbers without gaps</div>
+              <div class="quiz-option"><span>C)</span> RANK works on strings; DENSE_RANK works on numbers</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="LAG() retrieves data from earlier rows in the specified window order.">
+            <div class="quiz-question-text">12. Which window function retrieves a value from the preceding row without a self-join?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> LEAD()</div>
+              <div class="quiz-option"><span>B)</span> LAG()</div>
+              <div class="quiz-option"><span>C)</span> PRIOR()</div>
+              <div class="quiz-option"><span>D)</span> PREV()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="A Clustered index defines the physical order of rows on disk (only one allowed per table).">
+            <div class="quiz-question-text">13. Why can a table have only ONE Clustered Index?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because the SQL standard was written in 1986</div>
+              <div class="quiz-option"><span>B)</span> Because table rows can physically be sorted on the disk drive in only one order</div>
+              <div class="quiz-option"><span>C)</span> Because it would run out of RAM</div>
+              <div class="quiz-option"><span>D)</span> Because database engines only allow 1 file per table</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Under the Leftmost Prefix Rule, composite index (A, B, C) can only be used if column A is present.">
+            <div class="quiz-question-text">14. If a composite index is on (dept, role, hire_date), which WHERE clause CANNOT use the index?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> WHERE dept = 'IT'</div>
+              <div class="quiz-option"><span>B)</span> WHERE role = 'Engineer'</div>
+              <div class="quiz-option"><span>C)</span> WHERE dept = 'IT' AND role = 'Engineer'</div>
+              <div class="quiz-option"><span>D)</span> WHERE dept = 'IT' AND role = 'Engineer' AND hire_date > '2023-01-01'</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Wrapping indexed columns in functions forces full table scans because the engine must compute the function per row.">
+            <div class="quiz-question-text">15. Why does WHERE YEAR(order_date) = 2024 fail to use an index on order_date?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because YEAR is a reserved keyword</div>
+              <div class="quiz-option"><span>B)</span> Because wrapping an indexed column in a function destroys SARGability and forces a full table scan</div>
+              <div class="quiz-option"><span>C)</span> Because 2024 is too high of a number</div>
+              <div class="quiz-option"><span>D)</span> Dates cannot be indexed</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="Atomicity guarantees that all steps succeed or all modifications are completely rolled back ('All or Nothing').">
+            <div class="quiz-question-text">16. What does Atomicity guarantee in an ACID transaction?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Transactions run at atomic speed</div>
+              <div class="quiz-option"><span>B)</span> All statements complete successfully, or all changes are rolled back with zero partial changes</div>
+              <div class="quiz-option"><span>C)</span> Data is encrypted</div>
+              <div class="quiz-option"><span>D)</span> Only one transaction can run per hour</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="A Dirty Read occurs when reading uncommitted data from another transaction that might later be rolled back.">
+            <div class="quiz-question-text">17. What is a 'Dirty Read'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Reading corrupted hard drive sectors</div>
+              <div class="quiz-option"><span>B)</span> A transaction reading uncommitted data modified by another transaction</div>
+              <div class="quiz-option"><span>C)</span> Reading without an index</div>
+              <div class="quiz-option"><span>D)</span> Reading a table with NULL values</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="2NF removes partial dependencies on composite keys; 3NF removes transitive dependencies between non-key columns.">
+            <div class="quiz-question-text">18. What does Third Normal Form (3NF) eliminate?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Repeating groups and multi-valued arrays</div>
+              <div class="quiz-option"><span>B)</span> Transitive Dependencies (non-key columns depending on other non-key columns)</div>
+              <div class="quiz-option"><span>C)</span> Primary keys</div>
+              <div class="quiz-option"><span>D)</span> Foreign keys</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="DENSE_RANK() cleanly handles tied salaries without skipping rank numbers.">
+            <div class="quiz-question-text">19. What is the standard SQL query pattern to find the Nth highest salary handling ties?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> SELECT salary FROM employees LIMIT 1 OFFSET N</div>
+              <div class="quiz-option"><span>B)</span> WITH r AS (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank FROM emp) SELECT DISTINCT salary FROM r WHERE rank = N</div>
+              <div class="quiz-option"><span>C)</span> SELECT MAX(salary) * N FROM emp</div>
+              <div class="quiz-option"><span>D)</span> SELECT salary FROM emp WHERE salary = N</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-item" data-correct="1" data-explanation="ROW_NUMBER partitioned by duplicate columns identifies duplicate instances (row_number > 1).">
+            <div class="quiz-question-text">20. How do you delete duplicate rows from a table while preserving one original row?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> DROP TABLE and recreate it</div>
+              <div class="quiz-option"><span>B)</span> Use ROW_NUMBER() partitioned by unique business fields and delete rows where row_num > 1</div>
+              <div class="quiz-option"><span>C)</span> Run TRUNCATE TABLE</div>
+              <div class="quiz-option"><span>D)</span> Use DISTINCT inside DELETE</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <div style="margin-top: 2.5rem; padding: 2rem; background: var(--bg-surface); border: 2px dashed var(--c-sql-border); border-radius: var(--radius-lg); text-align: center;">
+          <h3 style="color:var(--c-sql);">&#127891; Claim Your SQL Architecture Certificate</h3>
+          <p style="color:var(--text-secondary); max-width:600px; margin: 0.5rem auto 1.5rem auto;">
+            Score 16 or higher on the exam above, then generate your personalized, verifiable certificate of completion.
+          </p>
+          <a href="../certificate/index.html?course=sql" class="btn btn-primary" style="background:var(--c-sql); border-color:var(--c-sql);">Generate Course Certificate &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

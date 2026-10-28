@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>SQL Joins Masterclass: INNER, LEFT, RIGHT, FULL & SELF JOIN — WebDev Academy</title>
+  <meta name="description" content="Master relational combinations with SQL Joins: INNER JOIN, LEFT OUTER JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, and the powerful SELF JOIN used in hierarchical organizational trees.">
+  <meta name="keywords" content="SQL joins, INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, SELF JOIN, SQL Venn diagrams, SQL join interview">
+  <meta property="og:title" content="SQL Joins Masterclass: INNER, LEFT, RIGHT, FULL & SELF JOIN">
+  <meta property="og:description" content="Master relational combinations with SQL Joins: INNER JOIN, LEFT OUTER JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, and the powerful SELF JOIN used in hierarchical organizational trees.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="06-joins-in-depth.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 06</span>
+          </div>
+          <h1 class="lesson-title">SQL Joins Masterclass: INNER, LEFT, RIGHT, FULL & SELF JOIN</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master relational combinations with SQL Joins: INNER JOIN, LEFT OUTER JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, and the powerful SELF JOIN used in hierarchical organizational trees.</span>
+            <span class="lang-hi">SQL Joins deep-dive: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN aur SELF JOIN (Employee-Manager hierarchy) seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why joins exist: Relational normalization and eliminating redundant data.</li><li>INNER JOIN: Retaining only intersecting, matching records.</li><li>LEFT (OUTER) JOIN: Preserving all records from the left table and populating missing right values with NULL.</li><li>RIGHT JOIN & FULL OUTER JOIN: Handling asymmetric and bidirectional outer relationships.</li><li>CROSS JOIN (Cartesian Product) and when to use it.</li><li>SELF JOIN: Joining a table to itself to solve hierarchical employee-manager tree problems.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 05: Aggregations & GROUP BY.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a school dance party. <strong>Table A is the Boys</strong>, and <strong>Table B is the Girls</strong>. <strong>INNER JOIN is only the pairs dancing together</strong> &mdash; any boy without a partner or girl without a partner is left out. <strong>LEFT JOIN includes ALL boys</strong> &mdash; if a boy has a dance partner, she stands next to him; if he has no partner, he stands alone with an empty space (NULL) next to him. <strong>FULL JOIN means EVERYONE is on the dance floor</strong> &mdash; paired couples dance together, and all lonely boys and lonely girls stand by themselves with NULL beside them!</span>
+            <span class="lang-hi">School ke dance party ki misaal lein: <strong>Table A ladke hain, Table B ladkiyan</strong>. <strong>INNER JOIN sirf un couples ko dikhata hai jo sath me dance kar rahe hain</strong> (akela ladka ya akeli ladki bahar). <strong>LEFT JOIN saare ladko ko bulata hai</strong>: jiska partner hai wo sath khada hai, jiska partner nahi hai uske aage NULL (khaali) likh diya. <strong>FULL JOIN sabko bulata hai</strong>: chahe couple ho ya akele, sab floor par rahenge!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>INNER JOIN vs LEFT JOIN:</strong> INNER JOIN returns only records where there is a match in both tables. LEFT JOIN returns all records from the left table, plus matched records from the right table; unmatched right attributes become NULL.</li><li><strong>How to find unmatched records (Anti-Join):</strong> Use a LEFT JOIN combined with <code>WHERE right_table.id IS NULL</code> to instantly find customers who have never placed an order.</li><li><strong>What is a SELF JOIN?</strong> A regular join where a table is joined with itself by giving it two different table aliases (e.g. <code>FROM employees e JOIN employees m ON e.manager_id = m.emp_id</code>). Used for hierarchical trees and parent-child graphs.</li><li><strong>CROSS JOIN (Cartesian Product):</strong> Multiplies every row of Table A with every row of Table B (M &times; N rows). Dangerous if executed accidentally without join conditions on large tables!</li><li><strong>ON vs WHERE in a LEFT JOIN (Tricky Interview Question!):</strong> Filtering in the <code>ON</code> clause filters rows of the right table <em>before</em> the outer join is performed (all left rows are preserved). Filtering in the <code>WHERE</code> clause filters rows <em>after</em> the join, effectively converting a LEFT JOIN into an INNER JOIN if you filter out NULLs!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Why Do We Need Joins in Relational Databases?</h2>
+        <p>In relational theory, we deliberately split data across multiple tables (Customers, Orders, Products, Payments) to eliminate data duplication (Normalization).</p>
+        <p>When an application needs to display a complete customer invoice, <strong>Joins</strong> dynamically reconnect those related tables at query runtime using their Primary Key & Foreign Key links.</p>
+        
+        <h2>2. INNER JOIN vs LEFT OUTER JOIN</h2>
+        <p><strong>INNER JOIN</strong> is the most common join. It compares records from both tables and includes only those rows where the join condition evaluates to TRUE.</p>
+        <p><strong>LEFT JOIN (or LEFT OUTER JOIN)</strong> guarantees that every single row from the left table appears in the output. If the right table has no matching row, the right columns are populated with <code>NULL</code>.</p>
+        
+        <h2>3. The Power of the SELF JOIN for Hierarchies</h2>
+        <p>Many real-world entities have recursive parent-child relationships within the exact same table: Employees have Managers (who are also employees!), Categories have Parent Categories, and Web Pages have Parent Pages.</p>
+        <p>A <strong>SELF JOIN</strong> solves this cleanly by referencing the same table twice using two distinct table aliases: <code>employees emp</code> and <code>employees mgr</code>.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: INNER JOIN: Fetching Orders with Customer Details</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    o.order_id,
+    o.order_date,
+    o.order_amount,
+    c.customer_name,
+    c.email
+FROM orders o
+INNER JOIN customers c ON o.customer_id = c.customer_id
+ORDER BY o.order_date DESC;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Only orders with a valid matching customer, and customers who placed that order, appear in the result set.
+        </div>
+        
+        <h3>Code Example 2: LEFT JOIN: Finding Customers Who Have NEVER Placed an Order (Anti-Join)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Find all registered users who have zero purchase activity
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    c.email
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL; -- The secret anti-join trick!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Because LEFT JOIN preserves all customers, users with no orders will have <code>o.order_id = NULL</code>. Filtering on that NULL gives you exactly the non-buyers!
+        </div>
+        
+        <h3>Code Example 3: SELF JOIN: Building an Employee-to-Manager Organizational Hierarchy</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Table: employees (emp_id, emp_name, manager_id)
+SELECT 
+    e.emp_id AS employee_id,
+    e.emp_name AS employee_name,
+    COALESCE(m.emp_name, 'Top Executive / CEO') AS manager_name
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.emp_id;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Table alias <code>e</code> represents the employee, and alias <code>m</code> represents their manager. A LEFT JOIN ensures the CEO (who has manager_id = NULL) is still displayed!
+        </div>
+        
+        <h3>Code Example 4: FULL OUTER JOIN: Reconciling Bank Accounts and Payment Gateways</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Reconcile local database transactions vs Stripe payment gateway records
+SELECT 
+    COALESCE(t.txn_id, s.stripe_txn_id) AS transaction_reference,
+    t.amount AS internal_amount,
+    s.amount AS stripe_amount,
+    CASE 
+        WHEN t.txn_id IS NULL THEN 'Missing in Internal DB'
+        WHEN s.stripe_txn_id IS NULL THEN 'Missing in Stripe'
+        ELSE 'Reconciled / Matched'
+    END AS audit_status
+FROM internal_transactions t
+FULL OUTER JOIN stripe_transactions s ON t.txn_id = s.stripe_txn_id;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • FULL OUTER JOIN preserves all rows from both tables, making financial reconciliation audits effortless.
+        </div>
+        
+        <h3>Code Example 5: CROSS JOIN: Generating Combinations (Matrix Generator)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Generate every possible T-Shirt variant (Sizes x Colors)
+SELECT 
+    s.size_name,
+    c.color_name,
+    CONCAT(c.color_name, ' T-Shirt in size ', s.size_name) AS product_title
+FROM sizes s
+CROSS JOIN colors c;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • CROSS JOIN creates a Cartesian product (e.g. 4 sizes &times; 5 colors = 20 total SKUs).
+        </div>
+        
+        <h3>Code Example 6: Joining 3 or More Tables Together</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- E-commerce invoice breakdown: Order -&gt; Items -&gt; Products -&gt; Customer
+SELECT 
+    o.order_id,
+    c.customer_name,
+    p.product_name,
+    oi.quantity,
+    oi.unit_price,
+    (oi.quantity * oi.unit_price) AS line_total
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+WHERE o.order_id = 10045;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Multiple tables are linked sequentially, following the foreign key relationships through junction tables.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: SQL Joins Masterclass: INNER, LEFT, RIGHT, FULL & SELF JOIN</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Joins Sandbox: Customers and Orders
+CREATE TABLE clients (
+    client_id INT PRIMARY KEY,
+    client_name VARCHAR(50)
+);
+CREATE TABLE purchases (
+    purchase_id INT PRIMARY KEY,
+    item_name VARCHAR(50),
+    client_id INT
+);
+
+INSERT INTO clients VALUES (1, 'Aditi'), (2, 'Karan'), (3, 'Zoya');
+INSERT INTO purchases VALUES (101, 'MacBook', 1), (102, 'Keyboard', 1), (103, 'Monitor', 2);
+
+-- Run a LEFT JOIN to see all clients (even Zoya who has no purchases!)
+SELECT c.client_name, COALESCE(p.item_name, 'No Orders Placed') AS item
+FROM clients c
+LEFT JOIN purchases p ON c.client_id = p.client_id;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Accidental CROSS JOIN (Missing ON clause):</strong> Writing <code>FROM orders, customers</code> without a WHERE or ON clause creates an explosive Cartesian product that can crash server memory on large tables.</li><li><strong>Filtering right-table columns in WHERE after a LEFT JOIN:</strong> Writing <code>LEFT JOIN orders o ON ... WHERE o.status = 'COMPLETED'</code> destroys the LEFT JOIN! Customers without orders have <code>o.status = NULL</code>, which WHERE discards, turning your query into an accidental INNER JOIN.</li><li><strong>Ambiguous column names:</strong> Omitting table aliases (e.g. writing <code>SELECT id FROM users JOIN orders ON...</code>) when both tables have an <code>id</code> column causes an immediate database error.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always alias your tables with short, readable names:</strong> Use <code>FROM order_items oi JOIN products p ON oi.product_id = p.id</code>. It makes long queries readable in 2 seconds.</li><li><strong>Put right-table filters in ON for LEFT JOIN:</strong> If you want all customers and only their completed orders, write <code>LEFT JOIN orders o ON c.id = o.cust_id AND o.status = 'COMPLETED'</code>. This preserves customers with zero completed orders!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>INNER JOIN returns only intersecting, matching records.</li><li>LEFT JOIN returns all left rows; unmatched right attributes become NULL.</li><li>Anti-Join pattern: <code>LEFT JOIN ... WHERE right.id IS NULL</code> finds records with no matching child.</li><li>SELF JOIN joins a table to itself using two aliases to model parent-child trees.</li><li>CROSS JOIN generates Cartesian products (all combinations).</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write an INNER JOIN query to display <code>student_name</code> and <code>department_name</code> by joining <code>students</code> and <code>departments</code> on <code>department_id</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use SELECT s.student_name, d.department_name FROM students s INNER JOIN departments d ON s.department_id = d.department_id.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    s.student_name,
+    d.department_name
+FROM students s
+INNER JOIN departments d ON s.department_id = d.department_id;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a query to list all departments from the <code>departments</code> table along with the count of students in each department. Departments with zero students must show a count of 0.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use a LEFT JOIN from departments to students and COUNT(s.student_id) with GROUP BY.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    d.department_name,
+    COUNT(s.student_id) AS total_students
+FROM departments d
+LEFT JOIN students s ON d.department_id = s.department_id
+GROUP BY d.department_id, d.department_name
+ORDER BY total_students DESC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Write a SELF JOIN query to find all employees who earn a higher salary than their direct manager, showing <code>employee_name</code>, <code>employee_salary</code>, <code>manager_name</code>, and <code>manager_salary</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Join employees e with employees m ON e.manager_id = m.emp_id WHERE e.salary > m.salary.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    e.emp_name AS employee_name,
+    e.salary AS employee_salary,
+    m.emp_name AS manager_name,
+    m.salary AS manager_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary &gt; m.salary;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="2" data-explanation="INNER JOIN only returns the matching intersection, which is 3 rows.">
+          <div class="quiz-question-text">1. What is returned by an INNER JOIN between Table A (10 rows) and Table B (5 rows) if only 3 rows match the ON condition?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 15 rows</div><div class="quiz-option"><span>B)</span> 10 rows</div><div class="quiz-option"><span>C)</span> 3 rows</div><div class="quiz-option"><span>D)</span> 50 rows</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="LEFT JOIN from products to orders with <code>WHERE orders.order_id IS NULL</code> filters to products with zero matched order records.">
+          <div class="quiz-question-text">2. How can you find all products that have never been ordered?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> INNER JOIN products and orders</div><div class="quiz-option"><span>B)</span> LEFT JOIN products and orders WHERE orders.order_id IS NULL</div><div class="quiz-option"><span>C)</span> CROSS JOIN products and orders</div><div class="quiz-option"><span>D)</span> RIGHT JOIN products and orders WHERE products.id IS NOT NULL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="A SELF JOIN joins a table to itself to resolve hierarchical or recursive relationships (e.g. employee -> manager).">
+          <div class="quiz-question-text">3. What is a SELF JOIN?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A join that creates its own index automatically</div><div class="quiz-option"><span>B)</span> Joining a table to itself using two distinct aliases</div><div class="quiz-option"><span>C)</span> A query that runs without a server</div><div class="quiz-option"><span>D)</span> A join between two databases on different computers</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Omitting join conditions results in a Cartesian product (M * N rows).">
+          <div class="quiz-question-text">4. What happens if you omit the ON condition in a JOIN statement?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> The database returns 0 rows</div><div class="quiz-option"><span>B)</span> The query creates an expensive Cartesian product (CROSS JOIN) of all rows</div><div class="quiz-option"><span>C)</span> The database automatically assumes matching on primary keys</div><div class="quiz-option"><span>D)</span> The database formats your computer hard drive</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Conditions in ON dictate which right-table rows are matched. WHERE filters the post-join result, which can accidentally filter out NULLs.">
+          <div class="quiz-question-text">5. What is the difference between ON and WHERE in a LEFT JOIN?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> There is no difference</div><div class="quiz-option"><span>B)</span> ON filters right-table rows before the join (preserving left rows); WHERE filters the joined result set afterwards</div><div class="quiz-option"><span>C)</span> ON can only be used on numbers; WHERE on strings</div><div class="quiz-option"><span>D)</span> WHERE runs before the table is loaded</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change the query to an INNER JOIN and observe how Zoya disappears from the output, proving how INNER JOINs drop unmatched rows!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#join" class="ref-pill">Glossary: JOIN</a><a href="../reference/glossary.html#self-join" class="ref-pill">Glossary: Self Join</a><a href="07-subqueries-and-ctes.html" class="ref-pill">Lesson 07: Subqueries & CTEs</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="05-aggregations-group-by-having.html" class="btn btn-outline">&larr; 05. Aggregations & GROUP BY</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-06">Mark as Complete</button>
+          <a href="07-subqueries-and-ctes.html" class="btn btn-primary">07. Subqueries & CTEs &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

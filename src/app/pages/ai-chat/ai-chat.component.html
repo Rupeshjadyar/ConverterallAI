@@ -1,0 +1,609 @@
+<div class="ai-playground-container">
+
+  <!-- Breadcrumbs Navigation -->
+  <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+    <div class="breadcrumb-inner">
+      <a routerLink="/" class="crumb-link">
+        <svg class="crumb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Home
+      </a>
+      <span class="crumb-sep">/</span>
+      <a routerLink="/developer-tools" class="crumb-link">Developer Tools</a>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-current" aria-current="page">AI Chat Playground</span>
+    </div>
+  </nav>
+
+  <!-- Header & Live Architecture Banner -->
+  <header class="playground-header">
+    <div class="header-left">
+      <div class="header-brand-badge">
+        <span class="pulse-indicator"></span>
+        <span class="badge-text">Production Multi-LLM Gateway</span>
+      </div>
+      <h1 class="header-title">AI Chat Playground &amp; Code Sandbox</h1>
+      <p class="header-subtitle">
+        Intelligent multi-provider AI chat with automated <strong>HTTP 429 failover</strong>.
+        Seamlessly alternates across Groq, Gemini Flash, OpenRouter, and Hugging Face with pristine code highlighting.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        (click)="openKeyModal()"
+        class="btn-control btn-keys"
+        title="Configure personal API keys for unrestricted throughput">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="7.5" cy="15.5" r="5.5"/>
+          <path d="m21 2-9.6 9.6"/>
+          <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+        </svg>
+        <span>API Keys</span>
+        @if (hasAnyConfiguredKeys()) {
+          <span class="key-status-dot active" title="Custom key configured"></span>
+        }
+      </button>
+
+      <button
+        type="button"
+        (click)="exportConversation('markdown')"
+        class="btn-control"
+        title="Export conversation as Markdown">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Export</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="clearChat()"
+        class="btn-control btn-clear"
+        title="Clear chat feed">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+        <span>Clear</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Routing & Model Control Bar -->
+  <section class="control-bar-panel" aria-label="Model and Provider Controls">
+    <div class="control-bar-grid">
+
+      <!-- Provider Selector -->
+      <div class="control-group">
+        <label for="provider-select" class="control-label">
+          <span>AI Provider</span>
+          <span class="control-sublabel">(Auto-Failover Enabled)</span>
+        </label>
+        <div class="select-wrapper">
+          <select
+            id="provider-select"
+            [ngModel]="selectedRouting()"
+            (ngModelChange)="onProviderChange($event)"
+            class="control-select">
+            <option value="auto">⚡ Auto (Smart Free Routing: Groq ➔ Gemini ➔ OpenRouter ➔ HF)</option>
+            @for (p of providers; track p.id) {
+              <option [value]="p.id">
+                {{ p.name }} (Priority #{{ p.priority }} - {{ p.rpd | number }} RPD)
+              </option>
+            }
+          </select>
+          <div class="select-arrow">▼</div>
+        </div>
+      </div>
+
+      <!-- Model Selector -->
+      <div class="control-group">
+        <label for="model-select" class="control-label">
+          <span>Active Model</span>
+          <span class="control-sublabel">({{ activeModel().contextWindow }})</span>
+        </label>
+        <div class="select-wrapper">
+          <select
+            id="model-select"
+            [ngModel]="selectedModelId()"
+            (ngModelChange)="onModelChange($event)"
+            class="control-select">
+            @for (m of getAvailableModelsForActiveProvider(); track m.id) {
+              <option [value]="m.id">
+                {{ m.name }} &bull; {{ m.contextWindow }} [{{ m.speedRating }}]
+              </option>
+            }
+          </select>
+          <div class="select-arrow">▼</div>
+        </div>
+      </div>
+
+      <!-- Active Quota & Speed Badge -->
+      <div class="quota-badge-container">
+        <div class="quota-badge" [ngClass]="activeProvider().badgeClass">
+          <div class="quota-header">
+            <span class="quota-dot"></span>
+            <span class="quota-provider">{{ activeProvider().name }} Active</span>
+          </div>
+          <div class="quota-metric">{{ activeProvider().quotaBadge }}</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AdSense Slot Above Chat -->
+  <div class="adsense-slot-wrapper" aria-label="Advertisement">
+    <!-- AdSense Slot Above Chat -->
+    <div class="adsense-card">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9707682105347147"
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <div class="adsense-disclaimer">Sponsored Advertisement</div>
+    </div>
+  </div>
+
+  <!-- Main Chat Workspace Card -->
+  <main class="chat-workspace-card">
+
+    <!-- Active Failover Banner Notification -->
+    @if (currentFailoverBadge(); as failover) {
+      <div class="active-failover-banner animate-slide-down" role="alert">
+        <div class="banner-icon-box">🔄</div>
+        <div class="banner-body">
+          <strong class="banner-title">Auto-Failover Triggered</strong>
+          <p class="banner-desc">{{ failover.reason }}</p>
+        </div>
+        <div class="banner-time">{{ failover.timestamp | date:'shortTime' }}</div>
+      </div>
+    }
+
+    <!-- Chat Messages Scroll Container -->
+    <div #chatScrollContainer class="chat-feed-scroll" role="log" aria-live="polite">
+
+      @for (msg of messages(); track msg.id) {
+
+        <!-- SYSTEM EVENT / FAILOVER PILL -->
+        @if (msg.role === 'system') {
+          <div class="system-event-row">
+            <div class="system-event-pill" [class.key-notice-pill]="msg.content.includes('API key') || msg.content.includes('Failed')">
+              <span class="system-icon">{{ msg.content.includes('API key') ? '🔑' : (msg.content.includes('Failed') ? '⚠️' : '🔄') }}</span>
+              <span class="system-text">{{ msg.content }}</span>
+              @if (msg.content.includes('API key') || msg.content.includes('Failed')) {
+                <button type="button" class="btn-pill-key-action" (click)="openKeyModal()">
+                  Configure Keys ⚙️
+                </button>
+              }
+              <span class="system-timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+            </div>
+          </div>
+        }
+
+        <!-- USER MESSAGE -->
+        @if (msg.role === 'user') {
+          <article class="chat-message-row user-row">
+            <div class="message-bubble user-bubble">
+              <div class="message-meta user-meta">
+                <span class="sender-name">You</span>
+                <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
+              </div>
+              <div class="user-text-content">{{ msg.content }}</div>
+            </div>
+            <div class="avatar user-avatar" title="User">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+          </article>
+        }
+
+        <!-- ASSISTANT MESSAGE -->
+        @if (msg.role === 'assistant') {
+          <article class="chat-message-row assistant-row">
+            <div class="avatar assistant-avatar" [attr.data-provider]="msg.providerId || 'groq'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
+                <rect width="18" height="12" x="3" y="8" rx="2"/>
+                <path d="M8 14h.01"/>
+                <path d="M16 14h.01"/>
+                <path d="M9 18h6"/>
+              </svg>
+            </div>
+
+            <div class="message-bubble assistant-bubble">
+              <div class="message-meta assistant-meta">
+                <span class="sender-name">AI Assistant</span>
+                @if (msg.providerId) {
+                  <span class="provider-pill" [attr.data-provider]="msg.providerId">
+                    {{ msg.providerId | uppercase }} &bull; {{ msg.modelId }}
+                  </span>
+                }
+                <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
+              </div>
+
+              <!-- Content Segments (Text & Fenced Code Blocks) -->
+              <div class="assistant-content-flow">
+                @for (segment of getMessageSegments(msg); track $index) {
+
+                  <!-- Code Block Segment -->
+                  @if (segment.type === 'code') {
+                    <div class="code-block-card">
+                      <div class="code-block-header">
+                        <div class="code-lang-tag">
+                          <span class="terminal-dot red"></span>
+                          <span class="terminal-dot yellow"></span>
+                          <span class="terminal-dot green"></span>
+                          <span class="lang-text">{{ segment.language }}</span>
+                        </div>
+                        <button
+                          type="button"
+                          (click)="copyCode(segment.raw, segment.codeId)"
+                          class="btn-copy-code"
+                          [class.copied]="copiedCodeId() === segment.codeId">
+                          @if (copiedCodeId() === segment.codeId) {
+                            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            <span>Copied!</span>
+                          } @else {
+                            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                            </svg>
+                            <span>Copy Code</span>
+                          }
+                        </button>
+                      </div>
+                      <!-- Angular interpolation guarantees 100% literal characters (<, >, {, }, quotes) without HTML corruption -->
+                      <pre class="code-pre-box"><code class="code-content">{{ segment.raw }}</code></pre>
+                    </div>
+                  }
+
+                  <!-- Text Segment -->
+                  @if (segment.type === 'text') {
+                    <div class="text-prose-block">
+                      <p class="prose-paragraph">{{ segment.raw }}</p>
+                    </div>
+                  }
+
+                }
+              </div>
+            </div>
+          </article>
+        }
+
+      }
+
+      <!-- Generating / Thinking Indicator -->
+      @if (isGenerating()) {
+        <div class="chat-message-row assistant-row typing-row">
+          <div class="avatar assistant-avatar pulse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div class="message-bubble assistant-bubble typing-bubble">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="typing-label">
+              Querying {{ activeProvider().name }} ({{ activeModel().name }})...
+            </span>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- Suggested Starter Chips -->
+    <div class="starter-chips-container">
+      <div class="chips-scroll">
+        @for (chip of promptChips; track chip) {
+          <button
+            type="button"
+            (click)="applyChipPrompt(chip)"
+            class="prompt-chip"
+            [disabled]="isGenerating()">
+            ✨ {{ chip }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Prompt Input Area -->
+    <div class="chat-input-wrapper">
+      <div class="input-container-box">
+        <textarea
+          #promptTextarea
+          [ngModel]="inputPrompt()"
+          (ngModelChange)="inputPrompt.set($event)"
+          (input)="onTextareaInput($event)"
+          (keydown)="onKeyDown($event)"
+          rows="1"
+          placeholder="Ask a technical question, paste code to debug, or request an architectural design... (Press Enter to Send)"
+          class="chat-textarea"
+          [disabled]="isGenerating()"></textarea>
+
+        <div class="input-action-bar">
+          <div class="input-info">
+            <span class="char-count">{{ inputPrompt().length }} chars</span>
+            <span class="info-sep">&bull;</span>
+            <span class="info-hint">Shift + Enter for new line</span>
+          </div>
+
+          <div class="input-buttons">
+            @if (isGenerating()) {
+              <button
+                type="button"
+                (click)="stopGeneration()"
+                class="btn-stop-generation">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <rect width="12" height="12" x="6" y="6" rx="2"/>
+                </svg>
+                <span>Stop Generation</span>
+              </button>
+            } @else {
+              <button
+                type="button"
+                (click)="sendMessage()"
+                [disabled]="!inputPrompt().trim()"
+                class="btn-send-message">
+                <span>Send</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Key Management Modal -->
+  @if (keyModalOpen()) {
+    <div class="modal-backdrop" (click)="closeKeyModal()">
+      <div class="modal-dialog-card" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h2 class="modal-title">🔑 AI Provider API Keys</h2>
+            <p class="modal-subtitle">
+              Stored 100% locally in your browser's <code>localStorage</code>. Keys never touch ConverterAllAI servers.
+            </p>
+          </div>
+          <button type="button" (click)="closeKeyModal()" class="btn-close-modal" aria-label="Close modal">&times;</button>
+        </div>
+
+        @if (keyFeedbackMessage()) {
+          <div class="modal-feedback-banner">
+            {{ keyFeedbackMessage() }}
+          </div>
+        }
+
+        <div class="modal-body">
+          @for (p of providers; track p.id) {
+            <div class="provider-key-row">
+              <div class="row-header">
+                <div class="provider-info">
+                  <strong class="p-name">{{ p.name }}</strong>
+                  <span class="p-quota">({{ p.quotaBadge }})</span>
+                </div>
+                <a [href]="p.keyDocsUrl" target="_blank" rel="noopener noreferrer" class="link-get-key">
+                  Get Free Key ↗
+                </a>
+              </div>
+
+              <div class="key-input-group">
+                <input
+                  [type]="keyVisibility()[p.id] ? 'text' : 'password'"
+                  [ngModel]="keyForm()[p.id]"
+                  (ngModelChange)="updateKeyFormField(p.id, $event)"
+                  placeholder="Paste your {{ p.name }} API key here..."
+                  class="key-input" />
+                <button
+                  type="button"
+                  (click)="toggleKeyVisibility(p.id)"
+                  class="btn-toggle-eye"
+                  [title]="keyVisibility()[p.id] ? 'Hide Key' : 'Reveal Key'">
+                  {{ keyVisibility()[p.id] ? '👁️' : '🔒' }}
+                </button>
+                @if (keyForm()[p.id]) {
+                  <button
+                    type="button"
+                    (click)="clearKeyForProvider(p.id)"
+                    class="btn-clear-key"
+                    title="Clear key">
+                    &times;
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="closeKeyModal()" class="btn-modal-ghost">Cancel</button>
+          <button type="button" (click)="saveAllKeys()" class="btn-modal-primary">Save Keys</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- SEO & Technical Architecture Section (Below the Chat) -->
+  <section class="seo-architecture-section">
+
+    <div class="section-badge">Technical Overview &amp; Architecture</div>
+    <h2 class="section-heading">Why Groq &amp; Gemini Free Tiers Power ConverterAllAI</h2>
+    <p class="section-lead">
+      We combined the industry's most generous free API tiers with high-availability client-side failover orchestration.
+      Developers get instant answers, code generation, and deep reasoning without unexpected rate-limit stops.
+    </p>
+
+    <div class="architecture-features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon groq-icon">⚡</div>
+        <h3 class="feature-title">Groq LPU Hardware Acceleration</h3>
+        <p class="feature-text">
+          Groq uses Language Processing Units (LPUs) designed specifically for sequential tensor computation,
+          clocking throughput exceeding 500 tokens/second. Free tier includes up to <strong>14,400 requests per day</strong>
+          and 30 requests per minute with near-zero latency.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon gemini-icon">✨</div>
+        <h3 class="feature-title">Google Gemini 1.5 Flash Reasoning</h3>
+        <p class="feature-text">
+          Gemini 1.5 Flash provides a groundbreaking <strong>1-million token context window</strong> on Google AI Studio's
+          free tier (1,500 requests per day). It handles large multi-file code reviews, deep logic, and architectural analysis
+          effortlessly.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon failover-icon">🔄</div>
+        <h3 class="feature-title">Seamless Auto-Failover Protocol</h3>
+        <p class="feature-text">
+          If your primary provider encounters an HTTP 429 (Rate Limit) or 503 (Overloaded) code, our Angular
+          orchestration layer automatically captures the event, shifts down the priority chain (Groq ➔ Gemini ➔ OpenRouter ➔ HF),
+          and completes your prompt without losing conversation state.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon privacy-icon">🔒</div>
+        <h3 class="feature-title">100% In-Browser Privacy</h3>
+        <p class="feature-text">
+          Your conversation history and custom API keys are processed strictly within your browser. No intermediary proxy
+          inspects or stores your prompts. Requests dispatch directly to provider endpoints via native browser fetch.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-container">
+      <h3 class="faq-main-title">Frequently Asked Questions</h3>
+
+      <div class="faq-accordion-list">
+
+        <!-- FAQ Item 1 -->
+        <div class="faq-item" [class.open]="isFaqOpen(0)">
+          <button type="button" class="faq-header-btn" (click)="toggleFaq(0)">
+            <span class="faq-question">Is this AI Chat Playground completely free to use?</span>
+            <span class="faq-toggle-icon">{{ isFaqOpen(0) ? '−' : '+' }}</span>
+          </button>
+          @if (isFaqOpen(0)) {
+            <div class="faq-answer-panel">
+              <p>
+                Yes! Both Groq and Google AI Studio offer expansive, genuine free developer tiers with no credit card required.
+                Groq grants 14,400 daily requests, and Google Gemini grants 1,500 daily requests. You can also plug in your own
+                free personal keys for unlimited personal developer throughput.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="faq-item" [class.open]="isFaqOpen(1)">
+          <button type="button" class="faq-header-btn" (click)="toggleFaq(1)">
+            <span class="faq-question">Are my API keys stored on your server?</span>
+            <span class="faq-toggle-icon">{{ isFaqOpen(1) ? '−' : '+' }}</span>
+          </button>
+          @if (isFaqOpen(1)) {
+            <div class="faq-answer-panel">
+              <p>
+                <strong>Never.</strong> ConverterAllAI adheres to a strict client-side architecture. Your keys are saved
+                strictly in your device's <code>window.localStorage</code> and are sent directly to the official provider endpoints
+                (api.groq.com, generativelanguage.googleapis.com, openrouter.ai, huggingface.co) via authenticated HTTPS requests.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="faq-item" [class.open]="isFaqOpen(2)">
+          <button type="button" class="faq-header-btn" (click)="toggleFaq(2)">
+            <span class="faq-question">What happens when a provider hits its rate limit (HTTP 429)?</span>
+            <span class="faq-toggle-icon">{{ isFaqOpen(2) ? '−' : '+' }}</span>
+          </button>
+          @if (isFaqOpen(2)) {
+            <div class="faq-answer-panel">
+              <p>
+                Instead of failing or crashing your chat session, the unified failover service catches the HTTP 429 error,
+                inserts an informational system badge into the chat feed, transitions to the next available provider in the
+                priority hierarchy, and re-dispatches the exact conversational prompt without any manual intervention.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="faq-item" [class.open]="isFaqOpen(3)">
+          <button type="button" class="faq-header-btn" (click)="toggleFaq(3)">
+            <span class="faq-question">Which models are best for code generation and debugging?</span>
+            <span class="faq-toggle-icon">{{ isFaqOpen(3) ? '−' : '+' }}</span>
+          </button>
+          @if (isFaqOpen(3)) {
+            <div class="faq-answer-panel">
+              <p>
+                For high-speed coding and quick syntax debugging, <strong>Groq Llama 3.1 8B Instant</strong> delivers results in
+                under a second. For complex full-stack codebases, SQL joins, or architectural design,
+                <strong>Groq Llama 3.3 70B Versatile</strong>, <strong>DeepSeek R1</strong>, or <strong>Gemini 1.5 Flash</strong>
+                excel with deep multi-step algorithmic reasoning.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- FAQ Item 5 -->
+        <div class="faq-item" [class.open]="isFaqOpen(4)">
+          <button type="button" class="faq-header-btn" (click)="toggleFaq(4)">
+            <span class="faq-question">Can I switch back to manual provider routing?</span>
+            <span class="faq-toggle-icon">{{ isFaqOpen(4) ? '−' : '+' }}</span>
+          </button>
+          @if (isFaqOpen(4)) {
+            <div class="faq-answer-panel">
+              <p>
+                Yes. You can switch between "Auto (Smart Free Routing)" and any specific provider using the dropdown in the top control bar
+                at any time. Manual mode routes queries specifically to your selected provider while still offering fallback options if rate limits occur.
+              </p>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- AdSense Slot Below FAQ -->
+  <div class="adsense-slot-wrapper bottom-slot" aria-label="Advertisement">
+    <!-- AdSense Slot Below FAQ -->
+    <div class="adsense-card">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9707682105347147"
+           data-ad-slot="9876543210"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <div class="adsense-disclaimer">Sponsored Advertisement</div>
+    </div>
+  </div>
+
+</div>

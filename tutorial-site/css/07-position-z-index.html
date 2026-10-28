@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Positioning &amp; Z-Index — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="07-position-z-index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 07</span>
+          </div>
+          <h1 class="lesson-title">Positioning &amp; Z-Index: Master the 3rd Dimension</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Static, Relative, Absolute, Fixed, and Sticky positioning demystified alongside 3D stacking contexts.</span>
+            <span class="lang-hi">Positioning ke 5 types (Static, Relative, Absolute, Fixed, Sticky) aur Z-Index stacking context ko aasaani se samjhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 5 values of <code>position</code>: <code>static</code>, <code>relative</code>, <code>absolute</code>, <code>fixed</code>, and <code>sticky</code>.</li>
+            <li>How the Offset Quadrant works (<code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code>, and modern <code>inset</code>).</li>
+            <li>The Golden Rule of Absolute Positioning: Always establish a <code>position: relative</code> parent.</li>
+            <li>Building sticky navigation bars and floating "Back to Top" action buttons.</li>
+            <li>How <strong>Stacking Contexts</strong> work and why <code>z-index: 999999</code> still fails.</li>
+            <li>Creating full-screen modal backdrops with modern <code>inset: 0</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="06-display-visibility-overflow.html">06. Display, Visibility &amp; Overflow</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Office Desk and Sticky Notes</div>
+          <p>
+            <span class="lang-en">Imagine your work office desk:
+            <br>&bull; <strong><code>static</code>:</strong> A heavy computer monitor sitting firmly on your desk. It sits strictly in normal order.
+            <br>&bull; <strong><code>relative</code>:</strong> You slide your coffee mug 2 inches to the right. The spot where it originally sat is still reserved; nobody else can put anything there.
+            <br>&bull; <strong><code>absolute</code>:</strong> A yellow Post-it note stuck specifically to the top-right corner of your monitor. If you move your monitor, the note moves with it!
+            <br>&bull; <strong><code>fixed</code>:</strong> A fly buzzing right in front of your eyes. No matter where you turn your head or walk in the room, it stays locked in your exact field of vision!
+            <br>&bull; <strong><code>sticky</code>:</strong> A receipt sitting loose on your desk until your hand reaches it, then it sticks to your palm and moves along with your hand!</span>
+            <span class="lang-hi">Office desk ki tarah sochiye: <code>static</code> normal desk par rakha computer hai; <code>relative</code> cup ko thoda khiskana hai par jagah reserve rehti hai; <code>absolute</code> monitor ke kone par laga sticky note hai; <code>fixed</code> aapki aankhon ke samne ruka hua chashma hai jo hamesha wahi rehta hai; aur <code>sticky</code> tab tak scroll hota hai jab tak top par chipak na jaye!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The 5 Position Values Explained</h2>
+        <p>
+          By default, every HTML element is <code>position: static</code>. It flows naturally from top to bottom. Once you change <code>position</code> to any other value, you unlock the four coordinate offset properties: <code>top</code>, <code>right</code>, <code>bottom</code>, and <code>left</code> (or shorthand <code>inset</code>).
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Static vs Relative</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Default: top/right/bottom/left and z-index are COMPLETELY IGNORED */
+.normal-box {
+  position: static;
+  top: 50px; /* Does nothing! */
+}
+
+/* Relative: Nudged from its original spot without disrupting siblings */
+.nudged-box {
+  position: relative;
+  top: -10px;  /* Nudges 10px upward */
+  left: 20px;  /* Nudges 20px rightward */
+  /* Crucial: The original physical footprint remains reserved in the layout! */
+}</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Absolute Positioning: The Parent Trap</h2>
+        <p>
+          When an element is set to <code>position: absolute</code>, it is <strong>completely ripped out of normal document flow</strong>. It occupies zero space. It anchors itself to the <em>nearest ancestor that has a position other than static</em>.
+        </p>
+        <p>
+          If no ancestor has <code>position: relative</code> (or absolute/fixed), the element anchors all the way up to the initial viewport (the entire browser page)!
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Canonical "Relative Parent + Absolute Child" Pattern</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* The Parent Container: Establishes the coordinate anchor boundary */
+.product-card {
+  position: relative; /* REQUIRED! Anchors the badge inside this card */
+  width: 280px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+/* The Child Badge: Positioned exactly in the top-right corner */
+.sale-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ef4444;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Fixed vs Sticky: The Scroll Anchors</h2>
+        <p>
+          Both <code>fixed</code> and <code>sticky</code> react to page scrolling, but their behaviors differ fundamentally:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Fixed Navbar &amp; Sticky Headers</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* FIXED: Locked permanently relative to the browser viewport */
+.site-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 1000; /* Stays above body content */
+}
+
+/* STICKY: Scrolls normally until reaching threshold, then locks! */
+.table-header th {
+  position: sticky;
+  top: 60px; /* Accounts for the 60px fixed navbar above it! */
+  background-color: #f8fafc;
+  z-index: 10;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Sticky Requirement:</strong> An element with <code>position: sticky</code> <em>must</em> specify at least one offset (e.g. <code>top: 0</code>). Furthermore, sticky elements stick <em>only within their parent container</em>. Once the parent scrolls past the screen, the sticky child scrolls out with it!
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Understanding Z-Index and Stacking Contexts</h2>
+        <p>
+          <code>z-index</code> controls the stacking order along the virtual Z-axis (depth facing the user). Larger numbers appear on top of smaller numbers.
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-warning); border-radius:var(--radius-sm);">
+          <strong>Golden Rule:</strong> <code>z-index</code> ONLY works on positioned elements (elements whose <code>position</code> is <code>relative</code>, <code>absolute</code>, <code>fixed</code>, or <code>sticky</code>), or flex/grid items. It is ignored on <code>position: static</code>!
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Why `z-index: 999999` Fails (Stacking Contexts)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Parent A has z-index: 1 */
+.sidebar {
+  position: relative;
+  z-index: 1;
+}
+
+/* Child of Parent A has a massive z-index */
+.sidebar .tooltip {
+  position: absolute;
+  z-index: 999999; /* Still gets trapped beneath .modal! */
+}
+
+/* Parent B has z-index: 2 */
+.modal {
+  position: fixed;
+  z-index: 2; /* Entire modal and ALL its children beat .sidebar! */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          Think of stacking contexts like royal families: Even the king's grand vizier (<code>z-index: 999999</code>) inside Household 1 cannot outrank the lowest prince in Household 2 if Household 2 itself has a higher rank (<code>z-index: 2</code> vs <code>1</code>).
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Full-Screen Modal Backdrops with Modern <code>inset: 0</code></h2>
+        <p>
+          In legacy CSS, making a full-screen overlay required <code>top: 0; right: 0; bottom: 0; left: 0;</code>. Modern CSS provides the single shorthand property <code>inset: 0</code>:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Modal Backdrop &amp; Centered Dialog</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Darkened translucent overlay covering 100% of the screen */
+.modal-backdrop {
+  position: fixed;
+  inset: 0; /* top: 0, right: 0, bottom: 0, left: 0 */
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+}
+
+/* Modal Dialog Box */
+.modal-content {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Test Positioning Live</h2>
+        <p>
+          Inspect relative, absolute, and sticky positioning in action below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Positioning Lab</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: system-ui, sans-serif; padding: 20px; background: #f8fafc; }
+  
+  .card {
+    position: relative; /* Anchor for the absolute badge */
+    width: 260px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  }
+  
+  .badge {
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    background: #2563eb;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  
+  .btn-close {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <button class="btn-close">&times;</button>
+    <div class="badge">PRO PLAN</div>
+    <h3 style="margin-top:8px;">Unlimited Cloud</h3>
+    <p style="color:#64748b; font-size:0.9rem; margin-top:8px;">
+      100GB fast SSD storage with automatic global CDN backups.
+    </p>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>position: relative</code> on the parent:</strong> The absolute element shoots across the screen and anchors to the <code>&lt;body&gt;</code> instead!</li>
+            <li><strong>Thinking <code>position: fixed</code> reserves space:</strong> Because fixed elements leave the normal flow, the content beneath them slides under. Always add top padding to the page equal to the fixed header's height.</li>
+            <li><strong>Overflow hidden breaking sticky:</strong> If any ancestor element has <code>overflow: hidden</code> or <code>overflow: auto</code>, <code>position: sticky</code> will silently stop working!</li>
+            <li><strong>Assuming <code>z-index</code> works on static elements:</strong> Applying <code>z-index: 100</code> to a default element does nothing until you set <code>position: relative</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Use standard Z-Index scales:</strong> Never pick arbitrary numbers like <code>99999</code>. Create a design token scale: <code>--z-dropdown: 100; --z-sticky: 200; --z-fixed: 500; --z-modal: 1000; --z-toast: 2000;</code>.</li>
+            <li><strong>Use <code>isolation: isolate</code> to prevent z-index leaks:</strong> If you want a component to create its own self-contained stacking context without setting positioning, add <code>isolation: isolate</code>.</li>
+            <li><strong>Modern <code>inset</code> shorthand:</strong> Replace <code>top: 0; right: 0; bottom: 0; left: 0;</code> with <code>inset: 0</code> for cleaner, more readable CSS.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>static</code> is the normal flow; offsets and <code>z-index</code> do not apply.</li>
+            <li><code>relative</code> nudges the element while leaving its original space intact; it acts as an anchor for absolute children.</li>
+            <li><code>absolute</code> removes the element from flow and positions it relative to the closest non-static ancestor.</li>
+            <li><code>fixed</code> locks the element relative to the viewport window.</li>
+            <li><code>sticky</code> acts like normal flow until hitting its offset threshold, then sticks within its parent.</li>
+            <li>Stacking contexts determine layer order; parent stacking contexts strictly cap child z-index values.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Floating Notification Counter</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>You have a bell icon button with <code>position: relative</code>. How do you position a red badge counter in its top-right corner overlapping slightly outside the button?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use absolute positioning with small negative top and right offsets.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.badge-counter {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Floating "Back to Top" Action Button</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write CSS for a circular floating action button that stays pinned 24px from the bottom and 24px from the right edge of the screen at all times while the user scrolls.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use position: fixed.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.btn-back-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 500;
+  border-radius: 50%;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Debugging the Sticky Failure</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>A developer wrote <code>.header { position: sticky; }</code> on a table header, but it fails to stick when scrolling. List the two common reasons why sticky elements fail.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Threshold offset and parent overflow.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              1. Missing threshold offset: You must declare at least one directional offset (e.g., <code>top: 0</code>).<br>
+              2. Parent container overflow: An ancestor element has <code>overflow: hidden</code>, <code>auto</code>, or <code>scroll</code>, which traps the sticky scroll context.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 07 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Absolute positioning searches upward through the DOM until it finds an ancestor with position other than static.">
+            <div class="quiz-question-text">1. Against which element is an element with 'position: absolute' positioned?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Always the &lt;body&gt; element</div>
+              <div class="quiz-option"><span>B)</span> Always the directly preceding sibling</div>
+              <div class="quiz-option"><span>C)</span> The nearest ancestor element that has a position value other than static</div>
+              <div class="quiz-option"><span>D)</span> The user's mouse cursor</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="z-index only applies to positioned elements or flex/grid children; it is ignored on static elements.">
+            <div class="quiz-question-text">2. Why does 'z-index: 99' have no effect on an element with default styling?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 99 is too small a number</div>
+              <div class="quiz-option"><span>B)</span> Default elements have position: static, which ignores z-index</div>
+              <div class="quiz-option"><span>C)</span> z-index requires a commercial license</div>
+              <div class="quiz-option"><span>D)</span> z-index only works on images</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Fixed positioning anchors directly to the browser viewport window regardless of scrolling.">
+            <div class="quiz-question-text">3. Which position value anchors an element permanently relative to the browser viewport?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> fixed</div>
+              <div class="quiz-option"><span>B)</span> relative</div>
+              <div class="quiz-option"><span>C)</span> static</div>
+              <div class="quiz-option"><span>D)</span> inherit</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="inset: 0 is the modern shorthand for top: 0, right: 0, bottom: 0, left: 0.">
+            <div class="quiz-question-text">4. What does the modern CSS property 'inset: 0;' replace?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> margin: 0; padding: 0;</div>
+              <div class="quiz-option"><span>B)</span> width: 0; height: 0;</div>
+              <div class="quiz-option"><span>C)</span> border: 0; outline: 0;</div>
+              <div class="quiz-option"><span>D)</span> top: 0; right: 0; bottom: 0; left: 0;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Stacking contexts formed by parents govern child stacking; child z-index cannot escape parent boundaries.">
+            <div class="quiz-question-text">5. If Element A has z-index: 1 and Element B has z-index: 2, can a child inside Element A with z-index: 99999 appear on top of Element B?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, because 99999 is larger than 2</div>
+              <div class="quiz-option"><span>B)</span> No, because Element A's stacking context is strictly ranked below Element B</div>
+              <div class="quiz-option"><span>C)</span> Only in Google Chrome</div>
+              <div class="quiz-option"><span>D)</span> Yes, if you add !important</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Floating Tooltip</h3>
+          <p>
+            In the live editor above, add a <code>.tooltip</code> element inside the card that appears <code>bottom: -30px; left: 50%; transform: translateX(-50%);</code> with a dark background and white text. Notice how perfectly it stays centered beneath the card!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#position" class="ref-pill">Positioning Properties Reference</a>
+            <a href="../reference/glossary.html#position" class="ref-pill">Glossary: Positioning</a>
+            <a href="../reference/glossary.html#stacking-context" class="ref-pill">Glossary: Stacking Context</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Positioning Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="06-display-visibility-overflow.html" class="btn btn-outline">&larr; Previous: Display, Visibility &amp; Overflow</a>
+          <button class="mark-complete-btn" data-lesson-id="css-07">Mark as Complete</button>
+          <a href="08-flexbox.html" class="btn btn-primary">Next: Master Flexbox Layout &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

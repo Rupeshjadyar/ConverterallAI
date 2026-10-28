@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 09: Expense &amp; Budget Tracker — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="09-expense-tracker.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 35 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 09</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Personal Expense &amp; Budget Tracker</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">The capstone frontend application. Architect a complete financial accounting system with net balance calculations, transaction history, and persistent LocalStorage syncing.</span>
+            <span class="lang-hi">Capstone Project: Complete Expense &amp; Budget Tracker banayein. Income/expense balance calculation, transaction history aur LocalStorage persistence.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Technical Concepts</div>
+          <ul>
+            <li><strong>Array Reducers in Action:</strong> Using <code>Array.prototype.reduce()</code> to compute Net Balance, Total Income, and Total Expenses dynamically.</li>
+            <li><strong>Transaction State Modeling:</strong> <code>{ id, desc, amount, category, date }</code>.</li>
+            <li><strong>Currency Formatting:</strong> Using native <code>Intl.NumberFormat</code> for localized dollar/rupee displays.</li>
+            <li><strong>Delete &amp; Filter Mechanics:</strong> Updating state, syncing with <code>localStorage</code>, and triggering clean DOM renders.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Expense Tracker</h2>
+          <p>
+            <span class="lang-en">Add income (positive numbers) or expenses (negative numbers) and watch your balance recalculate:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me expense tracker test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-expense">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Expense Tracker Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-expense')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-expense')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .tracker-card { width: 100%; max-width: 420px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    h2 { text-align: center; color: #38bdf8; margin-bottom: 14px; font-size: 20px; }
+    .balance-box { text-align: center; margin-bottom: 18px; }
+    .balance-label { font-size: 12px; color: #94a3b8; font-weight: bold; letter-spacing: 0.5px; }
+    .balance-val { font-size: 32px; font-weight: 800; color: white; margin-top: 4px; }
+    .inc-exp-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .inc-card, .exp-card { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 8px; text-align: center; }
+    .money-title { font-size: 11px; font-weight: bold; }
+    .money-plus { color: #10b981; font-size: 18px; font-weight: bold; margin-top: 4px; }
+    .money-minus { color: #ef4444; font-size: 18px; font-weight: bold; margin-top: 4px; }
+    .form-group { margin-bottom: 10px; }
+    input, select { width: 100%; padding: 9px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 13px; }
+    button.btn-add-tx { width: 100%; padding: 10px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; margin-top: 6px; }
+    .history-title { font-size: 13px; font-weight: bold; color: #94a3b8; margin: 20px 0 10px; }
+    .tx-list { list-style: none; max-height: 160px; overflow-y: auto; }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border: 1px solid #334155; padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; border-right: 4px solid transparent; }
+    .tx-item.plus { border-right-color: #10b981; }
+    .tx-item.minus { border-right-color: #ef4444; }
+    .btn-del-tx { background: transparent; border: none; color: #64748b; font-size: 16px; cursor: pointer; margin-left: 8px; }
+    .btn-del-tx:hover { color: #ef4444; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="tracker-card"&gt;
+    &lt;h2&gt;Personal Budget Tracker&lt;/h2&gt;
+    
+    &lt;div class="balance-box"&gt;
+      &lt;div class="balance-label"&gt;YOUR NET BALANCE&lt;/div&gt;
+      &lt;div class="balance-val" id="net-balance"&gt;&#36;0.00&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="inc-exp-container"&gt;
+      &lt;div class="inc-card"&gt;
+        &lt;div class="money-title" style="color:#10b981;"&gt;INCOME&lt;/div&gt;
+        &lt;div class="money-plus" id="money-income"&gt;+&#36;0.00&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class="exp-card"&gt;
+        &lt;div class="money-title" style="color:#ef4444;"&gt;EXPENSE&lt;/div&gt;
+        &lt;div class="money-minus" id="money-expense"&gt;-&#36;0.00&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="form-group"&gt;
+      &lt;input id="tx-desc" placeholder="Transaction description (e.g. Salary, Rent)..."&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;input id="tx-amount" type="number" step="any" placeholder="Amount (+income or -expense)..."&gt;
+    &lt;/div&gt;
+    &lt;button class="btn-add-tx" onclick="addTransaction()"&gt;Record Transaction&lt;/button&gt;
+
+    &lt;div class="history-title"&gt;TRANSACTION HISTORY&lt;/div&gt;
+    &lt;ul class="tx-list" id="tx-container"&gt;&lt;/ul&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const STORAGE_KEY = 'guided_project_expenses';
+
+    function getTransactions() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [
+        { id: 1, desc: "Frontend Freelance Gig", amount: 1200 },
+        { id: 2, desc: "Web Hosting &amp; Domain", amount: -45 }
+      ];
+    }
+
+    function saveTransactions(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      render();
+    }
+
+    function addTransaction() {
+      const descInput = document.getElementById('tx-desc');
+      const amountInput = document.getElementById('tx-amount');
+      const desc = descInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+
+      if (!desc || isNaN(amount) || amount === 0) {
+        alert("Please provide a valid description and non-zero amount (+ for income, - for expense).");
+        return;
+      }
+
+      const txs = getTransactions();
+      txs.push({ id: Date.now(), desc, amount });
+      descInput.value = '';
+      amountInput.value = '';
+      saveTransactions(txs);
+    }
+
+    function deleteTransaction(id) {
+      const txs = getTransactions().filter(t =&gt; t.id !== id);
+      saveTransactions(txs);
+    }
+
+    function formatCurrency(num) {
+      return (num &lt; 0 ? '-&#36;' : '&#36;') + Math.abs(num).toFixed(2);
+    }
+
+    function render() {
+      const txs = getTransactions();
+      const list = document.getElementById('tx-container');
+      list.innerHTML = '';
+
+      let total = 0;
+      let income = 0;
+      let expense = 0;
+
+      txs.forEach(t =&gt; {
+        total += t.amount;
+        if (t.amount &gt; 0) income += t.amount;
+        else expense += Math.abs(t.amount);
+
+        const li = document.createElement('li');
+        li.className = `tx-item ${t.amount &gt;= 0 ? 'plus' : 'minus'}`;
+        li.innerHTML = `
+          &lt;span&gt;${t.desc}&lt;/span&gt;
+          &lt;div style="display:flex; align-items:center;"&gt;
+            &lt;span style="font-weight:bold; color:${t.amount &gt;= 0 ? '#10b981' : '#ef4444'};"&gt;${t.amount &gt; 0 ? '+' : ''}&#36;${t.amount.toFixed(2)}&lt;/span&gt;
+            &lt;button class="btn-del-tx" onclick="deleteTransaction(${t.id})"&gt;&amp;times;&lt;/button&gt;
+          &lt;/div&gt;
+        `;
+        list.appendChild(li);
+      });
+
+      document.getElementById('net-balance').textContent = formatCurrency(total);
+      document.getElementById('money-income').textContent = `+&#36;${income.toFixed(2)}`;
+      document.getElementById('money-expense').textContent = `-&#36;${expense.toFixed(2)}`;
+    }
+
+    render();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="08-weather-app-mock-data.html" class="nav-btn prev-btn">&larr; Project 08: Weather App</a>
+          <button class="btn-complete" onclick="markLessonComplete('09-expense-tracker.html')">&#10003; Mark as Complete</button>
+          <a href="../playground/index.html" class="nav-btn next-btn">Interactive Playground &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

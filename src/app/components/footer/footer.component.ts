@@ -74,12 +74,15 @@ import { RouterModule } from '@angular/router';
           <div class="footer-col">
             <h4 class="col-title">⚡ Dev, AI &amp; Games</h4>
             <div class="col-links">
+              <a routerLink="/typing-speed-test">Typing Speed Test (WPM)</a>
+              <a routerLink="/developer-tools/web-tutorials">Learn through ConverterAllAI</a>
+              <a routerLink="/ai-chat">Free AI Chat Playground</a>
               <a routerLink="/developer-tools">Developer Tools Hub</a>
               <a routerLink="/developer-tools/sql">Interactive SQL Masterclass</a>
               <a routerLink="/developer-tools/json-formatter">JSON Formatter &amp; Validator</a>
+              <a routerLink="/typing-master">Typing Master Tutor</a>
               <a routerLink="/games">Free Web Arcade Games</a>
               <a routerLink="/resume-builder">AI Resume Builder</a>
-              <a routerLink="/typing-master">Typing Master Tutor</a>
             </div>
           </div>
 

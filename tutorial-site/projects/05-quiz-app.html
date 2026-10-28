@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 05: Timed Quiz Application — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="05-quiz-app.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 30 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 05</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Timed Quiz &amp; Assessment Engine</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Construct an interactive multiple-choice assessment engine. Master countdown interval timers, animated progress indicators, score tallying, and dynamic screen transitions.</span>
+            <span class="lang-hi">Timed Quiz App banayein: Countdown timer, animated progress bar, score screen, aur retry functionality.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Architectural Highlights</div>
+          <ul>
+            <li><strong>Interval Engine:</strong> A 15-second per-question countdown timer that auto-submits on expiration.</li>
+            <li><strong>Progress Bar:</strong> Visual width animation calculated as <code>((currentQ + 1) / totalQ) * 100%</code>.</li>
+            <li><strong>Screen Transitions:</strong> Smoothly swapping between Quiz Screen &rarr; Result Screen using DOM manipulation.</li>
+            <li><strong>Instant Answer Review:</strong> Highlighting the chosen answer and revealing the correct answer in green.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Quiz App</h2>
+          <p>
+            <span class="lang-en">Answer the questions before the timer runs out!</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me timed quiz test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-quiz-app">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Timed Quiz Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-quiz-app')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-quiz-app')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .quiz-card { width: 100%; max-width: 440px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .timer-badge { background: #f59e0b; color: black; font-weight: bold; font-size: 13px; padding: 4px 10px; border-radius: 20px; }
+    .prog-track { width: 100%; height: 6px; background: #0f172a; border-radius: 4px; overflow: hidden; margin-bottom: 18px; }
+    .prog-fill { height: 100%; width: 0%; background: #38bdf8; transition: width 0.3s; }
+    .q-text { font-size: 17px; font-weight: 700; margin-bottom: 16px; min-height: 48px; }
+    .opt-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    .opt-btn { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px 14px; border-radius: 6px; font-size: 14px; text-align: left; cursor: pointer; transition: all 0.15s; }
+    .opt-btn:hover { border-color: #38bdf8; }
+    .opt-btn.correct { background: #064e3b !important; border-color: #10b981 !important; color: #34d399; }
+    .opt-btn.wrong { background: #7f1d1d !important; border-color: #ef4444 !important; color: #fca5a5; }
+    .btn-next { width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: none; }
+    .result-screen { text-align: center; display: none; }
+    .score-circle { width: 90px; height: 90px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); border: 3px solid #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; color: #38bdf8; margin: 20px auto; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="quiz-card"&gt;
+    &lt;div id="quiz-screen"&gt;
+      &lt;div class="quiz-top"&gt;
+        &lt;span style="font-size:13px; color:#94a3b8;" id="q-counter"&gt;Question 1 of 3&lt;/span&gt;
+        &lt;span class="timer-badge" id="timer"&gt;&#9201; 15s&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="prog-track"&gt;&lt;div class="prog-fill" id="progress"&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class="q-text" id="q-title"&gt;Loading question...&lt;/div&gt;
+      &lt;div class="opt-list" id="opts-container"&gt;&lt;/div&gt;
+      &lt;button class="btn-next" id="btn-next" onclick="nextQuestion()"&gt;Next Question &amp;rarr;&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div class="result-screen" id="result-screen"&gt;
+      &lt;h3 style="font-size:20px;"&gt;Quiz Completed!&lt;/h3&gt;
+      &lt;div class="score-circle" id="score-display"&gt;3/3&lt;/div&gt;
+      &lt;p style="color:#94a3b8; font-size:14px; margin-bottom:20px;" id="score-feedback"&gt;Outstanding performance!&lt;/p&gt;
+      &lt;button class="btn-next" style="display:block;" onclick="restartQuiz()"&gt;Try Again&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const questions = [
+      {
+        q: "Which CSS property specifies the main layout axis of a flex container?",
+        opts: ["justify-content", "flex-direction", "align-items", "flex-wrap"],
+        ans: 1
+      },
+      {
+        q: "What is the return value of typeof null in JavaScript?",
+        opts: ["'null'", "'undefined'", "'object'", "'boolean'"],
+        ans: 2
+      },
+      {
+        q: "Which HTML5 tag represents the primary top-level heading of a document?",
+        opts: ["&lt;h0&gt;", "&lt;header&gt;", "&lt;title&gt;", "&lt;h1&gt;"],
+        ans: 3
+      }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let timeLeft = 15;
+    let timerId = null;
+
+    function startTimer() {
+      timeLeft = 15;
+      document.getElementById('timer').textContent = `&#9201; ${timeLeft}s`;
+      clearInterval(timerId);
+      timerId = setInterval(() =&gt; {
+        timeLeft--;
+        document.getElementById('timer').textContent = `&#9201; ${timeLeft}s`;
+        if (timeLeft &lt;= 0) {
+          clearInterval(timerId);
+          handleTimeout();
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      document.getElementById('q-counter').textContent = `Question ${currentQ + 1} of ${questions.length}`;
+      document.getElementById('progress').style.width = `${((currentQ + 1) / questions.length) * 100}%`;
+      document.getElementById('q-title').textContent = q.q;
+      document.getElementById('btn-next').style.display = 'none';
+
+      const container = document.getElementById('opts-container');
+      container.innerHTML = '';
+      q.opts.forEach((opt, idx) =&gt; {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = opt;
+        btn.onclick = () =&gt; selectAnswer(idx);
+        container.appendChild(btn);
+      });
+
+      startTimer();
+    }
+
+    function selectAnswer(chosenIdx) {
+      clearInterval(timerId);
+      const q = questions[currentQ];
+      const buttons = document.querySelectorAll('.opt-btn');
+      buttons.forEach(b =&gt; b.disabled = true);
+
+      if (chosenIdx === q.ans) {
+        buttons[chosenIdx].classList.add('correct');
+        score++;
+      } else {
+        buttons[chosenIdx].classList.add('wrong');
+        buttons[q.ans].classList.add('correct');
+      }
+
+      document.getElementById('btn-next').style.display = 'block';
+    }
+
+    function handleTimeout() {
+      const q = questions[currentQ];
+      const buttons = document.querySelectorAll('.opt-btn');
+      buttons.forEach(b =&gt; b.disabled = true);
+      buttons[q.ans].classList.add('correct');
+      document.getElementById('btn-next').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQ++;
+      if (currentQ &lt; questions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      const res = document.getElementById('result-screen');
+      res.style.display = 'block';
+      document.getElementById('score-display').textContent = `${score}/${questions.length}`;
+      const pct = Math.round((score / questions.length) * 100);
+      document.getElementById('score-feedback').textContent = pct &gt;= 70 ? "Great job! You mastered this material." : "Keep studying and try again!";
+    }
+
+    function restartQuiz() {
+      currentQ = 0;
+      score = 0;
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      renderQuestion();
+    }
+
+    renderQuestion();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="04-calculator.html" class="nav-btn prev-btn">&larr; Project 04: Calculator</a>
+          <button class="btn-complete" onclick="markLessonComplete('05-quiz-app.html')">&#10003; Mark as Complete</button>
+          <a href="06-digital-clock-stopwatch.html" class="nav-btn next-btn">Project 06: Stopwatch &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

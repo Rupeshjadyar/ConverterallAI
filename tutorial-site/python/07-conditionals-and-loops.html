@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Control Flow: Conditionals, Match-Case & Iteration Loops — WebDev Academy</title>
+  <meta name="description" content="Master execution control in Python: if/elif/else branching, Python 3.10+ Structural Pattern Matching (match-case), for and while loops, break, continue, enumerate, zip, and the rarely understood else clause on loops.">
+  <meta name="keywords" content="Python control flow, if elif else, Python match case, for loop, while loop, enumerate zip, loop else clause, Python tutorial">
+  <meta property="og:title" content="Control Flow: Conditionals, Match-Case & Iteration Loops">
+  <meta property="og:description" content="Master execution control in Python: if/elif/else branching, Python 3.10+ Structural Pattern Matching (match-case), for and while loops, break, continue, enumerate, zip, and the rarely understood else clause on loops.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="07-conditionals-and-loops.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 07</span>
+          </div>
+          <h1 class="lesson-title">Control Flow: Conditionals, Match-Case & Iteration Loops</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master execution control in Python: if/elif/else branching, Python 3.10+ Structural Pattern Matching (match-case), for and while loops, break, continue, enumerate, zip, and the rarely understood else clause on loops.</span>
+            <span class="lang-hi">Python Control Flow seekhein: if/elif/else, Python 3.10 match-case, for/while loops, enumerate, zip aur loops ke sath else block ka use.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Decision making with if, elif, and else conditionals.</li><li>Structural Pattern Matching: Python 3.10+ match-case statements.</li><li>Iterating over sequences with for loops and range().</li><li>Pairing collections with zip() and tracking indexes with enumerate().</li><li>Loop control: break, continue, pass, and while loops.</li><li>The secret Python feature: The else clause on for and while loops.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 06: Data Types: Dictionaries & Sets.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of driving a car through a city. <strong>An if/elif/else statement is a traffic signal with turn arrows</strong>: if the light is green, proceed straight; elif the yellow arrow flashes, prepare to turn; else, come to a complete stop. <strong>A for-loop is an automated conveyor belt</strong>: it carries 10 packages one by one past your inspection desk until the belt is empty. <strong>enumerate() is stamping a sequential tracking number on each package</strong>: (Box #1, Shoes), (Box #2, Books). And <strong>the loop else clause is an inspector saying: 'I inspected all 10 boxes from start to finish without sounding the emergency alarm (break)'</strong>!</span>
+            <span class="lang-hi">Gaadi chalane ki misaal lein: <strong>if/elif/else traffic signal jaisa hai</strong> (green hai toh chalo, yellow par ruko). <strong>for loop ek automated belt hai</strong> jo ek ek karke saari items ko aapke saamne lata hai. <strong>enumerate() har item par number chipka deta hai</strong>: (Item 1, Laptop), (Item 2, Mouse). Aur <strong>loop ke sath else block ka matlab hai: poora loop bina kisi break ke aasaani se complete ho gaya</strong>!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What does the 'else' clause on a Python loop do?</strong> The <code>else</code> block attached to a <code>for</code> or <code>while</code> loop executes ONLY if the loop completes normally without encountering a <code>break</code> statement. Perfect for search routines!</li><li><strong>Structural Pattern Matching (match-case):</strong> Introduced in Python 3.10 (PEP 634), <code>match-case</code> is much more powerful than a C-style switch-case: it performs deep structural destructuring of sequences, dictionaries, and class objects.</li><li><strong>range() memory efficiency:</strong> In Python 3, <code>range(1000000)</code> does NOT create a list of one million numbers in memory. It is a lazy generator-like sequence object that calculates numbers on demand in O(1) memory.</li><li><strong>zip() and zip_longest():</strong> <code>zip()</code> pairs elements until the shortest iterable is exhausted. To keep all elements and pad missing values, use <code>itertools.zip_longest()</code>.</li><li><strong>Infinite while loops in production:</strong> Always ensure a terminal break condition, timeout, or cancellation token exists inside <code>while True:</code> loops to prevent runaway 100% CPU spikes.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Decision Making: if, elif, and else</h2>
+        <p>Python executes code sequentially unless redirected by conditional branching. Indentation defines the code block associated with each branch.</p>
+        <p>You can also use ternary conditional expressions for concise inline assignments: <code>status = 'Adult' if age &gt;= 18 else 'Minor'</code>.</p>
+        
+        <h2>2. Modern Structural Pattern Matching (match-case)</h2>
+        <p>Starting in Python 3.10, Python features <strong>Structural Pattern Matching</strong> using the <code>match</code> and <code>case</code> keywords.</p>
+        <p>Unlike legacy switch statements that only compare scalar values, Python's match-case inspects structural shapes, extracts nested values, and applies conditional guards (<code>if</code>).</p>
+        
+        <h2>3. The Secret Loop Feature: The Loop 'else' Clause</h2>
+        <p>A unique Python feature that confuses beginners is the <code>else</code> clause attached directly to a <code>for</code> or <code>while</code> loop.</p>
+        <p>The code inside <code>else:</code> runs only if the loop finished iterating naturally without being terminated by a <code>break</code> statement.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Clean Conditional Branching and Ternary Expressions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">account_balance = 1250.00
+transaction_amount = 300.00
+is_authenticated = True
+
+if not is_authenticated:
+    print('Access denied: Authentication required.')
+elif transaction_amount &gt; account_balance:
+    print('Declined: Insufficient funds.')
+else:
+    account_balance -= transaction_amount
+    print(f'Approved! Remaining balance: ${account_balance:.2f}')
+
+# Pythonic ternary expression
+status = 'VIP' if account_balance &gt; 1000 else 'Standard'
+print(f'Customer Tier: {status}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Ternary expressions (<code>X if COND else Y</code>) assign values cleanly without multi-line if/else blocks.
+        </div>
+        
+        <h3>Code Example 2: Python 3.10+ match-case Structural Pattern Matching</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">def handle_api_command(command):
+    match command:
+        case {'action': 'login', 'username': user}:
+            return f'Authenticating user: {user}'
+        case {'action': 'transfer', 'amount': amt} if amt &gt; 10000:
+            return f'Flagged large transfer of ${amt} for security review!'
+        case {'action': 'transfer', 'amount': amt}:
+            return f'Processing transfer of ${amt}'
+        case ['quit' | 'exit']:
+            return 'Terminating session...'
+        case _:
+            return 'Unknown command syntax'
+
+print(handle_api_command({'action': 'transfer', 'amount': 25000}))
+print(handle_api_command(['quit']))</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>match-case</code> destructures dictionaries and lists in real time and supports conditional guards (<code>if amt &gt; 10000</code>).
+        </div>
+        
+        <h3>Code Example 3: Iterating Cleanly with enumerate() and zip()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">developers = ['Aarav', 'Priya', 'Rohan']
+roles = ['Backend Lead', 'ML Engineer', 'DevOps Specialist']
+
+# 1. enumerate() provides index and item cleanly (no manual i += 1!)
+for idx, dev in enumerate(developers, start=1):
+    print(f'Dev #{idx}: {dev}')
+
+# 2. zip() combines two parallel iterables simultaneously
+for dev, role in zip(developers, roles):
+    print(f'{dev} works as {role}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Never write <code>for i in range(len(lst)):</code> in Python! Use <code>enumerate()</code> or <code>zip()</code>.
+        </div>
+        
+        <h3>Code Example 4: The Loop 'else' Clause: Clean Search Without Flag Variables</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">target_item = 'Special Gadget'
+warehouse_crates = ['Bolts', 'Pipes', 'Wires', 'Screws']
+
+# In other languages, you need a found = False boolean flag
+for crate in warehouse_crates:
+    if crate == target_item:
+        print(f'Found {target_item}!')
+        break
+else:
+    # Runs ONLY if the loop exhausted all crates without breaking!
+    print(f'Item {target_item} was NOT found in any crate.')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The loop <code>else</code> block eliminates the clumsy boolean flag (<code>found = False</code>) pattern commonly used in other languages.
+        </div>
+        
+        <h3>Code Example 5: Controlling Loop Execution with break, continue, and pass</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">numbers = [1, 2, -3, 4, 0, 5, -6, 7]
+
+for n in numbers:
+    if n &lt; 0:
+        continue  # Skip negative numbers and proceed to next iteration
+    if n == 0:
+        pass      # Placeholder: do nothing for 0
+    if n == 5:
+        print('Hit stop condition (5)!')
+        break     # Terminate loop entirely
+    print(f'Processing positive: {n}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>continue</code> skips to the next iteration; <code>break</code> terminates the loop; <code>pass</code> is a syntactic no-op.
+        </div>
+        
+        <h3>Code Example 6: While Loops with Safe Terminal Guards</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">countdown = 5
+while countdown &gt; 0:
+    print(f'T-minus {countdown}...')
+    countdown -= 1
+print('Liftoff! Rocket launched successfully.')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • While loops repeat until a boolean expression becomes False.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Control Flow: Conditionals, Match-Case & Iteration Loops</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Control Flow Sandbox
+users = [
+    {'name': 'Alice', 'role': 'admin', 'active': True},
+    {'name': 'Bob', 'role': 'guest', 'active': False},
+    {'name': 'Charlie', 'role': 'member', 'active': True}
+]
+
+for u in users:
+    if not u['active']:
+        continue
+    print(f"Active user {u['name']} has role: {u['role']}")</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Writing C-style index loops:</strong> Writing <code>for i in range(len(lst)): print(lst[i])</code> is an anti-pattern. Write <code>for item in lst:</code> or <code>for idx, item in enumerate(lst):</code>.</li><li><strong>Modifying collections during iteration:</strong> Adding or removing items from a list while looping over it skips elements. Loop over a shallow copy instead: <code>for x in lst[:]:</code>.</li><li><strong>Misunderstanding the loop 'else' clause:</strong> Beginners often think <code>else</code> runs if the loop condition was False. It actually runs if the loop <em>never hit a break</em>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use any() and all() built-ins:</strong> Instead of writing a 6-line loop to check if any item meets a condition, write <code>if any(u['role'] == 'admin' for u in users):</code>. It short-circuits instantly and reads like English!</li><li><strong>itertools for advanced looping:</strong> Explore the standard library <code>itertools</code> module for Cartesian products (<code>product</code>), permutations (<code>permutations</code>), and grouping (<code>groupby</code>).</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Indentation dictates block scope in Python.</li><li>match-case provides structural pattern matching with deep destructuring.</li><li>enumerate() gives index and value; zip() iterates parallel sequences.</li><li>Loop 'else' executes only when the loop completes without a break.</li><li>Use any() and all() for clean boolean aggregations over collections.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python loop using <code>enumerate()</code> that prints a list of programming languages <code>['Python', 'JavaScript', 'SQL']</code> numbered starting from 1.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use for idx, lang in enumerate(languages, start=1):</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">languages = ['Python', 'JavaScript', 'SQL']
+for idx, lang in enumerate(languages, start=1):
+    print(f'{idx}. {lang}')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a prime number checker function <code>is_prime(n)</code> using a for-loop and the loop <code>else</code> clause.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Loop from 2 to int(n**0.5) + 1. If n % i == 0, break. In the else block, return True.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def is_prime(n):
+    if n &lt; 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    else:
+        return True
+
+print(is_prime(17))  # True
+print(is_prime(20))  # False</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Use Python 3.10+ match-case to write a point handler function <code>evaluate_point(pt)</code> that matches 1) (0, 0) as 'Origin', 2) (0, y) as 'On Y-axis', 3) (x, 0) as 'On X-axis', and 4) (x, y) as 'Coordinate at (x, y)'.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use match pt: with tuple unpacking cases.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def evaluate_point(pt):
+    match pt:
+        case (0, 0):
+            return 'Origin'
+        case (0, y):
+            return f'On Y-axis at y={y}'
+        case (x, 0):
+            return f'On X-axis at x={x}'
+        case (x, y):
+            return f'Coordinate at ({x}, {y})'
+        case _:
+            return 'Not a valid point'</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="The loop <code>else</code> clause executes only if the loop exhausted all iterations without a <code>break</code>.">
+          <div class="quiz-question-text">1. When does the 'else' block attached to a for-loop execute?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Whenever the loop has zero items</div><div class="quiz-option"><span>B)</span> When the loop terminates naturally without encountering a break statement</div><div class="quiz-option"><span>C)</span> Only when an exception occurs</div><div class="quiz-option"><span>D)</span> Every time the loop repeats</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="<code>enumerate()</code> is the official, idiomatic Python standard for index-tracked iteration.">
+          <div class="quiz-question-text">2. What is the idiomatic way to loop through a list and keep track of the index?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> i = 0; for x in lst: i += 1</div><div class="quiz-option"><span>B)</span> for i in range(len(lst)):</div><div class="quiz-option"><span>C)</span> for idx, item in enumerate(lst):</div><div class="quiz-option"><span>D)</span> for item in lst.withIndex():</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="0" data-explanation="Standard <code>zip()</code> terminates as soon as the shortest input iterable is exhausted.">
+          <div class="quiz-question-text">3. What does zip(['a', 'b'], [1, 2, 3]) produce when iterated?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> [('a', 1), ('b', 2)] (stops at shortest iterable)</div><div class="quiz-option"><span>B)</span> [('a', 1), ('b', 2), (None, 3)]</div><div class="quiz-option"><span>C)</span> Raises a ValueError for mismatched lengths</div><div class="quiz-option"><span>D)</span> A single dictionary</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>pass</code> is a no-operation statement used when syntax requires a code block but no action is needed.">
+          <div class="quiz-question-text">4. What is the 'pass' keyword in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Skips the next line of code</div><div class="quiz-option"><span>B)</span> A syntactic placeholder that performs no operation (no-op)</div><div class="quiz-option"><span>C)</span> Exits the program</div><div class="quiz-option"><span>D)</span> Passes an argument to a function</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Python 3.10 introduced Structural Pattern Matching using <code>match</code> and <code>case</code>.">
+          <div class="quiz-question-text">5. What feature introduced in Python 3.10 allows deep pattern matching on data structures?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> switch-case</div><div class="quiz-option"><span>B)</span> match-case</div><div class="quiz-option"><span>C)</span> select-case</div><div class="quiz-option"><span>D)</span> check-case</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change Charlie's active status to False and run to verify that only Alice is printed!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#control-flow" class="ref-pill">Glossary: Control Flow</a><a href="../reference/glossary.html#match-case" class="ref-pill">Glossary: Match-Case</a><a href="08-functions-args-kwargs-lambda.html" class="ref-pill">Lesson 08: Functions & Lambdas</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="06-dictionaries-and-sets.html" class="btn btn-outline">&larr; 06. Dictionaries & Sets</a>
+          <button class="mark-complete-btn" data-lesson-id="python-07">Mark as Complete</button>
+          <a href="08-functions-args-kwargs-lambda.html" class="btn btn-primary">08. Functions & Lambdas &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

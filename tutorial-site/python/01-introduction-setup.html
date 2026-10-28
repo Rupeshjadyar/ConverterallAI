@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python 3 Introduction, Setup & Virtual Environments — WebDev Academy</title>
+  <meta name="description" content="Understand why Python powers AI, web, and data science. Learn how the Python interpreter works, install virtual environments (venv), write PEP 8 compliant code, and execute your first script.">
+  <meta name="keywords" content="Python tutorial, Python 3 setup, Python interpreter, Python venv, virtual environment, PEP 8, learn Python beginner">
+  <meta property="og:title" content="Python 3 Introduction, Setup & Virtual Environments">
+  <meta property="og:description" content="Understand why Python powers AI, web, and data science. Learn how the Python interpreter works, install virtual environments (venv), write PEP 8 compliant code, and execute your first script.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="01-introduction-setup.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 14 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 01</span>
+          </div>
+          <h1 class="lesson-title">Python 3 Introduction, Setup & Virtual Environments</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Understand why Python powers AI, web, and data science. Learn how the Python interpreter works, install virtual environments (venv), write PEP 8 compliant code, and execute your first script.</span>
+            <span class="lang-hi">Python 3 introduction: Python kaise kaam karta hai, interpreter kya hai, venv (virtual environment) banana aur pehla program run karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why Python dominates AI, data engineering, web development, and cloud automation.</li><li>How Python executes: Source Code (.py) &rarr; Bytecode (.pyc) &rarr; Python Virtual Machine (PVM).</li><li>Setting up Python 3 on Windows, macOS, and Linux without environment corruption.</li><li>Why Virtual Environments (venv) are mandatory in modern Python engineering.</li><li>PEP 8 style guide: indentation, naming conventions, and docstrings.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> None! This is the absolute starting point for all Python programming.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of traveling to a foreign country. In languages like C++, you must write a complete book and hire a translator to translate the entire book in advance into machine code before anyone can read a word (Compiled language). <strong>Python is like having an ultra-smart live interpreter walking beside you</strong>: you speak a sentence in plain English, and the interpreter immediately translates that sentence on the fly and speaks it to the local listener (Interpreted language). <strong>A Virtual Environment (venv) is like packing separate suitcases for separate trips</strong>: one suitcase for a beach vacation (Django project), and one suitcase for snowy mountains (AI project) &mdash; your beach flip-flops never get mixed with your snow boots!</span>
+            <span class="lang-hi">Videsh ghoomne ki misaal lein: C++ me poori kitaab pehle translate karni padti hai. <strong>Python ek smart guide ki tarah hai jo sath sath chalte hue har line ko turant translate karke computer ko samjhata hai</strong> (Interpreted language). <strong>Virtual Environment (venv) alag alag suitcase jaisa hai</strong>: ek project ke tools doosre project se mix nahi hote aur computer hamesha saaf rehta hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Is Python interpreted or compiled?</strong> Python is BOTH. First, source code (<code>.py</code>) is compiled into platform-independent intermediate <strong>bytecode</strong> (stored in <code>__pycache__/*.pyc</code>). Then, the <strong>Python Virtual Machine (PVM)</strong> interprets that bytecode line-by-line into machine code.</li><li><strong>Why use Virtual Environments (venv)?</strong> To isolate project-specific dependencies and library versions. Without venv, installing a package globally can break other existing Python projects on the same machine (Dependency Hell).</li><li><strong>What is PEP 8?</strong> Python Enhancement Proposal 8 is the official Python style guide (4 spaces for indentation, snake_case for functions/variables, PascalCase for classes, UPPER_CASE for constants).</li><li><strong>Dynamic vs Static Typing:</strong> Python is dynamically typed (variable types are resolved at runtime, not compile-time) and strongly typed (types are enforced and not automatically coerced in incompatible operations like <code>'5' + 5</code>).</li><li><strong>What is CPython?</strong> CPython is the default, standard reference implementation of Python written in C. Alternative implementations include PyPy (JIT compiler for speed), Jython (Java bytecode), and IronPython (.NET).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Python and Why is it the World's #1 Language?</h2>
+        <p>Created by Guido van Rossum and released in 1991, Python was designed around a central philosophical premise: <em>'Readability counts'</em> (The Zen of Python).</p>
+        <p>Unlike languages with verbose boilerplate (curly braces <code>{}</code>, semicolons <code>;</code>, and type declarations), Python uses clean indentation. Today, Python is the lingua franca of Artificial Intelligence (PyTorch, TensorFlow), Data Science (Pandas, NumPy), and High-Scale Web Services (Django, FastAPI).</p>
+        
+        <h2>2. How Python Executes Under the Hood</h2>
+        <p>When you type <code>python script.py</code>, two distinct phases happen automatically:</p>
+        <p>1. <strong>Compilation Phase:</strong> Python parses the source code into a syntax tree and compiles it into low-level <strong>Bytecode</strong>.<br>2. <strong>Execution Phase:</strong> The <strong>Python Virtual Machine (PVM)</strong> reads the bytecode instructions and executes them on your CPU.</p>
+        
+        <h2>3. Virtual Environments (venv) & Package Management</h2>
+        <p>Never run <code>pip install</code> in your global system Python. Always create an isolated project environment:</p>
+        <p><code>python -m venv .venv</code> creates an isolated directory containing a local Python executable and a dedicated <code>site-packages</code> folder. Activating it ensures project packages never conflict.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Your First Python Script & The Zen of Python</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Script: hello_zen.py
+import this  # Prints the foundational philosophy of Python
+
+message = 'Hello, Python Engineering World!'
+print(message)
+print(f'Length of message: {len(message)} characters')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>import this</code> displays the Zen of Python: 'Simple is better than complex. Complex is better than complicated.'
+        </div>
+        
+        <h3>Code Example 2: Creating and Activating a Virtual Environment (Bash & PowerShell)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Step 1: Create the isolated virtual environment
+# Terminal: python -m venv .venv
+
+# Step 2: Activate it
+# On Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# On macOS / Linux: source .venv/bin/activate
+
+# Step 3: Install dependencies locally and export
+# Terminal: pip install requests
+# Terminal: pip freeze &gt; requirements.txt</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>requirements.txt</code> records exact package versions so your teammates can reproduce the exact environment with <code>pip install -r requirements.txt</code>.
+        </div>
+        
+        <h3>Code Example 3: PEP 8 Clean Code Standards Demonstration</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Constant (UPPER_CASE)
+DATABASE_TIMEOUT_SECONDS = 30
+
+# Class definition (PascalCase)
+class UserProfile:
+    """Represents a registered user in the authentication system."""
+    
+    def __init__(self, first_name: str, last_name: str) -&gt; None:
+        # Instance variables (snake_case)
+        self.first_name = first_name
+        self.last_name = last_name
+
+    # Method name (snake_case)
+    def get_display_name(self) -&gt; str:
+        return f'{self.first_name} {self.last_name}'</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice the use of 4-space indentation, docstrings, and Python 3 type hints for pristine readability.
+        </div>
+        
+        <h3>Code Example 4: Dynamic Typing vs Strong Typing in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># 1. Dynamic Typing: Variables can point to any object
+x = 42
+print(f'x is {type(x)}')  # &lt;class 'int'&gt;
+
+x = 'Now I am a string'
+print(f'x is now {type(x)}')  # &lt;class 'str'&gt;
+
+# 2. Strong Typing: Python NEVER silently converts incompatible types!
+try:
+    result = 'Score: ' + 100  # Fails! Unlike JavaScript, Python forbids this
+except TypeError as err:
+    print(f'Caught expected type error: {err}')
+    # Correct way: explicit casting
+    result = 'Score: ' + str(100)
+    print(result)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Python is strongly typed: it rejects implicit type coercion that causes subtle bugs in other dynamically typed languages.
+        </div>
+        
+        <h3>Code Example 5: Checking Python Environment Metadata Programmatically</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sys
+import platform
+
+print(f'Python Version: {platform.python_version()}')
+print(f'Interpreter Implementation: {platform.python_implementation()}')
+print(f'Executable Path: {sys.executable}')
+print(f'Module Search Path: {sys.path[:2]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>sys.executable</code> shows whether you are running inside a virtual environment or system Python.
+        </div>
+        
+        <h3>Code Example 6: Command-Line Arguments with sys.argv</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sys
+
+# Run with: python script.py Alice 25
+if len(sys.argv) &gt; 1:
+    name = sys.argv[1]
+    print(f'Welcome, {name}!')
+else:
+    print('No command-line arguments provided.')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>sys.argv</code> is a list containing script arguments passed from the terminal.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python 3 Introduction, Setup & Virtual Environments</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Python Sandbox: Explore Python 3
+user_name = 'DevLearner'
+role = 'Full-Stack Engineer'
+skills = ['Python', 'SQL', 'FastAPI']
+
+print(f'Candidate: {user_name}')
+print(f'Role: {role}')
+print(f'Total Skills: {len(skills)}')
+for idx, s in enumerate(skills, 1):
+    print(f'  {idx}. {s}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Mixing tabs and spaces for indentation:</strong> Python 3 strictly prohibits mixing tabs and spaces, throwing an <code>IndentationError: unexpected indent</code>. Always configure your editor to insert 4 spaces when pressing Tab.</li><li><strong>Installing packages globally without venv:</strong> Modifying system Python breaks operating system tools (especially on Ubuntu/Debian and macOS).</li><li><strong>Naming scripts after built-in modules:</strong> Naming your script <code>math.py</code> or <code>random.py</code> breaks Python's import system because <code>import math</code> will load your local script instead of the standard library!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always use modern f-strings:</strong> Introduced in Python 3.6, formatted string literals (<code>f'Hello {name}'</code>) are faster and far more readable than legacy <code>%</code> formatting or <code>.format()</code>.</li><li><strong>Use Type Hints with Mypy:</strong> Adding type annotations (<code>def greet(name: str) -&gt; str:</code>) improves IDE autocompletion and allows static type checking tools like Mypy to catch bugs before your code even runs!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Python compiles source code to bytecode (.pyc) and executes it on the Python Virtual Machine (PVM).</li><li>Python is dynamically typed (types resolved at runtime) and strongly typed (no silent coercion).</li><li>Virtual environments (venv) isolate project dependencies and prevent version conflicts.</li><li>PEP 8 defines community standards: 4 spaces indentation, snake_case, and clean docstrings.</li><li>f-strings (f'{var}') are the fastest and cleanest way to format text in Python 3.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python script that assigns your name and age to two variables, and prints a greeting using an f-string in the format: 'Hello, my name is [name] and I am [age] years old.'</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use name = '...' and age = ... with print(f'...')</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">name = 'Rupesh'
+age = 24
+print(f'Hello, my name is {name} and I am {age} years old.')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Python script that checks if a user is running Python 3.10 or higher. If yes, print 'Modern Python detected', otherwise print 'Please upgrade'.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Inspect sys.version_info.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">import sys
+
+if sys.version_info &gt;= (3, 10):
+    print('Modern Python detected')
+else:
+    print('Please upgrade')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the difference between Dynamic Typing and Strong Typing using Python code examples, contrasting Python's behavior with JavaScript.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Show how '5' + 5 behaves in Python vs JavaScript.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># 1. Dynamic Typing: Variables can point to different types across time:
+x = 10
+x = 'hello'  # Valid in both Python and JavaScript
+
+# 2. Strong Typing (Python): Rejects implicit coercion between incompatible types
+# '5' + 5 in Python raises: TypeError: can only concatenate str (not 'int') to str
+
+# In JavaScript (Weakly Typed): '5' + 5 produces '55' via implicit coercion!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="PEP 8 strictly prescribes 4 spaces per indentation level and recommends configuring editors to avoid tab characters.">
+          <div class="quiz-question-text">1. What is the standard indentation recommended by PEP 8 for Python code?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 2 spaces</div><div class="quiz-option"><span>B)</span> 4 spaces</div><div class="quiz-option"><span>C)</span> 1 tab character</div><div class="quiz-option"><span>D)</span> 8 spaces</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Python compiles source code into intermediate bytecode (.pyc) which is interpreted by the PVM.">
+          <div class="quiz-question-text">2. What is bytecode in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Binary 0s and 1s understood directly by the Intel/AMD CPU</div><div class="quiz-option"><span>B)</span> Platform-independent intermediate instructions (.pyc) executed by the Python Virtual Machine (PVM)</div><div class="quiz-option"><span>C)</span> A Python file written in C</div><div class="quiz-option"><span>D)</span> An encrypted password</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Virtual environments isolate package versions for each project, eliminating dependency conflicts.">
+          <div class="quiz-question-text">3. Why should you always use a virtual environment (venv) in Python projects?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It makes Python execute 10 times faster</div><div class="quiz-option"><span>B)</span> To isolate dependencies per project and avoid polluting or breaking global system packages</div><div class="quiz-option"><span>C)</span> Because Python won't run without one</div><div class="quiz-option"><span>D)</span> To hide your code from others</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Python is strongly typed and refuses to implicitly coerce an integer to a string in a concatenation operation.">
+          <div class="quiz-question-text">4. What happens when you execute: 'Score: ' + 10 in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Outputs: 'Score: 10'</div><div class="quiz-option"><span>B)</span> Throws a TypeError because Python is strongly typed and will not coerce an integer into a string implicitly</div><div class="quiz-option"><span>C)</span> Outputs: 'Score: null'</div><div class="quiz-option"><span>D)</span> Converts 'Score: ' into a number</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The built-in Python module command is <code>python -m venv &lt;env_name&gt;</code>.">
+          <div class="quiz-question-text">5. Which command creates a standard virtual environment named '.venv'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> pip make venv</div><div class="quiz-option"><span>B)</span> python -m venv .venv</div><div class="quiz-option"><span>C)</span> venv create .venv</div><div class="quiz-option"><span>D)</span> python --new-env</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, add a 4th skill 'Docker' to the skills list, re-run the code, and observe the updated skill count and numbered list!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#python" class="ref-pill">Glossary: Python</a><a href="../reference/glossary.html#interpreter" class="ref-pill">Glossary: Interpreter</a><a href="02-syntax-variables-datatypes.html" class="ref-pill">Lesson 02: Variables & Dynamic Typing</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="index.html" class="btn btn-outline">&larr; Python Course Index</a>
+          <button class="mark-complete-btn" data-lesson-id="python-01">Mark as Complete</button>
+          <a href="02-syntax-variables-datatypes.html" class="btn btn-primary">02. Variables & Dynamic Typing &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

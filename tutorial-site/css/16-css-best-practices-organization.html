@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Best Practices &amp; Organization — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="16-css-best-practices-organization.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 19 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 16</span>
+          </div>
+          <h1 class="lesson-title">CSS Best Practices, BEM &amp; Architecture</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Structure enterprise-grade stylesheets with BEM naming, Cascade Layers (@layer), and flat specificity curves.</span>
+            <span class="lang-hi">Enterprise CSS architecture: BEM methodology (Block-Element-Modifier), Cascade Layers (@layer), aur performance tips.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The fundamental architecture of a production CSS codebase: Tokens &rarr; Base &rarr; Layout &rarr; Components &rarr; Utilities.</li>
+            <li>The <strong>BEM Naming Methodology</strong>: <code>.block__element--modifier</code>.</li>
+            <li>Mastering Specificity: Why you should never use ID selectors (<code>#header</code>) in CSS stylesheets.</li>
+            <li>Why <code>!important</code> is the nuclear option that creates technical debt.</li>
+            <li>Modern <strong>Cascade Layers (<code>@layer</code>)</strong>: Taming the cascade without specificity wars.</li>
+            <li>Performance audits: Minimizing layout reflows and reducing render-blocking CSS.</li>
+            <li>Final course recap and transition into Vanilla JavaScript!</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="15-modern-layout-patterns.html">15. Modern Layout Patterns</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The City Library's Dewey Decimal System</div>
+          <p>
+            <span class="lang-en">Imagine entering a library with 500,000 books:
+            <br>&bull; <strong>Chaotic CSS:</strong> Every book is dumped into one giant heap in the center of the floor. When someone wants to read a mystery novel, they search for 4 hours and eventually tape a sticky note on top screaming <em>"!IMPORTANT: THIS IS A NOVEL!"</em>. Soon, other books have 50 sticky notes competing for attention!
+            <br>&bull; <strong>Architected CSS (BEM &amp; Cascade Layers):</strong> Every book has an organized aisle, shelf, category, and catalog barcode. Anyone can locate, replace, or update a volume in 10 seconds without disturbing adjacent shelves!</span>
+            <span class="lang-hi">Library ke Dewey Decimal System ki tarah sochiye: Bina planning ke likha CSS kachre ka dher ban jata hai jahan developers majboor hokar <code>!important</code> lagate hain. BEM naming aur <code>@layer</code> ke sath har component ka apna ek alag, saaf-suthra dabba hota hai jisse 10 saal baad bhi code padhna aasaan rehta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The 5-Layer Production Stylesheet Architecture</h2>
+        <p>
+          Senior frontend teams organize their global CSS into a predictable hierarchy that respects the natural cascade:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Modern Layer Hierarchy</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. TOKENS: CSS Variables, design tokens, color palettes, fonts */
+:root {
+  --color-brand: #2563eb;
+  --font-base: system-ui, sans-serif;
+}
+
+/* 2. BASE / RESET: Universal box-sizing, margin clears, base body typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  line-height: 1.6;
+}
+
+/* 3. LAYOUT: High-level structural shells (grid, navbar, sidebar, footer) */
+.layout-container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+}
+
+/* 4. COMPONENTS: Self-contained UI modules (buttons, cards, modals) */
+.btn { /* ... */ }
+.card { /* ... */ }
+
+/* 5. UTILITIES: Single-purpose atomic overrides */
+.text-center { text-align: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; }</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The BEM Naming Convention (Block, Element, Modifier)</h2>
+        <p>
+          BEM was created by Yandex engineers to eliminate selector collisions on massive enterprise portals. It establishes a crystal-clear relationship between HTML tags:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-css); border-radius:var(--radius-sm); font-family:var(--font-mono);">
+          <strong>.block</strong>__<strong>element</strong>--<strong>modifier</strong>
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: BEM in HTML &amp; CSS</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Block: .card --&gt;
+&lt;div class="card card--featured"&gt;
+  &lt;!-- Element: .card__image --&gt;
+  &lt;img class="card__image" src="photo.jpg" alt="Mountain summit"&gt;
+  
+  &lt;!-- Element: .card__body --&gt;
+  &lt;div class="card__body"&gt;
+    &lt;h3 class="card__title"&gt;Pro Adventure&lt;/h3&gt;
+    &lt;p class="card__text"&gt;Explore uncharted mountain ranges.&lt;/p&gt;
+    
+    &lt;!-- Block: .btn with Modifier: .btn--primary --&gt;
+    &lt;button class="btn btn--primary"&gt;Book Now&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Block */
+.card {
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* Modifier on Block */
+.card--featured {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+}
+
+/* Elements inside Block */
+.card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.card__body {
+  padding: 16px;
+}
+
+.card__title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Advantages:</strong><br>
+          &bull; <strong>Flat Specificity:</strong> Every selector has a specificity of exactly <code>0,1,0</code> (one class). Zero specificity wars!<br>
+          &bull; <strong>Self-Documenting:</strong> Anyone inspecting the DOM instantly knows which component owns that tag.<br>
+          &bull; <strong>Safe Refactoring:</strong> You can edit <code>.card__title</code> without fearing you accidentally broke titles in blog posts or navbars!
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Flat Specificity &amp; The `!important` Curse</h2>
+        <p>
+          CSS Specificity is calculated as: <code>[Inline styles, IDs, Classes, Elements]</code>.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Specificity Spiral of Death</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Developer 1 uses an ID (Specificity: 0,1,0,0): */
+#header .nav a {
+  color: blue;
+}
+
+/* Developer 2 tries to override it with a class, but FAILS because class < ID: */
+.nav-link-special {
+  color: red; /* Ignored! */
+}
+
+/* Frustrated Developer 2 uses !important: */
+.nav-link-special {
+  color: red !important;
+}
+
+/* Developer 3 now needs to override Developer 2, and must write: */
+#header .nav a.nav-link-special {
+  color: green !important; /* Total Chaos! */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Golden Rule:</strong> Never use ID selectors (<code>#my-id</code>) in CSS files. IDs carry a specificity of <code>0,1,0,0</code>, which crushes class selectors (<code>0,0,1,0</code>) and starts a vicious cycle that ends in <code>!important</code> pollution.
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The Modern Solution: Cascade Layers (<code>@layer</code>)</h2>
+        <p>
+          CSS Cascade Layers (<code>@layer</code>) is the official W3C specification designed to solve specificity wars forever. Layers let you explicitly declare the order of priority:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Modern Cascade Layers</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Define the priority ladder up front (Last layer wins!) */
+@layer reset, base, components, utilities;
+
+@layer reset {
+  * { box-sizing: border-box; margin: 0; }
+  h1, h2, h3 { font-size: inherit; }
+}
+
+@layer components {
+  /* Even an ID selector inside 'components'... */
+  #hero-btn {
+    background-color: blue;
+  }
+}
+
+@layer utilities {
+  /* ...WILL BE BEATEN by a simple class here, because 'utilities' layer ranks higher! */
+  .bg-red {
+    background-color: red;
+  }
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The Senior Developer's Performance Checklist</h2>
+        <div class="callout callout-tip">
+          <div class="callout-title">&#9889; High-Performance CSS Checklist</div>
+          <ol>
+            <li><strong>Zero Layout Reflows in Animations:</strong> Animate strictly <code>transform</code> and <code>opacity</code>.</li>
+            <li><strong>Use System Font Stacks:</strong> Zero milliseconds network font latency and 100% offline functionality.</li>
+            <li><strong>Eliminate Unused Selectors:</strong> Keep stylesheets concise and component-driven.</li>
+            <li><strong>Set <code>aspect-ratio</code> on Media:</strong> Prevents jarring Cumulative Layout Shift (CLS) when images finish downloading.</li>
+            <li><strong>Zero <code>@import</code> inside CSS:</strong> Never use <code>@import url(...)</code> inside CSS files; it chains sequential network requests and delays rendering. Use separate <code>&lt;link&gt;</code> tags in HTML.</li>
+          </ol>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Complete CSS Mastery Summary</h2>
+        <p>
+          Congratulations! You have completed all 16 in-depth CSS lessons. You now possess the skills of a modern professional frontend stylist:
+        </p>
+        <p>
+          &bull; <strong>Foundations:</strong> Selectors, Specificity, Box Model, Colors, Units, and System Typography.<br>
+          &bull; <strong>Layout Mastery:</strong> Flexbox 1D, CSS Grid 2D, Positioning, and Mobile-First Responsive Design.<br>
+          &bull; <strong>Motion &amp; Interaction:</strong> 60fps Transitions, Transforms, @keyframes Animations, and Pseudo-classes.<br>
+          &bull; <strong>Architecture:</strong> CSS Custom Properties, Math functions (calc/clamp), BEM Naming, and Cascade Layers.
+        </p>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Test BEM Architecture</h2>
+        <p>
+          Inspect clean BEM styling and test toggling the modifier class below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: BEM Component Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 24px;
+    background: #f8fafc;
+  }
+
+  /* BEM Block: .alert */
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    color: #1e293b;
+    border-left: 4px solid #64748b;
+    margin-bottom: 12px;
+  }
+
+  /* BEM Element: .alert__icon */
+  .alert__icon {
+    font-size: 1.25rem;
+  }
+
+  /* BEM Element: .alert__message */
+  .alert__message {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  /* BEM Modifiers: .alert--success, .alert--danger */
+  .alert--success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left-color: #10b981;
+  }
+
+  .alert--danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left-color: #ef4444;
+  }
+</style>
+</head>
+<body>
+  <!-- Standard Alert -->
+  <div class="alert">
+    <span class="alert__icon">&#8505;&#65039;</span>
+    <span class="alert__message">Standard system notification.</span>
+  </div>
+
+  <!-- Success Modifier Alert -->
+  <div class="alert alert--success">
+    <span class="alert__icon">&#9989;</span>
+    <span class="alert__message">Payment successfully verified!</span>
+  </div>
+
+  <!-- Danger Modifier Alert -->
+  <div class="alert alert--danger">
+    <span class="alert__icon">&#9888;&#65039;</span>
+    <span class="alert__message">Connection to server timed out.</span>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Grandchild BEM naming:</strong> Writing <code>.card__body__title</code> is incorrect. Keep elements flat: <code>.card__title</code>. Elements are always named relative to the Block, never relative to another Element.</li>
+            <li><strong>Reaching for <code>!important</code> to fix bugs:</strong> An <code>!important</code> flag does not fix a bug &mdash; it hides a specificity architectural defect. Fix the selector specificity instead!</li>
+            <li><strong>Over-nesting selectors:</strong> Writing <code>nav ul li div a span { ... }</code> creates immense specificity and fragile styles that break whenever HTML structure is modified. Stick to single BEM classes.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Adopt Cascade Layers for 3rd party resets:</strong> Wrapping CSS resets or base libraries in <code>@layer reset { ... }</code> guarantees that your component styles always override them without needing higher specificity.</li>
+            <li><strong>Lint with Stylelint:</strong> Use tools to enforce BEM conventions and flag accidental ID selectors before they enter production git repositories.</li>
+            <li><strong>Keep specificity flat at <code>0,1,0</code>:</strong> When 95% of your selectors are a single class name, moving, refactoring, and overriding components is effortless.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Follow the 5-layer hierarchy: Tokens &rarr; Base &rarr; Layout &rarr; Components &rarr; Utilities.</li>
+            <li>BEM uses <code>.block__element--modifier</code> for modular self-documenting code.</li>
+            <li>Avoid ID selectors in CSS; keep specificity flat at <code>0,1,0</code>.</li>
+            <li><code>!important</code> creates compounding technical debt; avoid it.</li>
+            <li>Modern Cascade Layers (<code>@layer</code>) govern stylesheet priority cleanly.</li>
+            <li>Ready for interactivity? Next stop: Vanilla JavaScript!</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify the BEM Parts</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>In the class name <code>.dialog__close-btn--disabled</code>, identify which part is the Block, which is the Element, and which is the Modifier.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Double underscore separates elements; double hyphen separates modifiers.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              &bull; <strong>Block:</strong> <code>dialog</code><br>
+              &bull; <strong>Element:</strong> <code>close-btn</code><br>
+              &bull; <strong>Modifier:</strong> <code>disabled</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Fix the BEM Grandchild Mistake</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>A junior developer wrote <code>.navbar__menu__item__link--active</code>. Refactor this class name into proper, clean BEM naming.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Elements belong directly to the block without chaining multiple double underscores.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>.navbar__link--active</code> (or treat menu item as its own block: <code>.nav-link--active</code>).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Cascade Layer Precedence</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Given <code>@layer reset, theme, components;</code>, will an <code>!important</code> rule in <code>reset</code> beat a normal rule in <code>components</code>? Explain the cascade layer rule.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Remember that !important inverts cascade layer precedence.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              Yes! Normal declarations favor the later layer (<code>components</code>), but when <code>!important</code> is introduced, Cascade Layer priority <strong>inverts</strong>, meaning <code>!important</code> in earlier layers (like <code>reset</code>) wins! This is why <code>!important</code> should be avoided.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 16 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="BEM stands for Block, Element, Modifier.">
+            <div class="quiz-question-text">1. What does the BEM acronym stand for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Browser, Engine, Memory</div>
+              <div class="quiz-option"><span>B)</span> Bold, Emphasized, Monospace</div>
+              <div class="quiz-option"><span>C)</span> Block, Element, Modifier</div>
+              <div class="quiz-option"><span>D)</span> Border, Edge, Margin</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="IDs carry 0,1,0,0 specificity, which overrules classes and forces cascading specificity escalation.">
+            <div class="quiz-question-text">2. Why should ID selectors (#header) be avoided in CSS stylesheets?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They have excessively high specificity that makes styles almost impossible to override without !important</div>
+              <div class="quiz-option"><span>B)</span> Modern browsers do not support IDs in CSS</div>
+              <div class="quiz-option"><span>C)</span> They consume 10x more GPU RAM</div>
+              <div class="quiz-option"><span>D)</span> They cannot use CSS variables</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Double underscore (__) designates an Element; double hyphen (--) designates a Modifier.">
+            <div class="quiz-question-text">3. In standard BEM naming, which delimiter denotes an Element belonging to a Block?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Single hyphen (-)</div>
+              <div class="quiz-option"><span>B)</span> Colon (:)</div>
+              <div class="quiz-option"><span>C)</span> Double hyphen (--)</div>
+              <div class="quiz-option"><span>D)</span> Double underscore (__)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="@layer lets developers explicitly declare layer precedence regardless of selector specificity.">
+            <div class="quiz-question-text">4. What problem do CSS Cascade Layers (@layer) primarily solve?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They compress image file sizes</div>
+              <div class="quiz-option"><span>B)</span> They manage cascade priority and prevent specificity conflicts between resets, frameworks, and component styles</div>
+              <div class="quiz-option"><span>C)</span> They replace JavaScript completely</div>
+              <div class="quiz-option"><span>D)</span> They enable 3D rendering in WebGL</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Animating layout properties (top, left, width) triggers CPU reflows, causing stuttering frame rates.">
+            <div class="quiz-question-text">5. Which of the following is considered a major CSS performance antipattern?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Using system font stacks</div>
+              <div class="quiz-option"><span>B)</span> Animating transform and opacity</div>
+              <div class="quiz-option"><span>C)</span> Continuously animating 'width' or 'left' on dozens of elements, causing constant CPU layout reflows</div>
+              <div class="quiz-option"><span>D)</span> Using clamp() for fluid typography</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a BEM Badge Component</h3>
+          <p>
+            In the live editor, create a <code>.badge</code> block with <code>.badge--warning</code> (yellow/amber) and <code>.badge--pill</code> (rounded 999px) modifier classes. Notice how modular and reusable BEM components are!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html" class="ref-pill">CSS Master Properties Reference</a>
+            <a href="../reference/glossary.html#bem" class="ref-pill">Glossary: BEM Methodology</a>
+            <a href="../reference/glossary.html#cascade-layers" class="ref-pill">Glossary: Cascade Layers</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Architecture Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="15-modern-layout-patterns.html" class="btn btn-outline">&larr; Previous: Modern Layout Patterns</a>
+          <button class="mark-complete-btn" data-lesson-id="css-16">Mark as Complete</button>
+          <a href="index.html" class="btn btn-outline">CSS Course Index &amp; Final Exam &rarr;</a>
+          <a href="../javascript/01-introduction-console.html" class="btn btn-primary" style="margin-left:auto;">Start JavaScript Course &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

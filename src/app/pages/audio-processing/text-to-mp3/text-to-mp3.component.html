@@ -1,318 +1,554 @@
-<div class="voice-studio-viewport">
-  <div class="studio-card">
-    
-    <!-- TOP HEADER -->
-    <div class="studio-header">
-      <div class="title-with-icon">
-        <span class="header-icon">🎛️</span>
-        <h1>Advanced Voice Generator</h1>
+<div class="tts-container">
+
+  <!-- TOAST ALERTS OVERLAY -->
+  <div class="toast-stack" *ngIf="toasts.length > 0">
+    <div *ngFor="let toast of toasts" class="toast-item" [ngClass]="'toast-' + toast.type">
+      <div class="toast-icon">
+        <span *ngIf="toast.type === 'success'">✅</span>
+        <span *ngIf="toast.type === 'error'">⚠️</span>
+        <span *ngIf="toast.type === 'warning'">⚡</span>
+        <span *ngIf="toast.type === 'info'">ℹ️</span>
       </div>
+      <div class="toast-content">{{ toast.message }}</div>
+      <button class="toast-close" (click)="removeToast(toast.id)" aria-label="Close notification">✕</button>
     </div>
+  </div>
 
-    <!-- MODE SELECTOR PILLS -->
-    <div class="mode-pill-bar">
-      <button class="mode-pill" [class.active]="activeMode === 'single'" (click)="activeMode = 'single'">
-        Single Voice
-      </button>
-      <button class="mode-pill" [class.active]="activeMode === 'dialogue'" (click)="activeMode = 'dialogue'">
-        Multi-Voice Dialogue
-      </button>
-      <button class="mode-pill" [class.active]="activeMode === 'cloning'" (click)="activeMode = 'cloning'">
-        🎙️ AI Voice Cloning
-      </button>
+  <!-- BREADCRUMB NAVIGATION -->
+  <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <li><a routerLink="/" class="breadcrumb-link">🏠 Home</a></li>
+      <li class="breadcrumb-separator">/</li>
+      <li><a routerLink="/audio-processing" class="breadcrumb-link">🎙️ Audio Processing</a></li>
+      <li class="breadcrumb-separator">/</li>
+      <li class="breadcrumb-current" aria-current="page">Text to Speech (MP3)</li>
+    </ol>
+  </nav>
+
+  <!-- HERO HEADER SECTION -->
+  <header class="tool-hero">
+    <div class="badge-pill">
+      <span class="badge-dot"></span>
+      <span>100% Free • Powered by Edge Neural Engine • No Registration</span>
     </div>
+    <h1 class="hero-title">
+      Free <span class="gradient-text">Text to Speech (MP3)</span> Converter
+    </h1>
+    <p class="hero-subtitle">
+      Generate ultra-realistic AI voiceovers in 140+ languages with expressive prosody. First-class natural neural voices for Hindi, Marathi, Indian English, Tamil, Telugu, and global languages.
+    </p>
 
-    <!-- MODE 1: SINGLE VOICE SCRIPT INPUT -->
-    <div class="studio-section" *ngIf="activeMode === 'single'">
-      <div class="section-label">
-        <span>📜 YOUR TEXT ({{ selectedLangObj.nativeName }})</span>
-      </div>
-      <div class="textarea-wrapper">
-        <textarea [(ngModel)]="textInput" maxlength="5000" rows="6" 
-                  placeholder="Type or paste your text here... (max 5000 characters)"></textarea>
-      </div>
-      <div class="textarea-footer">
-        <span class="char-count">⌨️ {{ textInput.length }} / 5000</span>
-        <span class="duration-est">⏱️ ~{{ estimatedDurationSec }} sec</span>
-      </div>
+    <div class="feature-pills-row">
+      <span class="feature-tag">🇮🇳 12+ Indian Regional Accents</span>
+      <span class="feature-tag">⚡ 50,000+ Character Auto-Chunking</span>
+      <span class="feature-tag">🎧 Studio Quality 24kHz MP3</span>
+      <span class="feature-tag">🔒 100% In-Browser Privacy</span>
     </div>
+  </header>
 
-    <!-- MODE 2: MULTI-VOICE DIALOGUE SCRIPT INPUT -->
-    <div class="studio-section" *ngIf="activeMode === 'dialogue'">
-      <div class="section-label d-flex justify-content-between align-items-center mb-2">
-        <span>🗣️ MULTI-VOICE DIALOGUE LINES</span>
-        <button class="btn-add-line" (click)="addDialogueLine()">+ Add Speaker Line</button>
-      </div>
+  <!-- MAIN CONVERTER STUDIO CARD -->
+  <main class="studio-card">
 
-      <div class="dialogue-line-card" *ngFor="let line of dialogueLines; let i = index">
-        <div class="line-header">
-          <input type="text" class="speaker-name-input" [(ngModel)]="line.speaker" placeholder="Speaker Name">
-          <select class="voice-select-sm" [(ngModel)]="line.voiceId">
-            <option *ngFor="let vc of combinedVoiceCharacters" [value]="vc.id">{{ vc.avatar }} {{ vc.name }}</option>
-          </select>
-          <button class="btn-remove-line" (click)="removeDialogueLine(i)">🗑️</button>
-        </div>
-        <textarea class="line-textarea" [(ngModel)]="line.text" rows="2" placeholder="Dialogue line..."></textarea>
-      </div>
-    </div>
-
-    <!-- MODE 3: AI VOICE CLONING STUDIO -->
-    <div class="studio-section" *ngIf="activeMode === 'cloning'">
-      <div class="section-label">
-        <span>🎙️ CLONE YOUR OWN VOICE (RECORD OR UPLOAD SAMPLE)</span>
-      </div>
-
-      <div class="clone-box-grid">
-        <!-- Mic Recording Card -->
-        <div class="clone-card">
-          <div class="card-icon">🎙️</div>
-          <h4>Option A: Record Your Voice</h4>
-          <p>Record a 5-10 second speech sample using your microphone.</p>
-          
-          <div class="rec-controls">
-            <button class="btn-rec-start" *ngIf="!isRecordingSample" (click)="startRecordingVoiceSample()">
-              🔴 Start Recording Mic
-            </button>
-            <button class="btn-rec-stop" *ngIf="isRecordingSample" (click)="stopRecordingVoiceSample()">
-              ⏹️ Stop Recording ({{ recordingDurationSec }}s)
-            </button>
-          </div>
-          <div class="rec-pulse-indicator" *ngIf="isRecordingSample">
-            <span class="pulse-wave"></span> Recording Audio Sample... Speak clearly!
-          </div>
-        </div>
-
-        <!-- File Upload Card -->
-        <div class="clone-card">
-          <div class="card-icon">📁</div>
-          <h4>Option B: Upload Audio File</h4>
-          <p>Upload a clear MP3, WAV, or M4A sample of the voice to clone.</p>
-          <input type="file" #voiceFileInput (change)="onVoiceFileUpload($event)" accept="audio/*" class="file-input-hidden">
-          <button class="btn-upload-file" (click)="voiceFileInput.click()">
-            📂 Choose Voice Sample File
+    <!-- STEP 1: TEXT INPUT AREA -->
+    <section class="studio-section" aria-labelledby="section-text-heading">
+      <div class="section-header-row">
+        <h2 id="section-text-heading" class="section-title">
+          <span class="step-num">1</span> Enter or Paste Text
+        </h2>
+        <div class="action-buttons-group">
+          <button type="button" class="btn-text-action" (click)="pasteSampleText()" title="Paste sample text in selected voice's language">
+            📋 Paste Sample
+          </button>
+          <button type="button" class="btn-text-action" (click)="clearText()" title="Clear textarea">
+            🗑️ Clear
           </button>
         </div>
       </div>
 
-      <!-- Preview Recorded / Uploaded Sample & Extraction Controls -->
-      <div class="sample-preview-banner" *ngIf="recordedAudioUrl">
-        <div class="preview-header">
-          <span>🎧 Sample Loaded Ready for Spectral Analysis</span>
-          <audio [src]="recordedAudioUrl" controls class="sample-audio-player"></audio>
-        </div>
+      <div class="textarea-wrapper">
+        <textarea
+          [(ngModel)]="textInput"
+          [attr.maxlength]="maxCharacterLimit"
+          rows="7"
+          class="tts-textarea"
+          placeholder="Type, write or paste your article, YouTube script, story, or dialogue here (up to 50,000 characters with intelligent auto-chunking)..."
+          aria-label="Text to convert into speech"
+        ></textarea>
+      </div>
 
-        <div class="clone-meta-fields">
-          <div class="meta-field">
-            <label>Voice Profile Name:</label>
-            <input type="text" [(ngModel)]="cloneVoiceName" class="studio-input" placeholder="e.g. My Personal AI Voice">
-          </div>
-          <div class="meta-field">
-            <label>Voice Gender:</label>
-            <select [(ngModel)]="cloneGender" class="studio-select-sm">
-              <option value="Neutral">Neutral 🧬</option>
-              <option value="Female">Female 👩</option>
-              <option value="Male">Male 👨</option>
-            </select>
-          </div>
+      <!-- TEXTAREA FOOTER METRICS -->
+      <div class="textarea-footer-metrics">
+        <div class="metrics-left">
+          <span class="metric-badge">
+            <span class="metric-icon">⌨️</span>
+            <strong>{{ characterCount.toLocaleString() }}</strong> / {{ maxCharacterLimit.toLocaleString() }} chars
+          </span>
+          <span class="metric-badge">
+            <span class="metric-icon">📝</span>
+            <strong>{{ wordCount.toLocaleString() }}</strong> words
+          </span>
         </div>
+        <div class="metrics-right">
+          <span class="metric-badge duration-badge" title="Estimated audio playback duration">
+            <span class="metric-icon">⏱️</span> Est. Duration: <strong>{{ estimatedDurationFormatted }}</strong>
+          </span>
+        </div>
+      </div>
+    </section>
 
-        <button class="btn-analyze-clone" (click)="analyzeAndCloneVoice()" [disabled]="isAnalyzingVoice">
-          <span *ngIf="!isAnalyzingVoice">⚡ Extract Spectral Features &amp; Clone Voice</span>
-          <span *ngIf="isAnalyzingVoice">⏳ Analyzing Pitch F0 &amp; Formants...</span>
+    <!-- STEP 2: VOICE & LANGUAGE SELECTION -->
+    <section class="studio-section" aria-labelledby="section-voice-heading">
+      <div class="section-header-row">
+        <h2 id="section-voice-heading" class="section-title">
+          <span class="step-num">2</span> Select AI Neural Voice
+        </h2>
+
+        <!-- SEARCH BAR -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search language, accent, or voice..."
+            class="search-input"
+            aria-label="Filter voices by language or name"
+          />
+          <button *ngIf="searchQuery" (click)="searchQuery = ''" class="search-clear-btn" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+
+      <!-- CATEGORY TABS -->
+      <div class="category-tabs" role="tablist">
+        <button
+          role="tab"
+          [attr.aria-selected]="activeCategory === 'Popular'"
+          class="tab-btn"
+          [class.active]="activeCategory === 'Popular'"
+          (click)="setCategory('Popular')"
+        >
+          ⭐ Popular Voices
         </button>
-
-        <!-- Analysis Metrics Result -->
-        <div class="metrics-badge-box" *ngIf="analysisMetrics">
-          <div class="metric-chip">🎵 Pitch F0: {{ analysisMetrics.pitch }} Hz</div>
-          <div class="metric-chip">🎛️ Formant Offset: {{ analysisMetrics.formant.toFixed(2) }}x</div>
-          <div class="metric-chip">📊 Centroid: {{ analysisMetrics.centroid }} Hz</div>
-          <div class="metric-chip status">✅ Voice Profile Saved!</div>
-        </div>
+        <button
+          role="tab"
+          [attr.aria-selected]="activeCategory === 'Indian'"
+          class="tab-btn"
+          [class.active]="activeCategory === 'Indian'"
+          (click)="setCategory('Indian')"
+        >
+          🇮🇳 Indian Languages (Hindi, Marathi, Tamil...)
+        </button>
+        <button
+          role="tab"
+          [attr.aria-selected]="activeCategory === 'Global'"
+          class="tab-btn"
+          [class.active]="activeCategory === 'Global'"
+          (click)="setCategory('Global')"
+        >
+          🌐 Global Languages (US, UK, Spanish, French...)
+        </button>
       </div>
 
-      <!-- MY CLONED VOICES LIBRARY -->
-      <div class="cloned-library-container" *ngIf="clonedVoices.length > 0">
-        <h4>🧬 My Cloned Voices ({{ clonedVoices.length }})</h4>
-        <div class="cloned-voices-list">
-          <div class="cloned-voice-item" *ngFor="let cv of clonedVoices" [class.selected]="selectedVoiceId === cv.id">
-            <div class="cv-info">
-              <span class="cv-avatar">{{ cv.avatar }}</span>
-              <div>
-                <strong>{{ cv.name }}</strong>
-                <small>F0: {{ cv.pitchF0 }}Hz • Formant: {{ cv.formantShift.toFixed(2) }}x • {{ cv.timestamp }}</small>
-              </div>
+      <!-- ACTIVE VOICE BADGE PREVIEW -->
+      <div class="active-voice-bar">
+        <span class="active-label">Selected Voice:</span>
+        <span class="active-badge">
+          {{ selectedVoice.flag }} <strong>{{ selectedVoice.name }}</strong> ({{ selectedVoice.lang }}) — 
+          <span class="gender-pill" [class.gender-female]="selectedVoice.gender === 'Female'" [class.gender-male]="selectedVoice.gender === 'Male'">
+            {{ selectedVoice.gender }}
+          </span>
+        </span>
+      </div>
+
+      <!-- VOICE GRID -->
+      <div class="voice-cards-grid" role="radiogroup" aria-label="Available AI Voices">
+        <div
+          *ngFor="let v of filteredVoices"
+          role="radio"
+          [attr.aria-checked]="selectedVoiceCode === v.code"
+          tabindex="0"
+          class="voice-card"
+          [class.selected]="selectedVoiceCode === v.code"
+          (click)="selectVoice(v)"
+          (keydown.enter)="selectVoice(v)"
+          (keydown.space)="selectVoice(v)"
+        >
+          <div class="voice-card-top">
+            <span class="voice-flag">{{ v.flag }}</span>
+            <span class="gender-badge" [class.female]="v.gender === 'Female'" [class.male]="v.gender === 'Male'">
+              {{ v.gender }}
+            </span>
+          </div>
+
+          <div class="voice-card-info">
+            <div class="voice-name">{{ v.name }}</div>
+            <div class="voice-lang">{{ v.lang }}</div>
+          </div>
+
+          <div class="radio-indicator">
+            <span class="radio-circle"></span>
+          </div>
+        </div>
+
+        <div *ngIf="filteredVoices.length === 0" class="no-results-box">
+          <p>No voices matching "<strong>{{ searchQuery }}</strong>". Try searching for another language or accent.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: AUDIO TUNING CONTROLS (SPEED & PITCH) -->
+    <section class="studio-section" aria-labelledby="section-tuning-heading">
+      <div class="section-header-row">
+        <h2 id="section-tuning-heading" class="section-title">
+          <span class="step-num">3</span> Fine-Tune Speech Prosody
+        </h2>
+        <button type="button" class="btn-text-action" (click)="resetTuning()" title="Reset speed and pitch to standard">
+          ↺ Reset Defaults
+        </button>
+      </div>
+
+      <div class="sliders-grid">
+        <!-- Speed Slider -->
+        <div class="slider-control-card">
+          <div class="slider-header">
+            <label for="speed-slider" class="slider-label">
+              <span>⚡ Playback Speed (Rate)</span>
+            </label>
+            <span class="slider-val-badge">{{ speed.toFixed(2) }}x</span>
+          </div>
+          <input
+            id="speed-slider"
+            type="range"
+            min="0.5"
+            max="2.0"
+            step="0.05"
+            [(ngModel)]="speed"
+            class="tuning-slider"
+          />
+          <div class="slider-labels-row">
+            <span>0.5x (Slow)</span>
+            <span>1.0x (Normal)</span>
+            <span>2.0x (Fast)</span>
+          </div>
+        </div>
+
+        <!-- Pitch Slider -->
+        <div class="slider-control-card">
+          <div class="slider-header">
+            <label for="pitch-slider" class="slider-label">
+              <span>🎵 Voice Pitch</span>
+            </label>
+            <span class="slider-val-badge">
+              {{ pitch > 0 ? '+' + pitch : pitch }} Hz
+            </span>
+          </div>
+          <input
+            id="pitch-slider"
+            type="range"
+            min="-50"
+            max="50"
+            step="5"
+            [(ngModel)]="pitch"
+            class="tuning-slider"
+          />
+          <div class="slider-labels-row">
+            <span>-50Hz (Deep Bass)</span>
+            <span>0Hz (Natural)</span>
+            <span>+50Hz (High Treble)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: ACTION CONVERSION & PROGRESS -->
+    <section class="studio-section action-section">
+      <div class="convert-cta-wrapper">
+        <button
+          type="button"
+          class="btn-convert-primary"
+          [disabled]="isConverting || !textInput.trim()"
+          (click)="convertToMp3()"
+        >
+          <span *ngIf="!isConverting" class="btn-inner">
+            <span class="btn-icon">🎙️</span> Convert to MP3
+          </span>
+          <span *ngIf="isConverting" class="btn-inner">
+            <svg class="spinner-svg" viewBox="0 0 24 24" fill="none">
+              <circle class="spinner-bg" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="spinner-fg" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Converting ({{ conversionProgress }}%)...
+          </span>
+        </button>
+      </div>
+
+      <!-- PROGRESS BAR & STATUS -->
+      <div *ngIf="isConverting" class="conversion-progress-box">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" [style.width.%]="conversionProgress"></div>
+        </div>
+        <div class="progress-status-info">
+          <span class="status-msg">⏳ {{ conversionStatusText }}</span>
+          <span class="status-pct">{{ conversionProgress }}%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: AUDIO PLAYER & INSTANT DOWNLOAD (When Audio is Ready) -->
+    <section *ngIf="audioBlobUrl" class="studio-section player-section" aria-labelledby="player-heading">
+      <div class="player-card">
+        <div class="player-header">
+          <div class="player-track-info">
+            <span class="player-disc-icon">🎧</span>
+            <div>
+              <h3 id="player-heading" class="track-title">{{ selectedVoice.name }} — Voiceover Preview</h3>
+              <p class="track-meta">
+                Format: 24kHz Mono MP3 • Language: {{ selectedVoice.lang }} ({{ selectedVoice.langCode }})
+              </p>
             </div>
-            <div class="cv-actions">
-              <button class="btn-cv-use" (click)="selectedVoiceId = cv.id; activeMode = 'single'">
-                {{ selectedVoiceId === cv.id ? '✓ Selected' : 'Use for Speech' }}
-              </button>
-              <button class="btn-cv-del" (click)="deleteClonedVoice(cv.id)">🗑️</button>
-            </div>
           </div>
+
+          <!-- DOWNLOAD BUTTON -->
+          <button type="button" class="btn-download-primary" (click)="downloadMp3()">
+            <span class="btn-download-icon">⬇️</span> Download MP3
+          </button>
+        </div>
+
+        <!-- HIDDEN NATIVE AUDIO ELEMENT -->
+        <audio
+          #audioPlayerRef
+          [src]="audioBlobUrl"
+          (loadedmetadata)="onAudioLoaded($event)"
+          (timeupdate)="onTimeUpdate($event)"
+          (play)="onAudioPlay()"
+          (pause)="onAudioPause()"
+          (ended)="onAudioEnded()"
+          preload="metadata"
+        ></audio>
+
+        <!-- CUSTOM AUDIO PLAYER CONTROLS -->
+        <div class="custom-player-controls">
+          <button
+            type="button"
+            class="btn-play-pause"
+            (click)="togglePlayback()"
+            [attr.aria-label]="isAudioPlaying ? 'Pause Audio' : 'Play Audio'"
+          >
+            <span *ngIf="!isAudioPlaying">▶️</span>
+            <span *ngIf="isAudioPlaying">⏸️</span>
+          </button>
+
+          <span class="time-display">{{ formatAudioSeconds(audioCurrentTime) }}</span>
+
+          <input
+            type="range"
+            min="0"
+            [max]="audioDuration || 100"
+            step="0.1"
+            [value]="audioCurrentTime"
+            (input)="seekAudio($event)"
+            class="audio-seek-slider"
+            aria-label="Audio scrubber"
+          />
+
+          <span class="time-display">{{ formatAudioSeconds(audioDuration) }}</span>
         </div>
       </div>
+    </section>
+
+  </main>
+
+  <!-- ADSENSE RESPONSIVE UNIT (SLOT 1) -->
+  <div class="ad-placement-slot my-8" aria-label="Advertisement">
+    <div class="ad-container-box">
+      <!-- AdSense Responsive Unit -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9707682105347147"
+           data-ad-slot="1234567890"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <span class="ad-label-hint">Advertisement</span>
     </div>
-
-    <!-- LANGUAGE & VOICE CHARACTER SELECTORS -->
-    <div class="controls-row-2col">
-      <div class="field-box">
-        <label class="field-label">🌐 LANGUAGE (100+ REAL MULTI-LINGUAL)</label>
-        <select class="studio-select" [(ngModel)]="selectedLangCode" (change)="onLanguageChange()">
-          <option *ngFor="let lang of languages" [value]="lang.code">
-            {{ lang.flag }} {{ lang.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="field-box">
-        <label class="field-label">🤖 VOICE CHARACTER (INCLUDES CLONED VOICES)</label>
-        <select class="studio-select" [(ngModel)]="selectedVoiceId">
-          <option *ngFor="let vc of combinedVoiceCharacters" [value]="vc.id">
-            {{ vc.avatar }} {{ vc.name }} — {{ vc.description }}
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <!-- SPEED, PITCH & VOLUME SLIDERS GRID -->
-    <div class="sliders-grid">
-      <!-- Speed Slider Card -->
-      <div class="slider-card">
-        <div class="slider-header">
-          <span class="slider-title">🏎️ Speed</span>
-          <span class="slider-val-badge">{{ speed }}x</span>
-        </div>
-        <input type="range" class="studio-range" min="0.5" max="2.0" step="0.1" [(ngModel)]="speed">
-        <div class="slider-footer">
-          <span>🐢 Slow</span>
-          <span>⚡ Fast</span>
-        </div>
-      </div>
-
-      <!-- Pitch Slider Card -->
-      <div class="slider-card">
-        <div class="slider-header">
-          <span class="slider-title">🎵 Pitch</span>
-          <span class="slider-val-badge">{{ pitch > 0 ? '+' + pitch : pitch }}</span>
-        </div>
-        <input type="range" class="studio-range" min="-5" max="5" step="1" [(ngModel)]="pitch">
-        <div class="slider-footer">
-          <span>🔽 Low</span>
-          <span>🔼 High</span>
-        </div>
-      </div>
-
-      <!-- Volume Slider Card -->
-      <div class="slider-card">
-        <div class="slider-header">
-          <span class="slider-title">🔊 Volume</span>
-          <span class="slider-val-badge">{{ volume }}%</span>
-        </div>
-        <input type="range" class="studio-range" min="0" max="100" step="5" [(ngModel)]="volume">
-        <div class="slider-footer">
-          <span>🔇 Mute</span>
-          <span>🔊 Max</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- SPEAKING STYLE & FORMAT SELECTORS -->
-    <div class="controls-row-2col">
-      <div class="field-box">
-        <label class="field-label">🎭 SPEAKING STYLE</label>
-        <select class="studio-select" [(ngModel)]="speakingStyle">
-          <option *ngFor="let style of speakingStyles" [value]="style">🎭 {{ style }}</option>
-        </select>
-      </div>
-
-      <div class="field-box">
-        <label class="field-label">💾 FORMAT</label>
-        <select class="studio-select" [(ngModel)]="audioFormat">
-          <option value="mp3">🎵 MP3 (Recommended)</option>
-          <option value="wav">🎼 WAV (Uncompressed HD)</option>
-          <option value="aac">🎧 AAC Audio</option>
-          <option value="ogg">🎛️ OGG Vorbis</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- NATURAL VOICE MODE TOGGLE -->
-    <div class="toggle-banner-box">
-      <div class="toggle-info">
-        <div class="toggle-title">
-          <span class="sparkle-icon">✨</span> Natural Voice Mode
-        </div>
-        <div class="toggle-sub">
-          Smart prosody — questions rise ↑, exclamations get energy ⚡, natural pauses at commas &amp; full stops
-        </div>
-      </div>
-      <label class="switch-toggle">
-        <input type="checkbox" [(ngModel)]="naturalProsody">
-        <span class="switch-slider"></span>
-      </label>
-    </div>
-
-    <!-- GENERATE & PLAYBACK ACTION BUTTONS -->
-    <div class="action-bar">
-      <button class="btn-generate-voice" (click)="generateAndPlayVoice()" [disabled]="isPlaying">
-        <span *ngIf="!isPlaying">🚀 Generate &amp; Listen (Native Accent)</span>
-        <span *ngIf="isPlaying">🔊 Speaking Native Speech...</span>
-      </button>
-
-      <div class="secondary-actions-row" *ngIf="isPlaying || isPaused">
-        <button class="btn-sec-action" (click)="pauseSpeech()">⏸️ Pause</button>
-        <button class="btn-sec-action" (click)="stopPlayback()">⏹️ Stop</button>
-      </div>
-
-      <button class="btn-download-audio" (click)="generateAndSaveAudio()" [disabled]="isGeneratingAudio">
-        <span *ngIf="!isGeneratingAudio">💾 Generate, Save &amp; Download Audio (.{{ audioFormat }})</span>
-        <span *ngIf="isGeneratingAudio">⏳ Processing Audio...</span>
-      </button>
-    </div>
-
-    <!-- SAVED AUDIO LIBRARY (PERSISTENT STORAGE) -->
-    <div class="saved-library-section" *ngIf="savedAudioLibrary.length > 0">
-      <h3 class="library-title">📁 Studio Saved Audio Library</h3>
-      <div class="library-grid">
-        <div class="library-item-card" *ngFor="let item of savedAudioLibrary; let i = index">
-          <div class="item-info">
-            <strong>{{ item.title }}</strong>
-            <small>{{ item.langName }} • {{ item.voiceName }} • {{ item.timestamp }}</small>
-          </div>
-          <div class="item-actions">
-            <button class="btn-lib-play" (click)="playLibraryItem(item)">▶ Play</button>
-            <a [href]="item.audioUrl" [download]="'audio-' + item.id + '.' + item.format" class="btn-lib-download">📥 Download</a>
-            <button class="btn-lib-del" (click)="deleteLibraryItem(i)">🗑️</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- QUICK ACCESS TO 100+ LANGUAGE PAGES -->
-  <div class="lang-nav-section mt-4">
-    <div class="lang-nav-header">
-      <h3>🌍 Explore 100+ Dedicated Language Studios</h3>
-      <p>Discover localized text-to-speech generators optimized for native pronunciation and accents.</p>
-    </div>
-    
-    <div class="lang-pill-grid">
-      <a *ngFor="let lang of displayedLanguages" [routerLink]="['/tts', lang.slug]" class="lang-pill-link">
-        <span class="lang-pill-flag">{{ lang.flag }}</span>
-        <span class="lang-pill-name">{{ lang.lang }}</span>
-        <span class="lang-pill-country">{{ lang.country }}</span>
-      </a>
+  <!-- BELOW-THE-FOLD SEO CONTENT BLOCKS (Layer 5) -->
+  <section class="seo-content-container">
+
+    <!-- FEATURE HIGHLIGHTS GRID -->
+    <div class="seo-intro-card">
+      <h2 class="seo-h2">Why ConverterAllAI Text to Speech is 100% Free &amp; Unlimited</h2>
+      <p class="seo-lead">
+        ConverterAllAI delivers broadcast-grade speech synthesis without the typical paywalls, subscription models, or stringent monthly character caps enforced by traditional TTS providers. By leveraging modern edge neural infrastructures with optimized in-browser WebSocket stream assembly, our platform converts your written words directly into crystal-clear MP3 audio.
+      </p>
+
+      <div class="seo-features-grid">
+        <div class="seo-feature-box">
+          <div class="seo-feature-icon">🧠</div>
+          <h3 class="seo-h3">Advanced Neural Prosody</h3>
+          <p>
+            Unlike robotic synthesis engines of the past, our neural models reproduce human-like intonation, pause rhythms, breathe cadence, and phonetic accuracy for fluent, immersive voiceovers.
+          </p>
+        </div>
+
+        <div class="seo-feature-box">
+          <div class="seo-feature-icon">🇮🇳</div>
+          <h3 class="seo-h3">Rich Regional Indian Voices</h3>
+          <p>
+            Enjoy dedicated native models for Hindi (Madhur &amp; Swara), Marathi (Aarohi &amp; Manohar), Indian English (Neerja &amp; Prabhat), Tamil, Telugu, Gujarati, Bengali, Kannada, Malayalam, and Urdu.
+          </p>
+        </div>
+
+        <div class="seo-feature-box">
+          <div class="seo-feature-icon">📚</div>
+          <h3 class="seo-h3">Long-Form Smart Chunking</h3>
+          <p>
+            Convert lengthy novels, research papers, scripts, and articles up to 50,000+ characters. Our sentence-boundary chunker seamlessly stitches audio frames into a single, contiguous MP3.
+          </p>
+        </div>
+
+        <div class="seo-feature-box">
+          <div class="seo-feature-icon">🔒</div>
+          <h3 class="seo-h3">100% Client-Side Privacy</h3>
+          <p>
+            Your text is never indexed, stored, or sold. Audio synthesis streams through encrypted pipelines, and final MP3 blobs are assembled directly in your browser memory with zero retention.
+          </p>
+        </div>
+      </div>
     </div>
 
-    <div class="view-all-action mt-3 text-center">
-      <button class="btn-view-all-langs" *ngIf="!showAllLangs" (click)="showAllLangs = true">
-        ⬇️ Show All 104 Languages
-      </button>
-      <a routerLink="/tts" class="btn-view-all-langs outline mt-2" *ngIf="showAllLangs">
-        📂 Go to Languages Directory
-      </a>
+    <!-- HOW-TO-USE STEP-BY-STEP TUTORIAL (HowTo Schema Compatible) -->
+    <div class="seo-card">
+      <h2 class="seo-h2">How to Convert Text to Speech MP3 Online: Step-by-Step Guide</h2>
+      <div class="howto-steps-list">
+        <div class="howto-step-item">
+          <div class="howto-step-number">1</div>
+          <div class="howto-step-body">
+            <h3 class="seo-h3">Step 1: Input or Paste Your Script</h3>
+            <p>
+              Type or paste your text into the primary text box. The dynamic counters will monitor character count, word density, and approximate voiceover duration in real-time.
+            </p>
+          </div>
+        </div>
+
+        <div class="howto-step-item">
+          <div class="howto-step-number">2</div>
+          <div class="howto-step-body">
+            <h3 class="seo-h3">Step 2: Choose Your AI Voice &amp; Language</h3>
+            <p>
+              Explore our categorized catalog across Popular Voices, Indian Regional Accents, or Global Languages. Select from male or female neural voices designed for conversational, broadcast, or educational storytelling.
+            </p>
+          </div>
+        </div>
+
+        <div class="howto-step-item">
+          <div class="howto-step-number">3</div>
+          <div class="howto-step-body">
+            <h3 class="seo-h3">Step 3: Customize Speed and Pitch</h3>
+            <p>
+              Use the intuitive sliders to tailor the delivery speed (0.5x to 2.0x) and pitch (-50Hz to +50Hz) to perfectly align with your video pacing or podcast branding.
+            </p>
+          </div>
+        </div>
+
+        <div class="howto-step-item">
+          <div class="howto-step-number">4</div>
+          <div class="howto-step-body">
+            <h3 class="seo-h3">Step 4: Generate, Preview &amp; Download MP3</h3>
+            <p>
+              Click <strong>Convert to MP3</strong>. Once completed, test the audio with our embedded player and click <strong>Download MP3</strong> to save the final file straight to your local drive.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- ADSENSE RESPONSIVE UNIT (SLOT 2) -->
+    <div class="ad-placement-slot my-8" aria-label="Advertisement">
+      <div class="ad-container-box">
+        <!-- AdSense Responsive Unit -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-9707682105347147"
+             data-ad-slot="9876543210"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <span class="ad-label-hint">Advertisement</span>
+      </div>
+    </div>
+
+    <!-- FREQUENTLY ASKED QUESTIONS (FAQ Accordion - FAQPage Schema Ready) -->
+    <div class="seo-card">
+      <h2 class="seo-h2">Frequently Asked Questions (FAQ)</h2>
+      <div class="faq-accordion-list">
+
+        <!-- FAQ Item 1 -->
+        <div class="faq-item" [class.open]="isFaqOpen(0)">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(0)" [attr.aria-expanded]="isFaqOpen(0)">
+            <span>Is this Text to Speech MP3 converter truly 100% free with no limits?</span>
+            <span class="faq-arrow">{{ isFaqOpen(0) ? '▲' : '▼' }}</span>
+          </button>
+          <div class="faq-answer-panel" *ngIf="isFaqOpen(0)">
+            <p>
+              Yes, absolutely! ConverterAllAI provides completely free text to speech conversion. There are no premium subscription tiers, paywalls, mandatory user accounts, or hidden credit card trials. You can synthesize and download as many MP3 files as your workflow demands.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="faq-item" [class.open]="isFaqOpen(1)">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(1)" [attr.aria-expanded]="isFaqOpen(1)">
+            <span>Which Indian regional languages and accents are supported?</span>
+            <span class="faq-arrow">{{ isFaqOpen(1) ? '▲' : '▼' }}</span>
+          </button>
+          <div class="faq-answer-panel" *ngIf="isFaqOpen(1)">
+            <p>
+              We prioritize first-class support for Indian regional languages. You can generate authentic, accent-accurate voices for Hindi (Madhur &amp; Swara), Marathi (Aarohi &amp; Manohar), Indian English (Neerja &amp; Prabhat), Tamil (Pallavi &amp; Valluvar), Telugu (Shruti &amp; Mohan), Bengali (Tanishaa &amp; Bashkar), Gujarati (Dhwani &amp; Niranjan), Kannada (Sapna &amp; Gagan), Malayalam (Sobhana &amp; Midhun), Urdu (Gul &amp; Salman), Nepali, and Sinhala.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="faq-item" [class.open]="isFaqOpen(2)">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(2)" [attr.aria-expanded]="isFaqOpen(2)">
+            <span>How does the long-form text chunking system work?</span>
+            <span class="faq-arrow">{{ isFaqOpen(2) ? '▲' : '▼' }}</span>
+          </button>
+          <div class="faq-answer-panel" *ngIf="isFaqOpen(2)">
+            <p>
+              Most standard TTS APIs reject requests over 4,000 characters. Our intelligent chunking algorithm scans your text, divides it at logical paragraph breaks and punctuation marks (such as periods, question marks, and Devanagari dandas '।'), processes each section sequentially, and seamlessly concatenates the binary MP3 frames into a single, contiguous audio file up to 50,000+ characters.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="faq-item" [class.open]="isFaqOpen(3)">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(3)" [attr.aria-expanded]="isFaqOpen(3)">
+            <span>Can I use the generated MP3 files for commercial YouTube videos and podcasts?</span>
+            <span class="faq-arrow">{{ isFaqOpen(3) ? '▲' : '▼' }}</span>
+          </button>
+          <div class="faq-answer-panel" *ngIf="isFaqOpen(3)">
+            <p>
+              Yes! All audio generated through ConverterAllAI is exported in standard 24kHz MP3 format without audio watermarks or voice overlays. You have full freedom to integrate these voiceovers into monetized YouTube channels, TikTok reels, audiobooks, educational presentations, and commercial advertisements.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 5 -->
+        <div class="faq-item" [class.open]="isFaqOpen(4)">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(4)" [attr.aria-expanded]="isFaqOpen(4)">
+            <span>How does ConverterAllAI compare to paid services like ElevenLabs or Amazon Polly?</span>
+            <span class="faq-arrow">{{ isFaqOpen(4) ? '▲' : '▼' }}</span>
+          </button>
+          <div class="faq-answer-panel" *ngIf="isFaqOpen(4)">
+            <p>
+              Paid services charge high recurring subscription fees or expensive per-character token rates that quickly escalate for long-form creators. ConverterAllAI utilizes Microsoft's neural voice infrastructure directly with zero middlemen markups, delivering identical, studio-grade clarity and prosody completely free of charge.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
 
 </div>

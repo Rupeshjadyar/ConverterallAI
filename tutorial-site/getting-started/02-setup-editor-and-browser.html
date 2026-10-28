@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Setting Up Your Editor & Browser — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="getting-started" data-current-lesson="02-setup-editor-and-browser.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- 1. Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 11 min read</span>
+            <span class="badge" style="background:var(--bg-subtle); color:var(--text-secondary);">Module 02</span>
+          </div>
+          <h1 class="lesson-title">Setting Up Your Code Editor and Browser</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Turn your computer into a high-powered web development laboratory using free, standard tools.</span>
+            <span class="lang-hi">Apne computer ko ek complete web development lab banayein. Seekhein sahi editor chunna, file extensions dekhna aur files organize karna.</span>
+          </p>
+        </div>
+
+        <!-- 2. What you will learn & Prerequisites -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The difference between rich text editors (Word) and code editors (VS Code / Notepad).</li>
+            <li>How to enable file name extensions on Windows and macOS.</li>
+            <li>Setting up a clean workspace folder structure for any project.</li>
+            <li>Keyboard shortcuts that will save you hundreds of hours.</li>
+            <li>Opening local HTML files directly in your browser.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="01-how-the-web-works.html">01. How the Web Works</a>.
+          </div>
+        </div>
+
+        <!-- 3. Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: A Master Carpenter's Workshop</div>
+          <p>
+            <span class="lang-en">A carpenter does not build fine furniture with a pocketknife on a kitchen counter. They have a dedicated workbench with labeled drawers for chisels, saws, and measuring tapes. In web development, your <strong>Code Editor</strong> is your workbench, your <strong>Browser</strong> is your showroom floor where customers view the finished work, and your <strong>Project Folder</strong> is your organized cabinet of raw wood and nails.</span>
+            <span class="lang-hi">Jaise ek badhai (carpenter) furniture banane ke liye ek vyavasthit workbench aur sahi auzaaron ka istemal karta hai, waise hi web developer ka workbench uska <strong>Code Editor</strong> hota hai aur browser uska showroom jahan log website dekhte hain.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Why Word Processors Ruin Code (Plain Text vs Rich Text)</h2>
+        <p>
+          You cannot write code in programs like Microsoft Word, Apple Pages, or Google Docs. Here is why:
+        </p>
+        <ul>
+          <li><strong>Rich Text (Word, Docs):</strong> These programs inject invisible hidden metadata, font styling, formatting tables, margins, and "smart curly quotes" (like <code>&ldquo;</code> and <code>&rdquo;</code>). To a browser parser, curly quotes are invalid syntax errors that break your code!</li>
+          <li><strong>Plain Text (.html, .css, .js):</strong> Code requires pure UTF-8 plain text with straight quotes (<code>"</code> and <code>'</code>). Code editors (such as VS Code, Sublime Text, or even built-in Windows Notepad) save pure characters without hidden formatting baggage.</li>
+        </ul>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Danger of "Smart" Curly Quotes vs Straight Quotes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- BROKEN: Word processors replace quotes with curly quotation marks --&gt;
+&lt;a href=&ldquo;index.html&rdquo; class=&ldquo;button&rdquo;&gt;Click Me&lt;/a&gt;  &lt;!-- SYNTAX ERROR! --&gt;
+
+&lt;!-- VALID: Plain text editors preserve straight quotes --&gt;
+&lt;a href="index.html" class="button"&gt;Click Me&lt;/a&gt;  &lt;!-- CLEAN & VALID --&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; Notice the curvature in <code>&ldquo;</code> and <code>&rdquo;</code>. A browser treats these as unrecognized Unicode symbols, destroying the attribute.<br>
+          &bull; The second example uses straight ASCII quotes (<code>"</code>, Unicode U+0022), which browsers parse flawlessly.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Critical Step: Show File Extensions</h2>
+        <p>
+          By default, both Windows and macOS hide file extensions (the letters after the dot, such as <code>.txt</code> or <code>.html</code>). This causes a notorious beginner trap: saving a file as <code>index.html.txt</code> without knowing it!
+        </p>
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; How to Enable File Extensions in Windows</div>
+          <ol>
+            <li>Open File Explorer (press <strong>Windows Key + E</strong>).</li>
+            <li>Click the <strong>View</strong> tab at the top.</li>
+            <li>Look for the <strong>"File name extensions"</strong> checkbox and check it ON! (On Windows 11: View &rarr; Show &rarr; File name extensions).</li>
+          </ol>
+        </div>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Standard Professional Project Folder Architecture</h3>
+        <p>Every professional web project follows this predictable folder structure:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">my-web-project/
+├── index.html            (Home page, always lower-case index.html)
+├── about.html            (Secondary page)
+├── contact.html          (Contact page)
+├── css/
+│   └── styles.css        (All styling rules)
+├── js/
+│   └── app.js            (All interactive JavaScript)
+└── images/
+    ├── logo.svg
+    └── avatar.jpg</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this structure matters:</strong><br>
+          &bull; Web servers automatically serve <code>index.html</code> as the default landing file if no specific file is requested in the URL.<br>
+          &bull; Keeping CSS, JS, and images separated in their own subdirectories prevents your project from becoming an unmanageable mess.
+        </div>
+
+        <!-- Try it Yourself -->
+        <h2>Interactive Playground: Experimenting with File Links</h2>
+        <p>Test how an HTML file links its visual structure to internal styles right inside this sandboxed editor:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Live Workspace Preview</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .workspace-card {
+      font-family: system-ui, sans-serif;
+      padding: 1.5rem;
+      border: 2px dashed #3b82f6;
+      border-radius: 8px;
+      background: #eff6ff;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="workspace-card">
+    <h3 style="color: #1e3a8a; margin: 0 0 0.5rem 0;">Ready for Development!</h3>
+    <p style="color: #334155; margin: 0;">Your editor and browser environment is set up.</p>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Essential VS Code Keyboard Shortcuts</h3>
+        <p>Speed is everything when writing code. Commit these keyboard shortcuts to muscle memory:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">Ctrl + S (Cmd + S on Mac)      : Save current file (Do this constantly!)
+Ctrl + / (Cmd + / on Mac)      : Comment / uncomment current line of code
+Alt + Up / Down Arrow          : Move the current line up or down
+Shift + Alt + Down Arrow       : Duplicate the current line downwards
+Ctrl + ` (Backtick)            : Toggle built-in terminal console
+Ctrl + F                       : Find text within file
+Ctrl + Shift + F               : Find text across ALL files in the project folder</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Takeaway:</strong> Professional developers rarely reach for their mouse. Keyboard shortcuts allow your hands to stay on the home row, keeping your train of thought uninterrupted.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Emmet Abbreviation Boilerplate</h3>
+        <p>In VS Code, you never have to type the basic HTML skeleton by hand. Type <code>!</code> and press <code>Tab</code>:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Type ! and press Tab to generate this entire block in 0.1 seconds --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Document&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; Emmet is built into VS Code by default with zero configuration.<br>
+          &bull; <code>meta charset="UTF-8"</code> ensures special symbols, emojis, and characters from all human languages render without gibberish.<br>
+          &bull; <code>meta name="viewport"</code> guarantees the page scales correctly on mobile phones.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Testing Local File Paths (Relative References)</h3>
+        <p>How an HTML file in your project folder links to sibling CSS and JS files without needing an internet server:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Offline Project&lt;/title&gt;
+  &lt;!-- Notice the relative path starting with ./ or folder name --&gt;
+  &lt;link rel="stylesheet" href="./css/styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Local Development&lt;/h1&gt;
+  &lt;img src="./images/logo.svg" alt="Project Logo"&gt;
+  &lt;script src="./js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>./</code> means "look in the current folder where this HTML file lives".<br>
+          &bull; <code>./css/styles.css</code> directs the browser into the subfolder <code>css</code> to find <code>styles.css</code>.<br>
+          &bull; This ensures that your site functions 100% offline whether opened from a USB flash drive or a hard disk!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Verifying Browser Offline Storage with Console</h3>
+        <p>You can verify that your browser can store local settings even without an active internet connection:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Run in browser console to test offline state persistence
+localStorage.setItem("editor_preference", "VSCode");
+localStorage.setItem("theme_preference", "Dark");
+
+const preferredEditor = localStorage.getItem("editor_preference");
+console.log("Configured Editor: " + preferredEditor);
+console.log("Storage Working: " + (preferredEditor === "VSCode"));</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>localStorage.setItem(key, value)</code> stores key-value pairs permanently on your machine.<br>
+          &bull; <code>localStorage.getItem(key)</code> retrieves the value even if you close and reopen the browser offline.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Spaces in file names:</strong> Never name files <code>my cool page.html</code>! Use hyphens: <code>my-cool-page.html</code>. Spaces turn into ugly <code>%20</code> strings in URLs and break links.</li>
+            <li><strong>Capital letters in file names:</strong> Always use lowercase (e.g. <code>index.html</code>, not <code>Index.HTML</code>). Windows is case-insensitive, but real Linux web servers are case-sensitive. <code>Logo.PNG</code> and <code>logo.png</code> are two different files on Linux!</li>
+            <li><strong>Forgetting to save:</strong> In VS Code, a small solid white circle on the file tab means the file has unsaved changes. Always hit <code>Ctrl + S</code> before refreshing the browser.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Turn on <strong>Auto Save</strong> in VS Code (File &rarr; Auto Save) so you never lose code or wonder why your browser isn't updating!</li>
+            <li>Always create a dedicated folder for each project on your Desktop or Documents (e.g., <code>portfolio-project/</code>) before creating any files.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Use a code editor like VS Code, not a word processor like Word.</li>
+            <li>Always enable "File name extensions" in your operating system.</li>
+            <li>Use lowercase, hyphenated file names with no spaces (<code>my-page.html</code>).</li>
+            <li>Keep assets organized in <code>css/</code>, <code>js/</code>, and <code>images/</code> subfolders.</li>
+            <li>Use <code>Ctrl+S</code> to save and <code>Ctrl+/</code> to toggle comments.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify the Valid Filename</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Which of the following is the best, production-safe filename for a contact page?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Remember the rule: lowercase, hyphens, no spaces, straight extension.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>contact-us.html</code>.<br>
+              Avoid <code>Contact Us.html</code> (spaces and capitals) or <code>contact_us.HTML</code> (capital extension).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Relative File Navigation</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Your HTML file is at <code>my-site/index.html</code>. Your CSS file is at <code>my-site/css/main.css</code>. What exact <code>href</code> path must you put in the <code>&lt;link&gt;</code> tag?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look from index.html into the css folder.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>href="css/main.css"</code> (or <code>href="./css/main.css"</code>).
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Spot the Bug in this Markup</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Examine this line of code: <code>&lt;link rel=&ldquo;stylesheet&rdquo; href=&ldquo;styles.css&rdquo;&gt;</code>. Why will this fail in a real browser?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Check the quotation marks closely!</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> It uses <strong>smart curly quotes</strong> (<code>&ldquo;</code> and <code>&rdquo;</code>) pasted from a word processor instead of straight ASCII quotes (<code>"</code>). The browser will fail to parse the attribute values correctly.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 02 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Word processors add invisible formatting tags and curly quotes that corrupt code.">
+            <div class="quiz-question-text">1. Why should you never use Microsoft Word to write web code?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Microsoft Word cannot save text files</div>
+              <div class="quiz-option"><span>B)</span> Word requires you to pay for each HTML tag you type</div>
+              <div class="quiz-option"><span>C)</span> Word adds hidden rich formatting and curly quotes that break code syntax</div>
+              <div class="quiz-option"><span>D)</span> Word files cannot be opened on phones</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="index.html is the universal default landing page recognized by all web servers and browsers.">
+            <div class="quiz-question-text">2. What is the universal standard name for the home page of any website?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> home.html</div>
+              <div class="quiz-option"><span>B)</span> index.html</div>
+              <div class="quiz-option"><span>C)</span> main.page</div>
+              <div class="quiz-option"><span>D)</span> default.doc</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Ctrl + S (or Cmd + S on Mac) is the universal shortcut to save your file.">
+            <div class="quiz-question-text">3. What keyboard shortcut saves your current file in virtually all code editors?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Ctrl + S (Cmd + S on Mac)</div>
+              <div class="quiz-option"><span>B)</span> Alt + F4</div>
+              <div class="quiz-option"><span>C)</span> Shift + Enter</div>
+              <div class="quiz-option"><span>D)</span> Ctrl + P</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Filenames should be lowercase with hyphens replacing spaces to avoid URL encoding issues.">
+            <div class="quiz-question-text">4. Which of the following is considered professional best practice for naming files?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> My New Project Page.html</div>
+              <div class="quiz-option"><span>B)</span> PAGE 1(final).HTML</div>
+              <div class="quiz-option"><span>C)</span> my-project-page.HTML.txt</div>
+              <div class="quiz-option"><span>D)</span> my-project-page.html</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="In VS Code, typing ! and pressing Tab generates a complete HTML5 boilerplate instantly.">
+            <div class="quiz-question-text">5. What single keystroke shortcut generates a complete HTML5 skeleton in VS Code?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> ? followed by Space</div>
+              <div class="quiz-option"><span>B)</span> ! followed by Tab (or Enter)</div>
+              <div class="quiz-option"><span>C)</span> # followed by Ctrl+Enter</div>
+              <div class="quiz-option"><span>D)</span> F5</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create Your Project Folder</h3>
+          <p>
+            On your computer's Desktop, create a new folder called <code>web-practice</code>. Inside it, create an empty file named <code>index.html</code>. Verify that its file extension is truly <code>.html</code> and not <code>.html.txt</code>. Double-click it &mdash; your browser will open it as a clean local page!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#editor" class="ref-pill">Glossary: Code Editor</a>
+            <a href="../reference/glossary.html#ide" class="ref-pill">Glossary: IDE</a>
+            <a href="../reference/glossary.html#utf8" class="ref-pill">Glossary: UTF-8</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">Developer Cheatsheets</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-how-the-web-works.html" class="btn btn-outline">&larr; Previous: How the Web Works</a>
+          <button class="mark-complete-btn" data-lesson-id="getting-started-02">Mark as Complete</button>
+          <a href="03-your-first-webpage.html" class="btn btn-primary">Next: Your First Webpage &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Meta Tags & SEO — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="12-meta-tags-seo.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 12</span>
+          </div>
+          <h1 class="lesson-title">Meta Tags, Document Metadata &amp; SEO</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Optimize your site for search engine crawlers, mobile phone viewports, and social media rich link preview cards.</span>
+            <span class="lang-hi">Search engines (SEO), mobile viewports aur social media share cards (Open Graph) ke liye meta tags lagana seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How the <code>&lt;head&gt;</code> communicates with search engine bots and social algorithms.</li>
+            <li>Configuring the mobile <code>viewport</code> meta tag for responsive scaling.</li>
+            <li>Crafting high-converting SEO <code>description</code> snippets and controlling indexing with <code>robots</code>.</li>
+            <li>Building Open Graph (<code>og:*</code>) meta tags for rich link preview cards on WhatsApp, Twitter, and Slack.</li>
+            <li>Preventing duplicate content penalties using canonical links: <code>&lt;link rel="canonical"&gt;</code>.</li>
+            <li>Configuring crisp browser tab favicons using modern SVG formats.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="11-audio-video-iframe.html">11. Audio, Video &amp; Iframes</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Library Index Card and Book Dust Jacket</div>
+          <p>
+            <span class="lang-en">Think of an ancient grand library containing millions of books. A librarian doesn't read all 500 pages of a book to categorize it; they look at the <strong>Library Catalog Index Card</strong> containing the title, summary synopsis, publication year, and call number. That index card is your <strong><code>&lt;meta&gt;</code> tags</strong>! When you see a book on a shelf, the colorful dust jacket showing the cover artwork and punchy blurb is the <strong>Open Graph social preview card</strong>. Without meta tags, your book sits unindexed in a dark basement where no one can discover it!</span>
+            <span class="lang-hi">Ek library ke index card ki tarah sochiye. Librarian poori 500 panno ki kitaab padhe bina sirf card par likha title aur summary dekh kar faisla karta hai. Yahi <strong>Meta Tags</strong> hain jo Google aur search bots ko batate hain ki aapka page kis bare mein hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Non-Negotiable Core Meta Tags</h2>
+        <p>
+          Every production HTML file should always include these two primary meta tags at the top of the <code>&lt;head&gt;</code>:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Baseline Head Configuration</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;head&gt;
+  &lt;!-- 1. Character encoding: Always UTF-8 --&gt;
+  &lt;meta charset="UTF-8"&gt;
+
+  &lt;!-- 2. Viewport: Prevents mobile devices from zooming out --&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+
+  &lt;title&gt;WebDev Academy - Modern Frontend Mastery&lt;/title&gt;
+&lt;/head&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Viewport Explained:</strong><br>
+          &bull; <code>width=device-width</code>: Tells the mobile browser to set the screen width to the physical pixels of the phone (e.g. 390px on iPhone), rather than assuming an old 980px desktop screen.<br>
+          &bull; <code>initial-scale=1.0</code>: Sets the default initial 1:1 zoom ratio when the page loads.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Search Engine Optimization (SEO) Meta Tags</h2>
+        <p>
+          Search engines like Google rely on metadata to generate search result listings:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: SEO Meta Tags Suite</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Description: The 150-160 character snippet under your Google link --&gt;
+&lt;meta name="description" content="Learn HTML5, CSS3, and JavaScript from scratch with interactive editors, zero dependencies, and 100% offline access."&gt;
+
+&lt;!-- 2. Robots: Instructs search engine crawlers --&gt;
+&lt;meta name="robots" content="index, follow"&gt;
+
+&lt;!-- 3. Author: Metadata about the content creator --&gt;
+&lt;meta name="author" content="WebDev Academy Technical Team"&gt;
+
+&lt;!-- 4. Canonical URL: Tells Google which URL is the master version (avoids duplicate penalties) --&gt;
+&lt;link rel="canonical" href="https://example.com/html/meta-tags"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Robots Directive Values:</strong><br>
+          &bull; <code>index</code>: Please index this page in search results.<br>
+          &bull; <code>noindex</code>: Keep this page private (e.g. admin panels, staging servers).<br>
+          &bull; <code>follow</code>: Crawl the hyperlinks found on this page.<br>
+          &bull; <code>nofollow</code>: Do not endorse or follow links on this page.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Live Social Preview Card Simulator</h2>
+        <p>Notice how social networks transform Open Graph meta tags into rich clickable preview cards:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Open Graph Card Previewer</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #f8fafc; color: #1e293b; }
+    .og-card {
+      max-width: 420px;
+      margin: 10px auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .og-image {
+      height: 180px;
+      background: linear-gradient(135deg, #e44d26, #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    .og-content { padding: 16px; }
+    .og-domain { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; }
+    .og-title { font-size: 1.1rem; font-weight: 700; margin: 4px 0 8px 0; color: #0f172a; }
+    .og-desc { font-size: 0.85rem; color: #475569; line-height: 1.4; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="og-card">
+    <div class="og-image">&lt;HTML5 /&gt;</div>
+    <div class="og-content">
+      <div class="og-domain">webdevacademy.org</div>
+      <div class="og-title">HTML5 Mastery: Complete Developer Guide</div>
+      <p class="og-desc">Master modern semantic structure, accessible forms, and responsive meta tags with zero dependencies.</p>
+    </div>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Open Graph Protocol (<code>og:*</code>)</h2>
+        <p>
+          Whenever someone pastes a link to your website into WhatsApp, iMessage, Slack, LinkedIn, or Discord, the platform fetches your page and looks for <strong>Open Graph (og:)</strong> meta tags to generate a rich card:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Production Open Graph Tags</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Open Graph / Facebook / LinkedIn / Slack --&gt;
+&lt;meta property="og:type" content="article"&gt;
+&lt;meta property="og:url" content="https://example.com/html/lesson-12"&gt;
+&lt;meta property="og:title" content="Meta Tags & SEO Mastery - WebDev Academy"&gt;
+&lt;meta property="og:description" content="Learn how to optimize web pages for search engines and social sharing."&gt;
+&lt;meta property="og:image" content="https://example.com/images/meta-share-card.jpg"&gt;
+&lt;meta property="og:image:width" content="1200"&gt;
+&lt;meta property="og:image:height" content="630"&gt;
+
+&lt;!-- Twitter Cards --&gt;
+&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:title" content="Meta Tags & SEO Mastery"&gt;
+&lt;meta name="twitter:description" content="Optimize web pages for search bots and social platforms."&gt;
+&lt;meta name="twitter:image" content="https://example.com/images/meta-share-card.jpg"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Recommended Dimensions:</strong> The industry standard dimension for <code>og:image</code> is <strong>1200 &times; 630 pixels</strong> (aspect ratio 1.91:1). This guarantees crisp display on high-DPI smartphone displays.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Modern SVG Favicons and Mobile Home Screen Icons</h3>
+        <p>You can use a modern scalable SVG as your browser tab icon:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Modern SVG favicon: Scales infinitely and supports CSS dark mode! --&gt;
+&lt;link rel="icon" type="image/svg+xml" href="favicon.svg"&gt;
+
+&lt;!-- Legacy fallback for older browsers --&gt;
+&lt;link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"&gt;
+
+&lt;!-- Apple Touch Icon (when user taps "Add to Home Screen" on iPhone) --&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"&gt;
+
+&lt;!-- Android / Chrome theme color (tints the mobile browser address bar!) --&gt;
+&lt;meta name="theme-color" content="#2563eb"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The <code>theme-color</code> Magic:</strong> Adding <code>&lt;meta name="theme-color" content="#2563eb"&gt;</code> actually colors the smartphone's top browser status bar to match your brand!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Structured Data with JSON-LD (Search Engine Rich Snippets)</h3>
+        <p>Google reads structured JSON-LD scripts inside your <code>&lt;head&gt;</code> to display star ratings, FAQs, and event times:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "HTML5 Mastery",
+  "description": "Comprehensive zero-to-advanced HTML course.",
+  "provider": {
+    "@type": "Organization",
+    "name": "WebDev Academy"
+  }
+}
+&lt;/script&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Notice:</strong> <code>type="application/ld+json"</code> is purely structured data for Google and Bing bots &mdash; the browser never executes it as JavaScript code!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Reading Meta Tags with JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Extract metadata programmatically
+const metaDesc = document.querySelector('meta[name="description"]')?.getAttribute("content");
+const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute("content");
+const charset = document.characterSet;
+
+console.log("Meta Description:", metaDesc);
+console.log("Social Share Image:", ogImage);
+console.log("Active Charset:", charset);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Use Case:</strong> Single Page Applications (like React or vanilla JS routers) use this exact technique to dynamically swap document titles and meta tags when routing between pages.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Stuffing meta descriptions with random keywords:</strong> Google penalizes keyword spam (e.g. <code>content="coding, html, code, learn, web, dev"</code>). Write natural, engaging human sentences that entice real people to click your link!</li>
+            <li><strong>Using relative URLs for <code>og:image</code>:</strong> Social scrapers like WhatsApp and Facebook cannot resolve relative paths like <code>og:image="photo.jpg"</code>. They REQUIRE full absolute URLs starting with <code>https://</code>!</li>
+            <li><strong>Forgetting <code>initial-scale=1.0</code>:</strong> Setting only <code>width=device-width</code> without <code>initial-scale=1.0</code> can cause orientation switching bugs on mobile Safari.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Keep your <code>&lt;title&gt;</code> under <strong>60 characters</strong> and your <code>&lt;meta name="description"&gt;</code> between <strong>140 and 160 characters</strong> so Google does not truncate them with an ugly ellipsis (...).</li>
+            <li>Include <code>&lt;meta name="theme-color"&gt;</code> &mdash; it makes your website feel like a native mobile app on Android and iOS devices.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;meta charset="UTF-8"&gt;</code> ensures all symbols and emojis render cleanly.</li>
+            <li><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> is mandatory for mobile responsive sites.</li>
+            <li><code>&lt;meta name="description"&gt;</code> controls search engine result snippet text.</li>
+            <li>Open Graph tags (<code>og:*</code>) control link previews on WhatsApp, Twitter, and Slack.</li>
+            <li>Social image tags require absolute URLs (<code>https://...</code>).</li>
+            <li><code>&lt;link rel="canonical"&gt;</code> prevents duplicate content penalties.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): The Essential Mobile Viewport</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the exact meta tag required in every HTML document so mobile phones render the page at native device width instead of desktop zoom.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: name is viewport, content sets width and initial-scale.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Social Preview Card Tags</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write the Open Graph meta tags to set the share title to "Free WebDev Academy" and share image to "https://mysite.com/card.jpg".</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use property="og:title" and property="og:image".</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;meta property="og:title" content="Free WebDev Academy"&gt;
+&lt;meta property="og:image" content="https://mysite.com/card.jpg"&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Private Staging Directive</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>You deployed a temporary test version of your site at <code>test.mycompany.com</code>. What meta tag prevents Google from indexing this staging site in search results?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: name="robots" with noindex.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;meta name="robots" content="noindex, nofollow"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 12 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="width=device-width matches the viewport to the device's physical screen width.">
+            <div class="quiz-question-text">1. What does width=device-width accomplish in the viewport meta tag?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It resizes all images to 100%</div>
+              <div class="quiz-option"><span>B)</span> It sets the viewport width to match the physical width of the device screen</div>
+              <div class="quiz-option"><span>C)</span> It forces landscape mode</div>
+              <div class="quiz-option"><span>D)</span> It disables pinch-to-zoom completely</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Search engines display the <meta name='description'> text as the snippet in search results.">
+            <div class="quiz-question-text">2. Where does Google typically display the text from &lt;meta name="description"&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> In the browser tab title</div>
+              <div class="quiz-option"><span>B)</span> As the top heading on the page</div>
+              <div class="quiz-option"><span>C)</span> As the descriptive text snippet below the page title in search results</div>
+              <div class="quiz-option"><span>D)</span> In an alert popup</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Open Graph meta tags power rich link preview cards when sharing links on social platforms.">
+            <div class="quiz-question-text">3. What is the Open Graph protocol primarily used for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Generating rich visual preview cards when sharing links on messaging and social apps</div>
+              <div class="quiz-option"><span>B)</span> Drawing 3D vector graphics</div>
+              <div class="quiz-option"><span>C)</span> Encrypting financial transactions</div>
+              <div class="quiz-option"><span>D)</span> Speeding up CSS animations</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Social platform scrapers require full absolute URLs starting with https://.">
+            <div class="quiz-question-text">4. What type of URL is required for og:image so social platforms can display the photo?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A relative path like images/hero.jpg</div>
+              <div class="quiz-option"><span>B)</span> A local file path like file:///photo.jpg</div>
+              <div class="quiz-option"><span>C)</span> A base64 string only</div>
+              <div class="quiz-option"><span>D)</span> A full absolute URL starting with https://</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Canonical links prevent duplicate content penalties by identifying the master URL.">
+            <div class="quiz-question-text">5. What is the primary purpose of &lt;link rel="canonical"&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To connect a stylesheet</div>
+              <div class="quiz-option"><span>B)</span> To tell search engines which URL is the master version, preventing duplicate content penalties</div>
+              <div class="quiz-option"><span>C)</span> To download an icon font</div>
+              <div class="quiz-option"><span>D)</span> To link an external JavaScript file</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Customize the Social Card</h3>
+          <p>
+            In the live editor above, change the title from "HTML5 Mastery" to your own portfolio name, and change the gradient colors of the <code>.og-image</code> to <code>#2563eb</code> and <code>#3b82f6</code>. Click <strong>Run Code</strong> to preview how your card will appear when shared!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#meta" class="ref-pill">&lt;meta&gt; Tag Directory</a>
+            <a href="../reference/html-tags-reference.html#link" class="ref-pill">&lt;link&gt; Canonical &amp; Favicon</a>
+            <a href="../reference/glossary.html#seo" class="ref-pill">Glossary: SEO</a>
+            <a href="../reference/glossary.html#open-graph" class="ref-pill">Glossary: Open Graph</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="11-audio-video-iframe.html" class="btn btn-outline">&larr; Previous: Audio, Video &amp; Iframes</a>
+          <button class="mark-complete-btn" data-lesson-id="html-12">Mark as Complete</button>
+          <a href="13-accessibility-aria.html" class="btn btn-primary">Next: Accessibility &amp; ARIA &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

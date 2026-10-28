@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Strings, String Slicing & Core Built-in Methods — WebDev Academy</title>
+  <meta name="description" content="Master string manipulation in Python. Learn string immutability, advanced indexing & slicing [start:stop:step], modern f-string formatting, and essential string methods (split, join, strip, replace, find).">
+  <meta name="keywords" content="Python strings, string slicing, f-strings, string methods, split join strip replace, string immutability, learn Python string">
+  <meta property="og:title" content="Python Strings, String Slicing & Core Built-in Methods">
+  <meta property="og:description" content="Master string manipulation in Python. Learn string immutability, advanced indexing & slicing [start:stop:step], modern f-string formatting, and essential string methods (split, join, strip, replace, find).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="04-strings-and-string-methods.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 04</span>
+          </div>
+          <h1 class="lesson-title">Python Strings, String Slicing & Core Built-in Methods</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master string manipulation in Python. Learn string immutability, advanced indexing & slicing [start:stop:step], modern f-string formatting, and essential string methods (split, join, strip, replace, find).</span>
+            <span class="lang-hi">Python Strings seekhein: immutability kya hai, slicing [start:stop:step], f-strings formatting aur methods jaise split, join, strip aur replace.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why Python strings are immutable and how memory allocation handles string modifications.</li><li>Indexing (positive & negative) and advanced slicing: [start:stop:step].</li><li>Modern f-string formatting: alignment, padding, number formatting, and expression debugging (=).</li><li>Core text transformations: .strip(), .lower(), .upper(), .title(), and .replace().</li><li>Splitting and joining strings: .split() and .join() &mdash; the backbone of data parsing.</li><li>String validation methods: .startswith(), .endswith(), .isdigit(), and .isalpha().</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 03: Numbers, Booleans & Operators.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a printed passport book. <strong>Python strings are immutable like a printed passport</strong>: once the government prints your name on the page, you cannot use an eraser to change a single letter (e.g. <code>text[0] = 'X'</code> is strictly illegal!). If your name changes, the government must print a brand new passport book (creating a new string object in memory). <strong>Slicing [start:stop:step] is like a photo viewfinder</strong>: you decide where to place the window, where to stop, and whether to take every 2nd step or reverse the lens completely (<code>[::-1]</code>)!</span>
+            <span class="lang-hi">Printed passport ki misaal lein: <strong>Python strings immutable (na badalne wali) hoti hain</strong>. Ek baar print ho gaya toh aap eraser se ek akshar nahi mita sakte. Agar badalna hai toh nayi kitaab print karni padegi. <strong>Slicing [start:stop:step] camera ke zoom jaisa hai</strong>: kahan se shuru karna hai, kahan rukna hai, aur reverse karna hai ya nahi!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Why are strings immutable in Python?</strong> Security, hashability, and memory performance. Because strings cannot change, their hash value is constant, allowing them to be safely used as dictionary keys and set members. It also enables CPython to perform string interning (reusing identical string literals in memory).</li><li><strong>String Slicing Formula:</strong> <code>sequence[start:stop:step]</code> extracts elements from index <code>start</code> up to (but not including) index <code>stop</code>, incrementing by <code>step</code>. <code>s[::-1]</code> reverses a string in O(N) time.</li><li><strong>Why is <code>''.join(list_of_strings)</code> preferred over string concatenation in a loop?</strong> Concatenating strings in a loop with <code>+=</code> creates a new string object and copies memory on every iteration, leading to catastrophic <code>O(N^2)</code> quadratic time. <code>str.join()</code> pre-calculates the exact buffer size needed and builds the string in a single <code>O(N)</code> pass!</li><li><strong>f-string Debugging Trick (Python 3.8+):</strong> Writing <code>f'{variable=}'</code> prints both the variable name and its value (e.g. <code>user_id=42</code>), saving hours of debug logging.</li><li><strong>find() vs index():</strong> <code>.find('sub')</code> returns <code>-1</code> if the substring is not found. <code>.index('sub')</code> raises a <code>ValueError</code> exception if not found.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is a String in Python?</h2>
+        <p>In Python, a <strong>String</strong> (<code>str</code>) is an ordered, immutable sequence of Unicode characters. You can define strings using single quotes (<code>'hello'</code>), double quotes (<code>"hello"</code>), or triple quotes for multi-line text (<code>"""hello"""</code>).</p>
+        <p>Because strings are sequences, they support zero-based indexing, negative indexing from the end, and length inspection with <code>len()</code>.</p>
+        
+        <h2>2. Mastering Slicing: [start:stop:step]</h2>
+        <p>Slicing is one of Python's most elegant features. The general syntax is <code>s[start:stop:step]</code>:</p>
+        <p>• <code>start</code>: Index to begin (inclusive, defaults to 0).<br>• <code>stop</code>: Index to end (exclusive, defaults to len).<br>• <code>step</code>: Stride/increment (defaults to 1). A negative step walks backwards!</p>
+        
+        <h2>3. The Essential String Methods Toolbox</h2>
+        <p>Strings come equipped with dozens of built-in methods. Because strings are immutable, methods never modify the original string; they always return a <em>new string</em>:</p>
+        <p>• <code>.strip()</code>: Removes leading and trailing whitespace.<br>• <code>.split(delimiter)</code>: Breaks a string into a list of strings.<br>• <code>delimiter.join(iterable)</code>: Glues a list of strings together into a single string.<br>• <code>.replace(old, new)</code>: Substitutes occurrences.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: String Indexing and Advanced Slicing Demonstrations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">text = 'PythonMastery'
+
+# 1. Indexing (Positive &amp; Negative)
+print(f'First character: {text[0]}')   # 'P'
+print(f'Last character: {text[-1]}')    # 'y'
+
+# 2. Basic Slicing [start:stop]
+print(f'text[0:6]: {text[0:6]}')       # 'Python'
+print(f'text[6:]: {text[6:]}')         # 'Mastery'
+
+# 3. Stepping &amp; Reversing
+print(f'Every 2nd char: {text[::2]}')  # 'PtoMser'
+print(f'Reversed string: {text[::-1]}') # 'yretsaMnohtyP'</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>text[::-1]</code> is the standard, lightning-fast Pythonic way to reverse a string.
+        </div>
+        
+        <h3>Code Example 2: Demonstrating String Immutability</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">greeting = 'Hello World'
+
+try:
+    # Attempting in-place modification fails!
+    greeting[0] = 'J'
+except TypeError as err:
+    print(f'Immutability error: {err}')
+
+# Correct approach: Create a new string
+new_greeting = 'J' + greeting[1:]
+print(f'New string created: {new_greeting}')  # 'Jello World'</code></pre>
+        </div>
+        <div class="code-explanation">
+          • You cannot modify characters of an existing string object in place; you must create a new object.
+        </div>
+        
+        <h3>Code Example 3: Modern f-String Superpowers (Formatting & Debugging)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">product = 'Laptop Pro'
+price = 1299.50
+discount = 0.15
+
+# 1. Formatting decimals and currency
+print(f'{product} costs ${price:,.2f}')  # 'Laptop Pro costs $1,299.50'
+
+# 2. Percentage formatting
+print(f'Discount Rate: {discount:.1%}')  # 'Discount Rate: 15.0%'
+
+# 3. Alignment and padding
+print(f'{product:&lt;20} | ${price:&gt;10.2f}')
+
+# 4. Self-documenting debugging with = (Python 3.8+)
+count = 42
+print(f'{count=}')  # Prints: count=42</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>f'{count=}'</code> saves immense time when logging variables during debugging.
+        </div>
+        
+        <h3>Code Example 4: Parsing CSV Data with .split() and Recombining with .join()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Parsing a raw CSV line from a file
+raw_csv_record = '  1042 ,  Aarav Sharma ,  Software Architect ,  125000  '
+
+# Step 1: Split by comma and strip whitespace from each field
+fields = [col.strip() for col in raw_csv_record.split(',')]
+print(f'Parsed fields list: {fields}')
+
+# Step 2: Join into a clean pipe-delimited format
+clean_record = ' | '.join(fields)
+print(f'Clean pipe format: {clean_record}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>split()</code> and <code>join()</code> are the standard high-speed building blocks of data ingestion.
+        </div>
+        
+        <h3>Code Example 5: Why join() is O(N) vs += Loop which is O(N^2)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">words = ['Data', 'Science', 'With', 'Python']
+
+# BAD ANTI-PATTERN: O(N^2) memory reallocation in loop
+result = ''
+for w in words:
+    result += w + ' '
+
+# OPTIMAL PYTHONIC WAY: O(N) single-pass allocation
+clean_sentence = ' '.join(words)
+print(f'Result: {clean_sentence}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>''.join(list)</code> pre-calculates the required buffer size and allocates memory once, running in O(N) time.
+        </div>
+        
+        <h3>Code Example 6: String Inspection: startswith, endswith, isdigit</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">filename = 'report_2024.pdf'
+print(f'Is PDF? {filename.endswith((".pdf", ".PDF"))}')  # True
+print(f'Is Report? {filename.startswith("report")}')        # True
+
+phone_input = '9876543210'
+print(f'Is valid phone numeric? {phone_input.isdigit()}') # True</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>endswith()</code> can accept a tuple of multiple extensions to check in a single call.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Strings, String Slicing & Core Built-in Methods</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Strings Sandbox
+user_email = '  contact@CodeMasterAcademy.ORG  '
+
+# Clean and normalize the email
+clean_email = user_email.strip().lower()
+print(f'Cleaned email: {clean_email}')
+
+# Extract username and domain using split
+username, domain = clean_email.split('@')
+print(f'Username: {username}')
+print(f'Domain: {domain}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Trying to mutate a string in-place:</strong> Writing <code>text[0] = 'A'</code> raises a <code>TypeError: 'str' object does not support item assignment</code>.</li><li><strong>Building long strings with += inside large loops:</strong> Leads to severe quadratic <code>O(N^2)</code> performance slowdowns. Always append to a list and use <code>''.join(list)</code>.</li><li><strong>Using find() and assuming -1 is False:</strong> In Python, <code>-1</code> is Truthy! If you write <code>if text.find('abc'):</code>, it evaluates to True even when 'abc' was NOT found! Write <code>if 'abc' in text:</code> instead.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use the 'in' keyword for substring checks:</strong> Writing <code>if '@' in email:</code> is faster and far more readable than calling <code>email.find('@') != -1</code>.</li><li><strong>Multi-line triple quotes with dedent:</strong> Use <code>textwrap.dedent('''...''')</code> to format indented multi-line strings without ugly leading spaces.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Strings are ordered, immutable Unicode sequences.</li><li>Slicing syntax: [start:stop:step]; [::-1] reverses a string in O(N) time.</li><li>f-strings support alignment, decimal precision, and self-documenting debug syntax (f'{var=}').</li><li>Use ''.join(list) for efficient O(N) string building instead of += concatenation.</li><li>Always check substring existence using the 'in' operator.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python function <code>is_palindrome(s: str) -&gt; bool</code> that checks whether a given string is a palindrome (reads the same backwards and forwards), ignoring case and whitespace.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Clean with s.replace(' ', '').lower() and compare with clean[::-1].</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def is_palindrome(s: str) -&gt; bool:
+    clean = s.replace(' ', '').lower()
+    return clean == clean[::-1]
+
+print(is_palindrome('Race car'))  # True
+print(is_palindrome('Python'))    # False</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Given a URL string like <code>'https://api.example.com/v1/users/42/profile'</code>, extract the user ID ('42') using string methods.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Split by '/' and find the element after 'users' or use negative indexing.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">url = 'https://api.example.com/v1/users/42/profile'
+parts = url.split('/')
+# '42' is the second to last element
+user_id = parts[-2]
+print(f'Extracted User ID: {user_id}')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the algorithmic time complexity of concatenating N single-character strings using <code>+=</code> in a loop vs using <code>''.join(list)</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Think about memory re-allocation and copying on each step.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># 1. Using += in a loop:
+# Strings are immutable. Each concatenation allocates a brand new memory block
+# and copies all previous i characters: 1 + 2 + 3 + ... + N = O(N^2) Quadratic time!
+
+# 2. Using ''.join(list):
+# Computes total byte length in one pass, allocates the exact final memory block once,
+# and copies each character in place: O(N) Linear time!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Slice [1:4] starts at index 1 ('y') and goes up to index 4 exclusive, yielding 'yth'.">
+          <div class="quiz-question-text">1. What is the output of 'Python'[1:4]?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 'Pyt'</div><div class="quiz-option"><span>B)</span> 'yth'</div><div class="quiz-option"><span>C)</span> 'ytho'</div><div class="quiz-option"><span>D)</span> 'th'</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Immutability guarantees that string hash values never change, allowing them to serve as dictionary keys and set members.">
+          <div class="quiz-question-text">2. Why are strings immutable in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> To prevent people from writing code</div><div class="quiz-option"><span>B)</span> For security, hashability (so they can be dictionary keys), and memory optimization through interning</div><div class="quiz-option"><span>C)</span> Because Guido van Rossum forgot to add setter methods</div><div class="quiz-option"><span>D)</span> Strings are mutable in Python 3</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>s[::-1]</code> uses a step of -1 to reverse any string in Python.">
+          <div class="quiz-question-text">3. Which expression reverses the string 'Frontend'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> 'Frontend'.reverse()</div><div class="quiz-option"><span>B)</span> 'Frontend'[::-1]</div><div class="quiz-option"><span>C)</span> 'Frontend'[-1:0]</div><div class="quiz-option"><span>D)</span> reverse('Frontend')</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The <code>=</code> specifier in f-strings prints the expression and its evaluated value: <code>42=42</code>.">
+          <div class="quiz-question-text">4. What does f'{42=}' output in Python 3.8+?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> '42'</div><div class="quiz-option"><span>B)</span> '42=42'</div><div class="quiz-option"><span>C)</span> '42='</div><div class="quiz-option"><span>D)</span> SyntaxError</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="2" data-explanation="<code>.find()</code> returns <code>-1</code> when a substring is not found. (Unlike <code>.index()</code> which raises a ValueError).">
+          <div class="quiz-question-text">5. What does the string method .find('x') return if 'x' is not present in the string?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> False</div><div class="quiz-option"><span>B)</span> None</div><div class="quiz-option"><span>C)</span> -1</div><div class="quiz-option"><span>D)</span> ValueError</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change user_email to '  INFO@DEEPLEARNING.AI  ' and run the code to see the cleaned output!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#string" class="ref-pill">Glossary: String</a><a href="../reference/glossary.html#immutability" class="ref-pill">Glossary: Immutability</a><a href="05-lists-and-tuples.html" class="ref-pill">Lesson 05: Lists & Tuples</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-numbers-booleans-operators.html" class="btn btn-outline">&larr; 03. Numbers & Operators</a>
+          <button class="mark-complete-btn" data-lesson-id="python-04">Mark as Complete</button>
+          <a href="05-lists-and-tuples.html" class="btn btn-primary">05. Data Types: Lists & Tuples &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

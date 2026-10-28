@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings & Preferences | TypePulse</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .settings-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 780px;
+      margin: 0 auto 3rem;
+    }
+    .setting-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: 1.5rem;
+    }
+    .setting-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .setting-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+    /* Theme Swatches */
+    .theme-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+    .theme-swatch-btn {
+      padding: 0.85rem;
+      border-radius: var(--border-radius-sm);
+      border: 2px solid var(--border-color);
+      background: var(--bg-subtle);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: left;
+      transition: all var(--transition-fast);
+    }
+    .theme-swatch-btn:hover {
+      border-color: var(--primary);
+    }
+    .theme-swatch-btn.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary-alpha);
+    }
+    .swatch-colors {
+      display: flex;
+      gap: 4px;
+      height: 18px;
+    }
+    .swatch-color {
+      flex: 1;
+      border-radius: 3px;
+    }
+    .swatch-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    /* Controls Form Rows */
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+      gap: 1rem;
+    }
+    .control-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .control-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .control-sublabel {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    /* Form Inputs */
+    select.setting-select, input.setting-input {
+      padding: 0.45rem 0.85rem;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-sm);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    select.setting-select:focus, input.setting-input:focus {
+      border-color: var(--primary);
+    }
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: var(--border-color);
+      transition: .2s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2.5"></rect><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01"></path><path d="M6 12h.01M10 12h.01M14 12h.01M18 12h.01"></path><path d="M8 16h8"></path></svg>
+        </div>
+        <span class="brand-title">Type<span>Pulse</span></span>
+        <span class="brand-badge">Offline</span>
+      </a>
+
+      <!-- Navigation -->
+      <nav class="main-nav">
+        <a href="../index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg><span>Test</span></a>
+        <a href="../learn/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg><span>Learn</span></a>
+        <a href="../stats/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20v-6"></path></svg><span>Stats</span></a>
+        <a href="../leaderboard/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path><path d="M14 14.66V17c0 .55.45 1 1 1h2"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg><span>Leaderboard</span></a>
+        <a href="index.html" class="nav-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span>Settings</span></a>
+        <a href="../about/index.html" class="nav-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>About</span></a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-icon" onclick="window.TypeApp.Theme.cycleTheme()" title="Switch theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+      <h1 style="font-size: 2rem; color: var(--text-main); font-weight: 800;">Settings & Customization</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.35rem;">Personalize appearance, typing behavior, audio synthesizer, and goals.</p>
+    </div>
+
+    <div class="settings-grid">
+
+      <!-- 1. Color Themes -->
+      <div class="setting-card">
+        <div class="setting-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a7 7 0 0 0 7 7c0 2-2 3-2 3s1 1 1 2a2 2 0 0 1-2 2h-4"></path></svg>
+          Color Themes (8 Built-in Palettes)
+        </div>
+        <div class="setting-desc">Switch themes instantly without reloading.</div>
+        <div class="theme-swatches" id="theme-swatches-box">
+          <!-- Swatches rendered here -->
+        </div>
+      </div>
+
+      <!-- 2. Typography & Caret -->
+      <div class="setting-card">
+        <div class="setting-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+          Typography & Caret
+        </div>
+        <div class="setting-desc">Configure font families, test sizes, and cursor animation styles.</div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Font Family</div>
+            <div class="control-sublabel">Offline system monospace fonts</div>
+          </div>
+          <select id="cfg-font-family" class="setting-select" onchange="updateFontFamily(this.value)">
+            <option value="ui-mono">Default UI Monospace</option>
+            <option value="consolas">Consolas / Monaco</option>
+            <option value="cascadia">Cascadia Code</option>
+            <option value="courier">Courier New</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Font Size</div>
+            <div class="control-sublabel">Text scale in typing area</div>
+          </div>
+          <select id="cfg-font-size" class="setting-select" onchange="updateFontSize(this.value)">
+            <option value="small">Small</option>
+            <option value="medium">Medium (Standard)</option>
+            <option value="large">Large</option>
+            <option value="xlarge">Extra Large</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Caret Style</div>
+            <div class="control-sublabel">Visual appearance of the active cursor</div>
+          </div>
+          <select id="cfg-caret-style" class="setting-select" onchange="updateCaretStyle(this.value)">
+            <option value="line">Vertical Line</option>
+            <option value="block">Semi-transparent Block</option>
+            <option value="underline">Underline</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Smooth Caret Movement</div>
+            <div class="control-sublabel">Smooth animated transitions between characters</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="cfg-caret-smooth" onchange="updateCaretSmooth(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. Web Audio Synthesizer -->
+      <div class="setting-card">
+        <div class="setting-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          Audio Feedback (Web Audio API Synthesizer)
+        </div>
+        <div class="setting-desc">Zero audio files; sounds are dynamically synthesized using browser oscillators.</div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Keystroke Sound Enabled</div>
+            <div class="control-sublabel">Play tactile audio on each key press</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="cfg-sound-enabled" onchange="updateSoundEnabled(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Synthesizer Sound Type</div>
+            <div class="control-sublabel">Acoustic profile of your virtual switches</div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <select id="cfg-sound-type" class="setting-select" onchange="updateSoundType(this.value)">
+              <option value="mechanical">Mechanical Switch Click</option>
+              <option value="typewriter">Vintage Typewriter Clatter</option>
+              <option value="softbeep">Soft Sine Beep</option>
+              <option value="errorbuzz">Subtle Tick & Error Buzz</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="testSoundPreview()">Test Sound</button>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Volume Level</div>
+            <div class="control-sublabel">Sound volume (0% to 100%)</div>
+          </div>
+          <input type="range" id="cfg-sound-volume" min="0.05" max="1" step="0.05" style="accent-color: var(--primary);" onchange="updateSoundVolume(this.value)">
+        </div>
+      </div>
+
+      <!-- 4. Typing Mechanics & Hard Mode -->
+      <div class="setting-card">
+        <div class="setting-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+          Typing Mechanics & Discipline
+        </div>
+        <div class="setting-desc">Configure difficulty enforcement and backspace behavior.</div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Stop On Error</div>
+            <div class="control-sublabel">Cannot proceed forward until the typo is corrected</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="cfg-stop-error" onchange="updateStopOnError(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Backspace Behavior</div>
+            <div class="control-sublabel">Hard mode disables backspace to enforce first-time precision</div>
+          </div>
+          <select id="cfg-backspace-mode" class="setting-select" onchange="updateBackspaceMode(this.value)">
+            <option value="normal">Normal (Backspace allowed)</option>
+            <option value="none">Hard Mode (Backspace Disabled)</option>
+          </select>
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Live Stats Visibility</div>
+            <div class="control-sublabel">Show or hide real-time stats while typing</div>
+          </div>
+          <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.85rem;">
+            <label><input type="checkbox" id="cfg-show-wpm" onchange="updateLiveDisplay('liveWpm', this.checked)"> WPM</label>
+            <label><input type="checkbox" id="cfg-show-acc" onchange="updateLiveDisplay('liveAcc', this.checked)"> Acc</label>
+            <label><input type="checkbox" id="cfg-show-timer" onchange="updateLiveDisplay('liveTimer', this.checked)"> Timer</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Profile & Daily Goals -->
+      <div class="setting-card">
+        <div class="setting-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Typist Profile & Daily Goals
+        </div>
+        <div class="setting-desc">Set your local moniker and daily practice targets.</div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Typist Nickname</div>
+            <div class="control-sublabel">Displayed on local leaderboard scores</div>
+          </div>
+          <input type="text" id="cfg-nickname" class="setting-input" style="width: 160px;" placeholder="Typist" onchange="updateNickname(this.value)">
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Daily Goal: Practice Minutes</div>
+            <div class="control-sublabel">Target minutes of typing per day</div>
+          </div>
+          <input type="number" id="cfg-goal-minutes" class="setting-input" style="width: 90px;" min="1" max="120" onchange="updateGoalMinutes(this.value)">
+        </div>
+
+        <div class="control-row">
+          <div>
+            <div class="control-label">Daily Goal: Test Count</div>
+            <div class="control-sublabel">Target number of tests per day</div>
+          </div>
+          <input type="number" id="cfg-goal-tests" class="setting-input" style="width: 90px;" min="1" max="100" onchange="updateGoalTests(this.value)">
+        </div>
+      </div>
+
+      <!-- Reset Settings -->
+      <div style="text-align: center; margin-top: 1rem;">
+        <button class="btn btn-ghost" style="color: var(--error);" onclick="resetAllSettings()">
+          Reset All Settings to Defaults
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-inner">
+      <div class="offline-pill">
+        <span class="offline-dot"></span>
+        100% Offline &middot; Settings Saved Locally
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/sound.js"></script>
+  <script>
+    const THEMES = [
+      { id: 'dark', name: 'Dark', colors: ['#1a1b26', '#24283b', '#bb9af7'] },
+      { id: 'light', name: 'Light', colors: ['#f7f9fc', '#ffffff', '#4f46e5'] },
+      { id: 'midnight', name: 'Midnight', colors: ['#0b0f19', '#111827', '#38bdf8'] },
+      { id: 'forest', name: 'Forest', colors: ['#19231f', '#222f2a', '#52b788'] },
+      { id: 'sunset', name: 'Sunset', colors: ['#201a28', '#2c2237', '#ff758f'] },
+      { id: 'ocean', name: 'Ocean', colors: ['#0f1c24', '#172a37', '#00b4d8'] },
+      { id: 'retro', name: 'Retro Terminal', colors: ['#0d1109', '#151b10', '#33ff33'] },
+      { id: 'contrast', name: 'High Contrast', colors: ['#000000', '#222222', '#ffff00'] }
+    ];
+
+    function renderThemeSwatches() {
+      const container = document.getElementById('theme-swatches-box');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+
+      THEMES.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = `theme-swatch-btn ${t.id === current ? 'active' : ''}`;
+        btn.innerHTML = `
+          <div class="swatch-colors">
+            <span class="swatch-color" style="background: ${t.colors[0]};"></span>
+            <span class="swatch-color" style="background: ${t.colors[1]};"></span>
+            <span class="swatch-color" style="background: ${t.colors[2]};"></span>
+          </div>
+          <span class="swatch-name">${t.name}</span>
+        `;
+        btn.onclick = () => {
+          window.TypeApp.Theme.setTheme(t.id);
+          renderThemeSwatches();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function populateForm() {
+      const s = window.TypeApp.Storage ? window.TypeApp.Storage.getSettings() : {};
+
+      document.getElementById('cfg-font-family').value = s.fontFamily || 'ui-mono';
+      document.getElementById('cfg-font-size').value = s.fontSize || 'medium';
+      document.getElementById('cfg-caret-style').value = s.caretStyle || 'line';
+      document.getElementById('cfg-caret-smooth').checked = s.caretSmooth !== false;
+
+      document.getElementById('cfg-sound-enabled').checked = !!s.soundEnabled;
+      document.getElementById('cfg-sound-type').value = s.soundType || 'mechanical';
+      document.getElementById('cfg-sound-volume').value = s.soundVolume || 0.5;
+
+      document.getElementById('cfg-stop-error').checked = !!s.stopOnError;
+      document.getElementById('cfg-backspace-mode').value = s.backspaceMode || 'normal';
+
+      document.getElementById('cfg-show-wpm').checked = s.liveWpm !== false;
+      document.getElementById('cfg-show-acc').checked = s.liveAcc !== false;
+      document.getElementById('cfg-show-timer').checked = s.liveTimer !== false;
+
+      document.getElementById('cfg-nickname').value = s.nickname || 'Typist';
+      document.getElementById('cfg-goal-minutes').value = s.dailyGoalMinutes || 10;
+      document.getElementById('cfg-goal-tests').value = s.dailyGoalTests || 5;
+
+      renderThemeSwatches();
+    }
+
+    function updateFontFamily(val) {
+      window.TypeApp.Theme.setFontFamily(val);
+    }
+
+    function updateFontSize(val) {
+      window.TypeApp.Theme.setFontSize(val);
+    }
+
+    function updateCaretStyle(val) {
+      const smooth = document.getElementById('cfg-caret-smooth').checked;
+      window.TypeApp.Theme.setCaret(val, smooth);
+    }
+
+    function updateCaretSmooth(checked) {
+      const style = document.getElementById('cfg-caret-style').value;
+      window.TypeApp.Theme.setCaret(style, checked);
+    }
+
+    function updateSoundEnabled(checked) {
+      window.TypeApp.Storage.saveSettings({ soundEnabled: checked });
+    }
+
+    function updateSoundType(val) {
+      window.TypeApp.Storage.saveSettings({ soundType: val });
+    }
+
+    function updateSoundVolume(val) {
+      window.TypeApp.Storage.saveSettings({ soundVolume: Number(val) });
+    }
+
+    function testSoundPreview() {
+      if (window.TypeApp.Sound) {
+        window.TypeApp.Sound.playKey(false);
+      }
+    }
+
+    function updateStopOnError(checked) {
+      window.TypeApp.Storage.saveSettings({ stopOnError: checked });
+    }
+
+    function updateBackspaceMode(val) {
+      window.TypeApp.Storage.saveSettings({ backspaceMode: val });
+    }
+
+    function updateLiveDisplay(key, val) {
+      const obj = {};
+      obj[key] = val;
+      window.TypeApp.Storage.saveSettings(obj);
+    }
+
+    function updateNickname(val) {
+      window.TypeApp.Storage.saveSettings({ nickname: val.trim() || 'Typist' });
+    }
+
+    function updateGoalMinutes(val) {
+      window.TypeApp.Storage.saveSettings({ dailyGoalMinutes: Number(val) || 10 });
+    }
+
+    function updateGoalTests(val) {
+      window.TypeApp.Storage.saveSettings({ dailyGoalTests: Number(val) || 5 });
+    }
+
+    function resetAllSettings() {
+      if (confirm('Reset all settings to default values?')) {
+        window.TypeApp.Storage.resetSettings();
+        window.location.reload();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      populateForm();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="09">
+  <title>Java Collections Framework: List, Set & HashMap Internals (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Java Collections: ArrayList vs LinkedList, HashSet vs TreeSet, HashMap internal bucket hashing, collision resolution, treeify threshold, and ConcurrentHashMap.">
+  <meta name="keywords" content="Java collections framework, ArrayList vs LinkedList, HashMap internals, hash collision, bucket treeify, HashSet, ConcurrentHashMap">
+  <meta property="og:title" content="Java Collections Framework: List, Set & HashMap Internals (Interview Ready)">
+  <meta property="og:description" content="Master Java Collections: ArrayList vs LinkedList, HashSet vs TreeSet, HashMap internal bucket hashing, collision resolution, treeify threshold, and ConcurrentHashMap.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 20 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">09. Collections Framework: Lists, Sets & HashMap Internals</h1>
+          <p class="lesson-subtitle">The heart of Java data structures: ArrayList dynamic growth, LinkedList node pointers, and the internal architecture of HashMap from hashing to red-black trees.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 05 (OOP Foundations) & Lesson 07 (Interfaces).</p>
+            <ul>
+              <li>Understand the complete Java Collection hierarchy (`Iterable`, `Collection`, `List`, `Set`, `Queue`, `Map`).</li><li>Compare `ArrayList` vs `LinkedList` (Memory footprint, random access vs insertions).</li><li>Master the contract between `equals()` and `hashCode()`.</li><li>Deep-dive into `HashMap` internals: Buckets, hash calculation, collisions, and treeify to Red-Black Trees (Java 8+).</li><li>Compare `HashMap` vs `HashTable` vs `ConcurrentHashMap`.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Locker Room & Pigeonhole Sorting Analogy</h3>
+      <p><strong>ArrayList vs LinkedList:</strong></p>
+      <ul>
+        <li><strong>ArrayList (A Row of Numbered Seats):</strong> 100 theater seats numbered 0 to 99 right next to each other. Finding seat #42 takes 1 millisecond (<strong>O(1) Random Access</strong>). But inserting someone into seat #2 requires making all 98 people stand up and shuffle right!</li>
+        <li><strong>LinkedList (A Scavenger Hunt Clue Chain):</strong> Person A holds a slip of paper pointing to Person B in the cafeteria; Person B holds a slip pointing to Person C in the library. Inserting someone between A and B is instant (change two slips of paper!). But finding the 50th person requires walking through 50 people one by one!</li>
+      </ul>
+      <p><strong>HashMap (The Mail Sorting Pigeonholes):</strong> Imagine a post office with 16 sorting pigeonhole boxes (buckets). When a letter arrives for "Rupesh", a math formula calculates <code>hashCode("Rupesh") % 16 = Box 7</code>. The mailman drops it straight into Box 7. Finding it later takes 1 second without checking the other 15 boxes!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (सिनेमा हॉल की कुर्सियां और डाकघर के डिब्बे)</h3>
+      <p><strong>ArrayList:</strong> यह सिनेमा हॉल की कतार जैसी है। अगर आपसे कोई कहे "सीट नंबर 15 पर जाओ", तो आप सीधे कूदकर पहुंच जाते हैं (O(1) Fast Access)। लेकिन बीच में किसी नई सीट को घुसाना हो, तो सबको अपनी जगह खिसकानी पड़ती है (Slow Insertions)।</p>
+      <p><strong>HashMap कैसे काम करता है:</strong> सोचिए एक कमरे में 16 डिब्बे (Buckets) रखे हैं। जब कोई नया नाम आता है, तो एक फॉर्मूला (Hash Code) तय करता है कि वह किस डिब्बे में जाएगा। जब आपको वह नाम ढूंढना होता है, तो पूरा कमरा छानने की जरूरत नहीं पड़ती, आप सीधे उसी एक डिब्बे में हाथ डालते हैं! इसी जादू को कहते हैं <strong>O(1) Time Complexity</strong>!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The Java Collection Framework Hierarchy</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Interface</th>
+            <th>Duplicates Allowed?</th>
+            <th>Order Guaranteed?</th>
+            <th>Key Implementations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>List</code></td><td>Yes</td><td>Insertion order preserved</td><td><code>ArrayList</code>, <code>LinkedList</code>, <code>Vector</code></td></tr>
+          <tr><td><code>Set</code></td><td>No</td><td>No (except LinkedHashSet/TreeSet)</td><td><code>HashSet</code>, <code>LinkedHashSet</code>, <code>TreeSet</code></td></tr>
+          <tr><td><code>Queue / Deque</code></td><td>Yes</td><td>FIFO / Priority based</td><td><code>ArrayDeque</code>, <code>PriorityQueue</code></td></tr>
+          <tr><td><code>Map</code> (Separate)</td><td>Keys: No, Values: Yes</td><td>No (except LinkedHashMap/TreeMap)</td><td><code>HashMap</code>, <code>LinkedHashMap</code>, <code>TreeMap</code>, <code>ConcurrentHashMap</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. Under the Hood of HashMap (Java 8+)</h3>
+      <p>A <code>HashMap</code> uses an internal array of <code>Node&lt;K,V&gt;</code> (default capacity 16, load factor 0.75):</p>
+      <ol class="styled-list">
+        <li><strong>Hash Calculation:</strong> Computes key's hash and bit-shifts it: <code>(h = key.hashCode()) ^ (h >>> 16)</code> to spread high-bit entropy into low bits.</li>
+        <li><strong>Bucket Index:</strong> <code>index = hash &amp; (n - 1)</code> where n is array capacity (power of 2).</li>
+        <li><strong>Collision Resolution:</strong> If two different keys map to the same bucket index, they are chained in a <strong>LinkedList</strong>.</li>
+        <li><strong>Treeification (Java 8 Enhancement):</strong> When a single bucket's linked list grows to <strong>8 nodes (TREEIFY_THRESHOLD)</strong> and total array capacity is at least 64, the linked list is converted into a balanced <strong>Red-Black Tree</strong>! This turns worst-case lookup from slow <strong>O(N)</strong> to blazing fast <strong>O(log N)</strong>!</li>
+      </ol>
+
+      <h3>3. The equals() and hashCode() Contract</h3>
+      <div class="code-box">
+        <pre><code class="language-java">// CRITICAL RULE:
+// If two objects are equal according to equals(), they MUST have the same hashCode()!
+// If two objects have the same hashCode(), they do NOT necessarily have to be equals() (Collision).
+
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return id == user.id && Objects.equals(email, user.email);
+}
+
+@Override
+public int hashCode() {
+    return Objects.hash(id, email);
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"How does HashMap work internally in Java 8? What is hash collision, and what is treeify threshold?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Internal Structure:</strong> HashMap is an array of buckets containing Nodes (key, value, hash, next). Default initial capacity is 16 and default load factor is 0.75 (resizes when 12 items are inserted).</li><li><strong>Collision Handling:</strong> Collisions occur when two distinct keys yield the same bucket index. Prior to Java 8, collisions were chained in a singly-linked list with O(N) worst-case search.</li><li><strong>Treeification Mechanism:</strong> In Java 8+, once a bucket reaches 8 nodes and table capacity >= 64, the bucket transforms into a balanced Red-Black Tree, improving lookup from O(N) to O(log N).</li><li><strong>equals() and hashCode() Contract:</strong> If you override equals(), you MUST override hashCode(). Otherwise, two logically equal objects will produce different hash codes and land in different buckets, making retrieval impossible.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always state: "HashMap calculates bucket index via bitwise AND with (capacity - 1). Collisions form linked lists until reaching 8 elements, where they convert to Red-Black Trees for O(log N) worst-case performance."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Safe Iteration and Concurrent Modification Prevention</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.util.*;
+
+public class CollectionIterationDemo {
+    public static void main(String[] args) {
+        List<String> frameworkList = new ArrayList<>(List.of("Spring", "Quarkus", "Micronaut", "Struts"));
+
+        // Modern safe removal using removeIf (Predicate)
+        frameworkList.removeIf(f -> f.equals("Struts"));
+        System.out.println("Modern frameworks: " + frameworkList);
+
+        // Safe removal using Iterator
+        Iterator<String> it = frameworkList.iterator();
+        while (it.hasNext()) {
+            if (it.next().startsWith("M")) {
+                it.remove(); // Safe removal without ConcurrentModificationException!
+            }
+        }
+        System.out.println("After iterator removal: " + frameworkList);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Thread-Safe ConcurrentHashMap In Action</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.util.concurrent.ConcurrentHashMap;
+
+public class ConcurrentMapDemo {
+    public static void main(String[] args) {
+        // High-concurrency bucket-level locking without global synchronization
+        ConcurrentHashMap<String, Integer> cache = new ConcurrentHashMap<>();
+        
+        // Atomic compute-if-absent (thread-safe memoization)
+        cache.computeIfAbsent("ACTIVE_USERS", key -> 100);
+        
+        // Atomic increment
+        cache.merge("ACTIVE_USERS", 1, Integer::sum);
+        System.out.println("Active Users Count: " + cache.get("ACTIVE_USERS")); // 101
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('09')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-09" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">import java.util.*;
+
+public class CollectionsSandbox {
+    public static void main(String[] args) {
+        Map<String, Double> prices = new HashMap<>();
+        prices.put("Laptop", 1200.0);
+        prices.put("Phone", 800.0);
+        prices.put("Headphones", 150.0);
+
+        prices.forEach((item, price) -> {
+            System.out.println(item + " costs $" + price);
+        });
+
+        System.out.println("Contains 'Phone'? " + prices.containsKey("Phone"));
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-09" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Overriding `equals()` without `hashCode()`:</strong> Causes `map.get(new User(id))` to return `null` even though the user exists in the map because different hash codes locate different buckets.</li><li><strong>Using Mutable Objects as HashMap Keys:</strong> If a key object's fields are modified after being placed in a HashMap, its hashCode changes and the object can never be found again!</li><li><strong>Choosing LinkedList by default for "fast insertions":</strong> Due to CPU cache locality and pointer overhead, `ArrayList` beats `LinkedList` in almost all practical real-world scenarios!</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Always Pre-size Maps with Known Capacity:</strong> Initialize `new HashMap<>(expectedSize / 0.75f + 1)` to prevent expensive array rehash allocations in high-throughput services.</li><li><strong>Use `List.of()` and `Map.of()` for Immutable Collections:</strong> Java 9+ static factory methods produce space-efficient, truly unmodifiable collections.</li><li><strong>Use `EnumMap` and `EnumSet` for Enums:</strong> Internally implemented as bit vectors and arrays, providing unmatched speed and minimal memory footprint.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>ArrayList is backed by a resizable array;:</strong> LinkedList is a doubly-linked list.</li><li><strong>HashMap uses bucket hashing with load factor 0.75;:</strong> converts to Red-Black Tree at 8 items.</li><li><strong>equals() and hashCode() must be consistent::</strong> equal objects MUST produce equal hash codes.</li><li><strong>Use ConcurrentHashMap for thread safety;:</strong> avoid legacy synchronized HashTable.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Find Duplicates using Set</h4>
+        <p>Given a list with duplicate names, return a unique list preserving insertion order.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static List<String> removeDuplicates(List<String> list) {
+    return new ArrayList<>(new LinkedHashSet<>(list)); // LinkedHashSet preserves insertion order
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Word Frequency Counter</h4>
+        <p>Write a method using <code>Map&lt;String, Integer&gt;</code> to count word occurrences in a sentence.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static Map<String, Integer> countWords(String sentence) {
+    Map<String, Integer> counts = new HashMap<>();
+    for (String word : sentence.toLowerCase().split("\\s+")) {
+        counts.merge(word, 1, Integer::sum);
+    }
+    return counts;
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Why Treeify at 8?</h4>
+        <p>Why did Oracle choose 8 as the treeify threshold for HashMap buckets?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> Under the Poisson distribution with a well-distributed hashCode function, the probability of 8 collisions occurring in a single bucket is less than one in ten million (0.00000006). If 8 collisions occur, it usually indicates either a poor hashcode implementation or a malicious Hash Collision Denial-of-Service attack, requiring O(log N) tree protection.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What is the default initial capacity and load factor of a Java HashMap?</strong></p>
+        <label><input type="radio" name="q1" value="1"> Capacity: 16, Load Factor: 0.75</label><br>
+        <label><input type="radio" name="q1" value="0"> Capacity: 10, Load Factor: 0.5</label><br>
+        <label><input type="radio" name="q1" value="0"> Capacity: 32, Load Factor: 0.8</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: What happens to a HashMap bucket when collisions reach 8 elements (and total table capacity >= 64)?</strong></p>
+        <label><input type="radio" name="q2" value="1"> Converts from LinkedList to a balanced Red-Black Tree</label><br>
+        <label><input type="radio" name="q2" value="0"> It throws OutOfMemoryError</label><br>
+        <label><input type="radio" name="q2" value="0"> It truncates older elements</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: If two objects are equal according to `equals()`, what must be true about their `hashCode()`?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Their hashCodes may be different</label><br>
+        <label><input type="radio" name="q3" value="1"> Their hashCodes MUST be exactly equal</label><br>
+        <label><input type="radio" name="q3" value="0"> Their hashCodes must be zero</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Which Set implementation preserves the original insertion order of elements?</strong></p>
+        <label><input type="radio" name="q4" value="0"> HashSet</label><br>
+        <label><input type="radio" name="q4" value="1"> LinkedHashSet</label><br>
+        <label><input type="radio" name="q4" value="0"> TreeSet</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Which Map implementation is thread-safe without synchronizing the entire table on every read?</strong></p>
+        <label><input type="radio" name="q5" value="1"> ConcurrentHashMap</label><br>
+        <label><input type="radio" name="q5" value="0"> Hashtable</label><br>
+        <label><input type="radio" name="q5" value="0"> TreeMap</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build an LRU (Least Recently Used) Cache</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a fast, bounded LRU cache with max capacity 100 using Java LinkedHashMap in access-order mode.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.util.*;
+
+public class LRUCache<K, V> extends LinkedHashMap<K, V> {
+    private final int maxCapacity;
+
+    public LRUCache(int maxCapacity) {
+        super(maxCapacity, 0.75f, true); // true sets access-order
+        this.maxCapacity = maxCapacity;
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+        return size() > maxCapacity;
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="08-exception-handling.html" class="btn btn-outline">&larr; Prev: Exception Handling</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-09')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="10-generics-and-comparators.html" class="btn btn-primary">Next: Generics & Sorting &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Laptop costs $1200.0\nPhone costs $800.0\nHeadphones costs $150.0\nContains 'Phone'? true\nHashMap O(1) key lookup verified.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

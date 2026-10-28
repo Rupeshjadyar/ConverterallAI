@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Data Science Foundations: Vectorized Computing with NumPy & Pandas — WebDev Academy</title>
+  <meta name="description" content="Master the bedrock of Python Data Science & Machine Learning: NumPy and Pandas. Learn vectorized array computing, array broadcasting, Pandas Series & DataFrames, .loc vs .iloc indexing, groupby, and data cleaning.">
+  <meta name="keywords" content="NumPy tutorial, Pandas tutorial, Python data science, DataFrame indexing loc iloc, NumPy broadcasting, vectorized computing, learn Pandas">
+  <meta property="og:title" content="Data Science Foundations: Vectorized Computing with NumPy & Pandas">
+  <meta property="og:description" content="Master the bedrock of Python Data Science & Machine Learning: NumPy and Pandas. Learn vectorized array computing, array broadcasting, Pandas Series & DataFrames, .loc vs .iloc indexing, groupby, and data cleaning.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="16-numpy-and-pandas.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 20 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 16</span>
+          </div>
+          <h1 class="lesson-title">Data Science Foundations: Vectorized Computing with NumPy & Pandas</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the bedrock of Python Data Science & Machine Learning: NumPy and Pandas. Learn vectorized array computing, array broadcasting, Pandas Series & DataFrames, .loc vs .iloc indexing, groupby, and data cleaning.</span>
+            <span class="lang-hi">Python Data Science seekhein: NumPy vectorized computing, arrays, broadcasting, Pandas DataFrames, .loc vs .iloc indexing, groupby aur missing data clean karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why Python lists fail for data science and how NumPy ndarrays achieve 50x C-speed.</li><li>Array creation, reshaping, mathematical operations, and the rule of Broadcasting.</li><li>Pandas Series (1D labeled arrays) and DataFrames (2D labeled tabular grids).</li><li>The crucial indexing distinction: .loc (label-based) vs .iloc (integer-position-based).</li><li>Data wrangling: Handling missing values with isna(), dropna(), and fillna().</li><li>Data aggregation and split-apply-combine using Pandas groupby().</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 12: Modules & Packages + SQL Aggregations.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of multiplying numbers. Standard Python lists are like giving a single handheld calculator to one accountant: they punch in number 1, press multiply, punch in number 2, press multiply &mdash; repeating one by one (slow interpreted loop). <strong>NumPy is an industrial supercomputer factory (Vectorization)</strong>: you load 10 million numbers onto an assembly line, push one giant button, and the CPU SIMD instructions multiply all 10 million pairs in parallel in 2 milliseconds! <strong>Pandas is like Excel on rocket fuel</strong>: it takes those super-fast NumPy arrays and adds human-readable column headers ('Customer_Name', 'Revenue', 'Date') and row indexes, giving you SQL-like slicing and grouping in Python!</span>
+            <span class="lang-hi">Multiplication ki misaal lein: Python list ek aam calculator jaisa hai jisme ek ek number type karke multiply karna padta hai (slow). <strong>NumPy ek industrial supercomputer hai (Vectorization)</strong>: 10 lakh numbers ko ek sath CPU registers me daalkar 2 millisecond me multiply kar deta hai! <strong>Pandas Excel sheet ko rocket engine lagane jaisa hai</strong>: NumPy ki fast speed par column ke naam ('Name', 'Sales') aur rows chipka deta hai taaki aap aasaani se filter aur group kar sakein!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Why is NumPy so much faster than Python lists?</strong><br>1. <strong>Contiguous Memory:</strong> NumPy arrays are stored in continuous blocks of C-memory (cache-friendly). Python lists store pointers to scattered objects.<br>2. <strong>Homogeneous Data:</strong> All elements share the exact same C-type (int64, float32), eliminating Python's dynamic type checking on every operation.<br>3. <strong>Vectorization &amp; SIMD:</strong> Operations are compiled in C/Fortran and utilize CPU SIMD (Single Instruction, Multiple Data) instructions to process multiple data points in a single clock cycle.</li><li><strong>What is Broadcasting in NumPy?</strong> The mechanism that allows arithmetic operations between arrays of different shapes without unnecessary memory copying (e.g. adding a 1D vector to a 2D matrix).</li><li><strong>.loc vs .iloc (Top Pandas Interview Question!):</strong><br>• <code>.loc[row_label, col_label]</code>: <strong>Label-based</strong> indexing (uses row index names and column names; includes endpoints in slices!).<br>• <code>.iloc[row_idx, col_idx]</code>: <strong>Integer position-based</strong> indexing (uses 0-indexed integer coordinates; excludes endpoints in slices!).</li><li><strong>Handling Missing Values in Pandas:</strong> <code>df.isna().sum()</code> counts missing entries; <code>df.dropna()</code> deletes rows/columns with missing data; <code>df.fillna(value)</code> imputes missing entries.</li><li><strong>View vs Copy in Pandas (SettingWithCopyWarning):</strong> Chained indexing like <code>df['col'][0] = 5</code> triggers a warning because Pandas cannot guarantee whether you are modifying a copy or the original DataFrame. Always use <code>df.loc[0, 'col'] = 5</code>!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. NumPy: High-Performance Numerical Computing</h2>
+        <p><strong>NumPy (Numerical Python)</strong> is the foundational core of the scientific Python ecosystem (SciPy, Scikit-Learn, PyTorch, Pandas).</p>
+        <p>At its heart is the <strong>ndarray</strong> (N-dimensional array): a fast, fixed-size, homogeneous multidimensional container supporting vectorized arithmetic.</p>
+        
+        <h2>2. Vectorization & Broadcasting</h2>
+        <p>In standard Python, doubling all numbers in a list requires a loop: <code>[x * 2 for x in lst]</code>. In NumPy, you simply write <code>arr * 2</code>.</p>
+        <p>This is <strong>Vectorization</strong>: the operation executes entirely in compiled C code at hardware memory bandwidth speeds without Python interpreter loop overhead.</p>
+        
+        <h2>3. Pandas: High-Level Tabular Data Analysis</h2>
+        <p>While NumPy excels at raw numeric matrices, real-world data contains column names, timestamps, text, and missing values.</p>
+        <p><strong>Pandas</strong> introduces two primary data structures: <strong>Series</strong> (1D labeled column) and <strong>DataFrame</strong> (2D tabular grid with labeled rows and columns).</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: NumPy Array Creation, Reshaping & Vectorized Math</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import numpy as np
+
+# 1. Create a 1D array
+a = np.array([1, 2, 3, 4, 5, 6])
+print(f'1D Array: {a}, Shape: {a.shape}')
+
+# 2. Reshape into a 2x3 matrix (2 rows, 3 columns)
+matrix = a.reshape(2, 3)
+print(f'2x3 Matrix:\n{matrix}')
+
+# 3. Vectorized Math (No for-loops!)
+print(f'Matrix squared:\n{matrix ** 2}')
+print(f'Mean: {matrix.mean():.2f}, Sum: {matrix.sum()}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Vectorized operations execute across entire arrays simultaneously in C.
+        </div>
+        
+        <h3>Code Example 2: NumPy Array Broadcasting in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import numpy as np
+
+# Matrix of student scores (3 students x 3 subjects)
+scores = np.array([
+    [85, 90, 78],
+    [72, 88, 92],
+    [95, 82, 85]
+])
+
+# Bonus curve to add to each subject: [5, 2, 8]
+curve = np.array([5, 2, 8])
+
+# Broadcasting: 1D array (3,) stretches automatically across (3, 3) matrix!
+curved_scores = scores + curve
+print(f'Original:\n{scores}\n\nCurved with Broadcasting:\n{curved_scores}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Broadcasting eliminates manual memory duplication when performing operations across different shapes.
+        </div>
+        
+        <h3>Code Example 3: Creating a Pandas DataFrame and Inspecting Statistics</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import pandas as pd
+# 
+# data = {
+#     'emp_id': [101, 102, 103, 104, 105],
+#     'name': ['Aarav', 'Priya', 'Rohan', 'Sneha', 'Vikram'],
+#     'dept': ['Tech', 'Tech', 'HR', 'Finance', 'Tech'],
+#     'salary': [95000, 110000, 62000, 85000, 92000],
+#     'years_exp': [4, 7, 2, 5, 3]
+# }
+# 
+# df = pd.DataFrame(data)
+# print(df.head())
+# print(f'\nSummary Statistics:\n{df.describe()}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>df.describe()</code> instantly computes count, mean, std, min, 25%, 50%, 75%, and max.
+        </div>
+        
+        <h3>Code Example 4: .loc vs .iloc Indexing: Label-based vs Position-based</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Sample Pandas DataFrame demonstration:
+# df = pd.DataFrame({'score': [88, 92, 75]}, index=['alice', 'bob', 'charlie'])
+# 
+# # .loc uses human-readable row labels and column names
+# print(df.loc['bob', 'score'])  # 92
+# 
+# # .iloc uses 0-based integer positions
+# print(df.iloc[1, 0])          # 92 (row position 1, column position 0)
+# 
+# # Slicing difference:
+# # df.loc['alice':'bob'] INCLUDES 'bob'!
+# # df.iloc[0:2] EXCLUDES index 2 (returns rows 0 and 1)!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>.loc</code> is label-based and inclusive; <code>.iloc</code> is integer-based and exclusive.
+        </div>
+        
+        <h3>Code Example 5: Handling Missing Data: isna, dropna, and fillna</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># import pandas as pd
+# import numpy as np
+# 
+# df = pd.DataFrame({
+#     'customer': ['Aditi', 'Karan', 'Zoya'],
+#     'spending': [1200.0, np.nan, 3400.0]
+# })
+# 
+# # 1. Check for missing values
+# print(df.isna().sum())
+# 
+# # 2. Impute missing values with mean spending
+# avg_spend = df['spending'].mean()
+# df['spending_imputed'] = df['spending'].fillna(avg_spend)
+# print(df)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>fillna()</code> allows data scientists to replace NaNs with column means, medians, or modes.
+        </div>
+        
+        <h3>Code Example 6: Data Aggregation with Pandas groupby()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># df.groupby('dept').agg({
+#     'salary': ['mean', 'max', 'min'],
+#     'emp_id': 'count'
+# }).rename(columns={'count': 'headcount'})</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>groupby()</code> in Pandas mirrors SQL GROUP BY with complete aggregation flexibility.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Data Science Foundations: Vectorized Computing with NumPy & Pandas</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive NumPy & Pandas Matrix Sandbox
+# Mocking basic vector arithmetic
+class SimpleVector:
+    def __init__(self, data):
+        self.data = data
+    def __add__(self, other):
+        return SimpleVector([a + b for a, b in zip(self.data, other.data)])
+    def mean(self):
+        return sum(self.data) / len(self.data)
+
+v1 = SimpleVector([10, 20, 30])
+v2 = SimpleVector([5, 5, 5])
+v3 = v1 + v2
+print(f'Vectorized sum: {v3.data}')
+print(f'Average: {v3.mean()}')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using for-loops instead of vectorized operations:</strong> Writing a loop over a NumPy array or Pandas DataFrame is 50-100x slower. Always use vectorized operations or <code>.apply()</code>.</li><li><strong>Confusing .loc and .iloc:</strong> Using integer indexes with <code>.loc</code> when your DataFrame has custom string labels causes a KeyError.</li><li><strong>Triggering SettingWithCopyWarning:</strong> Modifying a DataFrame slice directly with <code>df['col'][0] = x</code>. Always use <code>df.loc[0, 'col'] = x</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use parquet instead of CSV for large files:</strong> Storing DataFrames as <code>.parquet</code> files saves 80% disk space and loads 10x faster than <code>.csv</code> because Parquet is a compressed columnar binary format.</li><li><strong>Memory optimization with downcasting:</strong> Default <code>int64</code> and <code>float64</code> consume lots of memory. Convert integers to <code>int32</code> or <code>int16</code> and categories to <code>category</code> type to cut RAM usage by 70%!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>NumPy ndarrays store homogeneous C-contiguous data for blazing-fast vectorized math.</li><li>Broadcasting enables arithmetic between arrays of compatible shapes without copying memory.</li><li>Pandas Series is a 1D labeled column; DataFrame is a 2D labeled tabular grid.</li><li>.loc is label-based (inclusive); .iloc is integer position-based (exclusive).</li><li>groupby() mirrors SQL aggregations for split-apply-combine analytics.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: What is the result of <code>np.array([1, 2, 3]) * 3</code> in NumPy vs <code>[1, 2, 3] * 3</code> in standard Python?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> One performs mathematical multiplication; the other repeats the list.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># NumPy: np.array([1, 2, 3]) * 3 performs vectorized math: array([3, 6, 9])
+# Python List: [1, 2, 3] * 3 repeats the list: [1, 2, 3, 1, 2, 3, 1, 2, 3]</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Given a Pandas DataFrame <code>df</code> with columns <code>['name', 'score']</code>, write the code to filter and return only rows where <code>score &gt;= 80</code> using boolean indexing.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use df[df['score'] >= 80].</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># high_scores = df[df['score'] &gt;= 80]
+# Or using query(): df.query('score &gt;= 80')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the 3 rules of NumPy Array Broadcasting when performing operations between two arrays with shapes (3, 1) and (1, 4).</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> What is the resulting output shape?</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Broadcasting Rules:
+# 1. Compare shapes element-wise starting from trailing (rightmost) dimensions.
+# 2. Two dimensions are compatible if they are equal, or if one of them is 1.
+# 3. Any dimension of size 1 is stretched (broadcasted) to match the larger dimension.
+# Shape (3, 1) and (1, 4) produces an output shape of (3, 4)!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Contiguous memory layout and lack of type-checking overhead allows vectorized operations to execute at hardware memory bandwidth speeds.">
+          <div class="quiz-question-text">1. Why is NumPy significantly faster than standard Python lists?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Because it is written in assembly only</div><div class="quiz-option"><span>B)</span> Due to contiguous C memory storage, homogeneous types, and vectorized CPU SIMD instructions</div><div class="quiz-option"><span>C)</span> Because it skips math rules</div><div class="quiz-option"><span>D)</span> NumPy is not faster than Python lists</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>.loc</code> selects by index/column names; <code>.iloc</code> selects by 0-indexed integer coordinates.">
+          <div class="quiz-question-text">2. What is the fundamental difference between .loc and .iloc in Pandas?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> There is no difference</div><div class="quiz-option"><span>B)</span> .loc is label-based; .iloc is integer position-based</div><div class="quiz-option"><span>C)</span> .loc is for numbers; .iloc is for strings</div><div class="quiz-option"><span>D)</span> .iloc is deprecated</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>dropna()</code> removes rows or columns that contain NaN missing values.">
+          <div class="quiz-question-text">3. What does df.dropna() do in Pandas?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Drops the entire database</div><div class="quiz-option"><span>B)</span> Removes rows or columns containing missing (NaN/None) values</div><div class="quiz-option"><span>C)</span> Deletes the first row</div><div class="quiz-option"><span>D)</span> Resets the index</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Broadcasting stretches array dimensions of size 1 to match larger arrays without extra memory copies.">
+          <div class="quiz-question-text">4. What is Broadcasting in NumPy?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Streaming video arrays over WiFi</div><div class="quiz-option"><span>B)</span> Arithmetic operations between arrays of different shapes without copying data</div><div class="quiz-option"><span>C)</span> Printing an array to the console</div><div class="quiz-option"><span>D)</span> Connecting to a database</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Parquet is a compressed columnar binary format that is 80% smaller and 10x faster to read than CSV.">
+          <div class="quiz-question-text">5. What file format is recommended over CSV for storing large DataFrames due to speed and compression?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> TXT</div><div class="quiz-option"><span>B)</span> Parquet</div><div class="quiz-option"><span>C)</span> DOCX</div><div class="quiz-option"><span>D)</span> XML</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change v2 values to [10, 10, 10] and observe the updated sum and average!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#numpy" class="ref-pill">Glossary: NumPy</a><a href="../reference/glossary.html#pandas" class="ref-pill">Glossary: Pandas</a><a href="17-data-visualization-matplotlib.html" class="ref-pill">Lesson 17: Data Visualization: Matplotlib</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="15-django-fundamentals.html" class="btn btn-outline">&larr; 15. Full-Stack Django MVT</a>
+          <button class="mark-complete-btn" data-lesson-id="python-16">Mark as Complete</button>
+          <a href="17-data-visualization-matplotlib.html" class="btn btn-primary">17. Data Visualization: Matplotlib &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

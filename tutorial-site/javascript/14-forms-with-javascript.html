@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Forms with JavaScript — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="14-forms-with-javascript.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 14</span>
+          </div>
+          <h1 class="lesson-title">Forms &amp; Input Validation with JavaScript</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Capture and validate user data. Master submit handling, the FormData API, live validation feedback, and double-submit prevention.</span>
+            <span class="lang-hi">Forms aur Validation: submit handling, FormData API, live input feedback, aur duplicate submissions rokna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Intercepting the form <code>submit</code> event and halting full-page browser reloads.</li>
+            <li>Reading text, checkboxes (<code>.checked</code>), radio buttons, and select dropdowns.</li>
+            <li>The modern <strong><code>FormData</code></strong> API: Serializing complete forms into JSON in one line.</li>
+            <li><code>input</code> (live keystroke) vs <code>change</code> (on blur) event triggers.</li>
+            <li>Real-time client-side validation with instant inline error states.</li>
+            <li>Preventing accidental double-submissions by disabling buttons during processing.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="13-events-and-event-delegation.html">13. Events, Bubbling &amp; Event Delegation</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The International Airport Customs Gate</div>
+          <p>
+            <span class="lang-en">Imagine boarding an international flight at an airport terminal:
+            <br>&bull; A passenger presents their visa, ticket, and luggage to the agent.
+            <br>&bull; <strong>Without JavaScript (Old Web):</strong> You walk all the way onto the airplane, the pilot examines your paper, discovers your passport is expired by 1 day, kicks you off the plane, and flies back to the terminal (full-page reload!).
+            <br>&bull; <strong>With JavaScript Form Validation:</strong> A smart gate scanner at the entrance instantly inspects your passport as you type (live feedback). If a digit is missing, a gentle red prompt highlights the exact mistake before you ever board the plane!</span>
+            <span class="lang-hi">Airport customs checking ki tarah sochiye: Bina JavaScript ke poora page reload hota hai server par check hone ke liye. JavaScript ke sath form par turant live check hota hai ki email valid hai ya nahi, password strong hai ya nahi, aur galti hone par bina page reload kiye turant red error dikha diya jata hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Form Submission Lifecycle</h2>
+        <p>
+          By default in HTML, submitting a form executes an HTTP POST/GET request that <strong>reloads the entire webpage</strong>. In modern Single Page Applications (SPAs) and interactive web apps, we intercept this using <code>e.preventDefault()</code>:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Intercepting the Submit Event</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const signupForm = document.querySelector("#signup-form");
+
+signupForm.addEventListener("submit", (event) => {
+  // 1. HALT full-page reload
+  event.preventDefault();
+
+  console.log("Form submission intercepted successfully!");
+  
+  // 2. Extract inputs...
+  // 3. Validate data...
+  // 4. Send via fetch API or process locally...
+});</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Reading Different Input Types</h2>
+        <p>
+          Different HTML form controls expose their values through different DOM properties:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Accessing Various Form Controls</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Text / Email / Number Inputs: use .value
+const emailInput = document.querySelector("#user-email");
+const email = emailInput.value.trim(); // Always trim whitespace!
+
+// 2. Checkboxes: use .checked (Returns boolean true/false!)
+const termsCheckbox = document.querySelector("#accept-terms");
+const hasAccepted = termsCheckbox.checked;
+
+// 3. Radio Buttons: Select the ONE that is :checked
+const selectedPlan = document.querySelector("input[name='billing-tier']:checked");
+const planValue = selectedPlan ? selectedPlan.value : "free";
+
+// 4. Select Dropdowns: use .value
+const countrySelect = document.querySelector("#country-select");
+const countryCode = countrySelect.value;</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Modern `FormData` API</h2>
+        <p>
+          Manually reading 15 separate inputs with <code>document.querySelector</code> is tedious. Modern JavaScript provides the <code>FormData</code> object:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Extracting Entire Forms in 1 Line</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">signupForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  // 1. Pass the form element to FormData (Inputs must have a 'name' attribute!)
+  const formData = new FormData(signupForm);
+
+  // 2. Read individual fields by their 'name' attribute:
+  const username = formData.get("username");
+  const email = formData.get("email");
+
+  // 3. CONVERT THE ENTIRE FORM TO A PLAIN JAVASCRIPT OBJECT:
+  const formPayload = Object.fromEntries(formData.entries());
+  console.log("Full form object:", formPayload);
+  // Output: { username: "alice", email: "alice@test.com", plan: "pro" }
+});</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Live Validation: `input` vs `change` Events</h2>
+        <p>
+          Providing immediate visual feedback while the user types improves usability dramatically:
+        </p>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Event</th>
+              <th style="padding:10px;">When it Fires</th>
+              <th style="padding:10px;">Best Application</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>input</code></td>
+              <td style="padding:10px;">Instantly on <strong>every single keystroke</strong> or character change</td>
+              <td style="padding:10px;">Character counters, password strength meters, live search filters</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>change</code></td>
+              <td style="padding:10px;">Only after the user <strong>commits and blurs</strong> (clicks away)</td>
+              <td style="padding:10px;">Select dropdowns, file pickers, email validity checks</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Real-Time Character Counter</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const bioInput = document.querySelector("#bio-textarea");
+const charCountDisplay = document.querySelector("#char-count");
+const maxChars = 200;
+
+bioInput.addEventListener("input", () => {
+  const currentLength = bioInput.value.length;
+  charCountDisplay.textContent = `${currentLength} / ${maxChars}`;
+
+  if (currentLength > maxChars) {
+    charCountDisplay.style.color = "#ef4444"; // Red warning
+  } else {
+    charCountDisplay.style.color = "#64748b";
+  }
+});</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Building a Pro-Grade Validation UI</h2>
+        <p>
+          A production-grade form handles inline error messages cleanly without disruptive popups:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Complete Form Validation Component</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">function validatePassword(password) {
+  if (password.length < 8) {
+    return "Password must be at least 8 characters long.";
+  }
+  if (!/\d/.test(password)) {
+    return "Password must contain at least one number.";
+  }
+  return null; // Valid!
+}
+
+signupForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const passwordField = signupForm.querySelector("#password");
+  const errorMsgEl = signupForm.querySelector("#password-error");
+  const submitBtn = signupForm.querySelector("button[type='submit']");
+
+  const validationError = validatePassword(passwordField.value);
+
+  if (validationError) {
+    errorMsgEl.textContent = validationError;
+    passwordField.classList.add("input-error");
+    passwordField.focus();
+    return;
+  }
+
+  // Clear errors
+  errorMsgEl.textContent = "";
+  passwordField.classList.remove("input-error");
+
+  // PREVENT DOUBLE-SUBMISSION:
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Processing...";
+
+  setTimeout(() => {
+    alert("Account created successfully!");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Sign Up";
+    signupForm.reset();
+  }, 1000);
+});</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Live Registration Validator</h2>
+        <p>
+          Test live form input validation and error states in real time:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Form Validation Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; box-sizing: border-box; padding: 8px 12px;
+      border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem;
+    }
+    input.error { border-color: #ef4444; background: #fee2e2; }
+    .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 4px; min-height: 18px; }
+    .btn-submit {
+      background: #2563eb; color: white; border: none; padding: 10px 18px;
+      border-radius: 6px; font-weight: bold; cursor: pointer;
+    }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h3>Account Registration</h3>
+  <form id="reg-form" novalidate style="max-width:320px;">
+    <div class="form-group">
+      <label for="username">Username (min 4 chars):</label>
+      <input type="text" id="username" name="username">
+      <div id="username-error" class="error-msg"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="pwd">Password (min 6 chars):</label>
+      <input type="password" id="pwd" name="pwd">
+      <div id="pwd-error" class="error-msg"></div>
+    </div>
+
+    <button type="submit" id="submit-btn" class="btn-submit">Register Account</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("reg-form");
+    const userField = document.getElementById("username");
+    const pwdField = document.getElementById("pwd");
+    const userError = document.getElementById("username-error");
+    const pwdError = document.getElementById("pwd-error");
+    const btn = document.getElementById("submit-btn");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      let hasError = false;
+
+      // Validate Username
+      if (userField.value.trim().length < 4) {
+        userError.textContent = "Username must be at least 4 characters.";
+        userField.classList.add("error");
+        hasError = true;
+      } else {
+        userError.textContent = "";
+        userField.classList.remove("error");
+      }
+
+      // Validate Password
+      if (pwdField.value.length < 6) {
+        pwdError.textContent = "Password must be at least 6 characters.";
+        pwdField.classList.add("error");
+        hasError = true;
+      } else {
+        pwdError.textContent = "";
+        pwdField.classList.remove("error");
+      }
+
+      if (!hasError) {
+        btn.disabled = true;
+        btn.textContent = "Submitting...";
+        console.log("Form data valid! Username:", userField.value);
+        setTimeout(() => {
+          alert("Account registered successfully!");
+          btn.disabled = false;
+          btn.textContent = "Register Account";
+          form.reset();
+        }, 800);
+      }
+    });
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>event.preventDefault()</code> on submit:</strong> The browser immediately refreshes the page, wiping out all console logs and JavaScript state!</li>
+            <li><strong>Missing the <code>name</code> attribute in HTML:</strong> <code>new FormData(form)</code> strictly ignores any input that does not have an explicit <code>name="..."</code> attribute!</li>
+            <li><strong>Checking checkbox value instead of <code>.checked</code>:</strong> Writing <code>checkbox.value</code> returns <code>"on"</code> regardless of whether the box is ticked! Always check <code>checkbox.checked</code> (boolean).</li>
+            <li><strong>Leaving native browser tooltips active:</strong> If you build custom validation UI, add <code>novalidate</code> to the <code>&lt;form&gt;</code> tag to suppress ugly native browser popup bubbles.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Always disable buttons on submit:</strong> Protect users on slow 3G connections from accidentally submitting payment forms twice.</li>
+            <li><strong>Reset forms with <code>form.reset()</code>:</strong> Instead of manually clearing 10 fields to empty strings, call <code>form.reset()</code> to restore the form to its initial state.</li>
+            <li><strong>Auto-focus the first invalid field:</strong> When validation fails, call <code>firstInvalidInput.focus()</code> to immediately position the user's cursor on the mistake.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Always attach to the form's <code>submit</code> event and call <code>e.preventDefault()</code>.</li>
+            <li>Read text with <code>.value</code>; read checkboxes with <code>.checked</code>.</li>
+            <li><code>Object.fromEntries(new FormData(form))</code> serializes complete forms into objects instantly.</li>
+            <li><code>input</code> fires on every keystroke; <code>change</code> fires after blur.</li>
+            <li>Disable the submit button during network requests to prevent duplicate submissions.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Read Checkbox Status</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the JavaScript expression to check if a checkbox with id <code>#newsletter-optin</code> is currently checked, returning a boolean.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: document.getElementById("...").checked.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>document.getElementById("newsletter-optin").checked;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Serialize Form with FormData</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write the two lines of JavaScript that take a form element <code>loginForm</code> and convert all its named fields into a clean JavaScript key-value object <code>credentials</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: new FormData and Object.fromEntries.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const formData = new FormData(loginForm);
+const credentials = Object.fromEntries(formData.entries());</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Prevent Double Submissions</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the JavaScript inside a submit listener that disables the submit button and changes its text to <code>"Saving..."</code> while processing.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: btn.disabled = true; btn.textContent = "Saving...";</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const submitBtn = form.querySelector("button[type='submit']");
+submitBtn.disabled = true;
+submitBtn.textContent = "Saving...";</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 14 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="e.preventDefault() halts the browser's default action of reloading the page upon form submission.">
+            <div class="quiz-question-text">1. Why is 'e.preventDefault()' essential in a form submit event handler?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It clears the password input</div>
+              <div class="quiz-option"><span>B)</span> It prevents the browser from executing its default full-page reload and submission navigation</div>
+              <div class="quiz-option"><span>C)</span> It closes the browser tab</div>
+              <div class="quiz-option"><span>D)</span> It compiles the form into JSON</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="checkbox.checked returns a boolean true or false indicating state.">
+            <div class="quiz-question-text">2. Which property should you check to see if a checkbox is checked?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> checkbox.value === true</div>
+              <div class="quiz-option"><span>B)</span> checkbox.selected</div>
+              <div class="quiz-option"><span>C)</span> checkbox.checked</div>
+              <div class="quiz-option"><span>D)</span> checkbox.status</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="FormData only includes inputs that possess a valid 'name' HTML attribute.">
+            <div class="quiz-question-text">3. What HTML attribute MUST an &lt;input&gt; possess for FormData to include it?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> name</div>
+              <div class="quiz-option"><span>B)</span> id</div>
+              <div class="quiz-option"><span>C)</span> class</div>
+              <div class="quiz-option"><span>D)</span> title</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The 'input' event fires immediately on every keystroke or character deletion.">
+            <div class="quiz-question-text">4. Which event fires immediately on every keystroke as the user types into a text input?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> change</div>
+              <div class="quiz-option"><span>B)</span> blur</div>
+              <div class="quiz-option"><span>C)</span> submit</div>
+              <div class="quiz-option"><span>D)</span> input</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Disabling the button prevents duplicate network requests and charges from multiple quick clicks.">
+            <div class="quiz-question-text">5. Why should submit buttons be disabled immediately upon submission?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To make the button blue</div>
+              <div class="quiz-option"><span>B)</span> To prevent accidental duplicate submissions caused by multiple fast clicks</div>
+              <div class="quiz-option"><span>C)</span> It is mandatory in HTML5</div>
+              <div class="quiz-option"><span>D)</span> To encrypt form inputs</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Password Match Checker</h3>
+          <p>
+            In the live editor, add a "Confirm Password" input field. Add a live <code>input</code> listener that displays a green checkmark if both passwords match, or a red "Passwords do not match" warning if they differ!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#forms" class="ref-pill">FormData API Reference</a>
+            <a href="../reference/glossary.html#form-data" class="ref-pill">Glossary: FormData</a>
+            <a href="../reference/glossary.html#client-validation" class="ref-pill">Glossary: Client-Side Validation</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Form Handling Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="13-events-and-event-delegation.html" class="btn btn-outline">&larr; Previous: Events &amp; Event Delegation</a>
+          <button class="mark-complete-btn" data-lesson-id="js-14">Mark as Complete</button>
+          <a href="15-es6-destructuring-spread-modules.html" class="btn btn-primary">Next: ES6+ Destructuring, Rest/Spread &amp; Modules &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

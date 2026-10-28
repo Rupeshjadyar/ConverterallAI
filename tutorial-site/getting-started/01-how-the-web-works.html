@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>How the Web Works — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="getting-started" data-current-lesson="01-how-the-web-works.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- 1. Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--bg-subtle); color:var(--text-secondary);">Module 01</span>
+          </div>
+          <h1 class="lesson-title">How the Web Works: Clients, Servers, HTTP & DNS</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Before you write a single line of code, learn how websites travel across the world from a remote computer to your screen in milliseconds.</span>
+            <span class="lang-hi">Code likhne se pehle samajhte hain ki jab aap browser mein website kholte hain, toh internet ke piche kya chal raha hota hai.</span>
+          </p>
+        </div>
+
+        <!-- 2. What you will learn & Prerequisites -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What an internet client (browser) and web server actually are.</li>
+            <li>How DNS (Domain Name System) translates human-friendly names into IP addresses.</li>
+            <li>The HTTP Request-Response lifecycle and status codes (200, 404, 500).</li>
+            <li>How browsers parse HTML, download CSS/JS, and render pixels on your screen.</li>
+            <li>Why local web development works completely offline on your own machine.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> None! Just a curious mind and a web browser.
+          </div>
+        </div>
+
+        <!-- 3. Real-Life Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: Ordering Food at a Restaurant</div>
+          <p>
+            <span class="lang-en">Imagine you visit a restaurant. You are the <strong>Client</strong>. The waiter who takes your order and brings back food is the <strong>HTTP Protocol</strong>. The kitchen in the back storing ingredients and cooking dishes is the <strong>Web Server</strong>. If you look up the restaurant in your phonebook to find its physical street address, that phonebook is the <strong>DNS</strong>!</span>
+            <span class="lang-hi">Maan lijiye aap ek restaurant gaye. Aap hain <strong>Client</strong>. Waiter jo aapka order kitchen le jata hai aur khana lata hai, woh hai <strong>HTTP Protocol</strong>. Kitchen jahan khana banta hai woh hai <strong>Server</strong>. Aur restaurant ka address phonebook se dhoondhna <strong>DNS</strong> hai!</span>
+          </p>
+        </div>
+
+        <!-- Body Section 1 -->
+        <h2>1. The Two Halves of the Web: Clients and Servers</h2>
+        <p>
+          Every website you interact with exists because two machines have a conversation:
+        </p>
+        <ul>
+          <li><strong>The Client:</strong> The device and software requesting information. This is typically your laptop, phone, or tablet running a web browser like Chrome, Firefox, Safari, or Edge. The client's job is to send requests and render (display) the returned data into readable pages.</li>
+          <li><strong>The Server:</strong> A powerful computer connected to the internet 24/7 without a monitor. It stores website files (HTML documents, CSS stylesheets, JavaScript files, images, videos, databases). Its primary job is to listen for incoming client requests and serve the appropriate files back.</li>
+        </ul>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: What a Basic HTTP Request Looks Like</h3>
+        <p>When you type a URL into your browser, your browser sends plain text over the network that looks like this:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">http</span>
+          </div>
+          <pre class="code-content"><code data-lang="html">GET /index.html HTTP/1.1
+Host: www.mysite.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+Accept: text/html,application/xhtml+xml
+Connection: keep-alive</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>GET /index.html HTTP/1.1</code>: We are requesting the file named index.html using the GET method.<br>
+          &bull; <code>Host: www.mysite.com</code>: Identifies the exact domain name of the web server we want.<br>
+          &bull; <code>User-Agent</code>: Tells the server what browser and operating system are requesting the file.<br>
+          &bull; <code>Accept</code>: Tells the server what file formats the browser can understand (HTML, XML, etc.).
+        </div>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: What the Server Responds With</h3>
+        <p>The server receives the GET request, finds <code>index.html</code> on its hard drive, and sends back an HTTP Response:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <span class="code-lang">http</span>
+          </div>
+          <pre class="code-content"><code data-lang="html">HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+Content-Length: 342
+Server: Apache/2.4.52
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;&lt;title&gt;Welcome&lt;/title&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello, Web Learner!&lt;/h1&gt;
+    &lt;p&gt;Your web journey begins right here.&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>HTTP/1.1 200 OK</code>: Status code 200 means everything succeeded cleanly.<br>
+          &bull; <code>Content-Type: text/html</code>: Informs the browser to parse the body payload as an HTML document.<br>
+          &bull; The remaining payload is the raw HTML document that your browser renders on screen.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Inspection: The Browser Rendering Engine</h2>
+        <p>See how your browser takes raw HTML and renders it visually right here without contacting any external server:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Live HTML Rendering</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><div style="text-align: center; padding: 20px;">
+  <h2 style="color: #2563eb;">The Web Works Locally!</h2>
+  <p style="color: #475569;">Change this text, click <strong>Run Code</strong>, and see it update instantly.</p>
+  <button style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="alert('Client-side JavaScript executed!')">
+    Click Me
+  </button>
+</div></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body Section 2 -->
+        <h2>2. DNS: The Internet's Phonebook</h2>
+        <p>
+          Computers do not navigate the internet using word-based names like <code>google.com</code> or <code>myportfolio.com</code>. They navigate using numeric <strong>IP (Internet Protocol) Addresses</strong>, such as <code>142.250.190.46</code> (IPv4) or <code>2607:f8b0:4005:805::200e</code> (IPv6).
+        </p>
+        <p>
+          Humans are bad at remembering strings of random numbers, but great at remembering words. <strong>DNS (Domain Name System)</strong> solves this by acting as a global distributed address book:
+        </p>
+        <ol>
+          <li>You type <code>mysite.com</code> in your browser bar.</li>
+          <li>Your computer queries a <strong>DNS Resolver</strong> (often provided by your internet provider or router).</li>
+          <li>The DNS Resolver finds the matching IP address: <code>93.184.216.34</code>.</li>
+          <li>Your computer connects directly to that IP address to request the website files.</li>
+        </ol>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Simulating a DNS Lookup Table in JavaScript</h3>
+        <p>Here is how a DNS lookup can be understood as a dictionary lookup:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Conceptual model of a DNS records table
+const dnsRecords = {
+  "mywebsite.com": "192.0.2.1",
+  "learninghub.org": "198.51.100.42",
+  "localdev.test": "127.0.0.1"
+};
+
+function resolveDomain(domain) {
+  if (dnsRecords[domain]) {
+    return "Connecting to server IP: " + dnsRecords[domain];
+  }
+  return "Error: DNS Name Not Resolved (Check spelling)";
+}
+
+console.log(resolveDomain("mywebsite.com"));
+// Output: Connecting to server IP: 192.0.2.1</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>dnsRecords</code>: An object storing domain keys mapped to machine IP values.<br>
+          &bull; <code>resolveDomain()</code>: Takes human letters, checks if a record exists, and returns the IP.<br>
+          &bull; <code>127.0.0.1</code>: The universal "localhost" IP that points right back to your own computer!
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Understanding HTTP Status Codes</h3>
+        <p>Whenever a server responds, it includes a 3-digit status code that informs the client what happened:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const httpStatusCodes = {
+  200: "OK - The file was found and is sent back successfully",
+  301: "Moved Permanently - The page relocated to a new URL",
+  400: "Bad Request - The server did not understand your request",
+  404: "Not Found - The requested file does not exist on this server",
+  500: "Internal Server Error - The server crashed or encountered a bug"
+};
+
+function checkResponse(statusCode) {
+  return "Status " + statusCode + ": " + (httpStatusCodes[statusCode] || "Unknown Code");
+}
+
+console.log(checkResponse(200));
+console.log(checkResponse(404));</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>200-level</code>: Everything went well.<br>
+          &bull; <code>300-level</code>: Redirects to another resource.<br>
+          &bull; <code>400-level</code>: Client error (e.g., misspelled filename 404).<br>
+          &bull; <code>500-level</code>: Server-side failure.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: How the Browser Parses HTML and Downloads Linked Assets</h3>
+        <p>A web page is rarely just one file. It is a constellation of assets linked together:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;!-- 1. Browser sees CSS link, halts rendering to download styles --&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;My Page&lt;/h1&gt;
+  &lt;!-- 2. Browser sees image tag, initiates background image download --&gt;
+  &lt;img src="hero.png" alt="Company Hero Logo"&gt;
+
+  &lt;!-- 3. Browser sees script tag, downloads and runs JavaScript --&gt;
+  &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; When the browser encounters <code>&lt;link rel="stylesheet"&gt;</code>, it sends a new HTTP request for <code>style.css</code>.<br>
+          &bull; When it reads <code>&lt;img src="hero.png"&gt;</code>, it sends another HTTP request for the image.<br>
+          &bull; When it reaches <code>&lt;script src="app.js"&gt;</code>, it requests the script and executes it in order.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Browser Navigation Timing</h3>
+        <p>Modern browsers allow you to inspect network performance directly with the built-in Performance API:</p>
+
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Check how fast your current page loaded
+const perfEntries = performance.getEntriesByType("navigation");
+if (perfEntries.length > 0) {
+  const nav = perfEntries[0];
+  console.log("DNS Lookup Time: " + Math.round(nav.domainLookupEnd - nav.domainLookupStart) + "ms");
+  console.log("Server Response Time: " + Math.round(nav.responseEnd - nav.requestStart) + "ms");
+  console.log("DOM Complete Render: " + Math.round(nav.domComplete) + "ms");
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>performance.getEntriesByType("navigation")</code>: Accesses native browser timing records.<br>
+          &bull; <code>domainLookupEnd - domainLookupStart</code>: Exactly how long DNS took to resolve.<br>
+          &bull; <code>responseEnd - requestStart</code>: The round-trip latency to the server and back.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Thinking you need an internet connection to build websites:</strong> You do NOT! You can write HTML, CSS, and JS on your laptop and double-click the file to open it in any browser offline.</li>
+            <li><strong>Confusing the Web with the Internet:</strong> The Internet is the physical network of connected computers (wires, routers, satellites). The Web (World Wide Web) is just one service running on top of it using HTTP to share hyperlinked documents.</li>
+            <li><strong>Assuming 404 is a browser bug:</strong> A 404 status code means you asked for a file that does not exist at that specific path on the server.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Every web developer uses <code>localhost</code> (IP <code>127.0.0.1</code>) to build and test websites before putting them live for the public.</li>
+            <li>Always inspect the "Network" tab in your browser's Developer Tools to see every HTTP request, status code, and payload in real time.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><strong>Client</strong> = Asks for files (Your browser).</li>
+            <li><strong>Server</strong> = Stores and sends files back.</li>
+            <li><strong>DNS</strong> = Translates domain names (google.com) into numerical IP addresses (142.250.x.x).</li>
+            <li><strong>HTTP</strong> = The standardized question-and-answer language of the web.</li>
+            <li><strong>Status 200</strong> = Success; <strong>Status 404</strong> = File not found; <strong>Status 500</strong> = Server failure.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify Client vs Server Roles</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Which machine is responsible for parsing CSS rules and drawing the colored pixels on a user's screen?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Does the server have your screen and monitor attached to it?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The <strong>Client (the user's browser)</strong>! The server simply transmits the raw text of the CSS file over the network. It is your browser's layout engine (Blink, Gecko, WebKit) that calculates coordinates and paints pixels onto your display.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): HTTP Status Code Matching</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You created a file named <code>about-us.html</code>, but in your link you typed <code>href="about.html"</code>. What HTTP status code will the browser receive when a user clicks it?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: The file does not exist at the requested name.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The server will respond with <strong>404 Not Found</strong>. Because the server looked on its drive for <code>about.html</code>, failed to locate it, and returned the universal 404 error code.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Asset Waterfall Analysis</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>If an HTML page contains links to 3 CSS files, 2 JavaScript files, and 4 images, how many HTTP requests will the browser make in total to display the full page?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Don't forget the very first request for the HTML document itself!</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Exactly <strong>10 HTTP requests</strong>!<br>
+              1 (initial HTML document) + 3 (CSS stylesheets) + 2 (JS scripts) + 4 (images) = 10 separate requests.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question MCQ Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 01 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="DNS (Domain Name System) maps readable words like example.com to numerical IP addresses.">
+            <div class="quiz-question-text">1. What is the primary purpose of DNS on the internet?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To write HTML and CSS automatically</div>
+              <div class="quiz-option"><span>B)</span> To translate human domain names into computer IP addresses</div>
+              <div class="quiz-option"><span>C)</span> To encrypt your passwords inside databases</div>
+              <div class="quiz-option"><span>D)</span> To speed up your computer processor</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="HTTP stands for HyperText Transfer Protocol, the protocol used for transmitting web documents.">
+            <div class="quiz-question-text">2. What does HTTP stand for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> High Tech Transfer Program</div>
+              <div class="quiz-option"><span>B)</span> Hyperlink Text Tool Package</div>
+              <div class="quiz-option"><span>C)</span> HyperText Transfer Protocol</div>
+              <div class="quiz-option"><span>D)</span> Host Terminal Transmission Process</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Status code 200 OK indicates that the client request was received, understood, and successfully processed.">
+            <div class="quiz-question-text">3. Which HTTP status code represents a completely successful request?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 200 OK</div>
+              <div class="quiz-option"><span>B)</span> 301 Moved</div>
+              <div class="quiz-option"><span>C)</span> 404 Not Found</div>
+              <div class="quiz-option"><span>D)</span> 500 Server Error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="127.0.0.1 is the standard IPv4 loopback address known as localhost.">
+            <div class="quiz-question-text">4. What is the universal loopback IP address representing your local computer (localhost)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 192.168.1.1</div>
+              <div class="quiz-option"><span>B)</span> 0.0.0.0</div>
+              <div class="quiz-option"><span>C)</span> 255.255.255.255</div>
+              <div class="quiz-option"><span>D)</span> 127.0.0.1</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="You can build and test websites completely offline using any text editor and browser on your local hard drive.">
+            <div class="quiz-question-text">5. Do you need an active internet connection to write and test HTML/CSS/JS files?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, browsers cannot open files without internet</div>
+              <div class="quiz-option"><span>B)</span> No, browsers can open and render local .html files offline</div>
+              <div class="quiz-option"><span>C)</span> Only if you use CSS, but not HTML</div>
+              <div class="quiz-option"><span>D)</span> Yes, because JavaScript requires a server to run</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Mini-Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Simulating an HTTP Request</h3>
+          <p>
+            Open the <strong>Interactive Inspection</strong> live editor earlier in this lesson. Change the background color of the button from <code>#2563eb</code> (blue) to <code>#16a34a</code> (green) and change the text from "Click Me" to "Request Sent 200 OK". Click <strong>Run Code</strong> to verify your edit!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#client" class="ref-pill">Glossary: Client</a>
+            <a href="../reference/glossary.html#server" class="ref-pill">Glossary: Server</a>
+            <a href="../reference/glossary.html#dns" class="ref-pill">Glossary: DNS</a>
+            <a href="../reference/glossary.html#http" class="ref-pill">Glossary: HTTP</a>
+            <a href="../reference/glossary.html#ip-address" class="ref-pill">Glossary: IP Address</a>
+          </div>
+        </div>
+
+        <!-- Student Notes Box -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways, memory hooks, or questions... (Saved automatically in your browser's LocalStorage)"></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="../index.html" class="btn btn-outline">&larr; Course Home</a>
+          <button class="mark-complete-btn" data-lesson-id="getting-started-01">Mark as Complete</button>
+          <a href="02-setup-editor-and-browser.html" class="btn btn-primary">Next: Setup Editor &amp; Browser &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <!-- Scripts -->
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

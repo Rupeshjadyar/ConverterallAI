@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="15">
+  <title>Spring Boot 3 RESTful APIs & Global Exception Handling (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Build production REST APIs with Spring Boot: @RestController, HTTP status codes, @Valid request validation, DTO patterns, and @RestControllerAdvice error handling.">
+  <meta name="keywords" content="Spring Boot 3, REST API Java, @RestController, @RestControllerAdvice, @Valid Jakarta validation, DTO pattern, embedded Tomcat">
+  <meta property="og:title" content="Spring Boot 3 RESTful APIs & Global Exception Handling (Interview Ready)">
+  <meta property="og:description" content="Build production REST APIs with Spring Boot: @RestController, HTTP status codes, @Valid request validation, DTO patterns, and @RestControllerAdvice error handling.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 20 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">15. Spring Boot & Production RESTful APIs</h1>
+          <p class="lesson-subtitle">Zero-XML auto-configuration: Starters, embedded Tomcat web servers, REST endpoints, DTO validation, and centralized RFC 7807 error responses.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 14 (Spring Core & IoC).</p>
+            <ul>
+              <li>Understand Spring Boot Auto-Configuration (`@SpringBootApplication` and `spring.factories`).</li><li>Build robust CRUD REST APIs with `@RestController`, `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`.</li><li>Enforce request validation using Jakarta Validation annotations (`@NotNull`, `@Size`, `@Email`, `@Valid`).</li><li>Decouple database entities from client contracts using Data Transfer Objects (DTOs).</li><li>Implement standardized global error handling with `@RestControllerAdvice` and ProblemDetails.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Furnished Luxury Apartment & The Restaurant Waiter Analogy</h3>
+      <p><strong>Spring Framework vs Spring Boot:</strong> Classic Spring was like buying an empty concrete apartment shell. You had to wire the electricity (XML configuration), install your own water pipes (DispatcherServlet), and assemble every single piece of furniture manually. Exhausting!</p>
+      <p><strong>Spring Boot</strong> is a fully-furnished turnkey penthouse! When you open the door, lights turn on automatically (Auto-Configuration), hot water flows immediately (Embedded Tomcat Server), and you simply bring your laptop and start living (<strong>Starters</strong>)!</p>
+      <p><strong>@RestController (The Courteous Waiter):</strong> You hand the waiter an order ticket written on paper (JSON HTTP Request). The waiter inspects it to make sure you didn't order raw rocks (<code>@Valid DTO</code>), takes it to the kitchen (<code>@Service</code>), brings back a hot plated dish, and wraps it in a clean takeaway box with a polite receipt (HTTP 200 OK + JSON Response)!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (तैयार फ्लैट और रेस्टोरेंट का वेटर)</h3>
+      <p><strong>पुराना Spring vs Spring Boot:</strong> पुराने Spring में आपको हर चीज की फाइल (XML) खुद बनानी पड़ती थी, सर्वर (Tomcat) अलग से डाउनलोड करके इंस्टॉल करना पड़ता था।</p>
+      <p><strong>Spring Boot:</strong> यह एक तैयार लग्जरी फ्लैट जैसा है। बस <code>@SpringBootApplication</code> का बटन दबाओ, अंदर का इनबिल्ट Tomcat सर्वर अपने आप चालू हो जाता है!</p>
+      <p><strong>@RestController:</strong> यह रेस्टोरेंट के वेटर जैसा है। यूजर मोबाइल ऐप से जो JSON ऑर्डर भेजता है, वेटर उसे चेक करता है कि नाम और पता सही है या नहीं (Validation), फिर शेफ (Service) से खाना बनवाकर यूजर को वापस 200 OK के साथ भेज देता है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. What Happens Inside `@SpringBootApplication`?</h3>
+      <p>A meta-annotation combining three critical Spring annotations:</p>
+      <ul>
+        <li><code>@SpringBootConfiguration</code>: Declares the class as a primary source of Spring Bean definitions.</li>
+        <li><code>@EnableAutoConfiguration</code>: Scans the classpath (e.g. finds <code>spring-boot-starter-web</code>) and automatically registers embedded Tomcat, Jackson JSON serializer, and DispatcherServlet.</li>
+        <li><code>@ComponentScan</code>: Recursively scans packages below this class for <code>@Component</code>, <code>@Service</code>, <code>@Repository</code>, <code>@RestController</code>.</li>
+      </ul>
+
+      <h3>2. Complete REST Controller Pattern with DTO</h3>
+      <div class="code-box">
+        <pre><code class="language-java">@RestController
+@RequestMapping("/api/v1/users")
+public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreateUserRequestDTO request) {
+        UserResponseDTO created = userService.registerUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created); // Returns 201 Created
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));          // Returns 200 OK
+    }
+}</code></pre>
+      </div>
+
+      <h3>3. Global Exception Handling with `@RestControllerAdvice`</h3>
+      <div class="code-box">
+        <pre><code class="language-java">@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.NOT_FOUND.value());
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(err -> 
+            errors.put(err.getField(), err.getDefaultMessage()));
+        return ResponseEntity.badRequest().body(errors); // Returns 400 Bad Request
+    }
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"How does Spring Boot Auto-Configuration work? What is the difference between @Controller and @RestController?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Auto-Configuration Mechanism:</strong> Spring Boot inspects classes present on the classpath using `@ConditionalOnClass` and `@ConditionalOnMissingBean`. If Tomcat and Spring MVC jars are detected, Spring Boot automatically configures DispatcherServlet and starts an embedded servlet container without any manual XML or Java configuration.</li><li><strong>@Controller vs @RestController:</strong> `@Controller` is traditional Spring MVC for server-side rendering (returns view template names like "index.html"). `@RestController` is a convenience meta-annotation that combines `@Controller` and `@ResponseBody`, instructing Spring to serialize method return objects directly into JSON/XML HTTP response bodies using Jackson.</li><li><strong>DTO Pattern Necessity:</strong> Entities should not be exposed directly through REST endpoints because: 1) Leaks internal DB schema; 2) Exposes sensitive fields (passwords, internal IDs); 3) Causes Jackson serialization recursion cycles on bidirectional JPA relationships.</li><li><strong>Centralized Error Handling:</strong> `@RestControllerAdvice` intercepts exceptions thrown anywhere across the controller layer and maps them to clean, consistent HTTP response envelopes (ProblemDetails / RFC 7807).</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "@RestController is @Controller + @ResponseBody. Spring Boot Auto-Configuration uses conditional annotations to configure beans automatically based on classpath starters."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Request DTO with Jakarta Bean Validation</h4>
+        <div class="code-box">
+          <pre><code class="language-java">package com.academy.dto;
+
+import jakarta.validation.constraints.*;
+
+public record CreateUserRequestDTO(
+    @NotBlank(message = "Username is mandatory")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    String username,
+
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Must be a valid email format")
+    String email,
+
+    @Min(value = 18, message = "User must be at least 18 years old")
+    int age
+) {}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Complete Spring Boot Main Application</h4>
+        <div class="code-box">
+          <pre><code class="language-java">package com.academy;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        // Launches embedded Tomcat server on port 8080
+        SpringApplication.run(Application.class, args);
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('15')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-15" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class SpringBootSandbox {
+    public static void main(String[] args) {
+        System.out.println("--- Spring Boot 3 Startup Log ---");
+        System.out.println("  .   ____          _            __ _ _");
+        System.out.println(" /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \");
+        System.out.println("( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \");
+        System.out.println(" \\/  ___)| |_)| | | | | || (_| |  ) ) ) )");
+        System.out.println("Starting Application on port 8080 (Embedded Tomcat)");
+        System.out.println("Mapped "[/api/v1/users]" onto UserController.createUser()");
+        System.out.println("Started Application in 1.42 seconds (JVM running for 1.8s)");
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-15" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Returning Database Entities Directly from Controllers:</strong> Exposes internal database schema and triggers serialization cycles or accidental mass-assignment security vulnerabilities.</li><li><strong>Omitting `@Valid` on `@RequestBody`:</strong> Without `@Valid`, annotations like `@NotNull` and `@Email` on your DTO are completely ignored by Spring, allowing invalid data into the database!</li><li><strong>Placing Main Class in Wrong Package:</strong> If `@SpringBootApplication` is placed in `com.app.config`, `@ComponentScan` will never scan controllers located in `com.app.controller`!</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use Java Records for DTOs:</strong> Java 17+ `record` creates immutable DTOs with constructor, getters, equals, and hashCode in one single line of code.</li><li><strong>Standardize Error Envelopes with RFC 7807:</strong> Spring Boot 3 natively supports `ProblemDetail.forStatusAndDetail()` for standardized API error contracts across all microservices.</li><li><strong>Set Explicit HTTP Status Codes:</strong> Always return 201 Created on POST, 204 No Content on DELETE, and 404 Not Found on missing resources.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>@SpringBootApplication enables auto-configuration and component scanning.:</strong> No XML required.</li><li><strong>@RestController serializes return objects into JSON via Jackson.:</strong> Combines @Controller and @ResponseBody.</li><li><strong>Jakarta Validation (@Valid, @NotNull, @Email):</strong> validates request DTOs at the controller gate.</li><li><strong>@RestControllerAdvice centralizes error responses:</strong> into clean, consistent HTTP payloads.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Create a Health-Check Endpoint</h4>
+        <p>Write a minimal Spring Boot RestController with a GET <code>/health</code> endpoint returning a JSON map with status "UP".</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">@RestController
+public class HealthController {
+    @GetMapping("/health")
+    public Map<String, String> health() {
+        return Map.of("status", "UP", "timestamp", Instant.now().toString());
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Write a Global Exception Handler</h4>
+        <p>Write an exception handler in <code>@RestControllerAdvice</code> that returns HTTP 404 when <code>UserNotFoundException</code> is thrown.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">@ExceptionHandler(UserNotFoundException.class)
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public Map<String, String> handleNotFound(UserNotFoundException ex) {
+    return Map.of("error", ex.getMessage());
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Custom Validation Annotation</h4>
+        <p>How do you create a custom validator annotation <code>@ValidPhoneNumber</code> in Spring Boot?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> Define the annotation with <code>@Constraint(validatedBy = PhoneNumberValidator.class)</code>, and implement <code>ConstraintValidator&lt;ValidPhoneNumber, String&gt;</code> overriding <code>isValid(String value, ConstraintValidatorContext context)</code> with a regex check.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What embedded servlet container is included by default in `spring-boot-starter-web`?</strong></p>
+        <label><input type="radio" name="q1" value="0"> Jetty</label><br>
+        <label><input type="radio" name="q1" value="1"> Apache Tomcat</label><br>
+        <label><input type="radio" name="q1" value="0"> Nginx</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: What is the primary difference between `@Controller` and `@RestController`?</strong></p>
+        <label><input type="radio" name="q2" value="1"> @RestController combines @Controller and @ResponseBody (returns JSON)</label><br>
+        <label><input type="radio" name="q2" value="0"> @RestController is only for mobile applications</label><br>
+        <label><input type="radio" name="q2" value="0"> @Controller cannot accept HTTP POST requests</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What annotation must be placed before a `@RequestBody` DTO parameter to trigger validation?</strong></p>
+        <label><input type="radio" name="q3" value="0"> @Verify</label><br>
+        <label><input type="radio" name="q3" value="1"> @Valid</label><br>
+        <label><input type="radio" name="q3" value="0"> @Check</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Which annotation is used to intercept exceptions globally across all controllers?</strong></p>
+        <label><input type="radio" name="q4" value="0"> @ErrorHandler</label><br>
+        <label><input type="radio" name="q4" value="1"> @RestControllerAdvice</label><br>
+        <label><input type="radio" name="q4" value="0"> @GlobalCatch</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What HTTP status code should be returned after successfully creating a new resource via POST?</strong></p>
+        <label><input type="radio" name="q5" value="0"> 200 OK</label><br>
+        <label><input type="radio" name="q5" value="1"> 201 Created</label><br>
+        <label><input type="radio" name="q5" value="0"> 204 No Content</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Complete CRUD REST Controller for Products</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a ProductController exposing GET /products, GET /products/{id}, POST /products (with validation), and DELETE /products/{id}.</p>
+              <div class="code-box">
+                <pre><code class="language-java">@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+    // TODO: Implement REST CRUD endpoints
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="14-spring-core-and-ioc.html" class="btn btn-outline">&larr; Prev: Spring Core & IoC</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-15')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="16-spring-data-jpa-hibernate.html" class="btn btn-primary">Next: Spring Data JPA & Hibernate &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "--- Spring Boot 3 Startup Log ---\nStarting Application on port 8080 (Embedded Tomcat)\nMapped \"[/api/v1/users]\" onto UserController.createUser()\nStarted Application in 1.42 seconds (JVM running for 1.8s)\nREST Web Server Live.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

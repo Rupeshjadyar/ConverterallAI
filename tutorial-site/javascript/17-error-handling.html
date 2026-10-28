@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Error Handling &amp; Debugging — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="17-error-handling.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 17</span>
+          </div>
+          <h1 class="lesson-title">Error Handling &amp; Defensive Programming</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Shield applications from unexpected crashes. Master try/catch/finally, custom Error subclasses, call stack traces, and clean fallbacks.</span>
+            <span class="lang-hi">Error Handling: try...catch...finally, custom Error classes throw karna, call stack trace padhna, aur defensive programming seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The anatomy of a runtime crash and the Call Stack trace.</li>
+            <li>Gracefully intercepting errors with <code>try...catch...finally</code>.</li>
+            <li>Inspecting the Error object: <code>error.name</code>, <code>error.message</code>, and <code>error.stack</code>.</li>
+            <li>Throwing explicit exceptions with <code>throw new Error()</code>.</li>
+            <li>Standard JavaScript error types: <code>TypeError</code>, <code>RangeError</code>, <code>SyntaxError</code>, <code>ReferenceError</code>.</li>
+            <li>Architecting domain-specific <strong>Custom Error Classes</strong>.</li>
+            <li>Why <code>finally</code> blocks always execute (and how to clean up loading spinners).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="16-classes-and-oop.html">16. Classes &amp; Object-Oriented JS</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Circus Trapeze Safety Net</div>
+          <p>
+            <span class="lang-en">Imagine an acrobatic circus performance high in the big tent:
+            <br>&bull; <strong>Code Without Error Handling:</strong> An acrobat flying 40 feet in the air over bare concrete. If their hand slips for one microsecond (a missing JSON field or network failure), they crash violently into the ground and the entire show halts in panic!
+            <br>&bull; <strong>Code With <code>try...catch</code>:</strong> A durable safety net strung across the floor. If the acrobat's grip slips inside the <code>try</code> block, they bounce gently into the <code>catch</code> net, dust themselves off, display a friendly message to the audience, and the show continues smoothly!</span>
+            <span class="lang-hi">Circus ke safety net ki tarah sochiye: Bina error handling ke code concrete floor par gir kar crash ho jata hai aur poora app band ho jata hai. <code>try...catch</code> ek mazboot safety net hai jo error ko pakad leta hai taaki user ko saaf message dikhe aur website chalti rahe!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The `try...catch...finally` Anatomy</h2>
+        <p>
+          The <code>try</code> block encloses code that might encounter runtime failures (such as parsing invalid JSON or network requests):
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Basic Try-Catch-Finally Structure</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">function parseUserData(jsonString) {
+  let spinnerActive = true;
+  console.log("Loading spinner activated.");
+
+  try {
+    // 1. Risky code executed inside 'try'
+    const user = JSON.parse(jsonString); // Might throw SyntaxError!
+    console.log("Parsed user successfully:", user.name);
+    return user;
+  } catch (error) {
+    // 2. 'catch' runs ONLY if an exception occurs in 'try'
+    console.error(`Parsing Failed: ${error.message}`);
+    return null; // Graceful fallback!
+  } finally {
+    // 3. 'finally' ALWAYS executes, whether there was an error or not!
+    spinnerActive = false;
+    console.log("Cleanup completed: Loading spinner deactivated.");
+  }
+}
+
+parseUserData('{"name": "Alice"}'); // Success!
+parseUserData("INVALID_RAW_STRING"); // Handled safely without crashing the page!</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Standard Built-in Error Types</h2>
+        <p>
+          JavaScript includes specific built-in Error subclasses to categorize different failure scenarios:
+        </p>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Error Type</th>
+              <th style="padding:10px;">Cause of Error</th>
+              <th style="padding:10px;">Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>TypeError</code></td>
+              <td style="padding:10px;">Value is not of the expected type or null method called</td>
+              <td style="padding:10px;"><code>null.toUpperCase()</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>ReferenceError</code></td>
+              <td style="padding:10px;">Attempting to read an undeclared variable</td>
+              <td style="padding:10px;"><code>console.log(undeclaredVar)</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>SyntaxError</code></td>
+              <td style="padding:10px;">Invalid language grammar (e.g. malformed JSON)</td>
+              <td style="padding:10px;"><code>JSON.parse("{ bad json }")</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>RangeError</code></td>
+              <td style="padding:10px;">Number falls outside allowed numeric bounds</td>
+              <td style="padding:10px;"><code>new Array(-1)</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Section 3 -->
+        <h2>3. Throwing Explicit Errors</h2>
+        <p>
+          Use the <code>throw</code> keyword to halt execution when business rules or parameters are violated:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Validating Inputs with `throw`</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">function withdrawFunds(accountBalance, amount) {
+  if (typeof amount !== "number" || Number.isNaN(amount)) {
+    throw new TypeError("Withdrawal amount must be a valid number.");
+  }
+  if (amount <= 0) {
+    throw new RangeError("Withdrawal amount must be greater than zero.");
+  }
+  if (amount > accountBalance) {
+    throw new Error("Insufficient funds for requested transaction.");
+  }
+
+  return accountBalance - amount;
+}
+
+try {
+  const newBalance = withdrawFunds(500, 700);
+} catch (err) {
+  console.warn(`Transaction Warning [${err.name}]: ${err.message}`);
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Architecting Custom Error Classes</h2>
+        <p>
+          In large enterprise systems, you should create specialized custom error classes extending the base <code>Error</code> class:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Subclassing Custom Domain Errors</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">class ValidationError extends Error {
+  constructor(message, fieldName) {
+    super(message); // Pass message to standard Error constructor
+    this.name = "ValidationError";
+    this.fieldName = fieldName;
+  }
+}
+
+class NetworkTimeoutError extends Error {
+  constructor(url, timeoutMs) {
+    super(`Request to ${url} timed out after ${timeoutMs}ms`);
+    this.name = "NetworkTimeoutError";
+  }
+}
+
+// Handling specialized errors selectively:
+try {
+  throw new ValidationError("Email address must contain an '@' symbol.", "email");
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.error(`Form Field '${error.fieldName}' is invalid: ${error.message}`);
+  } else {
+    console.error("Unknown system error occurred:", error);
+  }
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The Asynchronous Error Catching Pitfall</h2>
+        <p>
+          A common beginner mistake is wrapping an asynchronous timer or promise in a synchronous <code>try/catch</code> block:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Asynchronous Try-Catch Trap</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// THE BUG: Synchronous try/catch finishes before setTimeout runs!
+try {
+  setTimeout(() => {
+    // throw new Error("Boom!"); // UNCAUGHT CRASH! try/catch has already exited!
+  }, 100);
+} catch (err) {
+  console.log("Will NEVER catch the error here!");
+}
+
+// THE FIX: Place try/catch INSIDE the asynchronous callback:
+setTimeout(() => {
+  try {
+    throw new Error("Caught safely inside callback!");
+  } catch (err) {
+    console.log("Successfully handled:", err.message);
+  }
+}, 100);</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Error Handling Simulator</h2>
+        <p>
+          Test throwing and catching different errors safely in real time:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Exception Control Center</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .status-box { padding: 12px; border-radius: 6px; font-family: monospace; margin-top: 10px; }
+    .success { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
+    .error { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
+  </style>
+</head>
+<body>
+  <h3>JSON Parser &amp; Validator</h3>
+  <textarea id="json-input" style="width:100%; height:80px; font-family:monospace;">{ "name": "Alice", "age": 28 }</textarea>
+  <br><br>
+  <button id="parse-btn">Parse &amp; Validate JSON</button>
+  <div id="output-box" class="status-box success">Ready for input...</div>
+
+  <script>
+    const input = document.getElementById("json-input");
+    const btn = document.getElementById("parse-btn");
+    const out = document.getElementById("output-box");
+
+    btn.addEventListener("click", () => {
+      out.className = "status-box";
+      
+      try {
+        console.log("Attempting to parse JSON...");
+        const data = JSON.parse(input.value);
+
+        // Business rule check
+        if (typeof data.age !== "number" || data.age < 0) {
+          throw new RangeError("Age must be a positive number.");
+        }
+
+        out.classList.add("success");
+        out.textContent = `Valid JSON! User: ${data.name}, Age: ${data.age}`;
+        console.log("JSON parsed successfully:", data);
+      } catch (err) {
+        out.classList.add("error");
+        out.textContent = `[${err.name}]: ${err.message}`;
+        console.error("Caught error:", err);
+      } finally {
+        console.log("Parse operation cycle completed.");
+      }
+    });
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Empty <code>catch (e) {}</code> blocks:</strong> Silently swallowing errors with an empty catch block is considered one of the worst coding antipatterns. It turns fatal bugs into invisible phantom defects! Always log or report caught errors.</li>
+            <li><strong>Throwing plain strings:</strong> Writing <code>throw "Invalid input";</code> is bad practice because strings lack stack traces and error types! Always throw an instance of Error: <code>throw new Error("Invalid input");</code>.</li>
+            <li><strong>Overusing try/catch for standard logic:</strong> Do not use <code>try/catch</code> for simple null checks (e.g. <code>if (!user)</code>). <code>try/catch</code> carries a slight optimization cost; reserve it for genuine exceptions and external I/O.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Global unhandled error traps:</strong> Use <code>window.addEventListener("error", (e) => { ... })</code> and <code>window.addEventListener("unhandledrejection", (e) => { ... })</code> to catch any error that slips through and log it to telemetry.</li>
+            <li><strong>Error Cause (ES2022):</strong> You can chain error causes: <code>throw new Error("Payment failed", { cause: originalNetworkError });</code>!</li>
+            <li><strong>Always clean up in <code>finally</code>:</strong> Whether downloading finishes or fails, put loading state dismissal (e.g. <code>hideSpinner()</code>) in <code>finally</code> so users never get stuck staring at an infinite loading bar.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>try...catch</code> prevents uncaught exceptions from terminating program execution.</li>
+            <li>The <code>finally</code> block executes unconditionally for guaranteed resource cleanup.</li>
+            <li>Always throw instances of <code>Error</code>, not raw strings.</li>
+            <li>Inspect <code>err.name</code>, <code>err.message</code>, and <code>err.stack</code> for diagnosis.</li>
+            <li>Subclass <code>Error</code> to create specialized domain exceptions like <code>ValidationError</code>.</li>
+            <li>Synchronous <code>try/catch</code> cannot catch errors inside asynchronous callbacks.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Throw a RangeError</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write an <code>if</code> check inside a function <code>setVolume(level)</code> that throws a <code>RangeError</code> with message <code>"Volume must be between 0 and 100"</code> if <code>level &lt; 0 || level &gt; 100</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: throw new RangeError("...");</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>if (level < 0 || level > 100) {
+  throw new RangeError("Volume must be between 0 and 100");
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Safe JSON Parser Helper</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write a function <code>safeJsonParse(text, fallback = {})</code> that attempts to parse <code>text</code> with <code>JSON.parse</code>, but returns <code>fallback</code> if parsing throws an error.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: try { return JSON.parse(text); } catch { return fallback; }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>function safeJsonParse(text, fallback = {}) {
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    return fallback;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Custom HttpError Class</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Create a custom class <code>HttpError</code> extending <code>Error</code> that accepts <code>statusCode</code> and <code>statusText</code>, setting <code>this.statusCode = statusCode</code> and <code>this.name = "HttpError"</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: class HttpError extends Error { constructor(status, text) { super(text); ... } }</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>class HttpError extends Error {
+  constructor(statusCode, statusText) {
+    super(`HTTP ${statusCode}: ${statusText}`);
+    this.name = "HttpError";
+    this.statusCode = statusCode;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 17 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The finally block runs unconditionally, whether an exception occurred or not.">
+            <div class="quiz-question-text">1. When does the code inside a 'finally' block execute?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Only if an error was thrown in try</div>
+              <div class="quiz-option"><span>B)</span> Always, whether an error occurred or not</div>
+              <div class="quiz-option"><span>C)</span> Only if no error occurred</div>
+              <div class="quiz-option"><span>D)</span> Only in production mode</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="TypeError occurs when a value is not of the expected type, such as attempting to invoke null as an object.">
+            <div class="quiz-question-text">2. What error type is thrown by 'null.toUpperCase()'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> TypeError</div>
+              <div class="quiz-option"><span>B)</span> SyntaxError</div>
+              <div class="quiz-option"><span>C)</span> RangeError</div>
+              <div class="quiz-option"><span>D)</span> ReferenceError</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Throwing Error instances captures the execution call stack trace for debugging.">
+            <div class="quiz-question-text">3. Why should you write 'throw new Error("msg")' instead of 'throw "msg"'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Strings cannot be thrown in JavaScript</div>
+              <div class="quiz-option"><span>B)</span> Error instances run on the GPU</div>
+              <div class="quiz-option"><span>C)</span> Error instances capture the execution call stack trace and have name and message properties</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Empty catch blocks swallow errors silently, obscuring bugs from developers and users.">
+            <div class="quiz-question-text">4. Why is 'catch (error) {}' with an empty body considered a dangerous antipattern?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It slows down garbage collection</div>
+              <div class="quiz-option"><span>B)</span> It closes the browser window</div>
+              <div class="quiz-option"><span>C)</span> It causes a syntax error</div>
+              <div class="quiz-option"><span>D)</span> It swallows errors silently, hiding critical bugs and leaving applications in unpredictable broken states</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Synchronous try/catch finishes before asynchronous timers or promises run.">
+            <div class="quiz-question-text">5. Can a synchronous try/catch block wrap a setTimeout call and catch an error thrown inside the timer callback?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, always</div>
+              <div class="quiz-option"><span>B)</span> No, the synchronous try/catch finishes executing before the asynchronous timer callback fires</div>
+              <div class="quiz-option"><span>C)</span> Only in Firefox</div>
+              <div class="quiz-option"><span>D)</span> Yes, if you pass true</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Safe LocalStorage Wrapper</h3>
+          <p>
+            In the live editor, write a function <code>safeGetItem(key)</code> that wraps <code>localStorage.getItem(key)</code> in a <code>try/catch</code> to prevent crashes when third-party browser privacy settings disable cookies/storage!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#error" class="ref-pill">Error API Reference</a>
+            <a href="../reference/glossary.html#try-catch" class="ref-pill">Glossary: try...catch</a>
+            <a href="../reference/glossary.html#exception" class="ref-pill">Glossary: Exception</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Error Handling Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="16-classes-and-oop.html" class="btn btn-outline">&larr; Previous: Classes &amp; Object-Oriented JS</a>
+          <button class="mark-complete-btn" data-lesson-id="js-17">Mark as Complete</button>
+          <a href="18-promises-async-await.html" class="btn btn-primary">Next: Promises &amp; Async/Await &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

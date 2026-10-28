@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <title>Enterprise Java & Spring Boot Track | 10th-Grade to Senior Architect</title>
+  <meta name="description" content="Master Java from JVM memory internals, OOP, Collections, and Concurrency to enterprise Spring Boot 3 REST APIs, Spring Data JPA, Microservices, and top 100 interview questions.">
+  <meta name="keywords" content="Java tutorial, Learn Java, Spring Boot tutorial, Spring Data JPA, Java multithreading, Java interview questions, JVM architecture, microservices">
+  <meta property="og:title" content="Enterprise Java & Spring Boot Masterclass">
+  <meta property="og:description" content="18 comprehensive, production-grade lessons with 10th-grade intuitive analogies and point-wise interview cheat-sheets.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body>
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        
+        <!-- Hero Header -->
+        <div class="lesson-header" style="text-align: center; margin-bottom: 2.5rem;">
+          <div class="lesson-badge-group" style="justify-content: center;">
+            <span class="badge" style="background:var(--c-java);color:#fff;">☕ Enterprise Java Track</span>
+            <span class="badge badge-primary">18 Full Modules</span>
+            <span class="badge badge-outline">JVM + Spring Boot + Microservices</span>
+            <span class="badge badge-success">Official Certification Included</span>
+          </div>
+          <h1 class="lesson-title" style="font-size: 2.5rem; margin-top: 1rem;">Java & Spring Boot Masterclass</h1>
+          <p class="lesson-subtitle" style="max-width: 750px; margin: 0.5rem auto 1.5rem;">
+            From zero computer science knowledge to senior backend architect: Master the world's most enduring enterprise language. Built with real-world analogies, deep memory internals, and point-wise speaking notes for top-tier job interviews.
+          </p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="01-introduction-jvm-jdk-jre.html" class="btn btn-primary" style="padding: 0.75rem 1.75rem; font-size: 1.05rem;">
+              🚀 Start Lesson 01 (JVM & Architecture)
+            </a>
+            <a href="#certification-exam" class="btn btn-outline" style="padding: 0.75rem 1.5rem;">
+              🎓 Take Certification Exam
+            </a>
+          </div>
+        </div>
+
+        <!-- 4-Stage Learning Roadmap -->
+        <section id="roadmap" style="margin-bottom: 3rem;">
+          <h2 style="text-align: center; margin-bottom: 2rem;">🗺️ The Enterprise Java Roadmap</h2>
+          <div class="grid grid-2" style="gap: 1.5rem;">
+            
+            <div class="card" style="border-top: 4px solid var(--c-java);">
+              <div class="card-body">
+                <span class="badge badge-primary">Phase 1</span>
+                <h3 style="margin-top: 0.5rem;">Java Fundamentals & Memory Model</h3>
+                <p>Understand the JVM engine, Stack vs Heap, 8 primitives, type casting, modern switch expressions, and String Pool immutability.</p>
+                <ul class="styled-list">
+                  <li><a href="01-introduction-jvm-jdk-jre.html">01. JVM Architecture, Bytecode & JIT</a></li>
+                  <li><a href="02-syntax-data-types-variables.html">02. Data Types, Primitives & Wrappers</a></li>
+                  <li><a href="03-operators-control-flow.html">03. Operators & Modern Switch Expressions</a></li>
+                  <li><a href="04-methods-arrays-strings.html">04. Methods, Arrays & String Pool</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--c-warning);">
+              <div class="card-body">
+                <span class="badge badge-warning">Phase 2</span>
+                <h3 style="margin-top: 0.5rem;">Object-Oriented Architecture</h3>
+                <p>Master classes, defensive encapsulation, dynamic method dispatch, contracts via interfaces, sealed hierarchies, and robust exception handling.</p>
+                <ul class="styled-list">
+                  <li><a href="05-oop-classes-objects-constructors.html">05. Classes, Constructors & Encapsulation</a></li>
+                  <li><a href="06-oop-inheritance-polymorphism.html">06. Inheritance & Dynamic Method Dispatch</a></li>
+                  <li><a href="07-oop-abstraction-interfaces.html">07. Abstraction, Interfaces & Sealed Classes</a></li>
+                  <li><a href="08-exception-handling.html">08. Exception Handling & AutoCloseable</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--c-success);">
+              <div class="card-body">
+                <span class="badge badge-success">Phase 3</span>
+                <h3 style="margin-top: 0.5rem;">Collections, Concurrency & Modern APIs</h3>
+                <p>Unravel HashMap bucket treeification, PECS wildcard generics, multi-threaded thread pools, and declarative Streams pipelines with Optional.</p>
+                <ul class="styled-list">
+                  <li><a href="09-collections-framework.html">09. Collections Framework & HashMap Internals</a></li>
+                  <li><a href="10-generics-and-comparators.html">10. Generics (PECS) & Sorting Comparators</a></li>
+                  <li><a href="11-multithreading-concurrency.html">11. Multithreading, volatile & Thread Pools</a></li>
+                  <li><a href="12-java-8-streams-and-lambdas.html">12. Streams API, Lambdas & Optional</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--c-projects);">
+              <div class="card-body">
+                <span class="badge" style="background:#10b981; color:#fff;">Phase 4</span>
+                <h3 style="margin-top: 0.5rem;">Spring Boot, Data JPA & Microservices</h3>
+                <p>Build enterprise-grade distributed systems: JDBC, Spring IoC, Spring Boot 3 REST APIs, Hibernate ORM without N+1, and Spring Cloud Microservices.</p>
+                <ul class="styled-list">
+                  <li><a href="13-jdbc-and-database-connectivity.html">13. JDBC & HikariCP Connection Pooling</a></li>
+                  <li><a href="14-spring-core-and-ioc.html">14. Spring Core, IoC & Constructor Injection</a></li>
+                  <li><a href="15-spring-boot-and-rest-apis.html">15. Spring Boot 3 & Production REST APIs</a></li>
+                  <li><a href="16-spring-data-jpa-hibernate.html">16. Spring Data JPA & Hibernate (Solving N+1)</a></li>
+                  <li><a href="17-microservices-architecture.html">17. Microservices, Eureka & Circuit Breakers</a></li>
+                  <li><a href="18-java-interview-guide.html">18. 🎯 Master Java & Spring Boot Interview Q&A</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Final Course Certification Exam -->
+        <section id="certification-exam" style="margin-top: 3.5rem;">
+          <div class="card" style="border: 2px solid var(--c-java); background: var(--bg-card); padding: 2rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+              <span class="badge" style="background:var(--c-java); color:#fff; font-size:0.95rem; padding:0.4rem 1rem;">Official Certification</span>
+              <h2 style="font-size: 2rem; margin-top: 0.75rem;">Java Full-Stack Certification Exam</h2>
+              <p style="color: var(--text-muted); max-width: 650px; margin: 0.5rem auto;">
+                Demonstrate your enterprise Java mastery. Score 75% or higher (15/20 correct) to earn your verified Certificate of Completion.
+              </p>
+            </div>
+
+            <div id="exam-container">
+              <!-- 20 Comprehensive Exam Questions -->
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>1. Why is Java platform-independent while the JVM is platform-dependent?</strong></p>
+                <label><input type="radio" name="e1" value="1"> Java source compiles to bytecode (.class), which runs on any OS having a platform-tailored JVM</label><br>
+                <label><input type="radio" name="e1" value="0"> Java is an interpreted language like Python</label><br>
+                <label><input type="radio" name="e1" value="0"> Java source code is re-written automatically for Windows and Linux</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>2. In what memory area are Java Objects instantiated via `new` allocated?</strong></p>
+                <label><input type="radio" name="e2" value="0"> Thread-Private Stack</label><br>
+                <label><input type="radio" name="e2" value="1"> Shared Heap Memory</label><br>
+                <label><input type="radio" name="e2" value="0"> Metaspace</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>3. What is the value range pre-cached by the Java Integer Cache?</strong></p>
+                <label><input type="radio" name="e3" value="0"> 0 to 255</label><br>
+                <label><input type="radio" name="e3" value="1"> -128 to 127</label><br>
+                <label><input type="radio" name="e3" value="0"> -32,768 to 32,767</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>4. Why is `java.lang.String` designed to be immutable?</strong></p>
+                <label><input type="radio" name="e4" value="1"> For security, String Constant Pool memory reuse, and safe multi-threading without locks</label><br>
+                <label><input type="radio" name="e4" value="0"> Because the operating system requires fixed-size text</label><br>
+                <label><input type="radio" name="e4" value="0"> To prevent strings from holding numbers</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>5. Is Java strictly Pass-by-Value or Pass-by-Reference?</strong></p>
+                <label><input type="radio" name="e5" value="1"> Strictly Pass-by-Value (for objects, the memory reference pointer is copied by value)</label><br>
+                <label><input type="radio" name="e5" value="0"> Pass-by-Reference for all objects</label><br>
+                <label><input type="radio" name="e5" value="0"> Pass-by-Value for primitives and Pass-by-Reference for arrays</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>6. What happens if a subclass declares a `static` method with the exact same signature as its parent's static method?</strong></p>
+                <label><input type="radio" name="e6" value="1"> It hides the superclass method (Method Hiding), bound at compile-time</label><br>
+                <label><input type="radio" name="e6" value="0"> It dynamically overrides the parent method at runtime</label><br>
+                <label><input type="radio" name="e6" value="0"> It causes a compilation error</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>7. What keyword in Java 17 lists the explicit subclasses permitted to extend a `sealed` class?</strong></p>
+                <label><input type="radio" name="e7" value="0"> extends</label><br>
+                <label><input type="radio" name="e7" value="1"> permits</label><br>
+                <label><input type="radio" name="e7" value="0"> implements</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>8. What interface must an object implement to be managed automatically in a `try-with-resources` statement?</strong></p>
+                <label><input type="radio" name="e8" value="1"> java.lang.AutoCloseable</label><br>
+                <label><input type="radio" name="e8" value="0"> java.io.Serializable</label><br>
+                <label><input type="radio" name="e8" value="0"> java.lang.Cloneable</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>9. In Java 8+, at what collision threshold does a HashMap bucket convert from a LinkedList into a Red-Black Tree?</strong></p>
+                <label><input type="radio" name="e9" value="0"> 4 elements</label><br>
+                <label><input type="radio" name="e9" value="1"> 8 elements (TREEIFY_THRESHOLD)</label><br>
+                <label><input type="radio" name="e9" value="0"> 16 elements</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>10. If two objects evaluate to true via `equals()`, what must be true about their `hashCode()`?</strong></p>
+                <label><input type="radio" name="e10" value="1"> Their hashCode() values MUST be identical</label><br>
+                <label><input type="radio" name="e10" value="0"> Their hashCode() values may be completely different</label><br>
+                <label><input type="radio" name="e10" value="0"> Both hashCodes must be greater than zero</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>11. According to the PECS rule in Java Generics, when should `? extends T` be used?</strong></p>
+                <label><input type="radio" name="e11" value="1"> When you are only reading (producing) data from the generic structure</label><br>
+                <label><input type="radio" name="e11" value="0"> When you are inserting (consuming) data into the generic structure</label><br>
+                <label><input type="radio" name="e11" value="0"> Only in abstract classes</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>12. What does the `volatile` keyword guarantee in the Java Memory Model?</strong></p>
+                <label><input type="radio" name="e12" value="1"> Immediate memory visibility across CPU caches and prevents instruction reordering</label><br>
+                <label><input type="radio" name="e12" value="0"> Mutual exclusion lock like synchronized</label><br>
+                <label><input type="radio" name="e12" value="0"> Automatic atomic incrementing of numbers</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>13. Why is `opt.orElseGet(supplier)` preferred over `opt.orElse(fallback)` when generating default values?</strong></p>
+                <label><input type="radio" name="e13" value="1"> orElseGet executes the supplier lazily only when the Optional is empty</label><br>
+                <label><input type="radio" name="e13" value="0"> orElseGet executes in parallel across CPU cores</label><br>
+                <label><input type="radio" name="e13" value="0"> orElse is deprecated in Java 17</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>14. Why is `PreparedStatement` immune to SQL Injection attacks?</strong></p>
+                <label><input type="radio" name="e14" value="1"> The query structure is pre-compiled, and bound parameters are treated strictly as literal data</label><br>
+                <label><input type="radio" name="e14" value="0"> It encrypts all network packets using SSL</label><br>
+                <label><input type="radio" name="e14" value="0"> It strips quotes from the query string</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>15. Why is Constructor Injection strongly favored over Field Injection (`@Autowired`)?</strong></p>
+                <label><input type="radio" name="e15" value="1"> Enables final immutable fields, guarantees non-null dependencies, and allows pure unit testing</label><br>
+                <label><input type="radio" name="e15" value="0"> Constructor injection is required by HTTP 2.0</label><br>
+                <label><input type="radio" name="e15" value="0"> It speeds up Tomcat startup by 80%</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>16. What is the default bean scope in Spring Framework?</strong></p>
+                <label><input type="radio" name="e16" value="1"> Singleton (1 instance per Spring container)</label><br>
+                <label><input type="radio" name="e16" value="0"> Prototype (new instance on every request)</label><br>
+                <label><input type="radio" name="e16" value="0"> Session</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>17. What does `@RestController` in Spring Boot represent?</strong></p>
+                <label><input type="radio" name="e17" value="1"> A combination of `@Controller` and `@ResponseBody` (serializes return data to JSON)</label><br>
+                <label><input type="radio" name="e17" value="0"> An HTML template rendering engine</label><br>
+                <label><input type="radio" name="e17" value="0"> A WebSocket listener</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>18. How do you resolve the infamous N+1 query problem in Spring Data JPA?</strong></p>
+                <label><input type="radio" name="e18" value="1"> By using `JOIN FETCH` in JPQL or `@EntityGraph` on repository methods</label><br>
+                <label><input type="radio" name="e18" value="0"> By turning off SQL logging</label><br>
+                <label><input type="radio" name="e18" value="0"> By setting FetchType.EAGER on all collections</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>19. What state is a Resilience4j circuit breaker in when it short-circuits calls immediately to protect downstream services?</strong></p>
+                <label><input type="radio" name="e19" value="0"> CLOSED</label><br>
+                <label><input type="radio" name="e19" value="1"> OPEN</label><br>
+                <label><input type="radio" name="e19" value="0"> HALF-OPEN</label>
+              </div>
+
+              <div class="quiz-question" style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+                <p><strong>20. Why does calling a `@Transactional` method from another method in the SAME class fail to apply transactions?</strong></p>
+                <label><input type="radio" name="e19" value="1"> Self-invocation bypasses the Spring AOP proxy wrapper</label><br>
+                <label><input type="radio" name="e19" value="0"> The database closes the connection automatically</label><br>
+                <label><input type="radio" name="e19" value="0"> Java does not permit internal method calls</label>
+              </div>
+
+              <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" style="padding: 0.85rem 2.5rem; font-size: 1.15rem;" onclick="submitJavaExam()">
+                  Submit Exam & Calculate Score 🎯
+                </button>
+              </div>
+            </div>
+
+            <!-- Exam Results Box -->
+            <div id="exam-results" style="display:none; text-align:center; margin-top:2rem; padding:2rem; border-radius:8px;"></div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function submitJavaExam() {
+      var score = 0;
+      var total = 20;
+      for (var i = 1; i <= total; i++) {
+        var radios = document.getElementsByName('e' + i);
+        for (var r of radios) {
+          if (r.checked && r.value === '1') {
+            score++;
+            break;
+          }
+        }
+      }
+
+      var resDiv = document.getElementById('exam-results');
+      resDiv.style.display = 'block';
+      
+      if (score >= 15) {
+        resDiv.style.background = 'rgba(16, 185, 129, 0.15)';
+        resDiv.style.border = '2px solid #10b981';
+        resDiv.innerHTML = `
+          <h3 style="color:#10b981; font-size:1.8rem; margin-bottom:0.5rem;">🎉 Outstanding! Certification Passed!</h3>
+          <p style="font-size:1.2rem;">You scored <strong>${score} / ${total}</strong> (${Math.round((score/total)*100)}%).</p>
+          <p>You have demonstrated enterprise-grade mastery across Java, Concurrency, Spring Boot, JPA, and Microservices.</p>
+          <div style="margin-top:1.5rem;">
+            <a href="../certificate/index.html?course=java" class="btn btn-success" style="padding:0.75rem 2rem; font-size:1.1rem;">
+              📜 Claim Your Official Java & Spring Boot Certificate
+            </a>
+          </div>
+        `;
+      } else {
+        resDiv.style.background = 'rgba(239, 68, 68, 0.15)';
+        resDiv.style.border = '2px solid #ef4444';
+        resDiv.innerHTML = `
+          <h3 style="color:#ef4444; font-size:1.6rem; margin-bottom:0.5rem;">Score: ${score} / ${total} (${Math.round((score/total)*100)}%)</h3>
+          <p>Passing requirement is 15/20 (75%). Review the lessons, particularly Memory Model, Collections, and Spring Boot, and retake the exam!</p>
+          <div style="margin-top:1.5rem;">
+            <a href="01-introduction-jvm-jdk-jre.html" class="btn btn-outline">Review Lesson 01</a>
+          </div>
+        `;
+      }
+      resDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

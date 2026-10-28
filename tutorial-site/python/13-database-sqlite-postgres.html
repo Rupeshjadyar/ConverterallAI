@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Python Database Connectivity: SQLite, PostgreSQL & SQLAlchemy — WebDev Academy</title>
+  <meta name="description" content="Connect Python to relational databases. Master the Python DB-API 2.0 standard, built-in sqlite3, psycopg2 for PostgreSQL, stopping SQL injection with parameterized queries, connection pooling, and an introduction to SQLAlchemy ORM.">
+  <meta name="keywords" content="Python database, sqlite3 Python, psycopg2 PostgreSQL, SQL injection Python, parameterized query, SQLAlchemy ORM, DB-API 2.0">
+  <meta property="og:title" content="Python Database Connectivity: SQLite, PostgreSQL & SQLAlchemy">
+  <meta property="og:description" content="Connect Python to relational databases. Master the Python DB-API 2.0 standard, built-in sqlite3, psycopg2 for PostgreSQL, stopping SQL injection with parameterized queries, connection pooling, and an introduction to SQLAlchemy ORM.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="13-database-sqlite-postgres.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 13</span>
+          </div>
+          <h1 class="lesson-title">Python Database Connectivity: SQLite, PostgreSQL & SQLAlchemy</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Connect Python to relational databases. Master the Python DB-API 2.0 standard, built-in sqlite3, psycopg2 for PostgreSQL, stopping SQL injection with parameterized queries, connection pooling, and an introduction to SQLAlchemy ORM.</span>
+            <span class="lang-hi">Python Database Connectivity seekhein: sqlite3, PostgreSQL (psycopg2), SQL injection se bachna, parameterized queries aur SQLAlchemy ORM ka use.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The Python Database API Specification (PEP 249 / DB-API 2.0).</li><li>Working with embedded local databases using built-in sqlite3.</li><li>Connecting to enterprise PostgreSQL servers using psycopg2.</li><li>The #1 Security Rule: Eliminating SQL Injection vulnerabilities with parameterized queries.</li><li>Transaction management: commit, rollback, and connection context managers.</li><li>Object-Relational Mapping (ORM) fundamentals with modern SQLAlchemy 2.0.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 12: Modules & Packages + SQL Fundamentals.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of ordering food through a drive-through speaker. If you let a stranger scream into your microphone and say 'Cancel all previous orders and delete the cash register' &mdash; that is <strong>SQL Injection via raw string formatting</strong>! <strong>A Parameterized Query is like an electronic touch-screen menu</strong>: you select 'Item: Burger' and 'Quantity: 2'. No matter what strange words someone types into the name box (e.g. <code>'; DROP TABLE users; --</code>), the computer strictly treats it as harmless plain text, never as executable SQL commands! <strong>An ORM (like SQLAlchemy) is like hiring a bilingual translator</strong>: you speak pure Python objects (<code>user.email = '...'</code>), and the ORM translates it into optimized SQL behind your back!</span>
+            <span class="lang-hi">Restaurant ke drive-through ki misaal lein: agar koi mike me chillaye 'Restaurant band karo aur saare paise mita do', aur computer use sach maan le, toh yeh SQL Injection hai! <strong>Parameterized query ek digital form jaisa hai</strong>: chahe user kuch bhi ulta-seedha likhe, computer use sirf text manta hai, command nahi! <strong>SQLAlchemy ORM ek smart translator hai</strong>: aap Python objects me kaam karte ho aur wo peeche apne aap SQL likh deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is PEP 249 (Python DB-API 2.0)?</strong> The standard specification that all Python database drivers (sqlite3, psycopg2, mysqlclient) must implement, providing uniform methods: <code>connect()</code>, <code>cursor()</code>, <code>execute()</code>, <code>fetchall()</code>, <code>commit()</code>, and <code>rollback()</code>.</li><li><strong>How to prevent SQL Injection in Python?</strong> NEVER use f-strings or string concatenation to build SQL queries! Always pass query parameters as a tuple/list to <code>cursor.execute(sql, (param1, param2))</code> so the driver quotes and escapes them safely.</li><li><strong>What is Connection Pooling?</strong> Opening a TCP connection, performing TLS handshakes, and authenticating with PostgreSQL on every HTTP request adds 50-100ms latency. A connection pool keeps a pool of warm connections ready in memory to be reused by worker threads.</li><li><strong>fetchone() vs fetchall() vs fetchmany(size):</strong> <code>fetchall()</code> loads the ENTIRE result set into RAM (dangerous for millions of rows!). Use <code>fetchmany(1000)</code> or iterate over the cursor directly to stream rows in batches.</li><li><strong>Raw SQL vs ORM:</strong> Raw SQL offers maximum performance and explicit query control. ORMs (SQLAlchemy, Django ORM) offer rapid development, type safety, database portability, and eliminate boilerplate mapping.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. The Python DB-API 2.0 (PEP 249) Standard</h2>
+        <p>In Python, every database adapter follows the universal <strong>PEP 249</strong> standard. Whether you are querying SQLite, PostgreSQL, MySQL, or Oracle, the programming workflow is identical:</p>
+        <p>1. <code>connection = db_driver.connect(...)</code><br>2. <code>cursor = connection.cursor()</code><br>3. <code>cursor.execute(query, params)</code><br>4. <code>results = cursor.fetchall()</code><br>5. <code>connection.commit()</code> &amp; <code>connection.close()</code></p>
+        
+        <h2>2. Embedded Persistence with sqlite3</h2>
+        <p>Python includes <code>sqlite3</code> directly in its standard library &mdash; zero installation required. SQLite is an in-process, serverless relational database engine stored in a single file on disk (or in RAM with <code>:memory:</code>).</p>
+        <p>It is ideal for desktop applications, testing, edge devices, and prototyping before moving to PostgreSQL.</p>
+        
+        <h2>3. The Critical Danger of SQL Injection</h2>
+        <p>Never write: <code>cursor.execute(f'SELECT * FROM users WHERE email = "{user_input}"')</code>. If an attacker inputs <code>' OR '1'='1</code>, they bypass authentication entirely and expose every user's data!</p>
+        <p>Always write: <code>cursor.execute('SELECT * FROM users WHERE email = ?', (user_input,))</code>. The driver safely passes parameters separately from the SQL statement.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Complete CRUD Workflow with Built-in sqlite3</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sqlite3
+
+# 1. Connect to local database file (creates it if missing)
+conn = sqlite3.connect('local_academy.db')
+cursor = conn.cursor()
+
+# 2. Create table schema
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        track TEXT NOT NULL,
+        gpa REAL DEFAULT 0.0
+    )
+''')
+
+# 3. Parameterized INSERT (Safe against SQL Injection!)
+new_students = [
+    ('Aarav Sharma', 'Full-Stack Python', 3.9),
+    ('Priya Verma', 'AI &amp; Machine Learning', 4.0),
+    ('Rohan Patel', 'Cloud Architecture', 3.7)
+]
+cursor.executemany('''
+    INSERT INTO students (name, track, gpa) VALUES (?, ?, ?)
+''', new_students)
+conn.commit()  # Save changes permanently!
+
+# 4. Query and iterate through rows
+cursor.execute('SELECT id, name, track, gpa FROM students WHERE gpa &gt;= ?', (3.8,))
+for row in cursor.fetchall():
+    print(f'Honor Student: {row[1]} ({row[2]}) - GPA: {row[3]}')
+
+conn.close()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>cursor.executemany()</code> batches multiple insertions in a single transaction for high performance.
+        </div>
+        
+        <h3>Code Example 2: SQL Injection Demonstration: The Hack vs The Safe Fix</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sqlite3
+conn = sqlite3.connect(':memory:')
+cur = conn.cursor()
+cur.execute('CREATE TABLE secrets (id INT, api_key TEXT)')
+cur.execute("INSERT INTO secrets VALUES (1, 'sk_live_super_secret_key')")
+conn.commit()
+
+# Malicious attacker input
+malicious_user_id = '1 OR 1=1'
+
+# VULNERABLE CODE (Never do this!):
+# cur.execute(f'SELECT * FROM secrets WHERE id = {malicious_user_id}')  &lt;-- Leaks all keys!
+
+# SAFE PARAMETERIZED CODE:
+cur.execute('SELECT * FROM secrets WHERE id = ?', (malicious_user_id,))
+results = cur.fetchall()
+print(f'Safe query results: {results}')  # Empty list [] - Attack completely neutralized!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Parameterized queries prevent attacker payloads from being parsed as SQL code.
+        </div>
+        
+        <h3>Code Example 3: Enterprise PostgreSQL with psycopg2 and Dictionary Cursors</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Production PostgreSQL workflow with psycopg2:
+# import psycopg2
+# from psycopg2.extras import RealDictCursor
+# 
+# conn = psycopg2.connect(
+#     host='localhost', dbname='production_db',
+#     user='app_user', password='secure_password', port=5432
+# )
+# 
+# # RealDictCursor returns rows as Python dictionaries: row['column_name']!
+# with conn.cursor(cursor_factory=RealDictCursor) as cur:
+#     cur.execute('SELECT id, email, created_at FROM users WHERE is_active = %s', (True,))
+#     for user in cur.fetchmany(100):
+#         print(f'User {user["id"]}: {user["email"]}')
+# 
+# conn.commit()
+# conn.close()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>RealDictCursor</code> allows accessing columns by name (<code>row['email']</code>) rather than numeric index.
+        </div>
+        
+        <h3>Code Example 4: Modern SQLAlchemy 2.0 ORM Declarative Models</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># from sqlalchemy import create_engine, String, Float
+# from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+# 
+# class Base(DeclarativeBase):
+#     pass
+# 
+# class Product(Base):
+#     __tablename__ = 'products'
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     title: Mapped[str] = mapped_column(String(100))
+#     price: Mapped[float] = mapped_column(Float)
+# 
+# engine = create_engine('sqlite:///store.db')
+# Base.metadata.create_all(engine)
+# 
+# with Session(engine) as session:
+#     new_product = Product(title='Mechanical Keyboard', price=89.99)
+#     session.add(new_product)
+#     session.commit()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • SQLAlchemy 2.0 uses modern Python type annotations (<code>Mapped[int]</code>) to map database columns cleanly to Python objects.
+        </div>
+        
+        <h3>Code Example 5: Using sqlite3 with Row Factory for Named Column Access</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sqlite3
+
+conn = sqlite3.connect(':memory:')
+# Row factory allows dict-like and index-like access: row['name'] or row[0]
+conn.row_factory = sqlite3.Row
+cur = conn.cursor()
+
+cur.execute('CREATE TABLE items (id INT, name TEXT)')
+cur.execute("INSERT INTO items VALUES (1, 'Laser Mouse')")
+conn.commit()
+
+cur.execute('SELECT * FROM items WHERE id = 1')
+row = cur.fetchone()
+print(f'Item by name: {row["name"]}, Item by index: {row[1]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>sqlite3.Row</code> provides named access without the overhead of converting rows into full dictionaries.
+        </div>
+        
+        <h3>Code Example 6: Transaction Context Management (Automatic Rollback on Exception)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">import sqlite3
+
+conn = sqlite3.connect(':memory:')
+cur = conn.cursor()
+cur.execute('CREATE TABLE accounts (id INT PRIMARY KEY, balance REAL)')
+cur.execute('INSERT INTO accounts VALUES (1, 1000.0), (2, 500.0)')
+conn.commit()
+
+# Using connection as a context manager automatically handles COMMIT / ROLLBACK!
+try:
+    with conn:
+        cur.execute('UPDATE accounts SET balance = balance - 200 WHERE id = 1')
+        # Simulate crash
+        raise RuntimeError('Network timeout during bank transfer!')
+        cur.execute('UPDATE accounts SET balance = balance + 200 WHERE id = 2')
+except RuntimeError as err:
+    print(f'Transaction safely rolled back due to: {err}')
+
+cur.execute('SELECT balance FROM accounts WHERE id = 1')
+print(f'Account 1 balance is intact: ${cur.fetchone()[0]:.2f}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>with conn:</code> automatically issues a ROLLBACK if any exception escapes the block, preserving data integrity.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Python Database Connectivity: SQLite, PostgreSQL & SQLAlchemy</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive sqlite3 Sandbox
+import sqlite3
+
+conn = sqlite3.connect(':memory:')
+cur = conn.cursor()
+cur.execute('CREATE TABLE inventory (sku TEXT, stock INT)')
+cur.execute("INSERT INTO inventory VALUES ('LAPTOP-01', 25), ('MOUSE-02', 150)")
+conn.commit()
+
+cur.execute('SELECT sku, stock FROM inventory WHERE stock > ?', (20,))
+for sku, stock in cur.fetchall():
+    print(f'SKU: {sku} has {stock} units in warehouse.')</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using f-strings for SQL queries:</strong> The #1 security flaw in web development. Always pass query parameters as second argument to <code>execute()</code>.</li><li><strong>Forgetting conn.commit():</strong> In Python DB-API, transactions are open by default. If you omit <code>conn.commit()</code>, your INSERT and UPDATE statements are never written to disk!</li><li><strong>Calling fetchall() on massive tables:</strong> Trying to load 10 million rows into memory crashes server RAM with an Out Of Memory (OOM) error. Use <code>fetchmany()</code> or stream via cursor iteration.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always use connection pools in web servers:</strong> In FastAPI or Flask, use SQLAlchemy's <code>QueuePool</code> or <code>asyncpg.create_pool()</code> to reuse database connections across concurrent web worker threads.</li><li><strong>Use Alembic for database migrations:</strong> Never run manual ALTER TABLE commands in production. Use Alembic (from SQLAlchemy) to version control your database schema alongside your Git commits!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>PEP 249 DB-API 2.0 defines uniform database APIs across SQLite, PostgreSQL, and MySQL.</li><li>Never use string formatting in SQL; use parameterized queries (?, %s) to prevent SQL injection.</li><li>sqlite3 is built into Python; psycopg2 connects to enterprise PostgreSQL.</li><li>Always call conn.commit() to persist transactions permanently.</li><li>SQLAlchemy ORM bridges relational tables and Python OOP classes.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a Python script using <code>sqlite3</code> to create an in-memory database, create a table <code>users (id INT, name TEXT)</code>, insert 2 rows, and print all rows.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use sqlite3.connect(':memory:') and cur.fetchall().</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">import sqlite3
+
+conn = sqlite3.connect(':memory:')
+cur = conn.cursor()
+cur.execute('CREATE TABLE users (id INT, name TEXT)')
+cur.executemany('INSERT INTO users VALUES (?, ?)', [(1, 'Aarav'), (2, 'Priya')])
+conn.commit()
+
+cur.execute('SELECT * FROM users')
+print(cur.fetchall())</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a function <code>transfer_funds(conn, from_acc, to_acc, amount)</code> that uses an explicit transaction to deduct from one account and add to another, rolling back if from_acc does not have sufficient balance.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Check balance first, wrap updates in with conn: block.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">def transfer_funds(conn, from_acc, to_acc, amount):
+    cur = conn.cursor()
+    with conn:
+        cur.execute('SELECT balance FROM accounts WHERE id = ?', (from_acc,))
+        bal = cur.fetchone()[0]
+        if bal &lt; amount:
+            raise ValueError('Insufficient funds')
+        cur.execute('UPDATE accounts SET balance = balance - ? WHERE id = ?', (amount, from_acc))
+        cur.execute('UPDATE accounts SET balance = balance + ? WHERE id = ?', (amount, to_acc))
+    print('Transfer completed successfully.')</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain how an attacker exploits SQL Injection when code uses <code>f'SELECT * FROM users WHERE username = "{user}" AND password = "{pwd}"'</code>, and demonstrate the exact input string an attacker uses to log in as administrator without knowing the password.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Show input: admin" -- and explain how SQL comments bypass the password check.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># If the query is:
+# sql = f'SELECT * FROM users WHERE username = "{user}" AND password = "{pwd}"'
+
+# The attacker inputs for username:
+# admin" --
+
+# The resulting executed SQL statement becomes:
+# SELECT * FROM users WHERE username = "admin" -- AND password = "..."
+# In SQL, '--' comments out the rest of the line! The password check is ignored entirely,
+# logging the attacker in as administrator!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="0" data-explanation="PEP 249 defines the Python Database API Specification 2.0 (DB-API 2.0).">
+          <div class="quiz-question-text">1. What is the standard specification for Python database drivers defined in PEP 249?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> DB-API 2.0</div><div class="quiz-option"><span>B)</span> SQL-Python v3</div><div class="quiz-option"><span>C)</span> ORM Specification</div><div class="quiz-option"><span>D)</span> PyDatabase</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Parameterized queries separate SQL structure from user data, neutralizing injection attacks.">
+          <div class="quiz-question-text">2. How should user input be passed into a SQL query in Python to prevent SQL Injection?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Using f-strings: f'SELECT * FROM u WHERE id = {val}'</div><div class="quiz-option"><span>B)</span> Using parameterized queries: cursor.execute('SELECT * FROM u WHERE id = ?', (val,))</div><div class="quiz-option"><span>C)</span> Using string concatenation (+)</div><div class="quiz-option"><span>D)</span> By encrypting the Python file</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="In DB-API 2.0, transactions are open by default; changes must be explicitly committed to persist.">
+          <div class="quiz-question-text">3. What happens if you forget to call conn.commit() after running INSERT statements?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> The database throws a syntax error</div><div class="quiz-option"><span>B)</span> The changes are never permanently written to the database disk and will be lost when the connection closes</div><div class="quiz-option"><span>C)</span> Python crashes</div><div class="quiz-option"><span>D)</span> The changes commit automatically on Tuesday</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>sqlite3.Row</code> provides dictionary-like column access alongside numeric indexing.">
+          <div class="quiz-question-text">4. What is the advantage of using sqlite3.Row as the row_factory?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It makes queries 100 times faster</div><div class="quiz-option"><span>B)</span> It allows accessing columns by both name (row['col']) and numeric index (row[0])</div><div class="quiz-option"><span>C)</span> It encrypts the database</div><div class="quiz-option"><span>D)</span> It automatically creates indexes</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="SQLAlchemy is the premier Python ORM and database abstraction library.">
+          <div class="quiz-question-text">5. What is the role of SQLAlchemy in modern Python development?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A web browser</div><div class="quiz-option"><span>B)</span> A powerful Object-Relational Mapper (ORM) and SQL toolkit that maps Python classes to database tables</div><div class="quiz-option"><span>C)</span> An alternative to pip</div><div class="quiz-option"><span>D)</span> A Python compiler</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, insert a third product 'KEYBOARD-03' with 45 units, commit the transaction, and re-run to see it in the query output!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#db-api" class="ref-pill">Glossary: DB-API</a><a href="../reference/glossary.html#sql-injection" class="ref-pill">Glossary: SQL Injection</a><a href="14-flask-and-fastapi.html" class="ref-pill">Lesson 14: Web APIs: Flask & FastAPI</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="12-modules-packages-pip.html" class="btn btn-outline">&larr; 12. Modules, Packages & pip</a>
+          <button class="mark-complete-btn" data-lesson-id="python-13">Mark as Complete</button>
+          <a href="14-flask-and-fastapi.html" class="btn btn-primary">14. Web APIs: Flask & FastAPI &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

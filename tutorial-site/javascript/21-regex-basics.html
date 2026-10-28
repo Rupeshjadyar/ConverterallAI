@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>RegEx Basics — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="21-regex-basics.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 20 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 21</span>
+          </div>
+          <h1 class="lesson-title">Regular Expressions (RegEx) in JavaScript</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the art of pattern matching. Validate emails and passwords, extract clean data tokens, replace text dynamically, and harness powerful character classes.</span>
+            <span class="lang-hi">Pattern matching ki superpower: Regular Expressions (RegEx), character classes (\d, \w), quantifiers (*, +, ?), anchors (^, $), test(), match() aur replace() ka complete guide.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What is a Regular Expression and why is it essential for text validation and extraction?</li>
+            <li>Literal notation <code>/abc/g</code> vs the <code>new RegExp()</code> constructor.</li>
+            <li>Crucial flags: <code>g</code> (global), <code>i</code> (case-insensitive), and <code>m</code> (multiline).</li>
+            <li>Character sets and classes: <code>[a-z]</code>, <code>\d</code> (digits), <code>\w</code> (words), and <code>\s</code> (spaces).</li>
+            <li>Quantifiers: <code>+</code> (1+), <code>*</code> (0+), <code>?</code> (optional), and <code>{min, max}</code>.</li>
+            <li>String boundary anchors: <code>^</code> (start of line) and <code>$</code> (end of line).</li>
+            <li>Core JavaScript methods: <code>regex.test()</code>, <code>regex.exec()</code>, <code>string.match()</code>, and <code>string.replace()</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="10-strings-numbers-math-date.html">10. Strings, Numbers, Math &amp; Date</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Cookie Cutter &amp; Metal Detector</div>
+          <p>
+            <span class="lang-en">Imagine searching through a giant sandbox full of toys, sand, shells, and coins:
+            <br>&bull; <strong>Without RegEx:</strong> You must inspect every individual sand particle one by one with a magnifying glass, checking each character's ASCII code manually with nested <code>if</code> statements.
+            <br>&bull; <strong>With RegEx:</strong> You carry a custom-calibrated metal detector shaped like a cookie cutter. You swipe it across the sandbox once. It immediately ignores all sand and plastic, beep-highlighting only exact 10-digit phone numbers or valid email addresses in a split second!</span>
+            <span class="lang-hi">Cookie cutter aur metal detector ki tarah samjhein: Hazaron lines ke text me se ek-ek character check karne ki jagah, RegEx ek custom pattern banata hai jo exact phone numbers, emails ya dates ko ek jhatke me dhoondh leta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <section id="regex-syntax">
+          <h2>1. Creating Regular Expressions &amp; Flags</h2>
+          <p>
+            <span class="lang-en">In JavaScript, a regular expression is an instance of the built-in <code>RegExp</code> object. You can create one in two distinct ways:</span>
+            <span class="lang-hi">JavaScript me RegEx do tarike se banaye jaate hain: Regex Literals (slashes ke beech) aur <code>new RegExp()</code> constructor:</span>
+          </p>
+
+          <!-- Code Example 1 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Literal Syntax vs RegExp Constructor</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// 1. RegEx Literal (Preferred when pattern is fixed at compile-time)
+// Syntax: /pattern/flags
+const jsPattern = /javascript/i; // 'i' flag means case-insensitive
+
+// 2. RegExp Constructor (Used when pattern is dynamic, e.g. from user input)
+// Syntax: new RegExp("pattern", "flags")
+const searchWord = "javascript";
+const dynamicPattern = new RegExp(searchWord, "i");
+
+// Testing for a match: .test() returns true or false
+console.log(jsPattern.test("I love JavaScript!")); // true
+console.log(jsPattern.test("Python is great."));    // false</code></pre>
+          </div>
+
+          <h3>Essential RegEx Flags:</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Flag</th>
+                  <th>Name</th>
+                  <th>Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>i</code></td>
+                  <td>Ignore Case</td>
+                  <td>Makes the match case-insensitive (<code>/a/i</code> matches "a" and "A").</td>
+                </tr>
+                <tr>
+                  <td><code>g</code></td>
+                  <td>Global</td>
+                  <td>Finds all matches across the entire text rather than stopping at the first match.</td>
+                </tr>
+                <tr>
+                  <td><code>m</code></td>
+                  <td>Multiline</td>
+                  <td>Treats beginning (<code>^</code>) and end (<code>$</code>) characters as working across each individual line.</td>
+                </tr>
+                <tr>
+                  <td><code>s</code></td>
+                  <td>dotAll</td>
+                  <td>Allows the wildcard dot <code>.</code> to match newline characters (<code>\n</code>).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="character-classes">
+          <h2>2. Character Classes &amp; Metacharacters</h2>
+          <p>
+            <span class="lang-en">Metacharacters are characters with special meanings in RegEx patterns. Character classes act as shortcuts representing categories of characters:</span>
+            <span class="lang-hi">Character classes special symbols hote hain jo poori category ko represent karte hain (jaise sabhi numbers ya sabhi letters):</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Class / Symbol</th>
+                  <th>Matches</th>
+                  <th>Example Match</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>.</code></td>
+                  <td>Any single character (except newline)</td>
+                  <td><code>/c.t/</code> matches "cat", "cot", "c9t"</td>
+                </tr>
+                <tr>
+                  <td><code>\d</code></td>
+                  <td>Any digit <code>[0-9]</code></td>
+                  <td><code>/\d\d/</code> matches "42", "99"</td>
+                </tr>
+                <tr>
+                  <td><code>\D</code></td>
+                  <td>Any NON-digit (negated)</td>
+                  <td><code>/\D/</code> matches "a", "#", " "</td>
+                </tr>
+                <tr>
+                  <td><code>\w</code></td>
+                  <td>Word character: <code>[a-zA-Z0-9_]</code></td>
+                  <td><code>/\w+/</code> matches "user_99"</td>
+                </tr>
+                <tr>
+                  <td><code>\W</code></td>
+                  <td>NON-word character (punctuation/symbols)</td>
+                  <td><code>/\W/</code> matches "!", "@", " "</td>
+                </tr>
+                <tr>
+                  <td><code>\s</code></td>
+                  <td>Whitespace (space, tab, newline)</td>
+                  <td><code>/\s/</code> matches " " or "\t"</td>
+                </tr>
+                <tr>
+                  <td><code>[abc]</code></td>
+                  <td>Any character inside the brackets</td>
+                  <td><code>/[aeiou]/</code> matches any vowel</td>
+                </tr>
+                <tr>
+                  <td><code>[^abc]</code></td>
+                  <td>Negated set: ANY character EXCEPT those listed</td>
+                  <td><code>/[^0-9]/</code> matches non-numbers</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="quantifiers-anchors">
+          <h2>3. Quantifiers &amp; Position Anchors</h2>
+          <p>
+            <span class="lang-en">Quantifiers specify <em>how many times</em> a character or group must repeat. Anchors specify <em>where</em> in the string the match must occur:</span>
+            <span class="lang-hi">Quantifiers batate hain ki koi cheez kitni baar repeat honi chahiye (+, *, ?), aur Anchors batate hain ki shuruat ya aakhir me match ho (^, $):</span>
+          </p>
+
+          <!-- Code Example 2 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Quantifiers and Anchors in Action</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// Quantifiers:
+// +    -> 1 or more times
+// *    -> 0 or more times
+// ?    -> 0 or 1 time (optional)
+// {3}  -> Exactly 3 times
+// {2,5}-> Between 2 and 5 times
+
+// Anchors:
+// ^    -> Starts with
+// $    -> Ends with
+
+// Validate a 5-digit postal zip code (must start and end with digits ONLY)
+const zipRegex = /^\d{5}$/;
+console.log(zipRegex.test("90210"));      // true
+console.log(zipRegex.test("90210-4412")); // false (not strictly 5 digits)
+console.log(zipRegex.test("abc90210xyz"));// false (due to ^ and $ anchors!)
+
+// Without ^ and $, /\\d{5}/ would match "abc90210xyz" anywhere inside!</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="methods-test-match-replace">
+          <h2>4. Key JavaScript RegEx Methods</h2>
+          <p>
+            <span class="lang-en">JavaScript provides methods on both the <code>RegExp</code> object (<code>test</code>, <code>exec</code>) and on the <code>String</code> prototype (<code>match</code>, <code>replace</code>, <code>split</code>, <code>search</code>):</span>
+            <span class="lang-hi">JavaScript me RegEx ke saath use hone wale sabse common methods:</span>
+          </p>
+
+          <!-- Code Example 3 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — string.replace() and string.match()</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>const text = "Contact our support team at help@company.com or sales@company.org anytime.";
+
+// 1. string.match(regex): Extract all emails (using global flag 'g')
+const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const foundEmails = text.match(emailRegex);
+console.log("Found Emails:", foundEmails);
+// Output: ['help@company.com', 'sales@company.org']
+
+// 2. string.replace(regex, replacement): Mask credit card numbers
+const secretCard = "Your active card is 4111-2222-3333-4444.";
+const masked = secretCard.replace(/\d{4}-\d{4}-\d{4}-(\d{4})/, "****-****-****-$1");
+console.log("Masked card:", masked);
+// Output: "Your active card is ****-****-****-4444."
+
+// 3. string.split(regex): Split text by any sequence of commas or spaces
+const csvData = "apple, banana ;  orange,grape; mango";
+const fruits = csvData.split(/[,;\s]+/);
+console.log("Clean fruit list:", fruits);
+// Output: ['apple', 'banana', 'orange', 'grape', 'mango']</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="common-real-patterns">
+          <h2>5. Production RegEx Patterns (Cheat Sheet)</h2>
+          <p>
+            <span class="lang-en">Here are real-world, industry-tested regular expressions frequently used in web applications:</span>
+            <span class="lang-hi">Web applications me aksar use hone wale tested RegEx patterns:</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Use Case</th>
+                  <th>RegEx Pattern</th>
+                  <th>Explanation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Username</strong></td>
+                  <td><code>/^[a-zA-Z0-9_]{3,16}$/</code></td>
+                  <td>Alphanumeric + underscores, 3 to 16 characters long.</td>
+                </tr>
+                <tr>
+                  <td><strong>Simple Email</strong></td>
+                  <td><code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code></td>
+                  <td>Checks for non-space characters surrounding <code>@</code> and dot.</td>
+                </tr>
+                <tr>
+                  <td><strong>Strong Password</strong></td>
+                  <td><code>/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/</code></td>
+                  <td>Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char (using lookaheads).</td>
+                </tr>
+                <tr>
+                  <td><strong>Indian Phone</strong></td>
+                  <td><code>/^(\+91[\-\s]?)?[6-9]\d{9}$/</code></td>
+                  <td>Starts with optional +91, followed by a digit 6-9, followed by 9 digits.</td>
+                </tr>
+                <tr>
+                  <td><strong>Clean HTML Tags</strong></td>
+                  <td><code>/&lt;[^&gt;]*&gt;/g</code></td>
+                  <td>Finds all opening and closing HTML tags to strip markup from text.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Interactive Playground -->
+        <section id="try-it-live">
+          <h2>6. Interactive Try-It Editor: Live RegEx Tester &amp; Highlighter</h2>
+          <p>
+            <span class="lang-en">Test regular expressions dynamically against any sample text. As you type a pattern and test phrase, watch instant matches appear!</span>
+            <span class="lang-hi">Neeche diye gaye live editor me patterns test karein aur match results dekhein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-regex">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live RegEx Pattern Tester</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-regex')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-regex')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    input { background: #1e293b; color: white; border: 1px solid #334155; padding: 8px 12px; border-radius: 6px; font-family: monospace; }
+    #pattern-input { width: 140px; }
+    #text-input { flex: 1; }
+    button { padding: 8px 16px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
+    #output-box { background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 6px; min-height: 80px; font-family: monospace; font-size: 13px; white-space: pre-line; }
+    .match-tag { background: #10b981; color: black; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 4px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Real-Time RegEx Matcher&lt;/h3&gt;
+  &lt;div class="input-row"&gt;
+    &lt;input id="pattern-input" value="\b[A-Z][a-z]+\b" placeholder="Pattern"&gt;
+    &lt;input id="text-input" value="Hello Rahul, how is Delhi and Mumbai today?" placeholder="Test text"&gt;
+    &lt;button onclick="testPattern()"&gt;Evaluate&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div id="output-box"&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    function testPattern() {
+      const patStr = document.getElementById('pattern-input').value;
+      const text = document.getElementById('text-input').value;
+      const out = document.getElementById('output-box');
+
+      try {
+        const regex = new RegExp(patStr, 'g');
+        const matches = text.match(regex);
+        if (matches && matches.length > 0) {
+          out.innerHTML = `&lt;strong style="color:#38bdf8"&gt;Found ${matches.length} Matches:&lt;/strong&gt;&lt;br&gt;` +
+            matches.map(m =&gt; `&lt;span class="match-tag"&gt;${m}&lt;/span&gt;`).join(' ');
+        } else {
+          out.innerHTML = '&lt;span style="color:#ef4444"&gt;No matches found in string.&lt;/span&gt;';
+        }
+      } catch (err) {
+        out.innerHTML = `&lt;span style="color:#ef4444"&gt;Invalid RegEx: ${err.message}&lt;/span&gt;`;
+      }
+    }
+    testPattern();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common RegEx Pitfalls</div>
+          <ul>
+            <li><strong>The "Greedy" Wildcard:</strong> By default, quantifiers like <code>.*</code> are greedy &mdash; they consume as much text as possible. In <code>&lt;b&gt;one&lt;/b&gt; and &lt;b&gt;two&lt;/b&gt;</code>, the greedy <code>/&lt;b&gt;.*&lt;\/b&gt;/</code> matches from the first <code>&lt;b&gt;</code> all the way to the last <code>&lt;/b&gt;</code>! Add <code>?</code> (e.g. <code>.*?</code>) to make it lazy.</li>
+            <li><strong>Forgetting to Escape Special Characters:</strong> Characters like <code>.</code>, <code>*</code>, <code>+</code>, <code>?</code>, <code>(</code>, <code>)</code>, <code>[</code>, <code>]</code>, <code>^</code>, and <code>$</code> must be escaped with a backslash (e.g. <code>\.</code>) if you want to match the literal character!</li>
+            <li><strong>Reusing Global RegEx with <code>.test()</code>:</strong> When a RegEx uses the <code>g</code> flag, calling <code>regex.test(str)</code> mutates its internal <code>lastIndex</code> pointer. Calling <code>regex.test()</code> twice in a row on the exact same string can return <code>true</code> and then unexpectedly <code>false</code>! Avoid the <code>g</code> flag if you only need <code>.test()</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Pro Tips</div>
+          <ul>
+            <li><strong>Named Capture Groups:</strong> Use <code>(?&lt;name&gt;...)</code> to give semantic names to captured matches. E.g. <code>/(?&lt;year&gt;\d{4})-(?&lt;month&gt;\d{2})/</code> lets you access <code>match.groups.year</code> directly!</li>
+            <li><strong>Combine with HTML5 Form Attributes:</strong> You can apply regular expressions directly to HTML input tags using the <code>pattern="[0-9]{10}"</code> attribute for instant client-side CSS <code>:valid</code> / <code>:invalid</code> feedback without writing any JS!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9989; Quick Recap</div>
+          <ul>
+            <li>Create patterns using literals <code>/pattern/flags</code> or <code>new RegExp()</code>.</li>
+            <li>Common flags: <code>i</code> (case-insensitive), <code>g</code> (match all globally), <code>m</code> (multiline).</li>
+            <li>Character classes: <code>\d</code> (digits), <code>\w</code> (word chars), <code>\s</code> (whitespace), <code>.</code> (any char).</li>
+            <li>Quantifiers: <code>+</code> (1+), <code>*</code> (0+), <code>?</code> (optional), <code>{n,m}</code> (range).</li>
+            <li>Anchors: <code>^</code> matches start of string; <code>$</code> matches end of string.</li>
+            <li>Methods: <code>test()</code> returns boolean; <code>match()</code> returns array of matches; <code>replace()</code> substitutes matches.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <section id="exercises">
+          <h2>Hands-On Practice Exercises</h2>
+
+          <!-- Exercise 1 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-easy">Easy</span>
+              <h4>Exercise 1: Hex Color Code Validator</h4>
+            </div>
+            <p>Write a function <code>isValidHexColor(str)</code> that returns <code>true</code> if the input string is a valid 3-character or 6-character hexadecimal color code (e.g. <code>#fff</code> or <code>#38bdf8</code>), preceded by a hash symbol.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function isValidHexColor(str) {
+  const hexRegex = /^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/;
+  return hexRegex.test(str);
+}
+
+console.log(isValidHexColor("#fff"));     // true
+console.log(isValidHexColor("#38bdf8"));  // true
+console.log(isValidHexColor("#12345"));   // false (5 chars is invalid)
+console.log(isValidHexColor("38bdf8"));   // false (missing #)</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 2 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-medium">Medium</span>
+              <h4>Exercise 2: Slugify a Blog Post Title</h4>
+            </div>
+            <p>Write a function <code>slugify(title)</code> that converts a title into a URL-friendly slug: convert to lowercase, replace all spaces and punctuation with hyphens, remove duplicate consecutive hyphens, and strip leading/trailing hyphens.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function slugify(title) {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "") // Remove non-word chars (except spaces & hyphens)
+    .replace(/[\s_-]+/g, "-") // Replace spaces/underscores with single hyphen
+    .replace(/^-+|-+$/g, ""); // Trim leading and trailing hyphens
+}
+
+console.log(slugify("10 Best Tips & Tricks for JavaScript in 2026!"));
+// Output: "10-best-tips-tricks-for-javascript-in-2026"</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 3 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-hard">Hard</span>
+              <h4>Exercise 3: Extract Hashtags and Mentions</h4>
+            </div>
+            <p>Write a function <code>parseSocialPost(text)</code> that extracts all twitter-style hashtags (e.g. <code>#coding</code>) and user mentions (e.g. <code>@priya</code>) into an object containing two separate arrays: <code>{ tags: [...], mentions: [...] }</code>.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function parseSocialPost(text) {
+  const hashtagRegex = /#([a-zA-Z0-9_]+)/g;
+  const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+
+  const tags = [];
+  const mentions = [];
+
+  let match;
+  while ((match = hashtagRegex.exec(text)) !== null) {
+    tags.push(match[1]); // match[1] extracts the captured group without #
+  }
+
+  while ((match = mentionRegex.exec(text)) !== null) {
+    mentions.push(match[1]);
+  }
+
+  return { tags, mentions };
+}
+
+console.log(parseSocialPost("Excited to launch @webdev_app with @alex! #javascript #coding #100DaysOfCode"));
+/* Output:
+{
+  tags: ['javascript', 'coding', '100DaysOfCode'],
+  mentions: ['webdev_app', 'alex']
+}
+*/</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <!-- 5-Question Interactive Quiz -->
+        <section id="lesson-quiz">
+          <h2>Interactive Quiz: Regular Expressions</h2>
+          <div class="quiz-container" id="quiz-js-21">
+            <div class="quiz-question-card" data-q="0">
+              <p class="quiz-q-text">1. Which flag makes a Regular Expression search case-insensitive?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'g is the global flag for finding all matches.')">g</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! The i flag makes letters match regardless of whether they are uppercase or lowercase.')">i</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'm is for multiline mode.')">m</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 's is the dotAll flag.')">s</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="1">
+              <p class="quiz-q-text">2. What character class matches any numerical digit from 0 through 9?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '\\w matches word characters including letters and underscores.')">\w</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '\\s matches whitespace.')">\s</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! \\d is shorthand for [0-9].')">\d</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '\\D matches any NON-digit character.')">\D</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="2">
+              <p class="quiz-q-text">3. What do the anchors <code>^</code> and <code>$</code> represent in a RegEx?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'They do not indicate digits.')">First and last digit</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! ^ matches the start of the string/line, and $ matches the end.')">Start of the string and end of the string</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'They are boundary anchors, not operators.')">Upper and lower limits</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Characters inside square brackets [] indicate sets.')">Inclusive range brackets</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="3">
+              <p class="quiz-q-text">4. Which quantifier matches <strong>one or more</strong> repetitions of the preceding character?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '* matches zero or more times.')">*</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '? matches zero or one time (optional).')">?</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! + requires at least 1 or more occurrences.')">+</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '{0,1} matches 0 or 1 time.')">{0, 1}</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="4">
+              <p class="quiz-q-text">5. What does the string method <code>text.replace(/cat/g, "dog")</code> do?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Without g it replaces the first cat, but with g it replaces all.')">Replaces only the first occurrence of 'cat'</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! The g flag ensures every single occurrence of cat throughout the string is replaced by dog.')">Replaces all occurrences of 'cat' throughout the text with 'dog'</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Strings in JS are immutable; replace returns a new string without mutating the original.')">Directly mutates the original text variable in place</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It returns a string, not a boolean.')">Returns true if cat was found</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mini-Task -->
+        <div class="callout callout-task">
+          <div class="callout-title">&#128736; Mini-Task: Build a Live Password Strength Checker</div>
+          <p>
+            Create an HTML page with a password input and a strength meter. Use 4 RegEx rules: (1) length &gt;= 8, (2) contains lowercase &amp; uppercase letters, (3) contains a number <code>\d</code>, (4) contains a special character. For each rule passed, add 25% width and change the meter bar color from red &rarr; orange &rarr; green!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="callout callout-ref">
+          <div class="callout-title">&#128279; Related Built-in References</div>
+          <p>
+            &bull; Explore string and regex methods in our <a href="../reference/js-reference.html#regex">JavaScript Built-in Reference</a>.<br>
+            &bull; Check RegEx terms and flags in our <a href="../reference/glossary.html#regex">Technical Glossary</a>.<br>
+            &bull; Next lesson: Master professional workflows with <a href="22-debugging-and-best-practices.html">22. Debugging &amp; Best Practices</a>.
+          </p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="20-localstorage-sessionstorage.html" class="nav-btn prev-btn">&larr; Previous: LocalStorage &amp; SessionStorage</a>
+          <button class="btn-complete" onclick="markLessonComplete('21-regex-basics.html')">&#10003; Mark as Complete</button>
+          <a href="22-debugging-and-best-practices.html" class="nav-btn next-btn">Next: Debugging &amp; Best Practices &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

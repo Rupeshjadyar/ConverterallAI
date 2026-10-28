@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Lists (ul, ol, dl) — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="06-lists.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 11 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 06</span>
+          </div>
+          <h1 class="lesson-title">HTML Lists: Ordered, Unordered &amp; Description</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Structure bullet points, step-by-step procedures, glossaries, and multi-level navigation trees with semantic list elements.</span>
+            <span class="lang-hi">Bullet points (<code>&lt;ul&gt;</code>), numbered steps (<code>&lt;ol&gt;</code>) aur glossary terms (<code>&lt;dl&gt;</code>) ko sahi tarike se structure karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>When to use <strong>Unordered Lists (<code>&lt;ul&gt;</code>)</strong> vs <strong>Ordered Lists (<code>&lt;ol&gt;</code>)</strong>.</li>
+            <li>Configuring ordered lists with <code>type</code>, <code>start</code>, and <code>reversed</code> attributes.</li>
+            <li>Mastering the underutilized <strong>Description List (<code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code>)</strong> for metadata, FAQs, and glossaries.</li>
+            <li>Building clean <strong>multi-level nested lists</strong> for outlines and sitemaps.</li>
+            <li>Using lists as the accessible foundation for website navigation menus.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="05-images-and-figures.html">05. Images &amp; Figures</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Master Chef's Recipe Book</div>
+          <p>
+            <span class="lang-en">Open any professional cookbook. First, you see the <strong>Ingredients List</strong>: 2 eggs, 1 cup flour, pinch of salt. The order doesn't matter (you buy flour first or eggs first, the cake is the same) &mdash; that is an <strong>Unordered List (<code>&lt;ul&gt;</code>)</strong>. Next, you see the <strong>Cooking Instructions</strong>: 1. Preheat oven, 2. Mix batter, 3. Bake for 30 minutes. If you do step 3 before step 1, your cake is ruined! Sequence matters &mdash; that is an <strong>Ordered List (<code>&lt;ol&gt;</code>)</strong>. Finally, at the back of the book is a <strong>Culinary Glossary</strong> with culinary terms and their definitions &mdash; that is a <strong>Description List (<code>&lt;dl&gt;</code>)</strong>!</span>
+            <span class="lang-hi">Ek recipe book ki tarah sochiye. Ingredients (samagri) ki list jahan sequence zaroori nahi hoti woh <strong>Unordered List (<code>&lt;ul&gt;</code>)</strong> hai. Step-by-step khana banane ke niyam jahan sequence zaroori hoti hai woh <strong>Ordered List (<code>&lt;ol&gt;</code>)</strong> hai. Aur culinary dictionary <strong>Description List (<code>&lt;dl&gt;</code>)</strong> hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Unordered Lists (<code>&lt;ul&gt;</code>)</h2>
+        <p>
+          Use an unordered list whenever the items have no necessary sequence or chronological priority:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Standard Unordered List</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;h3&gt;Key Frontend Skills&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Semantic HTML5 structure&lt;/li&gt;
+  &lt;li&gt;Modern responsive CSS3&lt;/li&gt;
+  &lt;li&gt;Vanilla JavaScript logic&lt;/li&gt;
+  &lt;li&gt;Accessibility compliance&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Syntactic Rule:</strong> The ONLY direct children allowed inside <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> are <code>&lt;li&gt;</code> (list item) elements. You cannot put a <code>&lt;p&gt;</code> or <code>&lt;h2&gt;</code> directly inside a <code>&lt;ul&gt;</code>!
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Ordered Lists (<code>&lt;ol&gt;</code>) &amp; Modern Modifiers</h2>
+        <p>
+          Ordered lists automatically number each item sequentially. HTML5 provides powerful attributes to customize how the numbering behaves:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Customized Numbering Sequences</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Starting at a specific number (e.g. continuing from previous page) --&gt;
+&lt;ol start="5"&gt;
+  &lt;li&gt;Review pull request&lt;/li&gt;
+  &lt;li&gt;Run automated tests&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;!-- 2. Countdown timer list (reversed attribute) --&gt;
+&lt;ol reversed&gt;
+  &lt;li&gt;Blastoff!&lt;/li&gt;
+  &lt;li&gt;Ignition sequence&lt;/li&gt;
+  &lt;li&gt;Final countdown&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;!-- 3. Roman Numerals or Letters (type="I", "a", "A") --&gt;
+&lt;ol type="I"&gt;
+  &lt;li&gt;Phase One: Conception&lt;/li&gt;
+  &lt;li&gt;Phase Two: Development&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Attribute Reference:</strong><br>
+          &bull; <code>start="5"</code>: Numbers items starting at 5 instead of 1.<br>
+          &bull; <code>reversed</code>: Counts downwards (3, 2, 1).<br>
+          &bull; <code>type="I"</code>: Roman numerals (I, II, III); <code>type="a"</code>: lowercase letters (a, b, c).
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Lists and Nested Sub-items</h2>
+        <p>Try adding an additional sub-bullet inside the nested menu below:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Multi-Level Lists</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; color: #1e293b; line-height: 1.6; }
+    ul { list-style-type: square; }
+    ol { color: #2563eb; font-weight: bold; }
+    ol li span { color: #1e293b; font-weight: normal; }
+  </style>
+</head>
+<body>
+  <h3>Web Development Curriculum</h3>
+  <ol>
+    <li>
+      <span>HTML5 Foundations</span>
+      <ul>
+        <li>Elements &amp; Attributes</li>
+        <li>Semantic Tags</li>
+      </ul>
+    </li>
+    <li>
+      <span>CSS3 Styling</span>
+      <ul>
+        <li>Flexbox 1D Layouts</li>
+        <li>CSS Grid 2D Systems</li>
+      </ul>
+    </li>
+  </ol>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Description Lists (<code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code>)</h2>
+        <p>
+          A description list is an associative array in HTML. It consists of terms (<code>&lt;dt&gt;</code> = Description Term) paired with definitions (<code>&lt;dd&gt;</code> = Description Details). It is the perfect semantic element for glossaries, metadata key-value pairs, and FAQ accordions:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Semantic Description List</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;h3&gt;Key Terminology Glossary&lt;/h3&gt;
+&lt;dl&gt;
+  &lt;dt&gt;DNS&lt;/dt&gt;
+  &lt;dd&gt;Domain Name System; translates domain names into numerical IP addresses.&lt;/dd&gt;
+
+  &lt;dt&gt;HTTP&lt;/dt&gt;
+  &lt;dd&gt;HyperText Transfer Protocol; the protocol used for transmitting web pages.&lt;/dd&gt;
+
+  &lt;dt&gt;DOM&lt;/dt&gt;
+  &lt;dd&gt;Document Object Model; the browser's in-memory tree representation of HTML.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Advanced Capability:</strong> You can have multiple terms for one definition (synonyms), or multiple definitions for a single term!
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Nested Lists for Website Navigation Menus</h3>
+        <p>Screen readers rely on nested lists to announce the depth and number of links in a navigation menu:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;nav aria-label="Main Navigation"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="courses.html"&gt;Courses&lt;/a&gt;
+      &lt;!-- Notice the nested &lt;ul&gt; is placed INSIDE the parent &lt;li&gt;! --&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="html.html"&gt;HTML5 Mastery&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="css.html"&gt;Modern CSS3&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="js.html"&gt;Vanilla JS&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href="contact.html"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Nesting Gold Standard:</strong> The child <code>&lt;ul&gt;</code> must be nested <em>inside the <code>&lt;li&gt;</code> element</em>, not between adjacent <code>&lt;li&gt;</code> elements!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Customizing CSS List Bullets</h3>
+        <p>In CSS, you can strip default bullets or customize the marker appearance:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;style&gt;
+  /* Strip bullets and padding for modern horizontal navbar */
+  .clean-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  /* Style individual bullet markers */
+  .custom-bullets li::marker {
+    color: #e44d26;
+    font-size: 1.2em;
+  }
+&lt;/style&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Modern CSS feature:</strong> The <code>::marker</code> pseudo-element allows you to color and style the bullet points independently from the text!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Iterating Over List Items in JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const listItems = document.querySelectorAll("ul li");
+
+console.log("Total list items: " + listItems.length);
+
+listItems.forEach((li, index) => {
+  console.log(`Item #${index + 1}: ${li.textContent.trim()}`);
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>DOM Query:</strong> <code>document.querySelectorAll("ul li")</code> returns a NodeList of all list items, which you can iterate over with <code>forEach()</code>.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Placing text directly inside <code>&lt;ul&gt;</code>:</strong> Never write <code>&lt;ul&gt;Some text &lt;li&gt;Item&lt;/li&gt;&lt;/ul&gt;</code>! Every piece of content inside a list must be wrapped in an <code>&lt;li&gt;</code> tag.</li>
+            <li><strong>Incorrect nesting of sub-lists:</strong> Never close an <code>&lt;li&gt;</code> before starting the nested sub-list. The sub-list belongs INSIDE the parent list item before its closing <code>&lt;/li&gt;</code>.</li>
+            <li><strong>Using numbers manually inside <code>&lt;ul&gt;</code>:</strong> Don't type <code>&lt;ul&gt;&lt;li&gt;1. First&lt;/li&gt;&lt;li&gt;2. Second&lt;/li&gt;&lt;/ul&gt;</code>! Use an <code>&lt;ol&gt;</code> so the browser handles numbering automatically.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Whenever you build a site header with navigation links, wrap them in a <code>&lt;nav&gt;&lt;ul&gt;&lt;li&gt;</code> structure &mdash; screen readers announce "Navigation list of 4 items", allowing blind users to easily skip through links.</li>
+            <li>Use <code>&lt;dl&gt;</code> for product specification tables (e.g. Dimensions: 10x20, Weight: 2kg) &mdash; it is cleaner and more mobile-friendly than a heavy table!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;ul&gt;</code> = Unordered list (bullet points).</li>
+            <li><code>&lt;ol&gt;</code> = Ordered list (sequential numbering, supports <code>start</code>, <code>type</code>, <code>reversed</code>).</li>
+            <li><code>&lt;li&gt;</code> = List item (the only direct child permitted inside <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code>).</li>
+            <li><code>&lt;dl&gt;</code> = Description list (<code>&lt;dt&gt;</code> = Term, <code>&lt;dd&gt;</code> = Details/Definition).</li>
+            <li>Nested lists must be placed inside the parent <code>&lt;li&gt;</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Create a Countdown List</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write an ordered list that starts at 3 and counts down: 3. Bronze, 2. Silver, 1. Gold.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the reversed boolean attribute on ol.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;ol reversed&gt;
+  &lt;li&gt;Bronze&lt;/li&gt;
+  &lt;li&gt;Silver&lt;/li&gt;
+  &lt;li&gt;Gold&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Fix the Nesting Flaw</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Correct the nesting error in this list markup:</p>
+          <pre class="code-content"><code data-lang="html">&lt;ul&gt;
+  &lt;li&gt;Fruits&lt;/li&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Apples&lt;/li&gt;
+    &lt;li&gt;Oranges&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/ul&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Notice where the closing tag for Fruits is placed.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The sub-list must be inside the <code>&lt;li&gt;Fruits&lt;/li&gt;</code> before it closes:<br>
+              <pre><code>&lt;ul&gt;
+  &lt;li&gt;Fruits
+    &lt;ul&gt;
+      &lt;li&gt;Apples&lt;/li&gt;
+      &lt;li&gt;Oranges&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Building an FAQ with Description Lists</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Build a semantic FAQ accordion structure with two questions and answers using <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, and <code>&lt;dd&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: dt represents Question; dd represents Answer.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;dl&gt;
+  &lt;dt&gt;Is this tutorial offline?&lt;/dt&gt;
+  &lt;dd&gt;Yes! It runs 100% locally with zero internet needed.&lt;/dd&gt;
+
+  &lt;dt&gt;Do I need to install Node.js?&lt;/dt&gt;
+  &lt;dd&gt;No, pure HTML, CSS, and JS run directly in any browser.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 06 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Only <li> tags are legally permitted as direct children of <ul> and <ol>.">
+            <div class="quiz-question-text">1. Which elements are permitted as DIRECT children inside a &lt;ul&gt; container?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Any element including &lt;p&gt;, &lt;div&gt;, and &lt;h2&gt;</div>
+              <div class="quiz-option"><span>B)</span> Only &lt;li&gt; elements</div>
+              <div class="quiz-option"><span>C)</span> Only &lt;dt&gt; and &lt;dd&gt; elements</div>
+              <div class="quiz-option"><span>D)</span> Only &lt;a&gt; tags</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="start='10' configures the first item to begin counting from 10.">
+            <div class="quiz-question-text">2. How do you configure an ordered list to start numbering from 10?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;ol begin="10"&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;ol count="10"&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;ol start="10"&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;ol offset="10"&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="<dt> represents the Description Term in a description list.">
+            <div class="quiz-question-text">3. In a &lt;dl&gt; description list, which tag defines the term/title being explained?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;dt&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;dd&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;dl-title&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;term&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The reversed attribute counts downwards from high to low.">
+            <div class="quiz-question-text">4. What boolean attribute makes an ordered list count downwards?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> descending</div>
+              <div class="quiz-option"><span>B)</span> backwards</div>
+              <div class="quiz-option"><span>C)</span> countdown</div>
+              <div class="quiz-option"><span>D)</span> reversed</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The nested list must reside inside the <li> tag of the parent item.">
+            <div class="quiz-question-text">5. Where should a nested sub-list be placed in valid HTML?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Outside the main list</div>
+              <div class="quiz-option"><span>B)</span> Inside the parent &lt;li&gt; tag before it closes</div>
+              <div class="quiz-option"><span>C)</span> Between two &lt;li&gt; tags</div>
+              <div class="quiz-option"><span>D)</span> Directly after &lt;/ul&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a 3-Step Recipe</h3>
+          <p>
+            In the live editor above, add a 3-step numbered recipe for making coffee using an <code>&lt;ol&gt;</code> tag: 1. Boil water, 2. Add ground beans, 3. Pour and enjoy. Verify that the browser numbers each step automatically!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#ul" class="ref-pill">&lt;ul&gt; &amp; &lt;li&gt;</a>
+            <a href="../reference/html-tags-reference.html#ol" class="ref-pill">&lt;ol&gt; Ordered List</a>
+            <a href="../reference/html-tags-reference.html#dl" class="ref-pill">&lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;</a>
+            <a href="../reference/glossary.html#list" class="ref-pill">Glossary: List</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="05-images-and-figures.html" class="btn btn-outline">&larr; Previous: Images &amp; Figures</a>
+          <button class="mark-complete-btn" data-lesson-id="html-06">Mark as Complete</button>
+          <a href="07-tables.html" class="btn btn-primary">Next: Tables &amp; Data Grids &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

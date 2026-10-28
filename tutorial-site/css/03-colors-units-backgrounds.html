@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Colors, Units & Backgrounds — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="03-colors-units-backgrounds.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 03</span>
+          </div>
+          <h1 class="lesson-title">Colors, Units and Background Styling</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master color models, understand relative sizing units (rem, em, vh, vw), and craft beautiful modern gradients.</span>
+            <span class="lang-hi">Color formats (Hex, RGB, HSL), relative units (rem vs px, vh, vw) aur modern linear gradients seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 4 primary color models: Named colors, Hex, RGB(A), and HSL(A).</li>
+            <li>Absolute units (<code>px</code>) vs Relative units (<code>rem</code>, <code>em</code>, <code>%</code>, <code>vh</code>, <code>vw</code>).</li>
+            <li>Why <code>rem</code> is the gold standard for accessible, responsive typography.</li>
+            <li>Full control over backgrounds: <code>background-size: cover</code>, <code>background-position</code>, and <code>repeat</code>.</li>
+            <li>Designing vibrant CSS <code>linear-gradient()</code> and <code>radial-gradient()</code> backdrops.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="02-selectors-specificity.html">02. Selectors &amp; Specificity</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Fixed Wooden Ruler vs The Elastic Fabric Band</div>
+          <p>
+            <span class="lang-en">Imagine tailor-making a shirt. If you use a rigid wooden stick (<strong><code>px</code></strong>), the shirt will only ever fit one person in one position. But if you tailor the waist using a stretchable elastic band (<strong><code>rem</code> and <code>%</code></strong>), the garment expands smoothly when the wearer sits down, eats lunch, or moves. Relative units in CSS are that elastic band &mdash; they allow your website to gracefully expand or contract depending on whether someone is viewing on an iPhone, a tablet, or an ultra-wide desktop monitor!</span>
+            <span class="lang-hi">Ek lakdi ke scale (<code>px</code>) aur ek elastic band (<code>rem</code>, <code>%</code>) ki tarah sochiye. Lakdi ka scale rigid rehta hai aur screen size ke hisaab se nahi badalta. Lekin elastic band mobile aur computer screen ke hisaab se naturally stretch hota hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Four CSS Color Models</h2>
+        <p>
+          CSS provides four standardized ways to describe any of the 16.7 million colors a computer screen can display:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Same Blue Expressed in 4 Different Formats</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Hexadecimal (#RRGGBB): Most popular in design systems */
+.box-hex {
+  background-color: #2563eb;
+}
+
+/* 2. RGB / RGBA: Red, Green, Blue (0-255) + Alpha transparency (0-1) */
+.box-rgb {
+  background-color: rgb(37, 99, 235);
+  border-color: rgba(37, 99, 235, 0.4); /* 40% opacity transparent border */
+}
+
+/* 3. HSL / HSLA: Hue (0-360), Saturation (0-100%), Lightness (0-100%) */
+.box-hsl {
+  background-color: hsl(221, 83%, 53%);
+}
+
+/* 4. Named Keywords: 140+ predefined colors (e.g. coral, dodgerblue, tomato) */
+.box-named {
+  background-color: dodgerblue;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why Designers Love HSL:</strong> If you want to make a color slightly lighter for a hover state, you simply adjust the third number in HSL: <code>hsl(221, 83%, 53%)</code> &rarr; <code>hsl(221, 83%, 65%)</code>. In Hex or RGB, adjusting lightness requires recalculating all 3 channels!
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. CSS Units: Absolute vs Relative</h2>
+        <p>
+          Choosing the wrong unit is the #1 cause of broken responsive layouts:
+        </p>
+        <ul>
+          <li><strong>Pixels (<code>px</code>) [Absolute]:</strong> Exactly 1/96th of an inch. Rigid and fixed. Great for borders (<code>1px solid #ccc</code>) and fine box shadows, but <em>dangerous for font sizing</em>.</li>
+          <li><strong>REM (Root EM) [Relative]:</strong> Relative to the root <code>&lt;html&gt;</code> element's font-size. By default, <code>1rem = 16px</code>. If a visually impaired user increases their browser default font size to 24px, all <code>rem</code> measurements scale up gracefully!</li>
+          <li><strong>EM [Relative]:</strong> Relative to the <em>current parent element's</em> font-size. Useful for button padding that scales proportionally with button text.</li>
+          <li><strong>Viewport Width (<code>vw</code>) &amp; Height (<code>vh</code>):</strong> <code>1vw = 1%</code> of the browser window width; <code>100vh = 100%</code> of the browser screen height.</li>
+        </ul>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The REM vs PX Calculation Cheat Sheet</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Default Root Base: 1rem = 16px */
+
+h1 {
+  font-size: 2.5rem;   /* 2.5 * 16px = 40px */
+}
+
+h2 {
+  font-size: 2rem;     /* 2.0 * 16px = 32px */
+}
+
+p {
+  font-size: 1rem;     /* 1.0 * 16px = 16px (Perfect body text) */
+  margin-bottom: 1.25rem; /* 1.25 * 16px = 20px */
+}
+
+small {
+  font-size: 0.875rem; /* 0.875 * 16px = 14px */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Accessibility Golden Rule:</strong> Always use <code>rem</code> for typography and spacing. Never lock font sizes in <code>px</code>, or you break the browser's native text zoom feature for older adults!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Modern CSS Gradients</h2>
+        <p>Play with gradient angles and color stops live in the editor below:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Gradient Studio</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; }
+    .gradient-banner {
+      /* Multi-stop linear gradient at a 135-degree angle */
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
+      color: #ffffff;
+      padding: 3rem 2rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="gradient-banner">
+    <h2 style="margin: 0 0 8px 0; font-size: 2rem;">Vibrant Modern Gradients</h2>
+    <p style="margin: 0; opacity: 0.9;">Crafted with 100% pure CSS3. Change 135deg to 45deg and click Run Code!</p>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Background Images and the <code>cover</code> Property</h2>
+        <p>
+          When displaying a background photograph, how you scale it determines whether it looks crisp or horribly stretched:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Production Full-Bleed Background Card</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.hero-section {
+  /* 1. Image path */
+  background-image: url("images/mountains.jpg");
+
+  /* 2. cover: Scales image proportionally to fill the ENTIRE box without stretching! */
+  background-size: cover;
+
+  /* 3. center: Centers the focal point of the photo */
+  background-position: center center;
+
+  /* 4. no-repeat: Stops the image from tiling like bathroom wallpaper */
+  background-repeat: no-repeat;
+
+  /* 5. Fallback color in case the photo fails to load offline */
+  background-color: #0f172a;
+
+  min-height: 50vh; /* Half of viewport height */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Shorthand:</strong> You can combine all five rules into one clean line: <code>background: #0f172a url("mountains.jpg") center/cover no-repeat;</code>.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Semi-Transparent Color Overlay over Images</h3>
+        <p>White text on top of bright photos is unreadable. Use a semi-transparent gradient overlay to ensure WCAG high contrast:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.hero-overlay {
+  /* Dark 60% black overlay layered on top of the background photo! */
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)),
+    url("hero-bg.jpg") center/cover no-repeat;
+  color: #ffffff; /* Crisp readable text */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>CSS Superpower:</strong> You can supply multiple backgrounds separated by commas. The first background listed sits on TOP of the second!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Viewport Units in Full-Screen Heroes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.full-screen-hero {
+  /* Exactly 100% of the user's monitor/screen height */
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Device Tip:</strong> On modern mobile phones where address bars expand and collapse, modern CSS supports <code>100dvh</code> (Dynamic Viewport Height) to prevent layout jumping!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Colors and Units in JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const banner = document.querySelector(".gradient-banner");
+const styles = window.getComputedStyle(banner);
+
+// Notice: Browsers convert all colors (Hex, HSL) into standard rgb() in JS!
+console.log("Computed RGB Color:", styles.backgroundColor);
+
+// And relative units (rem) are calculated into raw pixels:
+console.log("Computed Padding:", styles.padding); // e.g. "48px 32px"</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Browser Engine Truth:</strong> Under the hood, the browser engine converts all relative units into precise pixel values for your GPU to paint.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Hardcoding heights in pixels:</strong> Writing <code>height: 300px;</code> on content cards causes text to spill out and overlap when viewed on small mobile screens. Always prefer <code>min-height</code> or let content define its own height with padding!</li>
+            <li><strong>Forgetting <code>background-size: cover</code>:</strong> Without it, small photos repeat infinitely like tiled bathroom floor tiles, and large photos get cropped into an unrecognizable blur.</li>
+            <li><strong>Using <code>width: 100vw</code> when vertical scrollbars are present:</strong> <code>100vw</code> includes the scrollbar width on Windows, causing an unwanted horizontal scrollbar! Prefer <code>width: 100%</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Set your root font size to standard <code>html { font-size: 16px; }</code> (or omit it to respect user browser defaults) &mdash; then <code>1rem</code> equals exactly 16px everywhere.</li>
+            <li>Always test your text colors against your backgrounds using a contrast checker to ensure at least a <strong>4.5:1 ratio</strong> for accessible reading.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Use <strong>Hex</strong> for brand palettes, <strong>RGBA</strong> for transparency, and <strong>HSL</strong> for dynamic light/dark tweaks.</li>
+            <li>Use <strong><code>rem</code></strong> for accessible fonts and spacing (1rem = 16px by default).</li>
+            <li>Use <strong><code>px</code></strong> strictly for thin borders and subtle shadows.</li>
+            <li>Use <code>background-size: cover</code> to scale photos proportionally.</li>
+            <li>Layer gradients over photos to guarantee readable contrast.</li>
+            <li><code>vh</code>/<code>vw</code> are percentages of the viewport dimensions.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Convert Pixels to REM</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Assuming a standard root font-size of 16px, what is <strong>24px</strong> expressed in <code>rem</code> units?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Divide 24 by 16.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> 24 &divide; 16 = <strong>1.5rem</strong>!
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Create a 50% Transparent Black Color</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write the RGBA code for a pure black backdrop with 50% opacity.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Black is 0, 0, 0 in RGB. Alpha is 0.5.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>rgba(0, 0, 0, 0.5)</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Two-Stop Gradient Card</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the CSS rule for a card with a linear gradient transitioning from emerald green (<code>#10b981</code>) at the top to deep slate navy (<code>#0f172a</code>) at the bottom.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Direction is 'to bottom' or '180deg'.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>background: linear-gradient(180deg, #10b981 0%, #0f172a 100%);</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 03 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="1rem is relative to the root <html> font-size (typically 16px).">
+            <div class="quiz-question-text">1. What is the unit 'rem' relative to in CSS?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The immediate parent element font size</div>
+              <div class="quiz-option"><span>B)</span> The root &lt;html&gt; element font size</div>
+              <div class="quiz-option"><span>C)</span> The width of the screen</div>
+              <div class="quiz-option"><span>D)</span> The resolution of the user's graphics card</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="background-size: cover scales the image proportionally so it completely covers the container without stretching.">
+            <div class="quiz-question-text">2. Which background-size value scales an image proportionally to fill the container without distortion?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> contain</div>
+              <div class="quiz-option"><span>B)</span> 100% 100%</div>
+              <div class="quiz-option"><span>C)</span> cover</div>
+              <div class="quiz-option"><span>D)</span> stretch</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The 'A' in RGBA stands for Alpha, representing transparency between 0 (invisible) and 1 (opaque).">
+            <div class="quiz-question-text">3. What does the 'A' in the RGBA color model represent?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Alpha (transparency level)</div>
+              <div class="quiz-option"><span>B)</span> Angle</div>
+              <div class="quiz-option"><span>C)</span> Amber</div>
+              <div class="quiz-option"><span>D)</span> Accuracy</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="100vh represents 100% of the viewport height.">
+            <div class="quiz-question-text">4. How do you specify that an element should be at least as tall as the entire browser window screen?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> height: 100%;</div>
+              <div class="quiz-option"><span>B)</span> min-height: 100vw;</div>
+              <div class="quiz-option"><span>C)</span> height: max-content;</div>
+              <div class="quiz-option"><span>D)</span> min-height: 100vh;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="rem units scale with the user's browser accessibility text zoom settings.">
+            <div class="quiz-question-text">5. Why is 'rem' preferred over 'px' for font sizing on modern websites?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> rem files download faster</div>
+              <div class="quiz-option"><span>B)</span> rem honors user accessibility font size preferences configured in the browser</div>
+              <div class="quiz-option"><span>C)</span> px is not supported on iPhones</div>
+              <div class="quiz-option"><span>D)</span> rem makes fonts bold automatically</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create an Emerald Sunset Gradient</h3>
+          <p>
+            In the live editor above, change the gradient to a 90-degree horizontal gradient transitioning from emerald green (<code>#10b981</code>) on the left to deep ocean blue (<code>#0284c7</code>) on the right. Click <strong>Run Code</strong> to inspect your new design!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/colors-and-entities.html" class="ref-pill">CSS Colors Directory (140+ Names)</a>
+            <a href="../reference/css-properties-reference.html#background" class="ref-pill">Background Properties Reference</a>
+            <a href="../reference/glossary.html#rem" class="ref-pill">Glossary: REM</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Units Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="02-selectors-specificity.html" class="btn btn-outline">&larr; Previous: Selectors &amp; Specificity</a>
+          <button class="mark-complete-btn" data-lesson-id="css-03">Mark as Complete</button>
+          <a href="04-fonts-and-text.html" class="btn btn-primary">Next: Fonts &amp; Typography &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

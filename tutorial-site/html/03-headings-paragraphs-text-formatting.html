@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Headings, Paragraphs & Text Formatting — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="03-headings-paragraphs-text-formatting.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 03</span>
+          </div>
+          <h1 class="lesson-title">Headings, Paragraphs &amp; Text Formatting</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Structure content with proper typographic hierarchy and semantic emphasis tags.</span>
+            <span class="lang-hi">Content ko sahi heading hierarchy (h1 se h6) aur semantic text formatting tags ke saath organize karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The strict hierarchy of headings from <code>&lt;h1&gt;</code> down to <code>&lt;h6&gt;</code>.</li>
+            <li>Paragraph handling, whitespace collapsing, and when to use <code>&lt;br&gt;</code> vs <code>&lt;hr&gt;</code>.</li>
+            <li>Semantic importance: <code>&lt;strong&gt;</code> vs <code>&lt;b&gt;</code>, and <code>&lt;em&gt;</code> vs <code>&lt;i&gt;</code>.</li>
+            <li>Special text markup: <code>&lt;mark&gt;</code>, <code>&lt;small&gt;</code>, <code>&lt;sub&gt;</code>, <code>&lt;sup&gt;</code>, <code>&lt;del&gt;</code>, and <code>&lt;ins&gt;</code>.</li>
+            <li>Displaying code with <code>&lt;code&gt;</code> and preserving whitespace with <code>&lt;pre&gt;</code>.</li>
+            <li>Quoting text using <code>&lt;blockquote&gt;</code> and inline <code>&lt;q&gt;</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="02-elements-attributes.html">02. Elements &amp; Attributes</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Front Page of a Printed Newspaper</div>
+          <p>
+            <span class="lang-en">Open a physical newspaper. You instantly know what the biggest story of the day is because it has a massive, bold front-page <strong>Headline (<code>&lt;h1&gt;</code>)</strong>. Major sections like "Sports" or "Business" use <strong>Section Titles (<code>&lt;h2&gt;</code>)</strong>. Individual article titles use <strong>Subheads (<code>&lt;h3&gt;</code>)</strong>. The stories themselves are broken into readable chunks called <strong>Paragraphs (<code>&lt;p&gt;</code>)</strong>, with pull-quotes in larger italics. If every word in the newspaper was the same size, it would be an unreadable wall of gray!</span>
+            <span class="lang-hi">Ek akhbar (newspaper) ki tarah sochiye. Sabse badi khabar ka bada bold headline hota hai (<code>&lt;h1&gt;</code>), sections ke alag title hote hain (<code>&lt;h2&gt;</code>), aur har khabar chhote paragraphs mein bati hoti hai. Typographic hierarchy padhne wale ko guide karti hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Heading Hierarchy (h1 through h6)</h2>
+        <p>
+          HTML offers 6 levels of headings. They indicate the <strong>structural importance</strong> of the sections that follow them, not merely their visual font size:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Proper Heading Hierarchy</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;h1&gt;Modern Web Development Architecture&lt;/h1&gt;   &lt;!-- Top-level page topic (Only 1 per page) --&gt;
+
+  &lt;h2&gt;Frontend Technologies&lt;/h2&gt;               &lt;!-- Major Chapter / Section --&gt;
+    &lt;h3&gt;HTML5 Fundamentals&lt;/h3&gt;                &lt;!-- Sub-topic inside Frontend --&gt;
+      &lt;h4&gt;Document Skeletons&lt;/h4&gt;              &lt;!-- Detail inside HTML5 --&gt;
+      &lt;h4&gt;Semantic Tags&lt;/h4&gt;
+
+    &lt;h3&gt;CSS3 Styling&lt;/h3&gt;                      &lt;!-- Sibling sub-topic --&gt;
+      &lt;h4&gt;Flexbox Layouts&lt;/h4&gt;
+
+  &lt;h2&gt;Backend Systems&lt;/h2&gt;                     &lt;!-- Sibling Major Section --&gt;
+    &lt;h3&gt;Databases and APIs&lt;/h3&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Golden Hierarchy Rule:</strong> Never skip heading levels for visual convenience! Do not jump from an <code>&lt;h2&gt;</code> straight to an <code>&lt;h4&gt;</code> just because you want smaller text. Use CSS to change font size; use HTML to define semantic structure.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Paragraphs and Whitespace Collapsing</h2>
+        <p>
+          Browsers collapse multiple consecutive spaces, tabs, and line breaks into a single space. To create separate paragraphs, you must wrap each block of prose in a <code>&lt;p&gt;</code> tag:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Whitespace Collapsing in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- The browser renders all these spaces and line breaks as ONE single space! --&gt;
+&lt;p&gt;
+  This        is      a
+  single
+  paragraph.
+&lt;/p&gt;
+
+&lt;!-- To start a new paragraph with margin spacing, use a new &lt;p&gt; tag: --&gt;
+&lt;p&gt;This is the second distinct paragraph.&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Takeaway:</strong> Pressing Enter in your code editor 10 times does not create 10 empty lines on the webpage. If you genuinely need a manual line break within a postal address or poem, use the void element <code>&lt;br&gt;</code>.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Headings and Formatting</h2>
+        <p>Experiment with heading levels, paragraph text, and inline formatting tags below:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Text Formatting Studio</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.6; padding: 20px; color: #1e293b; }
+    h1 { color: #e44d26; margin-bottom: 4px; }
+    h2 { color: #2563eb; margin-top: 16px; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <h1>The Web Development Digest</h1>
+  <p>Published: <strong>October 2026</strong> by <em>Academy Press</em></p>
+  <hr>
+
+  <h2>Breaking Announcement</h2>
+  <p>Modern HTML5 ensures <mark>semantic accessibility</mark> for all humans.</p>
+  <p>Water formula is H<sub>2</sub>O and energy formula is E = mc<sup>2</sup>.</p>
+  <p>Price was <del>$99</del>, now only <ins>$49</ins>!</p>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Semantic Formatting: <code>strong</code> vs <code>b</code>, and <code>em</code> vs <code>i</code></h2>
+        <p>
+          In early HTML, <code>&lt;b&gt;</code> meant "bold" and <code>&lt;i&gt;</code> meant "italic". In modern HTML5, we use semantic tags that convey meaning to screen readers:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Visual Styling vs Semantic Meaning</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. &lt;strong&gt;: High importance or serious urgency --&gt;
+&lt;p&gt;&lt;strong&gt;Warning:&lt;/strong&gt; Do not touch high-voltage wires.&lt;/p&gt;
+
+&lt;!-- 2. &lt;b&gt;: Stylistic offset without extra importance (product names, keywords) --&gt;
+&lt;p&gt;The &lt;b&gt;MacBook Pro&lt;/b&gt; features a retina display.&lt;/p&gt;
+
+&lt;!-- 3. &lt;em&gt;: Stressed emphasis (changes sentence meaning when spoken aloud) --&gt;
+&lt;p&gt;I &lt;em&gt;really&lt;/em&gt; love vanilla JavaScript.&lt;/p&gt;
+
+&lt;!-- 4. &lt;i&gt;: Alternate voice or mood (foreign terms, book titles, thoughts) --&gt;
+&lt;p&gt;The phrase &lt;i&gt;carpe diem&lt;/i&gt; is Latin for seize the day.&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Screen Reader Impact:</strong> Screen readers announce <code>&lt;strong&gt;</code> in an elevated, urgent tone, and <code>&lt;em&gt;</code> with vocal stress. Plain <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> are read in normal monotone.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Editorial & Scientific Formatting Tags</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Subscript (sub) & Superscript (sup) --&gt;
+&lt;p&gt;Glucose is C&lt;sub&gt;6&lt;/sub&gt;H&lt;sub&gt;12&lt;/sub&gt;O&lt;sub&gt;6&lt;/sub&gt;&lt;/p&gt;
+&lt;p&gt;The Pythagorean theorem: a&lt;sup&gt;2&lt;/sup&gt; + b&lt;sup&gt;2&lt;/sup&gt; = c&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;
+
+&lt;!-- Marked (highlighted) text --&gt;
+&lt;p&gt;Search results: We found 3 matches for &lt;mark&gt;responsive grid&lt;/mark&gt;.&lt;/p&gt;
+
+&lt;!-- Deletions and Insertions (Audit trails / changelogs) --&gt;
+&lt;p&gt;The meeting is on &lt;del&gt;Tuesday&lt;/del&gt; &lt;ins&gt;Thursday&lt;/ins&gt; at 10 AM.&lt;/p&gt;
+
+&lt;!-- Small print (disclaimers, legal notices) --&gt;
+&lt;p&gt;&lt;small&gt;&copy; 2026 WebDev Academy. Terms and conditions apply.&lt;/small&gt;&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Benefit:</strong> These native tags provide immediate, accessible browser styles out of the box without requiring custom CSS rules.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Presenting Computer Code with <code>&lt;code&gt;</code> and <code>&lt;pre&gt;</code></h3>
+        <p>When teaching coding, you need to display code snippets without the browser parsing them as live HTML:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Inline code snippet inside prose --&gt;
+&lt;p&gt;Use the &lt;code&gt;console.log()&lt;/code&gt; method to print diagnostic text.&lt;/p&gt;
+
+&lt;!-- Multi-line preformatted code block: preserves spaces and linebreaks exactly! --&gt;
+&lt;pre&gt;&lt;code&gt;function greet(name) {
+  return "Hello, " + name + "!";
+}&lt;/code&gt;&lt;/pre&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How <code>&lt;pre&gt;</code> works:</strong> Unlike normal elements that collapse whitespace, <code>&lt;pre&gt;</code> preserves every space, tab, and newline exactly as written in the source code in a monospaced font.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Blockquotes vs Inline Quotes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Extended quotation set apart as a separate indented block --&gt;
+&lt;blockquote cite="https://www.w3.org"&gt;
+  &lt;p&gt;The power of the Web is in its universality. Access by everyone regardless of disability is an essential aspect.&lt;/p&gt;
+  &lt;footer&gt;&mdash; Tim Berners-Lee, &lt;cite&gt;W3C Founder&lt;/cite&gt;&lt;/footer&gt;
+&lt;/blockquote&gt;
+
+&lt;!-- Short inline quote: browser automatically inserts quotation marks --&gt;
+&lt;p&gt;As my mentor always said, &lt;q&gt;Practice code every single day.&lt;/q&gt;&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Pro Feature:</strong> The <code>&lt;q&gt;</code> tag automatically adds correct opening and closing quotation marks (localized by the <code>lang</code> attribute), so you don't type quote characters manually!
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Using multiple <code>&lt;h1&gt;</code> tags:</strong> A page should almost always have exactly ONE <code>&lt;h1&gt;</code> describing the entire document. Multiple h1s confuse screen readers and dilute SEO ranking.</li>
+            <li><strong>Using headings just to get big text:</strong> Never use <code>&lt;h1&gt;</code> just to make a warning banner big. Use a <code>&lt;p class="large-text"&gt;</code> and style it with CSS. Headings are an outline, not a font-size slider.</li>
+            <li><strong>Using multiple <code>&lt;br&gt;&lt;br&gt;&lt;br&gt;</code> to create vertical space:</strong> Never use line break tags for layout spacing! Use CSS margins or padding. <code>&lt;br&gt;</code> is strictly for line breaks within a single sentence (like a street address).</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Think of your headings like the <strong>Table of Contents</strong> of a book. If you extracted only your h1, h2, and h3 tags into a list, it should make complete, logical sense on its own.</li>
+            <li>Use <code>&lt;hr&gt;</code> to represent a <strong>thematic break</strong> (e.g., a shift in topic or scene change in a story), not merely as a decorative line.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code> define structural content hierarchy (one <code>&lt;h1&gt;</code> per page).</li>
+            <li>HTML collapses whitespace; use separate <code>&lt;p&gt;</code> tags for distinct paragraphs.</li>
+            <li><code>&lt;strong&gt;</code> indicates urgent importance; <code>&lt;em&gt;</code> indicates spoken stress.</li>
+            <li><code>&lt;sub&gt;</code> is subscript (H<sub>2</sub>O); <code>&lt;sup&gt;</code> is superscript (x<sup>2</sup>).</li>
+            <li><code>&lt;pre&gt;</code> preserves whitespace; <code>&lt;code&gt;</code> denotes computer code.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Scientific Formula Markup</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the HTML snippet to display Carbon Dioxide as <strong>CO<sub>2</sub></strong> with the "2" as a subscript.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the sub tag for subscript numbers.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>&lt;p&gt;CO&lt;sub&gt;2&lt;/sub&gt;&lt;/p&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Heading Audit</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Find the semantic flaw in this outline: <code>&lt;h1&gt;Cooking&lt;/h1&gt;</code> &rarr; <code>&lt;h3&gt;Desserts&lt;/h3&gt;</code> &rarr; <code>&lt;h2&gt;Baking Tips&lt;/h2&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Notice the level jump from h1 directly to h3 without an h2.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> It skips level 2 (jumping from <code>&lt;h1&gt;</code> directly to <code>&lt;h3&gt;</code>), and then places an <code>&lt;h2&gt;</code> after an <code>&lt;h3&gt;</code>. The correct hierarchy should be:<br>
+              <code>&lt;h1&gt;Cooking&lt;/h1&gt;</code> &rarr; <code>&lt;h2&gt;Desserts&lt;/h2&gt;</code> &rarr; <code>&lt;h3&gt;Baking Tips&lt;/h3&gt;</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Code Snippet Formatting</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>How do you format a multi-line JavaScript function so that both indentation is preserved and screen readers identify it as programming code?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Nest code inside pre.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Wrap <code>&lt;code&gt;</code> inside a <code>&lt;pre&gt;</code> container:<br>
+              <pre><code>&lt;pre&gt;&lt;code&gt;function add(a, b) {
+  return a + b;
+}&lt;/code&gt;&lt;/pre&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 03 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="<h1> is the highest level, down to <h6> as the lowest.">
+            <div class="quiz-question-text">1. Which heading tag represents the highest level of structural importance?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;head&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;h6&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;h1&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;header&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="<strong> conveys semantic urgency and importance, whereas <b> is purely visual bold without semantic meaning.">
+            <div class="quiz-question-text">2. What is the fundamental difference between &lt;strong&gt; and &lt;b&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;strong&gt; conveys semantic urgency to screen readers, while &lt;b&gt; is only visual bolding</div>
+              <div class="quiz-option"><span>B)</span> &lt;b&gt; is newer than &lt;strong&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;strong&gt; renders red text, &lt;b&gt; renders black text</div>
+              <div class="quiz-option"><span>D)</span> There is no difference at all</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="HTML collapses sequential spaces and newlines into a single space.">
+            <div class="quiz-question-text">3. What does a browser do when it encounters 5 consecutive spaces in HTML code?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Displays an error message</div>
+              <div class="quiz-option"><span>B)</span> Renders 5 wide spaces on screen</div>
+              <div class="quiz-option"><span>C)</span> Deletes the preceding word</div>
+              <div class="quiz-option"><span>D)</span> Collapses them into a single space</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="<pre> preserves exact whitespace and formatting.">
+            <div class="quiz-question-text">4. Which tag preserves exact spaces, tabs, and newlines exactly as typed?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;p&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;pre&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;code&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;span&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="<hr> marks a thematic change in topic.">
+            <div class="quiz-question-text">5. What does the &lt;hr&gt; tag semantically represent in HTML5?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> High Resolution mode</div>
+              <div class="quiz-option"><span>B)</span> Hourly Rate</div>
+              <div class="quiz-option"><span>C)</span> A thematic break or transition between topics</div>
+              <div class="quiz-option"><span>D)</span> A header row in a table</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Movie Review Snippet</h3>
+          <p>
+            In the live editor above, replace the content with a movie review for your favorite film: use an <code>&lt;h1&gt;</code> for the movie title, an <code>&lt;h2&gt;</code> for "Review Summary", a paragraph with <code>&lt;mark&gt;Must-Watch&lt;/mark&gt;</code>, and a <code>&lt;blockquote&gt;</code> quoting your favorite line. Click <strong>Run Code</strong>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#h1" class="ref-pill">&lt;h1&gt;&ndash;&lt;h6&gt; Headings</a>
+            <a href="../reference/html-tags-reference.html#p" class="ref-pill">&lt;p&gt; Paragraph</a>
+            <a href="../reference/html-tags-reference.html#strong" class="ref-pill">&lt;strong&gt; &amp; &lt;em&gt;</a>
+            <a href="../reference/html-tags-reference.html#blockquote" class="ref-pill">&lt;blockquote&gt;</a>
+            <a href="../reference/html-tags-reference.html#code" class="ref-pill">&lt;code&gt; &amp; &lt;pre&gt;</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="02-elements-attributes.html" class="btn btn-outline">&larr; Previous: Elements &amp; Attributes</a>
+          <button class="mark-complete-btn" data-lesson-id="html-03">Mark as Complete</button>
+          <a href="04-links-and-navigation.html" class="btn btn-primary">Next: Links &amp; Navigation &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

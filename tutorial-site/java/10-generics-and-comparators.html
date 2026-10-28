@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="10">
+  <title>Java Generics, Wildcards & Sorting (Comparable vs Comparator) | WebDev Academy</title>
+  <meta name="description" content="Master Java Generics, Type Erasure, Bounded Wildcards (PECS: Producer Extends, Consumer Super), and Sorting with Comparable vs Comparator.">
+  <meta name="keywords" content="Java generics, PECS rule, producer extends consumer super, type erasure, Comparable vs Comparator, sorting in java">
+  <meta property="og:title" content="Java Generics, Wildcards & Sorting (Comparable vs Comparator)">
+  <meta property="og:description" content="Master Java Generics, Type Erasure, Bounded Wildcards (PECS: Producer Extends, Consumer Super), and Sorting with Comparable vs Comparator.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 18 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">10. Generics, Bounded Wildcards (PECS) & Sorting</h1>
+          <p class="lesson-subtitle">Compile-time type safety: Eliminating ClassCastException, understanding Type Erasure, mastering the PECS wildcard rule, and sorting entities.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 09 (Collections Framework).</p>
+            <ul>
+              <li>Understand why Generics were introduced in Java 5 to eliminate runtime `ClassCastException`.</li><li>Master the PECS Principle: Producer `? extends T`, Consumer `? super T`.</li><li>Understand Type Erasure and why `new T()` or `instanceof T` is impossible.</li><li>Distinguish between `Comparable<T>` (natural ordering) vs `Comparator<T>` (custom sorting strategies).</li><li>Write custom generic classes, interfaces, and bounded type methods.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Labeled Storage Boxes & Luggage Sorters Analogy</h3>
+      <p><strong>Generics:</strong> Before Java 5, collections were like unmarked brown cardboard boxes. You could toss a tennis ball, a live kitten, and a hot pizza into the same box. But when someone opened the box and expected a tennis ball (<code>(Ball) box.get(0)</code>), they pulled out a live kitten and the entire program crashed (<code>ClassCastException</code>)!</p>
+      <p>Generics place a clear, verified transparent label on the box: <code>Box&lt;TennisBall&gt;</code>. If someone tries to toss a kitten into that box, the security guard (Java Compiler) stops them instantly before the plane takes off!</p>
+      <p><strong>Comparable vs Comparator:</strong></p>
+      <ul>
+        <li><strong>Comparable (Internal Natural ID):</strong> A student has their own intrinsic roll number printed on their ID card (<code>student1.compareTo(student2)</code>). There is only 1 natural order.</li>
+        <li><strong>Comparator (External Third-Party Judges):</strong> A panel of external judges ranking students. Judge A ranks them by height; Judge B ranks them by exam marks; Judge C ranks them by speed in a 100m race. You can create unlimited different Comparators without altering the Student class!</li>
+      </ul>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (लेबल वाला डिब्बा और स्कूल की लाइन)</h3>
+      <p><strong>Generics:</strong> पहले जावा में बिना लेबल वाला डिब्बा होता था, जिसमें कोई भी कुछ भी रख देता था। जब आप निकालने जाते तो गलत चीज निकलने पर प्रोग्राम क्रैश हो जाता था। जेनेरिक्स (<code>List&lt;String&gt;</code>) डिब्बे पर सख्त लेबल लगा देता है कि इसमें सिर्फ स्ट्रिंग ही आएगी, गलती करने पर कम्पाइलर तुरंत रोक देता है!</p>
+      <p><strong>Comparable vs Comparator:</strong></p>
+      <ul>
+        <li><strong>Comparable:</strong> बच्चे की अपनी लंबाई या रोल नंबर (स्वाभाविक क्रम - Natural Order)।</li>
+        <li><strong>Comparator:</strong> अलग-अलग खेल के नियम। कोई मास्टर जी बच्चों को दौड़ने की स्पीड से खड़ा करते हैं, तो कोई मास्टर जी वजन के हिसाब से। जितने चाहे उतने अलग-अलग <code>Comparator</code> बना सकते हैं!</li>
+      </ul>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The PECS Principle (Producer Extends, Consumer Super)</h3>
+      <p>Joshua Bloch's famous rule for using bounded wildcards in generic methods:</p>
+      <ul>
+        <li><strong>Producer Extends (`? extends T`):</strong> If a parameterized type represents a producer that you only <em>read data from</em>, use <code>? extends T</code>.</li>
+        <li><strong>Consumer Super (`? super T`):</strong> If a parameterized type represents a consumer that you only <em>write data into</em>, use <code>? super T</code>.</li>
+      </ul>
+      <div class="code-box">
+        <pre><code class="language-java">public static <T> void copy(List<? extends T> src, List<? super T> dest) {
+    for (T item : src) {   // src is PRODUCING items to read
+        dest.add(item);    // dest is CONSUMING items to store
+    }
+}</code></pre>
+      </div>
+
+      <h3>2. Type Erasure Under the Hood</h3>
+      <p>Java generics exist <strong>only at compile-time</strong>. To maintain backward compatibility with pre-Java 5 JVM bytecode, the compiler "erases" generic type parameters and replaces them with their bounding type (usually <code>Object</code>), inserting casts automatically.</p>
+      <p>This is why you cannot write <code>new T()</code>, <code>new T[10]</code>, or <code>if (x instanceof T)</code> &mdash; the type <code>T</code> does not exist at runtime!</p>
+
+      <h3>3. Comparable vs Comparator Comparison</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Comparable&lt;T&gt;</th>
+            <th>Comparator&lt;T&gt;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Package</strong></td><td><code>java.lang</code></td><td><code>java.util</code></td></tr>
+          <tr><td><strong>Method</strong></td><td><code>int compareTo(T o)</code></td><td><code>int compare(T o1, T o2)</code></td></tr>
+          <tr><td><strong>Class Modification</strong></td><td>Requires modifying original class</td><td>Does not modify original class</td></tr>
+          <tr><td><strong>Sorting Logic</strong></td><td>Single natural sorting order</td><td>Multiple custom sorting strategies</td></tr>
+          <tr><td><strong>Collections Sort</strong></td><td><code>Collections.sort(list)</code></td><td><code>Collections.sort(list, comparator)</code></td></tr>
+        </tbody>
+      </table>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"Explain the PECS rule in Java Generics. What is Type Erasure and what are its consequences?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>PECS (Producer Extends, Consumer Super):</strong> Use `? extends T` when reading data from a collection to accept any subtype. Use `? super T` when writing or adding elements to accept any supertype. Remember: You cannot add items to a `List<? extends Number>` (except null).</li><li><strong>Type Erasure Definition:</strong> At compile-time, the Java compiler verifies type safety and then strips all generic type information from bytecode, replacing unbounded types with Object and bounded types with their upper bound.</li><li><strong>Consequences of Erasure:</strong> Cannot instantiate generic types (`new T()`), cannot create generic arrays (`new T[]`), cannot use `instanceof` with generic parameters, and method overloads cannot differ solely by generic parameters (e.g. `foo(List<String>)` and `foo(List<Integer>)` have the exact same bytecode erasure).</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "PECS stands for Producer Extends, Consumer Super. Type erasure ensures complete backward compatibility with legacy JVM bytecode by removing generic types after compile-time verification."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Implementing Comparable for Natural Sorting</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class Product implements Comparable<Product> {
+    private String name;
+    private double price;
+
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    @Override
+    public int compareTo(Product other) {
+        // Natural order: ascending by price
+        return Double.compare(this.price, other.price);
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Modern Comparator Chaining with Lambdas</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.util.*;
+
+public class ModernSortingDemo {
+    public static void main(String[] args) {
+        List<Employee> staff = new ArrayList<>(List.of(
+            new Employee("Aarav", "Tech", 95000),
+            new Employee("Priya", "HR", 75000),
+            new Employee("Aarav", "Finance", 120000)
+        ));
+
+        // Modern comparator chaining: Sort by Name ASC, then Salary DESC
+        staff.sort(Comparator.comparing(Employee::getName)
+                             .thenComparing(Employee::getSalary, Comparator.reverseOrder()));
+
+        staff.forEach(System.out::println);
+    }
+}
+
+class Employee {
+    private String name, dept; private double salary;
+    public Employee(String n, String d, double s) { name=n; dept=d; salary=s; }
+    public String getName() { return name; }
+    public double getSalary() { return salary; }
+    @Override public String toString() { return name + " (" + salary + ")"; }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('10')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-10" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">import java.util.*;
+
+public class GenericsSandbox {
+    public static void main(String[] args) {
+        List<Integer> ints = List.of(50, 10, 40, 20);
+        List<Integer> sorted = new ArrayList<>(ints);
+        sorted.sort(Comparator.naturalOrder());
+        System.out.println("Ascending: " + sorted);
+        
+        sorted.sort(Comparator.reverseOrder());
+        System.out.println("Descending: " + sorted);
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-10" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Trying to Add Items to `List<? extends Number>`:</strong> Developers expect to be able to add `Integer` to `List<? extends Number>`. You cannot add anything because the compiler does not know the actual concrete subtype at runtime.</li><li><strong>Creating Generic Arrays (`new T[10]`):</strong> Generic arrays are forbidden due to type erasure. Always use `List<T>` or cast an `Object[]` array.</li><li><strong>Writing Raw Types (`List list = new ArrayList()`):</strong> Discards all compile-time type safety guarantees and re-introduces runtime `ClassCastException` hazards.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use Comparator Static Helpers:</strong> Leverage `Comparator.comparing()`, `thenComparing()`, and `nullsFirst()` for elegant, readable sorting logic.</li><li><strong>Apply PECS on All Public API Methods:</strong> Accepting `List<? extends T>` instead of `List<T>` in method parameters makes your libraries dramatically more flexible for callers.</li><li><strong>Avoid Raw Types at All Costs:</strong> Never write `List list`. Always use parameterized generics or wildcards like `List<?>`.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Generics provide compile-time type safety;:</strong> Type erasure strips them in bytecode.</li><li><strong>PECS Rule::</strong> Producer Extends (read), Consumer Super (write).</li><li><strong>Comparable defines natural ordering via `compareTo()`;:</strong> Comparator provides custom strategies via `compare()`.</li><li><strong>Modern Java sorting uses lambda method references:</strong> like `Comparator.comparing(User::getName)`.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Generic Max Method</h4>
+        <p>Write a generic method <code>&lt;T extends Comparable&lt;T&gt;&gt; T findMax(T a, T b)</code> that returns the larger element.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static <T extends Comparable<T>> T findMax(T a, T b) {
+    return (a.compareTo(b) >= 0) ? a : b;
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): PECS in Action</h4>
+        <p>Write a method <code>double sumOfList(List&lt;? extends Number&gt; list)</code> that sums all numbers in any list of numbers.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public static double sumOfList(List<? extends Number> list) {
+    double sum = 0.0;
+    for (Number n : list) {
+        sum += n.doubleValue();
+    }
+    return sum;
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Multi-Field Comparator</h4>
+        <p>Sort a list of Books by publishYear ascending; if years are equal, sort by author name alphabetically.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">books.sort(Comparator.comparing(Book::getPublishYear)
+                         .thenComparing(Book::getAuthor));</code></pre>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What does the PECS rule stand for?</strong></p>
+        <label><input type="radio" name="q1" value="1"> Producer Extends, Consumer Super</label><br>
+        <label><input type="radio" name="q1" value="0"> Parent Extends, Child Super</label><br>
+        <label><input type="radio" name="q1" value="0"> Pointer Equals, Constant Static</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Can you add a non-null object to a `List<? extends Number>`?</strong></p>
+        <label><input type="radio" name="q2" value="0"> Yes, any Integer or Double</label><br>
+        <label><input type="radio" name="q2" value="1"> No, the compiler prevents adding because concrete type is unknown</label><br>
+        <label><input type="radio" name="q2" value="0"> Only in Java 21</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What happens to generic types during compilation due to Type Erasure?</strong></p>
+        <label><input type="radio" name="q3" value="1"> They are removed and replaced with Object or bounds</label><br>
+        <label><input type="radio" name="q3" value="0"> They are converted to C++ templates</label><br>
+        <label><input type="radio" name="q3" value="0"> They remain intact in Heap memory</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Which interface is used to define an object's single natural ordering?</strong></p>
+        <label><input type="radio" name="q4" value="0"> java.util.Comparator</label><br>
+        <label><input type="radio" name="q4" value="1"> java.lang.Comparable</label><br>
+        <label><input type="radio" name="q4" value="0"> java.io.Serializable</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Can you write `new T()` inside a generic class `MyBox<T>`?</strong></p>
+        <label><input type="radio" name="q5" value="0"> Yes, always</label><br>
+        <label><input type="radio" name="q5" value="1"> No, because type erasure removes type information at runtime</label><br>
+        <label><input type="radio" name="q5" value="0"> Only if T implements Cloneable</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Generic Type-Safe Event Bus</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create a Generic EventBus<T> where listeners can subscribe to events of type T and publish messages with compile-time type verification.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.util.*;
+import java.util.function.Consumer;
+
+public class EventBus<T> {
+    private final List<Consumer<T>> listeners = new ArrayList<>();
+
+    public void register(Consumer<T> listener) { listeners.add(listener); }
+    public void publish(T event) { listeners.forEach(l -> l.accept(event)); }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="09-collections-framework.html" class="btn btn-outline">&larr; Prev: Collections Framework</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-10')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="11-multithreading-concurrency.html" class="btn btn-primary">Next: Multithreading & Concurrency &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Ascending: [10, 20, 40, 50]\nDescending: [50, 40, 20, 10]\nComparator sorting executed successfully.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

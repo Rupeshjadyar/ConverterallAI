@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Arrays &amp; Array Methods — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="08-arrays-and-array-methods.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 08</span>
+          </div>
+          <h1 class="lesson-title">Arrays &amp; Higher-Order Methods</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Harness the workhorse data structure of web development. Master map, filter, reduce, find, and non-destructive pipeline chaining.</span>
+            <span class="lang-hi">Arrays aur Higher-Order Methods: push/pop, slice/splice, map, filter, reduce, aur method chaining seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Array indexing (0-indexed) and length tracking.</li>
+            <li>Mutating methods: <code>push</code>, <code>pop</code>, <code>shift</code>, <code>unshift</code>, and <code>splice</code>.</li>
+            <li>The dangerous numeric sorting trap: Why <code>[10, 5, 2].sort()</code> returns <code>[10, 2, 5]</code>!</li>
+            <li>Non-mutating transformations: <code>slice</code>, <code>concat</code>, and <code>join</code>.</li>
+            <li>The Big 4 Higher-Order Methods: <code>map</code>, <code>filter</code>, <code>reduce</code>, and <code>find</code>.</li>
+            <li>The power of <strong>Method Chaining</strong> to process complex real-world data pipelines.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="07-scope-hoisting-closures.html">07. Scope, Hoisting &amp; Closures</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Train Cargo Flatbed Cars</div>
+          <p>
+            <span class="lang-en">Think of an industrial cargo freight train:
+            <br>&bull; The train is an <strong>Array</strong>. Each connected flatbed car is an <strong>Index</strong> starting at <code>0</code>.
+            <br>&bull; <strong><code>push()</code>:</strong> Couples a new shipping container onto the very end of the train.
+            <br>&bull; <strong><code>pop()</code>:</strong> Unhitches the last container from the caboose.
+            <br>&bull; <strong><code>map()</code>:</strong> A robotic paint shop where every container passing through is painted a new color.
+            <br>&bull; <strong><code>filter()</code>:</strong> A security checkpoint that allows only containers with valid customs permits to continue on the journey!</span>
+            <span class="lang-hi">Cargo train ke dibbon ki tarah sochiye: Train Array hai aur har dibba ek index (0 se shuru) hai. <code>push</code> se aakhiri dibba judta hai, <code>pop</code> se aakhiri dibba hat-ta hai, <code>map</code> se har dibbe par paint hota hai, aur <code>filter</code> se keval zaroori dibbe aage bheje jaate hain!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Array Basics &amp; 0-Indexing</h2>
+        <p>
+          An Array is an ordered list of values. Items inside an array can be any mixed data types, though professional code keeps array elements consistent:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Creating &amp; Accessing Arrays</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const fruits = ["Apple", "Banana", "Cherry"];
+
+console.log(fruits[0]); // "Apple" (First item)
+console.log(fruits[1]); // "Banana"
+console.log(fruits.length); // 3
+
+// Accessing the last item:
+console.log(fruits[fruits.length - 1]); // "Cherry"
+// Or modern at() method (supports negative indices!):
+console.log(fruits.at(-1)); // "Cherry"</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Mutating Methods: Altering the Original Array</h2>
+        <p>
+          These methods modify the array directly in memory:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Push, Pop, Shift, Unshift &amp; Splice</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const tasks = ["Design UI", "Write Code"];
+
+// 1. push: Adds to END (returns new array length)
+tasks.push("Test App"); // ["Design UI", "Write Code", "Test App"]
+
+// 2. pop: Removes from END (returns the removed element)
+const removedLast = tasks.pop(); // "Test App"
+
+// 3. unshift: Adds to START
+tasks.unshift("Brainstorm"); // ["Brainstorm", "Design UI", "Write Code"]
+
+// 4. shift: Removes from START
+const removedFirst = tasks.shift(); // "Brainstorm"
+
+// 5. splice(startIndex, deleteCount, ...itemsToAdd): Swiss Army Knife
+// Removes 1 item at index 1 and inserts "Review PR" in its place:
+tasks.splice(1, 1, "Review PR");
+console.log(tasks); // ["Design UI", "Review PR"]</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Shocking String Sorting Trap</h2>
+        <p>
+          By default, <code>array.sort()</code> converts elements to <strong>UTF-16 strings</strong> and sorts them alphabetically. This produces horrifying numerical bugs:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Sorting Numbers Correctly</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const scores = [10, 5, 25, 2, 100];
+
+// THE BUG:
+scores.sort();
+console.log(scores); // [10, 100, 2, 25, 5] ! (Alphabetical string sorting!)
+
+// THE SENIOR FIX: Always provide a Comparator Function (a, b)
+// Ascending (lowest to highest):
+scores.sort((a, b) => a - b);
+console.log(scores); // [2, 5, 10, 25, 100]
+
+// Descending (highest to lowest):
+scores.sort((a, b) => b - a);
+console.log(scores); // [100, 25, 10, 5, 2]</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Non-Mutating Methods: Slice &amp; Join</h2>
+        <p>
+          These methods return a new value without disturbing the source array:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Slice, Join &amp; Includes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const letters = ["A", "B", "C", "D", "E"];
+
+// 1. slice(start, endNonInclusive): Copies a slice
+const middle = letters.slice(1, 4); // ["B", "C", "D"]
+console.log(letters); // Source remains completely untouched!
+
+// 2. join(separator): Glues array items into a single string
+const csv = letters.join(", "); // "A, B, C, D, E"
+
+// 3. includes(val): Tests if item exists (returns true/false)
+console.log(letters.includes("C")); // true
+console.log(letters.includes("Z")); // false</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The Big 4 Functional Higher-Order Methods</h2>
+        <p>
+          Higher-Order Methods take a callback function and apply it across every element. They represent modern idiomatic JavaScript:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Map, Filter, Reduce &amp; Find</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const products = [
+  { id: 1, name: "Keyboard", price: 80, inStock: true },
+  { id: 2, name: "Mouse", price: 40, inStock: false },
+  { id: 3, name: "Monitor", price: 250, inStock: true }
+];
+
+// 1. MAP: Transforms every item into a new shape (Returns brand new array)
+const productNames = products.map(p => p.name);
+console.log(productNames); // ["Keyboard", "Mouse", "Monitor"]
+
+// 2. FILTER: Keeps only items that pass the truth test
+const availableProducts = products.filter(p => p.inStock);
+console.log(availableProducts); // [Keyboard, Monitor]
+
+// 3. FIND: Returns the FIRST matching item (or undefined)
+const monitor = products.find(p => p.id === 3);
+console.log(monitor.name); // "Monitor"
+
+// 4. REDUCE: Accumulates array into a single final value (acc, current)
+const totalInventoryValue = products.reduce((accumulator, product) => {
+  return accumulator + product.price;
+}, 0); // 0 is the starting initial value!
+console.log(`Total Value: $${totalInventoryValue}`); // $370</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Method Chaining: The Declarative Data Pipeline</h2>
+        <p>
+          Because <code>filter</code> and <code>map</code> return brand-new arrays, you can chain them into readable data transformation pipelines:
+        </p>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Real-World E-Commerce Pipeline</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const transactions = [
+  { type: "credit", amount: 150 },
+  { type: "debit", amount: 45 },
+  { type: "credit", amount: 200 },
+  { type: "debit", amount: 10 }
+];
+
+// Pipeline: Filter credits -> Extract amounts -> Sum with reduce
+const totalCreditRevenue = transactions
+  .filter(t => t.type === "credit")       // [{ amount: 150 }, { amount: 200 }]
+  .map(t => t.amount)                     // [150, 200]
+  .reduce((sum, amount) => sum + amount, 0); // 350
+
+console.log(`Total Credits: $${totalCreditRevenue}`); // $350</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Array Transformation Studio</h2>
+        <p>
+          Filter and format product cards in real time:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Array Pipeline Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .product-list { display: flex; flex-direction: column; gap: 8px; }
+    .item-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .price-tag { font-weight: bold; color: #16a34a; }
+  </style>
+</head>
+<body>
+  <h3>Filtered In-Stock Items</h3>
+  <div id="catalog" class="product-list"></div>
+
+  <script>
+    const catalogEl = document.getElementById("catalog");
+    
+    const inventory = [
+      { name: "Wireless Headphones", price: 89.99, inStock: true },
+      { name: "USB-C Hub", price: 29.50, inStock: false },
+      { name: "Mechanical Keyboard", price: 120.00, inStock: true },
+      { name: "Mousepad", price: 14.99, inStock: true }
+    ];
+
+    // Pipeline: Filter in-stock items -> Map to HTML strings -> Join into one string
+    const htmlCards = inventory
+      .filter(item => item.inStock)
+      .map(item => `
+        <div class="item-card">
+          <span>${item.name}</span>
+          <span class="price-tag">$${item.price.toFixed(2)}</span>
+        </div>
+      `)
+      .join("");
+
+    catalogEl.innerHTML = htmlCards;
+    console.log("Rendered in-stock catalog!");
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Sorting numbers without a comparator function:</strong> <code>[9, 80].sort()</code> produces <code>[80, 9]</code> because "80" comes before "9" in string alphabetical order! Always write <code>(a, b) =&gt; a - b</code>.</li>
+            <li><strong>Confusing <code>slice()</code> and <code>splice()</code>:</strong> <code>slice()</code> is non-mutating and copies a portion. <code>splice()</code> mutates the original array by deleting or inserting elements.</li>
+            <li><strong>Using <code>map()</code> when you don't return anything:</strong> If you just want to run an action without creating a new array, use <code>forEach()</code> or a <code>for...of</code> loop. Using <code>map()</code> creates an unnecessary array of <code>undefined</code>s in memory.</li>
+            <li><strong>Forgetting the initial value in <code>reduce()</code>:</strong> If you omit the initial value (e.g. <code>0</code> or <code>[]</code>), <code>reduce()</code> defaults to using the first array element, which causes runtime errors on empty arrays!</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Remove duplicates with Set:</strong> <code>const uniqueItems = [...new Set(myArray)];</code> is the fastest, cleanest one-liner to deduplicate an array!</li>
+            <li><strong>Shallow array cloning with spread:</strong> <code>const clone = [...originalArray];</code> creates a new shallow copy, preventing accidental mutations to the original source.</li>
+            <li><strong>Use <code>find()</code> over <code>filter()[0]</code>:</strong> <code>filter()</code> examines the entire array even after finding a match. <code>find()</code> stops scanning immediately upon the first match, saving CPU cycles!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Arrays are 0-indexed; access the last element with <code>arr.at(-1)</code>.</li>
+            <li>Mutating methods: <code>push</code>, <code>pop</code>, <code>shift</code>, <code>unshift</code>, <code>splice</code>, <code>sort</code>.</li>
+            <li>Always pass <code>(a, b) =&gt; a - b</code> to <code>sort()</code> for numbers.</li>
+            <li><code>map()</code> transforms elements; <code>filter()</code> subsets elements; <code>reduce()</code> aggregates values.</li>
+            <li><code>find()</code> stops scanning on the first matching element.</li>
+            <li>Chain methods together for clean, declarative data processing pipelines.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Double Every Number</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Using <code>map()</code>, write a one-line expression to transform <code>const nums = [1, 2, 3, 4];</code> into an array with every number doubled (<code>[2, 4, 6, 8]</code>).</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: nums.map(n => n * 2);</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>const doubled = nums.map(n => n * 2);</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Filter Passing Grades</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Given <code>const grades = [45, 80, 92, 58, 74, 30];</code>, write an expression using <code>filter()</code> that extracts all passing grades (score 60 or higher) and sorts them ascending.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: grades.filter(...).sort((a,b) => a - b);</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const passing = grades
+  .filter(g => g >= 60)
+  .sort((a, b) => a - b);
+// [74, 80, 92]</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Word Frequency Counter with Reduce</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Given <code>const fruits = ["apple", "banana", "apple", "orange", "banana", "apple"];</code>, use <code>reduce()</code> to produce an object tallying counts: <code>{ apple: 3, banana: 2, orange: 1 }</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: accumulator[fruit] = (accumulator[fruit] || 0) + 1; return accumulator; with initial value {}.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const counts = fruits.reduce((acc, fruit) => {
+  acc[fruit] = (acc[fruit] || 0) + 1;
+  return acc;
+}, {});</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 08 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="map transforms every element and returns a new array with the exact same length.">
+            <div class="quiz-question-text">1. Which array method returns a brand new array where every element is transformed by a callback function?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> filter()</div>
+              <div class="quiz-option"><span>B)</span> map()</div>
+              <div class="quiz-option"><span>C)</span> find()</div>
+              <div class="quiz-option"><span>D)</span> forEach()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Default sort converts items to strings, sorting alphabetically ('100' before '25').">
+            <div class="quiz-question-text">2. Why does '[100, 25, 5].sort()' place 100 before 25 by default?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because 100 is larger than 25</div>
+              <div class="quiz-option"><span>B)</span> It is a bug in the Chrome browser</div>
+              <div class="quiz-option"><span>C)</span> Because sort() converts elements to UTF-16 strings by default, and '1' comes before '2' alphabetically</div>
+              <div class="quiz-option"><span>D)</span> sort() reverses the array</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="slice is non-mutating (pure); splice mutates the original array in place.">
+            <div class="quiz-question-text">3. Which method extracts a section of an array WITHOUT modifying the original array?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> slice()</div>
+              <div class="quiz-option"><span>B)</span> splice()</div>
+              <div class="quiz-option"><span>C)</span> pop()</div>
+              <div class="quiz-option"><span>D)</span> shift()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="find stops iterating the moment it encounters the first element meeting the condition.">
+            <div class="quiz-question-text">4. What is the performance advantage of find() over filter()[0]?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> find() compiles to C++</div>
+              <div class="quiz-option"><span>B)</span> find() returns all matching items</div>
+              <div class="quiz-option"><span>C)</span> find() works only on numbers</div>
+              <div class="quiz-option"><span>D)</span> find() halts execution immediately upon encountering the first matching element, whereas filter() must process the entire array</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="[...new Set(arr)] converts the array to a Set of unique values and spreads it back into an array.">
+            <div class="quiz-question-text">5. What is the modern standard one-line idiom to remove duplicate values from an array?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> array.removeDuplicates()</div>
+              <div class="quiz-option"><span>B)</span> [...new Set(array)]</div>
+              <div class="quiz-option"><span>C)</span> array.filter(Boolean)</div>
+              <div class="quiz-option"><span>D)</span> array.unique()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Calculate Cart Total with Tax</h3>
+          <p>
+            In the live editor, create an array of item prices <code>[25, 40, 10]</code>. Use <code>reduce()</code> to sum the prices, then multiply by <code>1.08</code> (8% sales tax) to display the grand total rounded to 2 decimal places with <code>.toFixed(2)</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#arrays" class="ref-pill">Array Methods Reference</a>
+            <a href="../reference/glossary.html#array" class="ref-pill">Glossary: Array</a>
+            <a href="../reference/glossary.html#higher-order-function" class="ref-pill">Glossary: Higher-Order Function</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Array Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="07-scope-hoisting-closures.html" class="btn btn-outline">&larr; Previous: Scope, Hoisting &amp; Closures</a>
+          <button class="mark-complete-btn" data-lesson-id="js-08">Mark as Complete</button>
+          <a href="09-objects-and-this.html" class="btn btn-primary">Next: Objects &amp; the 'this' Keyword &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

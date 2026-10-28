@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="14">
+  <title>Spring Core, Inversion of Control & Dependency Injection (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Spring Framework Core: Inversion of Control (IoC), Dependency Injection (Constructor vs Field), ApplicationContext, @Component, @Autowired, @Service, @Repository, and Bean Scopes.">
+  <meta name="keywords" content="Spring framework, IoC container, Dependency Injection DI, @Component @Autowired, Spring bean lifecycle, singleton prototype bean scopes">
+  <meta property="og:title" content="Spring Core, Inversion of Control & Dependency Injection (Interview Ready)">
+  <meta property="og:description" content="Master Spring Framework Core: Inversion of Control (IoC), Dependency Injection (Constructor vs Field), ApplicationContext, @Component, @Autowired, @Service, @Repository, and Bean Scopes.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-danger">Advanced</span>
+            <span class="badge badge-outline">⏱️ 20 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">14. Spring Core: Inversion of Control (IoC) & Dependency Injection</h1>
+          <p class="lesson-subtitle">The bedrock of modern enterprise Java: Eliminating hardcoded dependencies, Spring IoC ApplicationContext, Bean lifecycle, and why Constructor Injection is king.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 05 (OOP) & Lesson 07 (Interfaces).</p>
+            <ul>
+              <li>Understand Inversion of Control (IoC) and the Hollywood Principle ("Don't call us, we'll call you").</li><li>Master Dependency Injection (DI) and compare Constructor vs Setter vs Field injection.</li><li>Understand Spring Stereotype Annotations (`@Component`, `@Service`, `@Repository`, `@Controller`).</li><li>Learn Spring Bean Scopes: Singleton (default) vs Prototype vs Web scopes.</li><li>Master the Spring Bean Lifecycle (`@PostConstruct`, `@PreDestroy`, InitializingBean).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Car Engine Factory & The Electric Plug Analogy</h3>
+      <p><strong>Without Dependency Injection (Hardcoded Dependency):</strong> Imagine when a car manufacturer builds a car, the assembly worker welds a specific gas engine directly into the steel frame with heavy glue (<code>private Engine engine = new V8GasolineEngine();</code>). If you later want to test the car with an electric motor or replace a broken engine, you have to smash the entire car with a sledgehammer!</p>
+      <p><strong>With Spring Dependency Injection (IoC Container):</strong> The car frame simply provides a standard empty engine bay and a connector interface (<code>private final Engine engine;</code>). The <strong>Spring IoC Container (The Master Factory Robot)</strong> builds the engine outside, walks over, and drops it into the car frame through the constructor! If you want an electric engine, the factory drops in an ElectricEngine without changing a single line of car code!</p>
+      <p><strong>Singleton Scope:</strong> Like the town hall clock tower. The entire city shares 1 single clock tower instance. When someone checks the time, everyone looks at the same clock tower!</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (कार का इंजन और रोबोट मैनेजर)</h3>
+      <p><strong>बिना Spring के (Hardcoding):</strong> मान लीजिए आप अपनी कार के अंदर इंजन को वेल्डिंग करके पक्का चिपका दें (<code>new V8Engine()</code>)। कल को अगर इंजन खराब हो जाए या आपको इलेक्ट्रिक इंजन लगाना हो, तो पूरी कार तोड़नी पड़ेगी!</p>
+      <p><strong>Spring IoC (रोबोट मैनेजर) के साथ:</strong> आप कार में सिर्फ एक सांचा छोड़ते हैं (Interface)। <strong>Spring Container</strong> एक जादुई रोबोट है जो बाहर से सही इंजन बनाकर आपकी कार के अंदर फिट कर देता है (Dependency Injection)। अब आप बिना कार को छुए पेट्रोल, डीजल या इलेक्ट्रिक कोई भी इंजन आसानी से बदल सकते हैं!</p>
+      <p><strong>Singleton Bean:</strong> पूरे स्कूल में एक ही प्रिंसिपल का कमरा होता है। हर छात्र उसी एक प्रिंसिपल से मिलता है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The Spring Stereotype Hierarchy</h3>
+      <pre><code>                     @Component (Generic Spring Bean)
+                            |
+        +-------------------+-------------------+
+        |                   |                   |
+    @Service            @Repository         @Controller / @RestController
+  (Business Logic)   (Data Access Layer,   (HTTP Web Request Handlers)
+                      translates SQL exceptions)</code></pre>
+
+      <h3>2. Why Constructor Injection Beats Field Injection (`@Autowired`)</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Constructor Injection (BEST)</th>
+            <th>Field Injection (@Autowired on field - AVOID)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Immutability</strong></td><td>Allows fields to be declared <code>final</code></td><td>Fields cannot be final</td></tr>
+          <tr><td><strong>Unit Testing</strong></td><td>Can instantiate with pure mocks without Spring container</td><td>Requires Spring runner or reflection to inject mocks</td></tr>
+          <tr><td><strong>Circular Dependencies</strong></td><td>Detected immediately at startup</td><td>Masked until runtime failures occur</td></tr>
+          <tr><td><strong>Null Safety</strong></td><td>Guaranteed fully initialized object</td><td>Risk of NullPointerException if instantiated with <code>new</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>3. Spring Bean Lifecycle Flow</h3>
+      <ol class="styled-list">
+        <li><strong>Instantiate:</strong> JVM creates raw bean instance via constructor.</li>
+        <li><strong>Populate Properties:</strong> Spring injects dependencies.</li>
+        <li><strong>Aware Interfaces:</strong> <code>BeanNameAware</code>, <code>ApplicationContextAware</code>.</li>
+        <li><strong>Pre-Initialization:</strong> <code>BeanPostProcessor.postProcessBeforeInitialization()</code>.</li>
+        <li><strong>Init Method:</strong> <code>@PostConstruct</code> &rarr; <code>afterPropertiesSet()</code>.</li>
+        <li><strong>Post-Initialization:</strong> <code>BeanPostProcessor.postProcessAfterInitialization()</code> (AOP Proxies created here!).</li>
+        <li><strong>Ready for Use:</strong> Bean is live in ApplicationContext.</li>
+        <li><strong>Destruction:</strong> <code>@PreDestroy</code> &rarr; <code>destroy()</code> when container shuts down.</li>
+      </ol>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is Inversion of Control (IoC) and Dependency Injection? Why is Constructor Injection preferred over Field Injection?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Inversion of Control (IoC):</strong> A design principle where the control of object creation, configuration, and lifecycle management is shifted from the application code to an external container (Spring ApplicationContext).</li><li><strong>Dependency Injection (DI):</strong> A specific implementation pattern of IoC where an object receives its dependencies from an external assembler rather than creating them itself via `new`.</li><li><strong>Why Constructor Injection is Preferred:</strong> 1) Enforces immutability via `final` fields; 2) Prevents `NullPointerException` by guaranteeing all mandatory dependencies are satisfied at construction time; 3) Simplifies pure POJO unit testing without needing reflection or a heavy Spring context; 4) Detects circular dependencies at startup.</li><li><strong>Bean Scopes:</strong> Singleton (1 instance per Spring container - default), Prototype (new instance every injection/lookup), Request, Session, Application, and Websocket.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> Always state: "Constructor injection enforces immutability with final fields, guarantees non-null dependencies, and enables clean unit testing without booting the Spring context."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Industry Standard Service with Constructor Injection</h4>
+        <div class="code-box">
+          <pre><code class="language-java">package com.academy.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderService {
+    // Declared final for immutability!
+    private final PaymentProcessor paymentProcessor;
+    private final NotificationService notificationService;
+
+    // Explicit constructor injection (Spring automatically injects without @Autowired in Spring 4.3+)
+    public OrderService(PaymentProcessor paymentProcessor, NotificationService notificationService) {
+        this.paymentProcessor = paymentProcessor;
+        this.notificationService = notificationService;
+    }
+
+    public void processOrder(Order order) {
+        paymentProcessor.charge(order.getAmount());
+        notificationService.sendReceipt(order.getCustomerEmail());
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Spring Bean Lifecycle with @PostConstruct & @PreDestroy</h4>
+        <div class="code-box">
+          <pre><code class="language-java">package com.academy.config;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CacheWarmupService {
+
+    @PostConstruct
+    public void init() {
+        System.out.println("1. PostConstruct: Spring has injected all dependencies. Pre-loading cache...");
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        System.out.println("2. PreDestroy: Spring container shutting down. Flushing cache to disk...");
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('14')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-14" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class SpringCoreSandbox {
+    public static void main(String[] args) {
+        System.out.println("Simulating Spring IoC Container Boot:");
+        System.out.println("1. Scanning @ComponentScan packages...");
+        System.out.println("2. Detected @Repository: UserRepository");
+        System.out.println("3. Detected @Service: UserService");
+        System.out.println("4. Spring IoC creates UserRepository instance");
+        System.out.println("5. Spring injects UserRepository into UserService constructor!");
+        System.out.println("6. Invoking @PostConstruct hooks...");
+        System.out.println("ApplicationContext initialized: All Singletons ready.");
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-14" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Using Field Injection (`@Autowired private Service s;`):</strong> Makes unit testing difficult, prevents `final` immutability, and hides architectural circular dependencies until runtime.</li><li><strong>Instantiating Spring Beans with `new`:</strong> Writing `UserService s = new UserService()` bypasses the Spring container completely, resulting in all internal `@Autowired` dependencies remaining `null`!</li><li><strong>Assuming Prototype Beans are Destroyed by Spring:</strong> Spring creates prototype beans and hands them to the caller, but Spring does NOT invoke `@PreDestroy` on prototypes! You must clean them up yourself.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Lombok `@RequiredArgsConstructor`:</strong> Use Lombok's `@RequiredArgsConstructor` on classes with `private final` fields to generate clean constructor injection automatically with zero boilerplate.</li><li><strong>Prefer Interface-Based Injection:</strong> Inject interfaces (e.g. `PaymentService`) rather than concrete classes (`StripePaymentService`) to allow dynamic swapping of implementations using `@Qualifier` or `@Profile`.</li><li><strong>Keep Beans Stateless:</strong> Because Spring beans are Singleton by default, never store user-specific mutable state in instance fields to avoid massive multi-user race conditions.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Inversion of Control (IoC)::</strong> Container manages object creation and wiring.</li><li><strong>Constructor Injection is the industry gold standard:</strong> allowing final immutable dependencies.</li><li><strong>Stereotypes::</strong> @Component (generic), @Service (business), @Repository (DAO/data), @Controller (web).</li><li><strong>Default Bean Scope is Singleton:</strong> (one instance per container); beans should remain stateless.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Refactor Field to Constructor Injection</h4>
+        <p>Refactor this class to use constructor injection: <code>class A { @Autowired private B b; }</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public class A {
+    private final B b;
+    public A(B b) { this.b = b; }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Bean Scope Difference</h4>
+        <p>If Bean A is Singleton and injects Prototype Bean B, does Bean A get a new instance of B on every method call?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> <strong>No!</strong> Bean A is instantiated only once at container startup, so Prototype Bean B is injected only once into Bean A's constructor. To get a fresh prototype on every call, you must use <code>@Lookup</code> method injection or <code>ObjectProvider&lt;B&gt;</code>.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Circular Dependency Detection</h4>
+        <p>Why does constructor injection catch circular dependency between ServiceA and ServiceB immediately at startup?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> To construct <code>ServiceA</code>, Spring must first call <code>new ServiceA(serviceB)</code>. But to construct <code>ServiceB</code>, it must first call <code>new ServiceB(serviceA)</code>. Neither constructor can finish executing, so Spring immediately detects the cycle and throws <code>BeanCurrentlyInCreationException</code>.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What is the default bean scope in Spring Framework?</strong></p>
+        <label><input type="radio" name="q1" value="0"> Prototype</label><br>
+        <label><input type="radio" name="q1" value="1"> Singleton</label><br>
+        <label><input type="radio" name="q1" value="0"> Request</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Why is constructor injection preferred over field injection?</strong></p>
+        <label><input type="radio" name="q2" value="1"> Enables final immutability, guarantees non-null dependencies, and simplifies unit testing</label><br>
+        <label><input type="radio" name="q2" value="0"> It runs faster in the JVM JIT compiler</label><br>
+        <label><input type="radio" name="q2" value="0"> It is required by the HTTP specification</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What annotation marks a initialization method to run right after Spring injects dependencies?</strong></p>
+        <label><input type="radio" name="q3" value="0"> @Start</label><br>
+        <label><input type="radio" name="q3" value="1"> @PostConstruct</label><br>
+        <label><input type="radio" name="q3" value="0"> @PreDestroy</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Which annotation is specialized for database access classes to enable automatic exception translation?</strong></p>
+        <label><input type="radio" name="q4" value="0"> @Service</label><br>
+        <label><input type="radio" name="q4" value="1"> @Repository</label><br>
+        <label><input type="radio" name="q4" value="0"> @Endpoint</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What happens if you instantiate a class managed by Spring using the `new` keyword yourself?</strong></p>
+        <label><input type="radio" name="q5" value="1"> You get an unmanaged plain object whose Spring dependencies remain null</label><br>
+        <label><input type="radio" name="q5" value="0"> Spring automatically attaches to it</label><br>
+        <label><input type="radio" name="q5" value="0"> It throws a ClassNotFoundException</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Complete Spring Component Wiring Setup</strong>
+            </div>
+            <div class="callout-body">
+              <p>Design a customer registration flow consisting of CustomerRepository (@Repository), CustomerService (@Service), and EmailService (@Component) connected via constructor injection.</p>
+              <div class="code-box">
+                <pre><code class="language-java">// TODO: Write clean Spring components using Constructor Injection</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="13-jdbc-and-database-connectivity.html" class="btn btn-outline">&larr; Prev: JDBC & Persistence</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-14')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="15-spring-boot-and-rest-apis.html" class="btn btn-primary">Next: Spring Boot & REST APIs &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Simulating Spring IoC Container Boot:\n1. Scanning @ComponentScan packages...\n2. Detected @Repository: UserRepository\n3. Detected @Service: UserService\n4. Spring IoC creates UserRepository instance\n5. Spring injects UserRepository into UserService constructor!\n6. Invoking @PostConstruct hooks...\nApplicationContext initialized: All Singletons ready.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

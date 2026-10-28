@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Step-by-Step Guided Projects — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 30px; }
+    .project-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+    .project-card:hover { transform: translateY(-4px); border-color: var(--c-projects); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .project-num { font-size: 13px; font-weight: 700; color: var(--c-projects); text-transform: uppercase; letter-spacing: 0.5px; }
+    .project-title { font-size: 20px; font-weight: 700; margin: 4px 0 10px; color: var(--text-main); }
+    .project-desc { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin-bottom: 16px; flex-grow: 1; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .project-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: var(--c-projects); font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .btn-build { width: 100%; display: block; text-align: center; padding: 10px; background: var(--c-projects); color: white; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none; transition: background 0.2s; }
+    .btn-build:hover { background: #059669; }
+  </style>
+</head>
+<body data-course="projects" data-current-lesson="index.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">&#128736; Portfolio Projects</span>
+            <span class="reading-time">&#128640; 9 Guided Builds</span>
+          </div>
+          <h1 class="lesson-title">Guided Step-by-Step Real World Projects</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Bridge the gap between theoretical syntax and full-scale web development. Build 9 production-grade applications completely in vanilla HTML, CSS, and JavaScript.</span>
+            <span class="lang-hi">Theory se practical application: Vanilla HTML, CSS aur JavaScript se 9 complete portfolio projects step-by-step build karein.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#127942; The Guided Build Methodology</div>
+          <p>
+            Every single project in this track is structured across 4 rigorous architectural phases:
+            <br>&bull; <strong>Phase 1: Architecture &amp; UI Mockup:</strong> Wireframes, design tokens, and user flow mapping.
+            <br>&bull; <strong>Phase 2: Semantic HTML5 Structure:</strong> Accessible markup, forms, landmarks, and containers.
+            <br>&bull; <strong>Phase 3: Responsive CSS3 Styling:</strong> Modern CSS Grid, Flexbox, responsive typography, and themes.
+            <br>&bull; <strong>Phase 4: Vanilla JavaScript Engine:</strong> Event listeners, application state, local storage persistence, and zero-dependency mock APIs.
+          </p>
+        </div>
+
+        <!-- 9 Projects Grid -->
+        <div class="projects-grid">
+
+          <!-- 01: Portfolio -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 01</span>
+                <span class="exercise-difficulty diff-easy">Beginner</span>
+              </div>
+              <h3 class="project-title">Personal Developer Portfolio</h3>
+              <p class="project-desc">A modern, responsive portfolio with dark theme styling, project cards, smooth scrolling navigation, and an interactive contact form.</p>
+              <div class="project-tags">
+                <span class="project-tag">HTML5 Semantics</span>
+                <span class="project-tag">CSS Flexbox</span>
+                <span class="project-tag">Form Handling</span>
+              </div>
+            </div>
+            <a href="01-personal-portfolio.html" class="btn-build">Build Project 01 &rarr;</a>
+          </div>
+
+          <!-- 02: Landing Page -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 02</span>
+                <span class="exercise-difficulty diff-easy">Beginner</span>
+              </div>
+              <h3 class="project-title">Responsive Product Landing Page</h3>
+              <p class="project-desc">High-converting SaaS product page featuring a collapsible mobile hamburger drawer, feature grids, pricing tiers, and FAQ accordion.</p>
+              <div class="project-tags">
+                <span class="project-tag">CSS Grid</span>
+                <span class="project-tag">Mobile First</span>
+                <span class="project-tag">Accordion Widget</span>
+              </div>
+            </div>
+            <a href="02-responsive-landing-page.html" class="btn-build">Build Project 02 &rarr;</a>
+          </div>
+
+          <!-- 03: Todo App -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 03</span>
+                <span class="exercise-difficulty diff-medium">Intermediate</span>
+              </div>
+              <h3 class="project-title">Feature-Rich Todo &amp; Task Manager</h3>
+              <p class="project-desc">Full CRUD task application with active/completed filters, task count badge, inline editing, and permanent LocalStorage persistence.</p>
+              <div class="project-tags">
+                <span class="project-tag">DOM Manipulation</span>
+                <span class="project-tag">LocalStorage</span>
+                <span class="project-tag">Event Delegation</span>
+              </div>
+            </div>
+            <a href="03-todo-app.html" class="btn-build">Build Project 03 &rarr;</a>
+          </div>
+
+          <!-- 04: Calculator -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 04</span>
+                <span class="exercise-difficulty diff-medium">Intermediate</span>
+              </div>
+              <h3 class="project-title">Interactive Scientific Calculator</h3>
+              <p class="project-desc">Clean, glassmorphism calculator with chained math operations, percentage handling, floating-point precision safety, and full keyboard input.</p>
+              <div class="project-tags">
+                <span class="project-tag">Math Engine</span>
+                <span class="project-tag">Keyboard Events</span>
+                <span class="project-tag">State Machine</span>
+              </div>
+            </div>
+            <a href="04-calculator.html" class="btn-build">Build Project 04 &rarr;</a>
+          </div>
+
+          <!-- 05: Quiz App -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 05</span>
+                <span class="exercise-difficulty diff-medium">Intermediate</span>
+              </div>
+              <h3 class="project-title">Timed Quiz &amp; Assessment Engine</h3>
+              <p class="project-desc">Interactive multiple-choice quiz engine with 15-second countdown timer, animated progress bar, score review screen, and retry functionality.</p>
+              <div class="project-tags">
+                <span class="project-tag">Timers &amp; Intervals</span>
+                <span class="project-tag">Score Calculation</span>
+                <span class="project-tag">Dynamic UI</span>
+              </div>
+            </div>
+            <a href="05-quiz-app.html" class="btn-build">Build Project 05 &rarr;</a>
+          </div>
+
+          <!-- 06: Stopwatch -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 06</span>
+                <span class="exercise-difficulty diff-medium">Intermediate</span>
+              </div>
+              <h3 class="project-title">Digital Clock &amp; Precision Stopwatch</h3>
+              <p class="project-desc">Accurate 100th-second stopwatch with lap history recording, difference calculation, alongside a real-time 12/24 hour digital clock.</p>
+              <div class="project-tags">
+                <span class="project-tag">Date Object</span>
+                <span class="project-tag">requestAnimationFrame</span>
+                <span class="project-tag">Lap Timing</span>
+              </div>
+            </div>
+            <a href="06-digital-clock-stopwatch.html" class="btn-build">Build Project 06 &rarr;</a>
+          </div>
+
+          <!-- 07: Image Gallery -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 07</span>
+                <span class="exercise-difficulty diff-medium">Intermediate</span>
+              </div>
+              <h3 class="project-title">Filterable Image Gallery &amp; Lightbox</h3>
+              <p class="project-desc">Responsive thumbnail grid with category filtering pills and a modal lightbox viewer with next/prev arrows and keyboard escape handling.</p>
+              <div class="project-tags">
+                <span class="project-tag">Modal Lightbox</span>
+                <span class="project-tag">CSS Transitions</span>
+                <span class="project-tag">Keyboard Shortcuts</span>
+              </div>
+            </div>
+            <a href="07-image-gallery-lightbox.html" class="btn-build">Build Project 07 &rarr;</a>
+          </div>
+
+          <!-- 08: Weather App -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 08</span>
+                <span class="exercise-difficulty diff-hard">Advanced</span>
+              </div>
+              <h3 class="project-title">Offline Weather Dashboard (Mock Data)</h3>
+              <p class="project-desc">Multi-city weather dashboard with temperature toggle (&deg;C/&deg;F), 5-day forecast cards, and humidity charts powered by a self-contained offline mock API.</p>
+              <div class="project-tags">
+                <span class="project-tag">Async/Await</span>
+                <span class="project-tag">Mock REST API</span>
+                <span class="project-tag">Offline Safe</span>
+              </div>
+            </div>
+            <a href="08-weather-app-mock-data.html" class="btn-build">Build Project 08 &rarr;</a>
+          </div>
+
+          <!-- 09: Expense Tracker -->
+          <div class="project-card">
+            <div>
+              <div class="project-header">
+                <span class="project-num">Project 09</span>
+                <span class="exercise-difficulty diff-hard">Advanced</span>
+              </div>
+              <h3 class="project-title">Personal Expense &amp; Budget Tracker</h3>
+              <p class="project-desc">Complete financial dashboard with income vs expense balance tally, categorical breakdown, transaction history, and localStorage synchronization.</p>
+              <div class="project-tags">
+                <span class="project-tag">Financial Logic</span>
+                <span class="project-tag">Data Visualization</span>
+                <span class="project-tag">Full Architecture</span>
+              </div>
+            </div>
+            <a href="09-expense-tracker.html" class="btn-build">Build Project 09 &rarr;</a>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="../practice/interview-questions.html" class="nav-btn prev-btn">&larr; Interview Questions</a>
+          <a href="01-personal-portfolio.html" class="nav-btn next-btn">Project 01: Portfolio &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

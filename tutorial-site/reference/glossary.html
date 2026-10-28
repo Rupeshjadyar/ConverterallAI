@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>A-Z Technical Glossary — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .glossary-search { width: 100%; box-sizing: border-box; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 16px; color: var(--text-main); margin-bottom: 20px; }
+    .letter-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 30px; position: sticky; top: var(--nav-height); background: var(--bg-body); padding: 10px 0; z-index: 50; border-bottom: 1px solid var(--border-color); }
+    .letter-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); text-decoration: none; font-size: 14px; transition: all 0.2s; }
+    .letter-btn:hover { background: var(--c-primary); color: white; border-color: var(--c-primary); }
+    .glossary-section { margin-bottom: 40px; }
+    .letter-heading { font-size: 28px; font-weight: 800; color: var(--c-primary); border-bottom: 2px solid var(--border-color); padding-bottom: 6px; margin-bottom: 16px; }
+    .glossary-term-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 14px; }
+    .term-title { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .term-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+    .tag-html { background: var(--c-html-light); color: var(--c-html); }
+    .tag-css { background: var(--c-css-light); color: var(--c-css); }
+    .tag-js { background: var(--c-js-light); color: var(--c-js); }
+    .tag-web { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+  </style>
+</head>
+<body data-course="reference" data-current-lesson="glossary.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Glossary Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-reference-light); color:var(--c-reference); border:1px solid var(--c-reference-border);">&#128218; Built-in Reference</span>
+            <span class="reading-time">&#128338; Complete A-Z Dictionary</span>
+          </div>
+          <h1 class="lesson-title">Comprehensive Technical Glossary (A to Z)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">The definitive encyclopedia of modern web development terms, protocols, and architectural concepts. Never leave this site to understand a term.</span>
+            <span class="lang-hi">Web development ke sabhi terms ki A se Z tak complete dictionary. Kisi bhi word ka matlab yahan dekhein.</span>
+          </p>
+        </div>
+
+        <input type="text" id="glossary-filter" class="glossary-search" placeholder="&#128269; Filter terms (e.g. Closure, Event Loop, Flexbox, Specificity, CORS)..." oninput="filterGlossary()">
+
+        <!-- Fast Alphabet Navigation Bar -->
+        <div class="letter-bar">
+          <a href="#letter-A" class="letter-btn">A</a>
+          <a href="#letter-B" class="letter-btn">B</a>
+          <a href="#letter-C" class="letter-btn">C</a>
+          <a href="#letter-D" class="letter-btn">D</a>
+          <a href="#letter-E" class="letter-btn">E</a>
+          <a href="#letter-F" class="letter-btn">F</a>
+          <a href="#letter-G" class="letter-btn">G</a>
+          <a href="#letter-H" class="letter-btn">H</a>
+          <a href="#letter-I" class="letter-btn">I</a>
+          <a href="#letter-J" class="letter-btn">J</a>
+          <a href="#letter-L" class="letter-btn">L</a>
+          <a href="#letter-M" class="letter-btn">M</a>
+          <a href="#letter-O" class="letter-btn">O</a>
+          <a href="#letter-P" class="letter-btn">P</a>
+          <a href="#letter-Q" class="letter-btn">Q</a>
+          <a href="#letter-R" class="letter-btn">R</a>
+          <a href="#letter-S" class="letter-btn">S</a>
+          <a href="#letter-T" class="letter-btn">T</a>
+          <a href="#letter-U" class="letter-btn">U</a>
+          <a href="#letter-V" class="letter-btn">V</a>
+          <a href="#letter-W" class="letter-btn">W</a>
+          <a href="#letter-X" class="letter-btn">X</a>
+          <a href="#letter-Z" class="letter-btn">Z</a>
+        </div>
+
+        <div id="glossary-content">
+
+          <!-- A -->
+          <div class="glossary-section" id="letter-A">
+            <div class="letter-heading">A</div>
+
+            <div class="glossary-term-card" data-term="api application programming interface">
+              <div class="term-title"><span>API (Application Programming Interface)</span><span class="term-tag tag-web">Web / Architecture</span></div>
+              <p>A set of rules, protocols, and tools that allows software applications to communicate with each other. In web development, web APIs allow client-side frontend code to send HTTP requests and receive structured JSON data from backend servers.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="aria accessible rich internet applications">
+              <div class="term-title"><span>ARIA (Accessible Rich Internet Applications)</span><span class="term-tag tag-html">HTML / Accessibility</span></div>
+              <p>A set of HTML attributes (e.g. <code>aria-label</code>, <code>aria-hidden</code>, <code>role</code>) that define ways to make web content and interactive UI components more accessible to people with disabilities using screen readers.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="async await asynchronous">
+              <div class="term-title"><span>Async / Await</span><span class="term-tag tag-js">JavaScript</span></div>
+              <p>Modern syntactic sugar built on top of JavaScript Promises. The <code>async</code> keyword designates a function as returning a Promise, while <code>await</code> pauses execution non-blockingly until a Promise settles.</p>
+            </div>
+          </div>
+
+          <!-- B -->
+          <div class="glossary-section" id="letter-B">
+            <div class="letter-heading">B</div>
+
+            <div class="glossary-term-card" data-term="box model margin border padding content">
+              <div class="term-title"><span>Box Model</span><span class="term-tag tag-css">CSS</span></div>
+              <p>The foundational CSS layout model where every HTML element is treated as a rectangular box consisting of four concentric layers: Content, Padding (inner spacing), Border, and Margin (outer spacing).</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="bubbling event propagation">
+              <div class="term-title"><span>Bubbling (Event Propagation)</span><span class="term-tag tag-js">JavaScript / DOM</span></div>
+              <p>The phase in the DOM event lifecycle where an event starts at the target element that received the action and propagates upward through all its ancestors in the DOM tree towards the document root.</p>
+            </div>
+          </div>
+
+          <!-- C -->
+          <div class="glossary-section" id="letter-C">
+            <div class="letter-heading">C</div>
+
+            <div class="glossary-term-card" data-term="callback function first class">
+              <div class="term-title"><span>Callback</span><span class="term-tag tag-js">JavaScript</span></div>
+              <p>A function passed as an argument into another function, intended to be executed ("called back") at a later point in time or when an asynchronous operation completes.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="closure lexical environment scope">
+              <div class="term-title"><span>Closure</span><span class="term-tag tag-js">JavaScript</span></div>
+              <p>The combination of a function bundled together with references to its surrounding lexical environment. A closure gives an inner function access to its outer function's scope even after the outer function has finished executing.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="cors cross-origin resource sharing security">
+              <div class="term-title"><span>CORS (Cross-Origin Resource Sharing)</span><span class="term-tag tag-web">Web / Security</span></div>
+              <p>A browser security mechanism that uses HTTP headers to tell browsers whether a web application running at one origin has permission to access resources from a server at a different origin.</p>
+            </div>
+          </div>
+
+          <!-- D -->
+          <div class="glossary-section" id="letter-D">
+            <div class="letter-heading">D</div>
+
+            <div class="glossary-term-card" data-term="debounce rate limit delay timer">
+              <div class="term-title"><span>Debounce</span><span class="term-tag tag-js">Performance Pattern</span></div>
+              <p>A programming pattern that limits the rate at which a function can fire. It delays execution until a certain amount of time has elapsed since the last time the function was invoked.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="dom document object model tree">
+              <div class="term-title"><span>DOM (Document Object Model)</span><span class="term-tag tag-web">Web Standards</span></div>
+              <p>An in-memory, object-oriented tree representation of the structured HTML document created by the browser. Allows programming languages like JavaScript to read, manipulate, add, or delete elements dynamically.</p>
+            </div>
+          </div>
+
+          <!-- E -->
+          <div class="glossary-section" id="letter-E">
+            <div class="letter-heading">E</div>
+
+            <div class="glossary-term-card" data-term="event delegation bubbling parent">
+              <div class="term-title"><span>Event Delegation</span><span class="term-tag tag-js">JavaScript / DOM</span></div>
+              <p>A technique where a single event listener is attached to a parent element rather than attaching individual listeners to multiple child elements, leveraging DOM event bubbling.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="event loop call stack microtask macrotask">
+              <div class="term-title"><span>Event Loop</span><span class="term-tag tag-js">JavaScript Engine</span></div>
+              <p>The background coordination engine in JavaScript runtimes that continuously monitors the Call Stack and moves callbacks from the Microtask and Task queues onto the stack once it becomes empty.</p>
+            </div>
+          </div>
+
+          <!-- F -->
+          <div class="glossary-section" id="letter-F">
+            <div class="letter-heading">F</div>
+
+            <div class="glossary-term-card" data-term="flexbox flexible box layout">
+              <div class="term-title"><span>Flexbox (Flexible Box Layout)</span><span class="term-tag tag-css">CSS</span></div>
+              <p>A one-dimensional CSS layout model that provides space distribution and powerful alignment capabilities along a main axis (row or column) and a cross axis.</p>
+            </div>
+          </div>
+
+          <!-- G -->
+          <div class="glossary-section" id="letter-G">
+            <div class="letter-heading">G</div>
+
+            <div class="glossary-term-card" data-term="grid two dimensional layout columns rows">
+              <div class="term-title"><span>Grid (CSS Grid Layout)</span><span class="term-tag tag-css">CSS</span></div>
+              <p>A two-dimensional CSS layout system that enables developers to design complex web layouts structured into intersecting rows and columns without floats or positioning hacks.</p>
+            </div>
+          </div>
+
+          <!-- H -->
+          <div class="glossary-section" id="letter-H">
+            <div class="letter-heading">H</div>
+
+            <div class="glossary-term-card" data-term="hoisting var function declaration">
+              <div class="term-title"><span>Hoisting</span><span class="term-tag tag-js">JavaScript</span></div>
+              <p>The JavaScript engine behavior where variable and function declarations are allocated memory space during the creation phase of an execution context before any code is run.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="http https protocol hypertext">
+              <div class="term-title"><span>HTTP &amp; HTTPS</span><span class="term-tag tag-web">Networking</span></div>
+              <p>Hypertext Transfer Protocol. The underlying client-server protocol used to exchange hypermedia documents on the World Wide Web. HTTPS adds end-to-end TLS/SSL encryption for privacy and security.</p>
+            </div>
+          </div>
+
+          <!-- I -->
+          <div class="glossary-section" id="letter-I">
+            <div class="letter-heading">I</div>
+
+            <div class="glossary-term-card" data-term="idempotent rest http get put delete">
+              <div class="term-title"><span>Idempotence</span><span class="term-tag tag-web">Architecture</span></div>
+              <p>A property of an HTTP method where executing the exact same request multiple times produces the identical side-effect on the server as executing it once (e.g. <code>GET</code>, <code>PUT</code>, <code>DELETE</code>).</p>
+            </div>
+          </div>
+
+          <!-- J -->
+          <div class="glossary-section" id="letter-J">
+            <div class="letter-heading">J</div>
+
+            <div class="glossary-term-card" data-term="json javascript object notation format">
+              <div class="term-title"><span>JSON (JavaScript Object Notation)</span><span class="term-tag tag-web">Data Format</span></div>
+              <p>A lightweight, language-agnostic text format for serializing structured data. Strict rules require double quotes around all keys and string values, with zero trailing commas allowed.</p>
+            </div>
+          </div>
+
+          <!-- L -->
+          <div class="glossary-section" id="letter-L">
+            <div class="letter-heading">L</div>
+
+            <div class="glossary-term-card" data-term="localstorage persistence key value">
+              <div class="term-title"><span>LocalStorage</span><span class="term-tag tag-web">Web Storage</span></div>
+              <p>A client-side synchronous key-value storage mechanism provided by the browser with approximately 5MB of capacity per origin that persists permanently until cleared by code or the user.</p>
+            </div>
+          </div>
+
+          <!-- M -->
+          <div class="glossary-section" id="letter-M">
+            <div class="letter-heading">M</div>
+
+            <div class="glossary-term-card" data-term="media query responsive breakpoint mobile">
+              <div class="term-title"><span>Media Query</span><span class="term-tag tag-css">CSS</span></div>
+              <p>A CSS module that allows styles to be applied selectively based on device characteristics, such as screen viewport width (<code>min-width</code>), orientation, or user color scheme preferences.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="microtask promise queuemicrotask queue">
+              <div class="term-title"><span>Microtask Queue</span><span class="term-tag tag-js">JavaScript Engine</span></div>
+              <p>A high-priority execution queue reserved for Promise callbacks and <code>queueMicrotask()</code>. The Event Loop guarantees all microtasks are drained before any macrotask runs.</p>
+            </div>
+          </div>
+
+          <!-- P -->
+          <div class="glossary-section" id="letter-P">
+            <div class="letter-heading">P</div>
+
+            <div class="glossary-term-card" data-term="promise pending fulfilled rejected async">
+              <div class="term-title"><span>Promise</span><span class="term-tag tag-js">JavaScript</span></div>
+              <p>An object representing the eventual outcome of an asynchronous operation, existing in one of three states: <code>pending</code>, <code>fulfilled</code>, or <code>rejected</code>.</p>
+            </div>
+          </div>
+
+          <!-- R -->
+          <div class="glossary-section" id="letter-R">
+            <div class="letter-heading">R</div>
+
+            <div class="glossary-term-card" data-term="regex regular expression pattern match">
+              <div class="term-title"><span>RegEx (Regular Expression)</span><span class="term-tag tag-js">Pattern Matching</span></div>
+              <p>A specialized string of characters defining a search pattern, commonly used for validating input formats (like emails), searching documents, or performing complex text substitutions.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="rest representational state transfer api">
+              <div class="term-title"><span>REST (Representational State Transfer)</span><span class="term-tag tag-web">Architecture</span></div>
+              <p>A software architectural style for building network services using standard HTTP verbs (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>) to perform CRUD operations on resources identified by URIs.</p>
+            </div>
+          </div>
+
+          <!-- S -->
+          <div class="glossary-section" id="letter-S">
+            <div class="letter-heading">S</div>
+
+            <div class="glossary-term-card" data-term="same origin policy security origin domain port protocol">
+              <div class="term-title"><span>Same-Origin Policy (SOP)</span><span class="term-tag tag-web">Security</span></div>
+              <p>A critical web browser security mechanism that restricts a script loaded from one origin (combination of protocol, domain, and port) from interacting with resources from a different origin.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="semantic html landmarks header nav main article">
+              <div class="term-title"><span>Semantic HTML</span><span class="term-tag tag-html">HTML</span></div>
+              <p>The practice of using HTML tags that convey the meaning of the content contained within them (e.g. <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>) rather than purely decorative <code>&lt;div&gt;</code> tags.</p>
+            </div>
+
+            <div class="glossary-term-card" data-term="specificity cascade weight selector css">
+              <div class="term-title"><span>Specificity</span><span class="term-tag tag-css">CSS</span></div>
+              <p>The algorithm browsers use to determine which CSS rule applies to an element when multiple conflicting declarations match, calculated based on Inline styles &gt; IDs &gt; Classes/attributes &gt; Elements.</p>
+            </div>
+          </div>
+
+          <!-- T -->
+          <div class="glossary-section" id="letter-T">
+            <div class="letter-heading">T</div>
+
+            <div class="glossary-term-card" data-term="throttle rate limit regular interval">
+              <div class="term-title"><span>Throttle</span><span class="term-tag tag-js">Performance Pattern</span></div>
+              <p>A design pattern that ensures a function executes at most once every specified period of time, regardless of how many times the user fires the event (ideal for scroll triggers).</p>
+            </div>
+          </div>
+
+          <!-- X -->
+          <div class="glossary-section" id="letter-X">
+            <div class="letter-heading">X</div>
+
+            <div class="glossary-term-card" data-term="xss cross site scripting security vulnerability">
+              <div class="term-title"><span>XSS (Cross-Site Scripting)</span><span class="term-tag tag-web">Security</span></div>
+              <p>A security vulnerability that occurs when a web application includes untrusted user data in an output webpage without proper encoding or escaping, allowing malicious scripts to execute in victims' browsers.</p>
+            </div>
+          </div>
+
+          <!-- Z -->
+          <div class="glossary-section" id="letter-Z">
+            <div class="letter-heading">Z</div>
+
+            <div class="glossary-term-card" data-term="z-index stacking context 3d depth">
+              <div class="term-title"><span>Z-Index</span><span class="term-tag tag-css">CSS</span></div>
+              <p>A CSS property that sets the Z-order (depth in 3D space) of a positioned element and its descendants, dictating which overlapping element renders in front.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="js-reference.html" class="nav-btn prev-btn">&larr; JS Reference</a>
+          <a href="cheatsheets.html" class="nav-btn next-btn">Printable Cheatsheets &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function filterGlossary() {
+      const q = document.getElementById('glossary-filter').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.glossary-term-card');
+      const sections = document.querySelectorAll('.glossary-section');
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const term = card.getAttribute('data-term') || '';
+        if (!q || text.includes(q) || term.includes(q)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Hide empty letter sections
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.glossary-term-card[style="display: block;"], .glossary-term-card:not([style*="display: none"])');
+        sec.style.display = (visibleCards.length > 0) ? 'block' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

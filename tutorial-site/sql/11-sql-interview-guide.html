@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Top 75 SQL Interview Questions & LeetCode Query Patterns — WebDev Academy</title>
+  <meta name="description" content="Ace your technical database interviews. Master the top 75 most frequently asked SQL interview questions, query patterns (Nth highest salary, delete duplicate rows, manager hierarchies, consecutive login streaks, rolling averages), and architectural design principles.">
+  <meta name="keywords" content="SQL interview questions, top SQL interview, Nth highest salary SQL, duplicate rows SQL, consecutive days gaps and islands, LeetCode SQL patterns">
+  <meta property="og:title" content="Top 75 SQL Interview Questions & LeetCode Query Patterns">
+  <meta property="og:description" content="Ace your technical database interviews. Master the top 75 most frequently asked SQL interview questions, query patterns (Nth highest salary, delete duplicate rows, manager hierarchies, consecutive login streaks, rolling averages), and architectural design principles.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="11-sql-interview-guide.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 25 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 11</span>
+          </div>
+          <h1 class="lesson-title">Top 75 SQL Interview Questions & LeetCode Query Patterns</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Ace your technical database interviews. Master the top 75 most frequently asked SQL interview questions, query patterns (Nth highest salary, delete duplicate rows, manager hierarchies, consecutive login streaks, rolling averages), and architectural design principles.</span>
+            <span class="lang-hi">Top 75 SQL interview questions aur LeetCode patterns seekhein: Nth Highest Salary, duplicate rows hatana, Manager hierarchy, consecutive active days aur performance tricks.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The Top 75 Most Frequently Asked SQL Technical Interview Questions with model answers.</li><li>How to find the Nth Highest Salary (using DENSE_RANK vs Correlated Subquery vs LIMIT/OFFSET).</li><li>How to delete duplicate records from a table without losing the original row.</li><li>The famous 'Gaps and Islands' problem: Finding consecutive active days/streaks.</li><li>Manager-to-employee reporting hierarchies and department-wise top performers.</li><li>System Design & Schema Architecture interview questions for Senior Engineers.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lessons 01 through 10 of the SQL track.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of going to a master chef audition. They don't just ask you 'What is a knife?' (Basic syntax). They give you a real challenge: 'Chop 50 onions in 2 minutes without crying, cook a 3-course meal for 100 people without running out of pans, and fix a sauce that broke' (LeetCode queries & System Design). <strong>This guide is your master cookbook of battle-tested recipes</strong> for every query challenge interviewers love to throw at candidates at Google, Amazon, Meta, and top tech startups!</span>
+            <span class="lang-hi">Chef ke audition ki misaal lein: wo sirf yeh nahi puchenge ki chammach kya hota hai. Wo kahenge ki '2 minute me 50 pyaaz kaato, 100 logon ka khana banao aur bigdi hui dish ko theek karke dikhao'. <strong>Yeh guide aapka master cookbook hai</strong> jisme Nth highest salary, duplicate rows hatana aur complex queries ke ready-made formula diye gaye hain jo har company ke interview me puche jaate hain!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>Pattern 1: Nth Highest Salary:</strong> Always clarify if ties exist! If ties exist, use <code>DENSE_RANK()</code>. Never use simple <code>LIMIT 1 OFFSET N-1</code> without deduplication.</li><li><strong>Pattern 2: Delete Duplicate Rows:</strong> Use a CTE with <code>ROW_NUMBER() OVER (PARTITION BY unique_fields ORDER BY id)</code> and delete where <code>row_num &gt; 1</code>.</li><li><strong>Pattern 3: Consecutive Streaks (Gaps &amp; Islands):</strong> Compute the difference between the chronological date and a sequential <code>ROW_NUMBER()</code>. The difference remains constant during consecutive day streaks!</li><li><strong>Pattern 4: Cumulative Running Totals:</strong> Use <code>SUM(amount) OVER (PARTITION BY ... ORDER BY ... ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)</code>.</li><li><strong>Pattern 5: Department Top N Performers:</strong> Use a CTE with <code>DENSE_RANK() OVER (PARTITION BY dept ORDER BY salary DESC)</code> and filter where <code>rank &lt;= N</code> in the outer query.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. The 5 LeetCode Query Patterns You MUST Master</h2>
+        <p>Over 90% of technical SQL interview coding challenges evaluate just five core query patterns:</p>
+        <p>1. <strong>Ranking &amp; Nth Highest</strong> (DENSE_RANK / subquery)<br>2. <strong>Deduplication</strong> (ROW_NUMBER / self join)<br>3. <strong>Sequential Streaks &amp; Gaps</strong> (LAG / date math)<br>4. <strong>Hierarchies</strong> (Self joins / Recursive CTEs)<br>5. <strong>Cohort &amp; Retention Analysis</strong> (Window functions &amp; date truncation)</p>
+        
+        <h2>2. Top Conceptual Interview Q&A (Rapid Fire)</h2>
+        <p>In phone screens and technical rounds, hiring managers test foundational clarity with rapid-fire questions:</p>
+        <p>• <strong>Q: Difference between TRUNCATE and DELETE?</strong> A: TRUNCATE is DDL (fast page deallocation, resets sequences, minimal logging, no WHERE). DELETE is DML (row-by-row, logs all deletions, triggers fire, accepts WHERE).<br>• <strong>Q: Difference between WHERE and HAVING?</strong> A: WHERE filters rows before grouping; HAVING filters aggregated groups after GROUP BY.<br>• <strong>Q: What is a Clustered Index?</strong> A: Dictates physical storage order on disk (one per table, usually PK). Leaf nodes contain actual data.<br>• <strong>Q: What happens if NOT IN encounters a NULL?</strong> A: Condition evaluates to UNKNOWN and returns ZERO rows. Always use NOT EXISTS instead.</p>
+        
+        <h2>3. Senior Architecture & Schema Design Questions</h2>
+        <p>For Senior and Full-Stack roles, interviews transition to database architecture:</p>
+        <p>• <strong>How do you handle multi-tenant databases?</strong> (Shared database with tenant_id vs separate schemas vs separate databases per tenant).<br>• <strong>How do you scale writes?</strong> (Read replicas for reads, table sharding/partitioning, asynchronous message queues for buffer writes).<br>• <strong>When would you pick PostgreSQL over MongoDB?</strong> (When you need ACID transactions, complex relational joins, data integrity constraints, and financial auditability).</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Interview Challenge 1: Find the 2nd (or Nth) Highest Salary</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Method A: Universal Best Practice (Handles ties cleanly!)
+WITH ranked_salaries AS (
+    SELECT 
+        salary,
+        DENSE_RANK() OVER (ORDER BY salary DESC) AS rank_pos
+    FROM employees
+)
+SELECT DISTINCT salary AS second_highest_salary
+FROM ranked_salaries
+WHERE rank_pos = 2;
+
+-- Method B: Subquery Approach (Works in older legacy SQL)
+SELECT MAX(salary) AS second_highest_salary
+FROM employees
+WHERE salary &lt; (
+    SELECT MAX(salary) FROM employees
+);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Method A with DENSE_RANK is preferred by interviewers because changing <code>rank_pos = 2</code> to <code>N</code> solves any Nth rank trivially.
+        </div>
+        
+        <h3>Code Example 2: Interview Challenge 2: Delete Duplicate Rows Keeping Only the Lowest ID</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Table: contacts (id, email, full_name)
+-- We want to keep row with min(id) and delete duplicates
+
+-- In PostgreSQL:
+DELETE FROM contacts
+WHERE id IN (
+    SELECT id FROM (
+        SELECT id, ROW_NUMBER() OVER (PARTITION BY email ORDER BY id ASC) AS rn
+        FROM contacts
+    ) t
+    WHERE t.rn &gt; 1
+);
+
+-- In MySQL using Self Join:
+DELETE c1 FROM contacts c1
+JOIN contacts c2 ON c1.email = c2.email AND c1.id &gt; c2.id;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>ROW_NUMBER() OVER (PARTITION BY email ORDER BY id ASC)</code> assigns 1 to the first record and 2, 3... to duplicates. Deleting where rn &gt; 1 cleans duplicates safely.
+        </div>
+        
+        <h3>Code Example 3: Interview Challenge 3: Consecutive Active Login Days (Gaps and Islands)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Find users with 3 or more consecutive active login days
+WITH login_groups AS (
+    SELECT 
+        user_id,
+        login_date,
+        -- Magic: Date minus row_number produces a constant anchor date for consecutive days!
+        DATE_SUB(login_date, INTERVAL ROW_NUMBER() OVER (
+            PARTITION BY user_id ORDER BY login_date
+        ) DAY) AS streak_group
+    FROM user_logins
+)
+SELECT 
+    user_id,
+    MIN(login_date) AS streak_start,
+    MAX(login_date) AS streak_end,
+    COUNT(*) AS consecutive_days
+FROM login_groups
+GROUP BY user_id, streak_group
+HAVING COUNT(*) &gt;= 3;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The famous Gaps and Islands trick: subtracting row_number from date produces an identical grouping anchor date for all consecutive days!
+        </div>
+        
+        <h3>Code Example 4: Interview Challenge 4: Top 3 Highest Earners in EACH Department</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">WITH dept_rankings AS (
+    SELECT 
+        emp_id,
+        emp_name,
+        department,
+        salary,
+        DENSE_RANK() OVER (
+            PARTITION BY department 
+            ORDER BY salary DESC
+        ) AS sal_rank
+    FROM employees
+)
+SELECT department, emp_name, salary, sal_rank
+FROM dept_rankings
+WHERE sal_rank &lt;= 3
+ORDER BY department, sal_rank;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • A standard FAANG interview question testing window partitions and CTE filtering.
+        </div>
+        
+        <h3>Code Example 5: Interview Challenge 5: Find Employees Who Earn More Than Their Direct Manager</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    e.emp_name AS employee,
+    e.salary AS emp_salary,
+    m.emp_name AS manager,
+    m.salary AS mgr_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary &gt; m.salary;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Tests self-join proficiency and understanding table aliasing.
+        </div>
+        
+        <h3>Code Example 6: Interview Challenge 6: Rolling 7-Day Cumulative Revenue</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">SELECT 
+    order_date,
+    daily_revenue,
+    SUM(daily_revenue) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS rolling_7_day_revenue
+FROM daily_revenue_summary;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Analytical window frame specification for finance and business intelligence dashboards.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: Top 75 SQL Interview Questions & LeetCode Query Patterns</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive Interview Sandbox: Solve Nth Highest Salary Live
+CREATE TABLE salaries (
+    emp_name VARCHAR(50),
+    salary INT
+);
+
+INSERT INTO salaries VALUES
+('Aarav', 90000),
+('Priya', 90000), -- Tie for 1st!
+('Rohan', 85000), -- 2nd highest!
+('Sneha', 72000),
+('Vikram', 65000);
+
+-- Solve 2nd highest salary handling ties:
+WITH ranked AS (
+    SELECT emp_name, salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM salaries
+)
+SELECT DISTINCT salary FROM ranked WHERE rnk = 2;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Using LIMIT 1 OFFSET 1 for 2nd highest salary:</strong> If two employees tie for 1st place with 90k, <code>LIMIT 1 OFFSET 1</code> returns 90k (the other 1st place employee!), failing the interview question. Always use DENSE_RANK()!</li><li><strong>Forgetting to specify ON DELETE CASCADE:</strong> In schema design interviews, omitting cascading rules shows a lack of production experience.</li><li><strong>Using string types for dates or numbers:</strong> Storing dates as <code>VARCHAR(20)</code> makes range queries and sorting impossible to index.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Always ask clarifying questions before writing SQL in an interview:</strong> 'Can there be NULL values?', 'Can salaries tie?', 'How large is this table in production?', 'Is write performance or read performance our priority?'. Interviewers look for these questions!</li><li><strong>Think about indexes out loud:</strong> When writing a query with <code>JOIN</code> and <code>WHERE</code>, say: 'In production, I would ensure we have an index on (customer_id, status) to make this query execute in milliseconds.'</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Always use DENSE_RANK() to solve Nth highest salary problems to handle ties gracefully.</li><li>Delete duplicate records using a ROW_NUMBER() CTE with PARTITION BY.</li><li>Solve consecutive day streaks using the date minus row_number grouping anchor.</li><li>Self joins resolve parent-child employee-to-manager reporting structures.</li><li>Ask clarifying questions on NULLs, ties, and data volume during interviews.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write a query to find all duplicate email addresses in a <code>users</code> table, showing the email and the number of times it appears.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use GROUP BY email HAVING COUNT(*) > 1.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    email,
+    COUNT(*) AS occurrence_count
+FROM users
+GROUP BY email
+HAVING COUNT(*) &gt; 1;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a query to find the 3rd highest unique salary from the <code>employees</code> table using DENSE_RANK().</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Wrap DENSE_RANK() in a CTE and filter where rank = 3.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">WITH ranked_salaries AS (
+    SELECT 
+        salary,
+        DENSE_RANK() OVER (ORDER BY salary DESC) AS salary_rank
+    FROM employees
+)
+SELECT DISTINCT salary
+FROM ranked_salaries
+WHERE salary_rank = 3;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Given a table <code>trips (id, client_id, driver_id, city_id, status, request_at)</code>, write a query to compute the cancellation rate of requests with unbanned users (both client and driver must not be banned) each day between '2024-10-01' and '2024-10-03', rounded to 2 decimal places.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use WHERE to filter out banned users, and calculate SUM(status != 'completed') / COUNT(*).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">SELECT 
+    t.request_at AS day,
+    ROUND(
+        SUM(CASE WHEN t.status != 'completed' THEN 1.0 ELSE 0.0 END) / COUNT(*), 
+        2
+    ) AS cancellation_rate
+FROM trips t
+JOIN users c ON t.client_id = c.users_id AND c.banned = 'No'
+JOIN users d ON t.driver_id = d.users_id AND d.banned = 'No'
+WHERE t.request_at BETWEEN '2024-10-01' AND '2024-10-03'
+GROUP BY t.request_at
+ORDER BY t.request_at ASC;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="Because OFFSET simply skips one row without deduplication, it returns the tied 1st place record.">
+          <div class="quiz-question-text">1. Why does 'SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;' fail if the two highest earners both make $100,000?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It causes a syntax error</div><div class="quiz-option"><span>B)</span> It returns $100,000 (the tied 1st place person) instead of the true 2nd distinct highest salary</div><div class="quiz-option"><span>C)</span> LIMIT does not work with ORDER BY</div><div class="quiz-option"><span>D)</span> OFFSET is not allowed in interviews</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Partitioning by duplicate attributes with ROW_NUMBER() allows targeting exactly the excess rows (row_number > 1).">
+          <div class="quiz-question-text">2. How can you safely remove duplicate rows while keeping one copy?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> TRUNCATE TABLE</div><div class="quiz-option"><span>B)</span> Use ROW_NUMBER() partitioned by unique attributes and delete rows with row_number > 1</div><div class="quiz-option"><span>C)</span> DROP TABLE and recreate it</div><div class="quiz-option"><span>D)</span> Run an empty UPDATE statement</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="The top executive / CEO has manager_id = NULL. An INNER JOIN would drop the CEO from the organization chart.">
+          <div class="quiz-question-text">3. In a Self Join for employee-manager reporting, why should you use LEFT JOIN instead of INNER JOIN?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> LEFT JOIN is faster</div><div class="quiz-option"><span>B)</span> INNER JOIN would exclude the CEO (whose manager_id is NULL) from the output</div><div class="quiz-option"><span>C)</span> Self joins do not support INNER JOIN</div><div class="quiz-option"><span>D)</span> There is no difference</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Gaps and Islands is the classic SQL problem of detecting contiguous runs of events (streaks) or missing sequences.">
+          <div class="quiz-question-text">4. What is the Gaps and Islands problem in SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> A problem with tropical database servers</div><div class="quiz-option"><span>B)</span> Identifying sequences of consecutive rows (islands) and missing data ranges (gaps)</div><div class="quiz-option"><span>C)</span> A network timeout error</div><div class="quiz-option"><span>D)</span> An indexing algorithm</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Clarifying assumptions on edge cases (NULLs, ties, duplicates, scale) demonstrates senior engineering maturity.">
+          <div class="quiz-question-text">5. What is the very first thing you should do when given a SQL problem in a technical interview?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Immediately start typing code without speaking</div><div class="quiz-option"><span>B)</span> Ask clarifying questions about schema, NULL values, ties, and table volume</div><div class="quiz-option"><span>C)</span> Ask for the answer directly</div><div class="quiz-option"><span>D)</span> Complain about SQL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, change the query to find the 3rd highest salary by setting rnk = 3 and verify that 72,000 is returned!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../practice/index.html" class="ref-pill">Practice Hub</a><a href="../practice/interview-questions.html" class="ref-pill">50+ Interview Questions</a><a href="index.html" class="ref-pill">SQL Course Index</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="10-transactions-acid-normalization.html" class="btn btn-outline">&larr; 10. ACID & Normalization</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-11">Mark as Complete</button>
+          <a href="index.html" class="btn btn-primary">SQL Course Index & Exam &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Tags Encyclopedic Reference — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .ref-search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .ref-search-input {
+      flex: 1;
+      min-width: 260px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 15px;
+    }
+    .ref-category-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--c-html);
+      color: white;
+      border-color: var(--c-html);
+    }
+    .ref-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .ref-card:hover {
+      border-color: var(--c-html);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+    .ref-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+    .ref-tag-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-html);
+      font-family: var(--font-code);
+    }
+    .ref-badges {
+      display: flex;
+      gap: 6px;
+    }
+    .ref-meta-row {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .ref-meta-item strong {
+      color: var(--text-main);
+    }
+    .ref-attr-table {
+      width: 100%;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body data-course="reference" data-current-lesson="html-tags-reference.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Reference Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">&#128218; Built-in Reference</span>
+            <span class="reading-time">&#128338; Complete Encyclopedia</span>
+          </div>
+          <h1 class="lesson-title">HTML5 Elements &amp; Tags Reference</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">The complete offline dictionary of standard HTML5 elements. Search and filter across document structures, forms, multimedia, tables, and semantics.</span>
+            <span class="lang-hi">HTML5 ke sabhi tags ki complete offline dictionary. Search aur filter karein, syntax dekhein aur copy karein.</span>
+          </p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="ref-search-bar">
+          <input type="text" id="tag-search" class="ref-search-input" placeholder="&#128269; Search any tag (e.g. video, button, table, form)..." oninput="filterTags()">
+        </div>
+
+        <div class="ref-category-filters">
+          <button class="filter-btn active" onclick="setCategory('all', this)">All Tags</button>
+          <button class="filter-btn" onclick="setCategory('structure', this)">Document Structure</button>
+          <button class="filter-btn" onclick="setCategory('text', this)">Text &amp; Headings</button>
+          <button class="filter-btn" onclick="setCategory('links', this)">Links &amp; Nav</button>
+          <button class="filter-btn" onclick="setCategory('media', this)">Media &amp; Embeds</button>
+          <button class="filter-btn" onclick="setCategory('forms', this)">Forms &amp; Inputs</button>
+          <button class="filter-btn" onclick="setCategory('tables', this)">Tables</button>
+          <button class="filter-btn" onclick="setCategory('interactive', this)">Interactive</button>
+        </div>
+
+        <div id="tag-count" style="margin-bottom:16px; font-size:14px; color:var(--text-muted); font-weight:600;">Showing 55 HTML5 elements</div>
+
+        <!-- Tag Reference Cards Container -->
+        <div id="tags-container">
+
+          <!-- 1. <!DOCTYPE html> -->
+          <div class="ref-card" data-category="structure" data-tag="!doctype doctype">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;!DOCTYPE html&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Declaration</span>
+                <span class="badge">Structure</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Tells the web browser that the document is written in modern HTML5. Must appear at the very first line of every HTML file before anything else to prevent legacy "quirks mode".</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Closing:</strong> None (Prolog)</span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/01-introduction-structure.html">HTML Intro &amp; Structure</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;!-- Page contents --&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 2. <html> -->
+          <div class="ref-card" data-category="structure" data-tag="html root">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;html&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Root</span>
+                <span class="badge">Structure</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> The root element of an HTML page. Every other tag in the document (except the DOCTYPE declaration) is a child or descendant of this element.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Closing:</strong> Required (<code>&lt;/html&gt;</code>)</span>
+              <span class="ref-meta-item"><strong>Essential Attributes:</strong> <code>lang="en"</code> (specifies natural language for screen readers and SEO).</span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;html lang="en" dir="ltr"&gt;
+  &lt;head&gt;...&lt;/head&gt;
+  &lt;body&gt;...&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 3. <head> -->
+          <div class="ref-card" data-category="structure" data-tag="head metadata">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;head&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Metadata</span>
+                <span class="badge">Structure</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Container for metadata (information about the document that is not directly rendered on the screen) such as the page title, character set, stylesheets, and meta viewport settings.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/12-meta-tags-seo.html">12. Meta Tags &amp; SEO</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Awesome Website&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 4. <body> -->
+          <div class="ref-card" data-category="structure" data-tag="body visible content">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;body&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Visible Body</span>
+                <span class="badge">Structure</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Represents the entire visible content of an HTML document. There can only be one <code>&lt;body&gt;</code> element per document.</p>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;body&gt;
+  &lt;header&gt;&lt;h1&gt;Welcome&lt;/h1&gt;&lt;/header&gt;
+  &lt;main&gt;&lt;p&gt;Visible text on screen.&lt;/p&gt;&lt;/main&gt;
+  &lt;footer&gt;&copy; 2026&lt;/footer&gt;
+&lt;/body&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 5. <h1> - <h6> -->
+          <div class="ref-card" data-category="text" data-tag="h1 h2 h3 h4 h5 h6 heading">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;h1&gt; through &lt;h6&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Block Element</span>
+                <span class="badge">Text</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Heading levels representing structural hierarchy, with <code>&lt;h1&gt;</code> as the main topic and <code>&lt;h6&gt;</code> as the lowest sub-heading. Always use exactly one <code>&lt;h1&gt;</code> per page for SEO and accessibility.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/03-headings-paragraphs-text-formatting.html">03. Headings &amp; Text</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;h1&gt;Main Document Heading&lt;/h1&gt;
+&lt;h2&gt;Major Section Heading&lt;/h2&gt;
+&lt;h3&gt;Sub-section Heading&lt;/h3&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 6. <p> -->
+          <div class="ref-card" data-category="text" data-tag="p paragraph text">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;p&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Block Element</span>
+                <span class="badge">Text</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Represents a paragraph of text. Browsers automatically add vertical margin before and after paragraphs.</p>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;p&gt;This is a clear, readable paragraph of body text.&lt;/p&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 7. <a> -->
+          <div class="ref-card" data-category="links" data-tag="a anchor link href navigation">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;a&gt; (Anchor)</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Inline Element</span>
+                <span class="badge">Navigation</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Creates a hyperlink to web pages, files, email addresses (<code>mailto:</code>), telephone numbers (<code>tel:</code>), or locations within the same page (<code>#hash</code>).</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Key Attributes:</strong> <code>href</code> (destination URL), <code>target="_blank"</code> (open new tab), <code>rel="noopener noreferrer"</code> (security).</span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/04-links-and-navigation.html">04. Links &amp; Navigation</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;a href="about.html"&gt;Visit About Page&lt;/a&gt;
+&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;External Site&lt;/a&gt;
+&lt;a href="#contact-section"&gt;Jump to Contact Section&lt;/a&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 8. <img> -->
+          <div class="ref-card" data-category="media" data-tag="img image src alt picture">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;img&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Void / Self-Closing</span>
+                <span class="badge">Media</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Embeds an image into the document. Mandatory <code>alt</code> attribute provides descriptive text for screen readers and search engines.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Key Attributes:</strong> <code>src</code> (path), <code>alt</code> (text description), <code>loading="lazy"</code> (performance), <code>width</code>, <code>height</code>.</span>
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/05-images-and-figures.html">05. Images &amp; Figures</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;img src="images/sunset.jpg" alt="Vibrant golden sunset over calm ocean waves" width="800" height="450" loading="lazy"&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 9. <ul>, <ol>, <li> -->
+          <div class="ref-card" data-category="text" data-tag="ul ol li list bulleted numbered">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; (Lists)</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Block Elements</span>
+                <span class="badge">Lists</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> <code>&lt;ul&gt;</code> creates an unordered (bulleted) list. <code>&lt;ol&gt;</code> creates an ordered (numbered) list. <code>&lt;li&gt;</code> defines individual list items inside either list.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/06-lists.html">06. Lists &amp; Navigation Bars</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;ul&gt;
+  &lt;li&gt;HTML5 Fundamentals&lt;/li&gt;
+  &lt;li&gt;CSS3 Modern Styling&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol start="1"&gt;
+  &lt;li&gt;Install code editor&lt;/li&gt;
+  &lt;li&gt;Write index.html&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 10. <table>, <tr>, <th>, <td> -->
+          <div class="ref-card" data-category="tables" data-tag="table tr th td thead tbody tfoot">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;table&gt; Suite</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Tabular Data</span>
+                <span class="badge">Tables</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Renders two-dimensional tabular data. Structured with <code>&lt;thead&gt;</code> (headers), <code>&lt;tbody&gt;</code> (data rows), <code>&lt;tr&gt;</code> (row), <code>&lt;th&gt;</code> (header cell), and <code>&lt;td&gt;</code> (data cell).</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/07-tables.html">07. Tables &amp; Data Grids</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;Product&lt;/th&gt;&lt;th&gt;Price&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Wireless Mouse&lt;/td&gt;&lt;td&gt;&#36;25&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 11. <form>, <input>, <button> -->
+          <div class="ref-card" data-category="forms" data-tag="form input button label select textarea">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;form&gt; &amp; Input Controls</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Interactive Form</span>
+                <span class="badge">Forms</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Collects user data. <code>&lt;form&gt;</code> encapsulates inputs and coordinates submission. <code>&lt;input&gt;</code> provides text, email, number, checkbox, radio, file, and submit controls. Always pair with <code>&lt;label for="..."&gt;</code>.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lessons:</strong> <a href="../html/08-forms-and-inputs.html">08. Forms</a> &bull; <a href="../html/09-form-validation.html">09. Validation</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;form action="/submit" method="POST"&gt;
+  &lt;label for="username"&gt;Username:&lt;/label&gt;
+  &lt;input type="text" id="username" name="user" required minlength="3"&gt;
+
+  &lt;button type="submit"&gt;Save Account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 12. Semantic Layout Elements -->
+          <div class="ref-card" data-category="structure" data-tag="header nav main section article aside footer semantic">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">Semantic Layout Landmarks</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Semantic HTML5</span>
+                <span class="badge">Structure</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Replaces generic <code>&lt;div&gt;</code> tags with descriptive, accessible landmark containers: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, and <code>&lt;footer&gt;</code>.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/10-semantic-html.html">10. Semantic HTML</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;header&gt;Site Banner&lt;/header&gt;
+&lt;nav&gt;Main Navigation&lt;/nav&gt;
+&lt;main&gt;
+  &lt;article&gt;Independent Article Content&lt;/article&gt;
+  &lt;aside&gt;Sidebar Notes&lt;/aside&gt;
+&lt;/main&gt;
+&lt;footer&gt;Footer Information&lt;/footer&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 13. <video>, <audio>, <iframe> -->
+          <div class="ref-card" data-category="media" data-tag="video audio iframe embed media">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;video&gt;, &lt;audio&gt;, &lt;iframe&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Embedded Media</span>
+                <span class="badge">Media</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Native multimedia playback without plugins. <code>&lt;video&gt;</code> and <code>&lt;audio&gt;</code> support controls, autoplay, and looping. <code>&lt;iframe&gt;</code> embeds another HTML page within the current document.</p>
+            <div class="ref-meta-row">
+              <span class="ref-meta-item"><strong>Related Lesson:</strong> <a href="../html/11-audio-video-iframe.html">11. Audio, Video &amp; iFrames</a></span>
+            </div>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;video controls poster="preview.jpg" width="640"&gt;
+  &lt;source src="movie.mp4" type="video/mp4"&gt;
+  Your browser does not support video playback.
+&lt;/video&gt;
+
+&lt;iframe srcdoc="&lt;h1&gt;Embedded Content&lt;/h1&gt;" sandbox="allow-scripts"&gt;&lt;/iframe&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 14. <details> and <summary> -->
+          <div class="ref-card" data-category="interactive" data-tag="details summary accordion collapsible disclosure">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;details&gt; &amp; &lt;summary&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Native Accordion</span>
+                <span class="badge">Interactive</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Creates a native toggle disclosure widget without requiring any JavaScript! The contents are hidden until the user clicks the <code>&lt;summary&gt;</code> bar.</p>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;details&gt;
+  &lt;summary&gt;Click to expand FAQ Answer&lt;/summary&gt;
+  &lt;p&gt;This hidden content reveals smoothly on click!&lt;/p&gt;
+&lt;/details&gt;</code></pre>
+            </div>
+          </div>
+
+          <!-- 15. <dialog> -->
+          <div class="ref-card" data-category="interactive" data-tag="dialog modal popup window">
+            <div class="ref-card-header">
+              <span class="ref-tag-title">&lt;dialog&gt;</span>
+              <div class="ref-badges">
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">Native Modal</span>
+                <span class="badge">Interactive</span>
+              </div>
+            </div>
+            <p><strong>Purpose:</strong> Represents a native modal or popup dialog. Provides built-in backdrop styling (<code>::backdrop</code>) and JavaScript methods <code>dialog.showModal()</code> and <code>dialog.close()</code> with automatic Escape key handling.</p>
+            <div class="code-block-container">
+              <div class="code-block-header"><span class="code-lang">HTML</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+              <pre class="code-block" data-lang="html"><code>&lt;dialog id="my-modal"&gt;
+  &lt;h3&gt;Confirm Action&lt;/h3&gt;
+  &lt;p&gt;Are you sure you want to proceed?&lt;/p&gt;
+  &lt;button onclick="document.getElementById('my-modal').close()"&gt;Close&lt;/button&gt;
+&lt;/dialog&gt;</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="../html/index.html" class="nav-btn prev-btn">&larr; HTML Course Hub</a>
+          <a href="css-properties-reference.html" class="nav-btn next-btn">CSS Properties Reference &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    let activeCategory = 'all';
+
+    function setCategory(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterTags();
+    }
+
+    function filterTags() {
+      const q = document.getElementById('tag-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.ref-card');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const tags = card.getAttribute('data-tag') || '';
+        const title = card.querySelector('.ref-tag-title').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+
+        const matchCat = (activeCategory === 'all' || cat === activeCategory);
+        const matchSearch = (!q || title.includes(q) || desc.includes(q) || tags.includes(q));
+
+        if (matchCat && matchSearch) {
+          card.style.display = 'block';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('tag-count').textContent = `Showing ${visible} HTML elements`;
+    }
+  </script>
+</body>
+</html>

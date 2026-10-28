@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>OOP Inheritance, Polymorphism, super() & Abstract Base Classes — WebDev Academy</title>
+  <meta name="description" content="Master advanced Object-Oriented design in Python. Learn single and multiple inheritance, the super() proxy, Method Resolution Order (MRO) with C3 Linearization, polymorphism, Duck Typing, and Abstract Base Classes (abc.ABC).">
+  <meta name="keywords" content="Python inheritance, super() Python, multiple inheritance, MRO C3 linearization, polymorphism Python, duck typing, abstract base classes abc ABC">
+  <meta property="og:title" content="OOP Inheritance, Polymorphism, super() & Abstract Base Classes">
+  <meta property="og:description" content="Master advanced Object-Oriented design in Python. Learn single and multiple inheritance, the super() proxy, Method Resolution Order (MRO) with C3 Linearization, polymorphism, Duck Typing, and Abstract Base Classes (abc.ABC).">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="10-oop-inheritance-polymorphism.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 19 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 10</span>
+          </div>
+          <h1 class="lesson-title">OOP Inheritance, Polymorphism, super() & Abstract Base Classes</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master advanced Object-Oriented design in Python. Learn single and multiple inheritance, the super() proxy, Method Resolution Order (MRO) with C3 Linearization, polymorphism, Duck Typing, and Abstract Base Classes (abc.ABC).</span>
+            <span class="lang-hi">OOP Inheritance aur Polymorphism seekhein: super() ka use, Multiple Inheritance aur MRO (Method Resolution Order), Duck Typing aur Abstract Base Classes (ABCs).</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Single inheritance: Deriving child subclasses from parent base classes.</li><li>The super() proxy: Calling parent constructors and methods without hardcoding names.</li><li>Multiple Inheritance: Combining multiple parent classes and the 'Diamond Problem'.</li><li>Method Resolution Order (MRO) and Python's C3 Linearization algorithm.</li><li>Polymorphism and Python's famous 'Duck Typing' philosophy: 'If it walks like a duck...'</li><li>Abstract Base Classes (ABCs) with abc.ABC and @abstractmethod to enforce strict interfaces.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 09: OOP: Classes, Objects & Encapsulation.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of biological evolution. <strong>Parent Class is a generic 'Bird'</strong>: it defines that all birds have feathers, lay eggs, and have a makeSound() method. <strong>A Subclass 'Duck' inherits all bird traits</strong> but overrides makeSound() to say 'Quack!'. <strong>A Subclass 'Crow' overrides makeSound() to say 'Caw!'</strong>. <strong>Polymorphism is walking into a bird sanctuary</strong>: you can point to any bird in a cage and say 'Sing!' &mdash; you don't care if it's a Duck or a Crow; each bird knows how to respond in its own unique voice! <strong>Duck Typing means</strong>: 'If it walks like a duck and quacks like a duck, it's a duck!' &mdash; Python doesn't demand to see an official birth certificate as long as the object has the required method!</span>
+            <span class="lang-hi">Animals ki misaal lein: <strong>Parent Class ek 'Animal' hai</strong> jisme sound() method hai. <strong>Child Class 'Dog' inherit karti hai</strong> aur sound ko 'Bark' kar deti hai, jabki 'Cat' use 'Meow' kar deti hai. <strong>Polymorphism yeh hai</strong> ki aap bina soche kisi bhi animal ko 'make_sound()' bol sakte ho aur wo apna kaam karega. <strong>Duck Typing ka matlab hai</strong>: Python yeh nahi poochta ki tumhara official caste ya type kya hai; agar tumhare paas kaam karne wala method hai, toh Python khushi se run kar dega!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is Method Resolution Order (MRO)?</strong> The deterministic order in which Python searches for methods and attributes in a class hierarchy, especially during multiple inheritance. Python uses the <strong>C3 Linearization algorithm</strong> (accessible via <code>ClassName.__mro__</code> or <code>ClassName.mro()</code>).</li><li><strong>How does super() work?</strong> <code>super()</code> returns a proxy object that delegates method calls to the next class in the MRO chain, ensuring that parent initializers are called cooperatively without duplicate executions.</li><li><strong>What is Duck Typing?</strong> 'If it walks like a duck and quacks like a duck, it's a duck.' Python checks for the presence of methods and behaviors at runtime, rather than requiring rigid type casting or explicit interface declarations.</li><li><strong>What is an Abstract Base Class (ABC)?</strong> A class that cannot be instantiated directly and serves as a formal contract. Any subclass MUST implement all methods decorated with <code>@abstractmethod</code>, or Python will raise a <code>TypeError</code> at instantiation time.</li><li><strong>Composition over Inheritance:</strong> Senior software design principle: prefer building complex objects by combining independent components ('has-a' relationship) rather than creating deeply nested inheritance trees ('is-a' relationship).</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. Single Inheritance & The super() Proxy</h2>
+        <p><strong>Inheritance</strong> allows a new class (subclass/child) to inherit attributes and methods from an existing class (base/parent), promoting code reuse and establishing 'is-a' relationships.</p>
+        <p>When overriding a parent method, <code>super()</code> delegates execution to the parent class implementation, ensuring foundational state is initialized correctly.</p>
+        
+        <h2>2. Multiple Inheritance & The Diamond Problem (MRO)</h2>
+        <p>Unlike Java, Python natively supports <strong>Multiple Inheritance</strong>: a class can inherit from two or more parent classes simultaneously.</p>
+        <p>To resolve the famous 'Diamond Problem' (where class D inherits from B and C, which both inherit from A), Python uses the mathematical <strong>C3 Linearization</strong> algorithm to establish a predictable Method Resolution Order (MRO).</p>
+        
+        <h2>3. Duck Typing & Abstract Base Classes (ABCs)</h2>
+        <p>Python is fundamentally dynamic. <strong>Polymorphism</strong> in Python is expressed through <strong>Duck Typing</strong>: code doesn't care about an object's explicit class, only whether it has the required methods.</p>
+        <p>When building enterprise frameworks where strict contracts are required, the standard library <code>abc</code> module provides <code>ABC</code> and <code>@abstractmethod</code> to enforce implementations at compile/instantiation time.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Single Inheritance and super() Constructor Delegation</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Employee:
+    def __init__(self, name: str, employee_id: int, base_salary: float) -&gt; None:
+        self.name = name
+        self.employee_id = employee_id
+        self.base_salary = base_salary
+
+    def calculate_pay(self) -&gt; float:
+        return self.base_salary
+
+# Manager inherits from Employee (Manager IS AN Employee)
+class Manager(Employee):
+    def __init__(self, name: str, employee_id: int, base_salary: float, bonus: float) -&gt; None:
+        # Call parent constructor using super()
+        super().__init__(name, employee_id, base_salary)
+        self.bonus = bonus
+
+    # Override parent method to include management bonus
+    def calculate_pay(self) -&gt; float:
+        return super().calculate_pay() + self.bonus
+
+m = Manager('Priya Verma', 101, 95000.0, 20000.0)
+print(f'{m.name} Total Pay: ${m.calculate_pay():.2f}')  # $115,000.00</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>super().__init__()</code> ensures parent attributes are initialized before child-specific attributes are added.
+        </div>
+        
+        <h3>Code Example 2: Multiple Inheritance and Inspecting the MRO Chain</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Loggable:
+    def log(self, msg: str) -&gt; None:
+        print(f'[AUDIT LOG]: {msg}')
+
+class Serializable:
+    def to_dict(self) -&gt; dict:
+        return self.__dict__
+
+# UserEntity inherits from TWO parent classes simultaneously
+class UserEntity(Loggable, Serializable):
+    def __init__(self, username: str, role: str) -&gt; None:
+        self.username = username
+        self.role = role
+
+u = UserEntity('aarav_dev', 'admin')
+u.log('User signed in')
+print(f'Serialized Dictionary: {u.to_dict()}')
+
+# Inspect the Method Resolution Order (MRO)
+print(f'MRO Chain: {[cls.__name__ for cls in UserEntity.__mro__]}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>UserEntity.__mro__</code> reveals the exact sequence Python uses to locate methods across parent classes.
+        </div>
+        
+        <h3>Code Example 3: Polymorphism in Action: Processing Heterogeneous Objects</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class StripeGateway:
+    def process_payment(self, amount: float) -&gt; str:
+        return f'Stripe: Processed card payment of ${amount:.2f}'
+
+class PayPalGateway:
+    def process_payment(self, amount: float) -&gt; str:
+        return f'PayPal: Redirected user for checkout of ${amount:.2f}'
+
+class CryptoGateway:
+    def process_payment(self, amount: float) -&gt; str:
+        return f'Crypto: Broadcasted transfer of ${amount:.2f} to blockchain'
+
+# Polymorphic checkout processor: Works on ANY gateway with .process_payment()!
+def execute_checkout(gateway, amount: float) -&gt; None:
+    print(gateway.process_payment(amount))
+
+gateways = [StripeGateway(), PayPalGateway(), CryptoGateway()]
+for gw in gateways:
+    execute_checkout(gw, 150.00)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>execute_checkout</code> demonstrates Duck Typing: it doesn't care what class the gateway belongs to, as long as it has a <code>process_payment()</code> method!
+        </div>
+        
+        <h3>Code Example 4: Abstract Base Classes (ABCs) Enforcing Contracts</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">from abc import ABC, abstractmethod
+
+class DatabaseConnector(ABC):
+    """Abstract base interface: cannot be instantiated directly."""
+
+    @abstractmethod
+    def connect(self) -&gt; None:
+        pass
+
+    @abstractmethod
+    def execute_query(self, query: str) -&gt; list:
+        pass
+
+class PostgresConnector(DatabaseConnector):
+    def connect(self) -&gt; None:
+        print('Connected to PostgreSQL on port 5432')
+
+    def execute_query(self, query: str) -&gt; list:
+        return [{'status': 'success', 'query': query}]
+
+# Instantiating concrete subclass works:
+pg = PostgresConnector()
+pg.connect()
+
+# Trying to instantiate abstract class raises TypeError!
+try:
+    invalid = DatabaseConnector()
+except TypeError as err:
+    print(f'Caught ABC enforcement: {err}')</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Abstract Base Classes guarantee that all subclasses implement required architectural interfaces.
+        </div>
+        
+        <h3>Code Example 5: Checking Types with isinstance() and issubclass()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">print(f'Is Manager an Employee subclass? {issubclass(Manager, Employee)}')  # True
+print(f'Is m an instance of Employee? {isinstance(m, Employee)}')             # True
+print(f'Is m an instance of object? {isinstance(m, object)}')                 # True (All classes inherit from object!)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • In Python, every class ultimately inherits from the root <code>object</code> base class.
+        </div>
+        
+        <h3>Code Example 6: Composition Over Inheritance (The Pro Pattern)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">class Engine:
+    def start(self) -&gt; str:
+        return 'V8 Engine roaring to life!'
+
+class GPS:
+    def navigate(self) -&gt; str:
+        return 'GPS: Route plotted to destination.'
+
+# Car HAS AN Engine and HAS A GPS (Composition)
+class Car:
+    def __init__(self) -&gt; None:
+        self.engine = Engine()
+        self.gps = GPS()
+
+    def drive(self) -&gt; None:
+        print(self.engine.start())
+        print(self.gps.navigate())
+        print('Car is rolling forward smoothly.')
+
+c = Car()
+c.drive()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Composition decouples classes and avoids rigid, fragile inheritance hierarchies.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: OOP Inheritance, Polymorphism, super() & Abstract Base Classes</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive Inheritance Sandbox
+class Vehicle:
+    def __init__(self, brand: str):
+        self.brand = brand
+    def description(self):
+        return f'Vehicle brand: {self.brand}'
+
+class ElectricCar(Vehicle):
+    def __init__(self, brand: str, battery_kwh: int):
+        super().__init__(brand)
+        self.battery_kwh = battery_kwh
+    def description(self):
+        return f'{super().description()} with {self.battery_kwh}kWh Battery'
+
+ev = ElectricCar('Tesla Model 3', 75)
+print(ev.description())</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Hardcoding parent class names instead of using super():</strong> Writing <code>Employee.__init__(self, ...)</code> breaks cooperative multiple inheritance. Always use <code>super().__init__(...)</code>.</li><li><strong>Creating deep, fragile inheritance trees:</strong> Hierarchies 5 or 6 levels deep become impossible to maintain. Favour composition over deep inheritance.</li><li><strong>Forgetting to implement abstract methods:</strong> Forgetting even one <code>@abstractmethod</code> in a subclass prevents that subclass from being instantiated.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Check MRO before debugging multiple inheritance:</strong> Always print <code>ClassName.__mro__</code> if a method call in multiple inheritance behaves unexpectedly.</li><li><strong>Use Mixins for reusable behavior:</strong> Mixin classes (like <code>JsonMixin</code> or <code>LoggingMixin</code>) provide small chunks of modular functionality without complex state.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>Inheritance promotes code reuse via 'is-a' relationships.</li><li>super() delegates to parent classes via the Method Resolution Order (MRO).</li><li>MRO is calculated using the C3 Linearization algorithm.</li><li>Duck Typing checks behavior rather than explicit class type.</li><li>Abstract Base Classes (abc.ABC) enforce interface contracts at instantiation.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Create a base class <code>Animal</code> with a method <code>speak()</code>. Create two subclasses <code>Dog</code> and <code>Cat</code> that override <code>speak()</code> to return 'Woof!' and 'Meow!' respectively.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Define class Dog(Animal): def speak(self): return 'Woof!'.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">class Animal:
+    def speak(self):
+        return 'Some generic sound'
+
+class Dog(Animal):
+    def speak(self):
+        return 'Woof!'
+
+class Cat(Animal):
+    def speak(self):
+        return 'Meow!'
+
+print(Dog().speak())  # Woof!
+print(Cat().speak())  # Meow!</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write an Abstract Base Class <code>PaymentProcessor(ABC)</code> with an abstract method <code>pay(amount: float)</code>. Implement a concrete subclass <code>CardPayment</code> that prints the charged amount.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Import ABC and @abstractmethod from abc.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">from abc import ABC, abstractmethod
+
+class PaymentProcessor(ABC):
+    @abstractmethod
+    def pay(self, amount: float):
+        pass
+
+class CardPayment(PaymentProcessor):
+    def pay(self, amount: float):
+        print(f'Charged ${amount:.2f} to credit card.')
+
+CardPayment().pay(99.00)</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the 'Diamond Problem' in Multiple Inheritance and how Python resolves it using C3 Linearization.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Show class A, B(A), C(A), D(B, C) and explain D.__mro__.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># Diamond Problem: Class D inherits from B and C, which both inherit from A.
+# If both B and C override a method from A, which one should D execute?
+# Python solves this deterministically using the C3 Linearization algorithm:
+# D.__mro__ will be: (D, B, C, A, object).
+# Python searches D first, then B, then C, and finally A, avoiding duplicate calls.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>super()</code> delegates method calls to the next class in the Method Resolution Order.">
+          <div class="quiz-question-text">1. What does the super() function do in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Grants superuser administrator permissions to the computer</div><div class="quiz-option"><span>B)</span> Returns a proxy object that delegates method calls to parent classes along the MRO chain</div><div class="quiz-option"><span>C)</span> Deletes child classes</div><div class="quiz-option"><span>D)</span> Restarts the script</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Python uses the C3 Linearization algorithm to determine method resolution in multiple inheritance.">
+          <div class="quiz-question-text">2. What algorithm does Python use to calculate Method Resolution Order (MRO)?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Dijkstra Algorithm</div><div class="quiz-option"><span>B)</span> C3 Linearization</div><div class="quiz-option"><span>C)</span> Binary Search</div><div class="quiz-option"><span>D)</span> Quicksort</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="'If it walks like a duck and quacks like a duck, it's a duck' &mdash; type compatibility is determined by methods present, not rigid class hierarchies.">
+          <div class="quiz-question-text">3. What is the core idea of 'Duck Typing' in Python?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> All classes must inherit from Animal</div><div class="quiz-option"><span>B)</span> If an object has the required methods and behaviors, Python accepts it regardless of its explicit class</div><div class="quiz-option"><span>C)</span> Writing code about birds</div><div class="quiz-option"><span>D)</span> Only using functional programming</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Subclasses cannot be instantiated until all inherited abstract methods are implemented.">
+          <div class="quiz-question-text">4. What happens if a subclass forgets to implement an @abstractmethod from an Abstract Base Class?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It works without errors</div><div class="quiz-option"><span>B)</span> Python raises a TypeError when attempting to instantiate the subclass</div><div class="quiz-option"><span>C)</span> The program crashes at import time</div><div class="quiz-option"><span>D)</span> Python writes the method automatically</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="In Python 3, all classes implicitly inherit from <code>object</code>.">
+          <div class="quiz-question-text">5. What is the root base class of all classes in Python 3?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> BaseClass</div><div class="quiz-option"><span>B)</span> object</div><div class="quiz-option"><span>C)</span> type</div><div class="quiz-option"><span>D)</span> None</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, create a Truck class inheriting from Vehicle with a cargo_capacity attribute, and print its description!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#inheritance" class="ref-pill">Glossary: Inheritance</a><a href="../reference/glossary.html#polymorphism" class="ref-pill">Glossary: Polymorphism</a><a href="11-error-handling-and-files.html" class="ref-pill">Lesson 11: Error Handling & Files</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="09-oop-classes-objects.html" class="btn btn-outline">&larr; 09. OOP: Classes & Objects</a>
+          <button class="mark-complete-btn" data-lesson-id="python-10">Mark as Complete</button>
+          <a href="11-error-handling-and-files.html" class="btn btn-primary">11. Error Handling & Files &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

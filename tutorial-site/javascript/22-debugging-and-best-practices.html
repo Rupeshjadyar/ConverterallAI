@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Debugging &amp; Best Practices — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="22-debugging-and-best-practices.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 22 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 22</span>
+          </div>
+          <h1 class="lesson-title">Debugging, Performance &amp; Clean Code Best Practices</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Graduate from print debugging. Master Chrome DevTools breakpoints, execution stepping, memory leak prevention, throttling, debouncing, and architectural design principles.</span>
+            <span class="lang-hi">Professional developer banne ki skills: Browser DevTools breakpoints, memory leak prevention, debounce aur throttle patterns, aur clean code principles.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Beyond <code>console.log</code>: Using <code>console.table()</code>, <code>console.time()</code>, <code>console.group()</code>, and <code>console.assert()</code>.</li>
+            <li>The <code>debugger;</code> statement and Chrome DevTools Sources panel.</li>
+            <li>Breakpoint mastery: Line breakpoints, Conditional breakpoints, and DOM mutation breakpoints.</li>
+            <li>Stepping through code: Step Over (F10), Step Into (F11), and Step Out (Shift+F11).</li>
+            <li>High-frequency event optimization: Implementing <strong>Debounce</strong> and <strong>Throttle</strong> from scratch.</li>
+            <li>Memory management: Detecting and resolving JavaScript memory leaks and detached DOM trees.</li>
+            <li>Clean Code standards: Single responsibility, pure functions, eliminating magic constants.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="13-events-and-event-delegation.html">13. Events</a> and <a href="17-error-handling.html">17. Error Handling</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Stethoscope vs The MRI Scanner</div>
+          <p>
+            <span class="lang-en">Imagine diagnosing a car or human body:
+            <br>&bull; <strong>Console.log Debugging (The Stethoscope):</strong> You tap on random parts, listen to faint noises, and print little notes. You have to edit the source code, reload, hope you guessed the right variable, and clutter your codebase with throwaway logs.
+            <br>&bull; <strong>DevTools Debugger (The High-Resolution MRI Scanner):</strong> You freeze time in the exact microsecond a calculation happens. You step backward and forward, inspect every in-memory variable in the scope tree, hover over values, and change state on the fly without changing a single line of permanent code!</span>
+            <span class="lang-hi">Stethoscope vs MRI scanner ki tarah samjhein: <code>console.log</code> se aap andaza lagate hain aur code kharab karte hain. Browser ka DevTools debugger ek MRI machine hai jo code ko pause karke har variable ki live value screen par dikha deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <section id="advanced-console">
+          <h2>1. Professional Console Superpowers</h2>
+          <p>
+            <span class="lang-en">The browser <code>console</code> object contains far more than just <code>.log()</code>. Professional engineers use structured logging tools to inspect data cleanly:</span>
+            <span class="lang-hi">Browser console me <code>console.log</code> ke alawa bohot saare powerful methods hote hain:</span>
+          </p>
+
+          <!-- Code Example 1 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Advanced Console Methods</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>const team = [
+  { id: 101, name: "Priya", role: "Frontend Lead", score: 98 },
+  { id: 102, name: "Alex", role: "DevOps Engineer", score: 91 },
+  { id: 103, name: "Kavita", role: "Product Designer", score: 95 }
+];
+
+// 1. console.table(): Renders tabular data with sortable columns!
+console.table(team);
+
+// 2. Performance benchmarking with console.time() and console.timeEnd()
+console.time("ArraySortingTimer");
+const sorted = [...team].sort((a, b) => b.score - a.score);
+console.timeEnd("ArraySortingTimer"); // Outputs: "ArraySortingTimer: 0.124ms"
+
+// 3. Collapsible hierarchical grouping
+console.group("User Authentication Flow");
+console.log("Validating email syntax...");
+console.log("Verifying password hash...");
+console.groupCollapsed("Database Lookup Details");
+console.log("Connection pool: Active (4)");
+console.log("Query latency: 12ms");
+console.groupEnd();
+console.log("Authentication successful!");
+console.groupEnd();
+
+// 4. Assertion: Logs an error ONLY if the condition is false!
+const currentCartTotal = -10;
+console.assert(currentCartTotal >= 0, "Cart total cannot be negative! Received:", currentCartTotal);</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="devtools-breakpoints">
+          <h2>2. The Sources Panel &amp; Breakpoint Mastery</h2>
+          <p>
+            <span class="lang-en">To access the debugger, press <strong>F12</strong> (or right-click &rarr; Inspect) and switch to the <strong>Sources</strong> tab. You can click on any line number in your JavaScript file to drop a <strong>Breakpoint</strong>:</span>
+            <span class="lang-hi">F12 dabakar <strong>Sources</strong> tab me jayein. Kisi bhi line number par click karke aap Breakpoint laga sakte hain. Jab code wahan pahuchega, browser execution pause kar dega:</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Debugger Shortcut</th>
+                  <th>Action Name</th>
+                  <th>What It Does</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>F8</code> (or Ctrl+\)</td>
+                  <td><strong>Resume</strong></td>
+                  <td>Unpauses execution until the next breakpoint is hit.</td>
+                </tr>
+                <tr>
+                  <td><code>F10</code></td>
+                  <td><strong>Step Over</strong></td>
+                  <td>Executes the current line and pauses on the very next line in the current function.</td>
+                </tr>
+                <tr>
+                  <td><code>F11</code></td>
+                  <td><strong>Step Into</strong></td>
+                  <td>Steps inside the function being called on the current line to debug its internal statements.</td>
+                </tr>
+                <tr>
+                  <td><code>Shift + F11</code></td>
+                  <td><strong>Step Out</strong></td>
+                  <td>Finishes executing the rest of the current function and pauses immediately in the caller function.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Example 2 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — The Native `debugger;` Statement</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>function calculateDiscountedPrice(cart, discountPercent) {
+  let subtotal = 0;
+
+  for (let i = 0; i < cart.length; i++) {
+    const item = cart[i];
+
+    // The 'debugger;' statement automatically triggers a breakpoint
+    // whenever DevTools is open in the browser!
+    if (item.price <= 0) {
+      debugger; // Pauses right here so you can inspect why an item is free or negative!
+    }
+
+    subtotal += item.price * item.quantity;
+  }
+
+  const finalPrice = subtotal - (subtotal * (discountPercent / 100));
+  return finalPrice;
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="debounce-throttle">
+          <h2>3. High-Frequency Events: Debounce vs Throttle</h2>
+          <p>
+            <span class="lang-en">Events like <code>window.scroll</code>, <code>window.resize</code>, and <code>input</code> (search autocomplete) can fire hundreds of times per second. Running complex calculations or network calls on every single pixel of scroll destroys browser frame rates. We solve this using two battle-tested design patterns:</span>
+            <span class="lang-hi">Scroll, resize aur search input jaise events ek second me 100 baar chal sakte hain. Isse site hang ho sakti hai. Isko optimize karne ke liye do patterns use hote hain: <strong>Debounce</strong> aur <strong>Throttle</strong>:</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Core Behavior</th>
+                  <th>Best Real-World Analogy</th>
+                  <th>Primary Use Case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Debounce</strong></td>
+                  <td>Waits for the user to <em>stop</em> firing the event for X milliseconds before running.</td>
+                  <td>An elevator door: Stays open if people keep stepping in; only moves when everyone stops entering for 5 seconds.</td>
+                  <td>Search autocomplete inputs, auto-saving form drafts, window resize layout recalculation.</td>
+                </tr>
+                <tr>
+                  <td><strong>Throttle</strong></td>
+                  <td>Guarantees the function runs at most <em>once every X milliseconds</em>, regardless of how often it is triggered.</td>
+                  <td>A machine gun fire rate: Even if you hold down the trigger continuously, it discharges bullets at fixed intervals.</td>
+                  <td>Infinite scroll triggers, scroll spy progress bars, drag-and-drop coordinate tracking.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Code Example 3 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Handcrafted Debounce and Throttle Utilities</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// 1. DEBOUNCE: Delays execution until 'delayMs' of silence
+function debounce(func, delayMs) {
+  let timerId;
+  return function(...args) {
+    clearTimeout(timerId); // Cancel previous scheduled run
+    timerId = setTimeout(() => {
+      func.apply(this, args);
+    }, delayMs);
+  };
+}
+
+// 2. THROTTLE: Limits execution to at most once per 'limitMs'
+function throttle(func, limitMs) {
+  let inThrottle = false;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limitMs);
+    }
+  };
+}
+
+// Practical Usage:
+const handleSearchInput = debounce((searchTerm) => {
+  console.log("Searching API for:", searchTerm);
+}, 300);
+
+const handlePageScroll = throttle(() => {
+  console.log("Scroll position:", window.scrollY);
+}, 200);</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="memory-leaks">
+          <h2>4. Preventing Common JavaScript Memory Leaks</h2>
+          <p>
+            <span class="lang-en">JavaScript utilizes an automatic Garbage Collector that frees memory when variables are no longer reachable. However, accidental references prevent the garbage collector from cleaning up memory, leading to sluggish tabs and mobile crashes:</span>
+            <span class="lang-hi">JavaScript automatic garbage collection karta hai, lekin agar hum galti se references chhod dein toh memory leak ho jata hai:</span>
+          </p>
+
+          <!-- Code Example 4 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — 3 Deadly Memory Leaks and How to Fix Them</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// LEAK 1: Accidental Global Variables (always use 'use strict')
+function leakGlobal() {
+  leakedData = new Array(1000000); // Missing 'let/const'! Attached permanently to window!
+}
+
+// LEAK 2: Forgotten Timers & Intervals
+// BAD: Interval continues ticking forever even if user navigated away from the page
+const intervalId = setInterval(updateStockTicker, 1000);
+// FIX: Always clear when component or page unmounts!
+clearInterval(intervalId);
+
+// LEAK 3: Lingering Event Listeners on Removed DOM Elements
+// BAD: Button removed from page, but listener closure keeps entire scope alive
+const btn = document.getElementById("temp-btn");
+function onBtnClick() { console.log("clicked"); }
+btn.addEventListener("click", onBtnClick);
+// FIX: Remove listener before removing DOM node!
+btn.removeEventListener("click", onBtnClick);
+btn.remove();</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="clean-code-principles">
+          <h2>5. Clean Code Principles for Frontend Masters</h2>
+          <ul>
+            <li><strong>Single Responsibility Principle (SRP):</strong> Each function must do one thing, and do it well. If a function is called <code>saveUserAndSendEmailAndLogAnalytics()</code>, break it into 3 distinct functions!</li>
+            <li><strong>Avoid "Magic Numbers":</strong> Never leave unexplained literals like <code>if (status === 3)</code> or <code>price * 0.18</code>. Define descriptive constants: <code>const GST_TAX_RATE = 0.18; const STATUS_COMPLETED = 3;</code>.</li>
+            <li><strong>Prefer Immutability:</strong> Avoid mutating incoming function arguments. Use object spread <code>{ ...user, active: true }</code> or array methods that return fresh copies (<code>map</code>, <code>filter</code>, <code>toSorted</code>).</li>
+            <li><strong>Early Return (Guard Clauses):</strong> Flatten nested <code>if-else</code> pyramids by checking failure conditions first and returning immediately.</li>
+          </ul>
+        </section>
+
+        <!-- Interactive Playground -->
+        <section id="try-it-live">
+          <h2>6. Interactive Try-It Editor: Live Debounce Visualizer</h2>
+          <p>
+            <span class="lang-en">Type rapidly into the input box below. Notice the raw keystroke counter increment instantly on every character, while the debounced counter only fires after you stop typing for 400ms!</span>
+            <span class="lang-hi">Neeche diye gaye box me tezi se type karein. Raw counter har letter par chalega jabki Debounced counter sirf rukne par chalega:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-debug">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Debounce vs Raw Events Visualizer</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-debug')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-debug')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    input { width: 100%; box-sizing: border-box; padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 6px; font-size: 15px; margin-bottom: 16px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 14px; text-align: center; }
+    .stat-num { font-size: 28px; font-weight: bold; margin-top: 6px; }
+    .num-raw { color: #f59e0b; }
+    .num-debounced { color: #10b981; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Debounce Visualizer&lt;/h3&gt;
+  &lt;input id="text-box" placeholder="Type rapidly here to compare event triggers..."&gt;
+  &lt;div class="stats-grid"&gt;
+    &lt;div class="stat-card"&gt;
+      &lt;div&gt;Raw Keystroke Events&lt;/div&gt;
+      &lt;div class="stat-num num-raw" id="raw-count"&gt;0&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="stat-card"&gt;
+      &lt;div&gt;Debounced API Calls (400ms)&lt;/div&gt;
+      &lt;div class="stat-num num-debounced" id="debounced-count"&gt;0&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    let rawCalls = 0;
+    let debouncedCalls = 0;
+    const rawDisplay = document.getElementById('raw-count');
+    const debouncedDisplay = document.getElementById('debounced-count');
+
+    function debounce(fn, delay) {
+      let timer;
+      return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() =&gt; fn.apply(this, args), delay);
+      };
+    }
+
+    const triggerDebounced = debounce(() =&gt; {
+      debouncedCalls++;
+      debouncedDisplay.textContent = debouncedCalls;
+    }, 400);
+
+    document.getElementById('text-box').addEventListener('input', () =&gt; {
+      rawCalls++;
+      rawDisplay.textContent = rawCalls;
+      triggerDebounced();
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Development Traps</div>
+          <ul>
+            <li><strong>Committing <code>debugger;</code> or <code>console.log()</code> to Production:</strong> Always review git diffs or configure linters (like ESLint) to flag console statements before pushing code.</li>
+            <li><strong>Calling Debounced Functions Inside Event Listeners:</strong> Creating a new debounce instance <em>inside</em> an event listener creates a fresh timer every keystroke and breaks debouncing completely! Always instantiate debounce outside the listener once.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Pro Tips</div>
+          <ul>
+            <li><strong>Conditional Breakpoints:</strong> Right-click on any line number in DevTools Sources and select "Add conditional breakpoint...". Enter an expression like <code>user.id === 502</code> so the debugger only pauses for the bug you are investigating!</li>
+            <li><strong>Logpoints:</strong> Want to log variables without editing and recompiling your file? Right-click a line number in Sources and select "Add logpoint...". It logs directly to console without pausing execution!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9989; Quick Recap</div>
+          <ul>
+            <li>Use <code>console.table()</code>, <code>console.time()</code>, and <code>console.assert()</code> for professional diagnostics.</li>
+            <li>Step through code in DevTools Sources using F10 (Step Over), F11 (Step Into), and F8 (Resume).</li>
+            <li>The <code>debugger;</code> statement programmatically halts execution when DevTools is open.</li>
+            <li><strong>Debounce</strong> delays execution until inactivity; <strong>Throttle</strong> caps rate of execution.</li>
+            <li>Prevent memory leaks by clearing intervals, removing dead event listeners, and scoping variables.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <section id="exercises">
+          <h2>Hands-On Practice Exercises</h2>
+
+          <!-- Exercise 1 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-easy">Easy</span>
+              <h4>Exercise 1: Guard Clause Refactoring</h4>
+            </div>
+            <p>Refactor a deeply nested function into clean code using early return guard clauses.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>// BEFORE: Nested Pyramid of if-else
+function processPaymentBad(user, amount) {
+  if (user) {
+    if (user.isActive) {
+      if (amount > 0) {
+        if (user.balance >= amount) {
+          user.balance -= amount;
+          return { success: true, balance: user.balance };
+        } else {
+          return { success: false, error: "Insufficient funds" };
+        }
+      } else {
+        return { success: false, error: "Invalid amount" };
+      }
+    } else {
+      return { success: false, error: "Inactive account" };
+    }
+  } else {
+    return { success: false, error: "User not found" };
+  }
+}
+
+// AFTER: Clean Guard Clauses (Early Return)
+function processPaymentClean(user, amount) {
+  if (!user) return { success: false, error: "User not found" };
+  if (!user.isActive) return { success: false, error: "Inactive account" };
+  if (amount <= 0) return { success: false, error: "Invalid amount" };
+  if (user.balance < amount) return { success: false, error: "Insufficient funds" };
+
+  user.balance -= amount;
+  return { success: true, balance: user.balance };
+}</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 2 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-medium">Medium</span>
+              <h4>Exercise 2: Write a Throttle Function with Trailing Call</h4>
+            </div>
+            <p>Implement a <code>throttle(fn, limit)</code> function in vanilla JavaScript that ensures the provided function runs at most once every <code>limit</code> milliseconds.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function throttle(fn, limit) {
+  let waiting = false;
+  let lastArgs = null;
+
+  return function throttled(...args) {
+    if (!waiting) {
+      fn.apply(this, args);
+      waiting = true;
+      setTimeout(() => {
+        waiting = false;
+        if (lastArgs) {
+          throttled.apply(this, lastArgs);
+          lastArgs = null;
+        }
+      }, limit);
+    } else {
+      lastArgs = args;
+    }
+  };
+}</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 3 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-hard">Hard</span>
+              <h4>Exercise 3: Custom Benchmark Runner</h4>
+            </div>
+            <p>Write a benchmarking function <code>benchmark(label, fn, iterations)</code> that runs a function <code>iterations</code> times, measures the elapsed execution time with <code>performance.now()</code>, and logs the average time per operation in microseconds.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function benchmark(label, fn, iterations = 100000) {
+  // Warm-up pass to let JIT compiler optimize
+  for (let i = 0; i < 1000; i++) fn();
+
+  const start = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    fn();
+  }
+  const end = performance.now();
+  const totalMs = end - start;
+  const avgMicroseconds = (totalMs / iterations) * 1000;
+
+  console.log(`[Benchmark: ${label}]`);
+  console.log(`Total Time: ${totalMs.toFixed(2)} ms for ${iterations.toLocaleString()} runs`);
+  console.log(`Average: ${avgMicroseconds.toFixed(4)} μs per call`);
+}
+
+// Test:
+benchmark("Array.map", () => [1, 2, 3].map(x => x * 2));</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <!-- 5-Question Interactive Quiz -->
+        <section id="lesson-quiz">
+          <h2>Interactive Quiz: Debugging &amp; Best Practices</h2>
+          <div class="quiz-container" id="quiz-js-22">
+            <div class="quiz-question-card" data-q="0">
+              <p class="quiz-q-text">1. What keyboard shortcut in Chrome DevTools executes the current line and Steps Over to the next line?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'F8 resumes code execution until the next breakpoint.')">F8</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! F10 is the universal shortcut to Step Over the current line in browser DevTools.')">F10</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'F11 steps into the function call.')">F11</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Shift+F11 steps out of the function.')">Shift + F11</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="1">
+              <p class="quiz-q-text">2. What does the JavaScript <code>debugger;</code> statement do when browser DevTools is open?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not print to console.')">Prints the current stack trace to the console</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! It functions as an programmatic breakpoint, halting JavaScript execution.')">Pauses JavaScript execution exactly at that statement like a breakpoint</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not reload the tab.')">Reloads the tab in debug mode</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It is completely valid standard JavaScript.')">Throws a fatal SyntaxError in strict mode</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="2">
+              <p class="quiz-q-text">3. Which technique waits for a period of silence (inactivity) before firing an expensive operation?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Throttle enforces a constant regular execution rate.')">Throttling</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Debouncing postpones execution until a specified delay passes with zero new events.')">Debouncing</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Memoization is caching function outputs.')">Memoization</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Recursion is functions calling themselves.')">Recursion</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="3">
+              <p class="quiz-q-text">4. What is a common cause of JavaScript client-side memory leaks?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'const variables are safely scoped and collected.')">Using const instead of let</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Forgotten intervals or listeners attached to removed DOM elements prevent garbage collection.')">Forgotten setInterval timers and dangling event listeners on removed elements</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Template literals do not leak memory.')">Using backtick template strings</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Promises are automatically garbage collected once settled.')">Using async/await</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="4">
+              <p class="quiz-q-text">5. What is the benefit of using "Guard Clauses" (early returns) in functions?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not change JIT performance significantly.')">It forces the browser to run in 64-bit mode</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Early returns handle errors and edge cases upfront, eliminating deep nested if-else pyramids.')">It flattens deeply nested if-else indentation and makes code easier to read</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'try/catch handles errors, not guard clauses.')">It eliminates the need for try/catch blocks</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not compress HTML.')">It minifies CSS automatically</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mini-Task -->
+        <div class="callout callout-task">
+          <div class="callout-title">&#128736; Mini-Task: Benchmark 3 Loop Strategies</div>
+          <p>
+            Create a benchmark script that populates an array with 1,000,000 numbers and compares the execution time of: (1) Classic <code>for (let i = 0; ...)</code>, (2) <code>for...of</code> loop, and (3) <code>Array.prototype.forEach()</code>. Use <code>performance.now()</code> and print the winner using <code>console.table()</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="callout callout-ref">
+          <div class="callout-title">&#128279; Related Built-in References</div>
+          <p>
+            &bull; Explore console and performance APIs in our <a href="../reference/js-reference.html#console">JavaScript Built-in Reference</a>.<br>
+            &bull; Review clean code and debugging terms in our <a href="../reference/glossary.html#debugging">Technical Glossary</a>.<br>
+            &bull; Test your comprehensive JavaScript mastery on the <a href="index.html#course-exam">JavaScript Final Exam (20 Questions)</a>!
+          </p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="21-regex-basics.html" class="nav-btn prev-btn">&larr; Previous: RegEx Basics</a>
+          <button class="btn-complete" onclick="markLessonComplete('22-debugging-and-best-practices.html')">&#10003; Mark as Complete</button>
+          <a href="index.html" class="nav-btn next-btn">&#127881; Course Hub &amp; Exam &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Scope, Hoisting &amp; Closures — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="07-scope-hoisting-closures.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 07</span>
+          </div>
+          <h1 class="lesson-title">Scope, Hoisting &amp; Closures</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Uncover the inner mechanics of the JavaScript engine. Understand the scope chain, TDZ, and closure data encapsulation.</span>
+            <span class="lang-hi">Scope, Hoisting aur Closures: Global vs Block Scope, Temporal Dead Zone (TDZ), aur private variables create karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 3 levels of JavaScript Scope: Global, Function, and Block Scope.</li>
+            <li>How the <strong>Scope Chain</strong> searches outward through lexical environments.</li>
+            <li><strong>Hoisting</strong> demystified: How functions, <code>var</code>, and <code>let/const</code> are treated during compilation.</li>
+            <li>The <strong>Temporal Dead Zone (TDZ)</strong> and why <code>let</code> throws a ReferenceError before declaration.</li>
+            <li>The JavaScript superpower: <strong>Closures</strong> explained clearly with real-world examples.</li>
+            <li>Building <strong>Private State &amp; Encapsulation</strong> using function factories.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="06-functions.html">06. Functions &amp; Arrow Functions</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Russian Matryoshka Nesting Dolls</div>
+          <p>
+            <span class="lang-en">Imagine painted Russian nesting dolls:
+            <br>&bull; A tiny wooden doll sits inside a medium doll, which sits inside a giant doll.
+            <br>&bull; <strong>Scope Chain (One-Way Glass):</strong> The tiny inner doll can look through the transparent layers and see what the giant outer doll is holding. However, the giant outer doll CANNOT reach into the tiny inner doll!
+            <br>&bull; <strong>Closure (A Backpack with a Memory):</strong> When the inner doll leaves the house, it packs a small backpack containing the exact variables of the room it was born in. Wherever it travels in your application, it can reach into that backpack and read those original values!</span>
+            <span class="lang-hi">Russian Nesting Dolls ki tarah sochiye: Chhoti doll andar se bahar dekh sakti hai, par bahar wali doll andar nahi dekh sakti (Scope Chain). Aur <strong>Closure</strong> ek aisa backpack hai jisme function apne janm lene ke kamre ke variables ko bandh kar le jata hai, chahe wo baad me kahin bhi run ho!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The 3 Types of Scope in JavaScript</h2>
+        <p>
+          Scope determines the visibility and accessibility of variables in different parts of your code:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Global vs Function vs Block Scope</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. GLOBAL SCOPE: Declared outside any function or curly braces.
+// Accessible from literally anywhere in the file!
+const appName = "AcademyApp";
+
+function printDetails() {
+  // 2. FUNCTION SCOPE: Visible ONLY inside this function!
+  const localSecret = "super-secret-token";
+  console.log(`App: ${appName}, Token: ${localSecret}`); // Works!
+
+  if (true) {
+    // 3. BLOCK SCOPE: Visible ONLY inside these { } braces!
+    const blockBadge = "Pro Member";
+    var legacyLeak = "I leak out of if-blocks!";
+    console.log(blockBadge); // Works!
+  }
+
+  // console.log(blockBadge); // ERROR: ReferenceError: blockBadge is not defined!
+  console.log(legacyLeak);   // "I leak out..." (var ignores block scope!)
+}
+
+printDetails();
+// console.log(localSecret); // ERROR: ReferenceError: localSecret is not defined!</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Scope Chain: Looking Outward</h2>
+        <p>
+          When you reference a variable, the JavaScript engine searches for it in the immediate local scope. If not found, it steps <strong>one level outward</strong> to the parent scope, continuing all the way up to the Global Scope.
+        </p>
+        <p>
+          If the variable is not found in the global scope, JavaScript throws an <code>Uncaught ReferenceError</code>. The scope chain is strictly one-way: <strong>Inside looks outward; outside cannot look inward!</strong>
+        </p>
+
+        <!-- Section 3 -->
+        <h2>3. Hoisting &amp; The Temporal Dead Zone (TDZ)</h2>
+        <p>
+          During the initial compilation phase (before any code actually runs), the JavaScript engine scans the file and allocates memory for variable and function declarations. This process is called <strong>Hoisting</strong>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Hoisting Differences</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Function Declarations: FULLY HOISTED!
+sayHi(); // Works! Prints "Hi!"
+function sayHi() {
+  console.log("Hi!");
+}
+
+// 2. var Variables: Hoisted as 'undefined'!
+console.log(myVar); // Prints: undefined (No error, but returns bug-inducing undefined!)
+var myVar = "Hello";
+
+// 3. let and const: Hoisted into the TEMPORAL DEAD ZONE (TDZ)!
+// console.log(myLet); // CRASH! Uncaught ReferenceError: Cannot access 'myLet' before initialization
+let myLet = "Modern Safe Code";</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Temporal Dead Zone (TDZ):</strong> The period between entering a scope and the actual line where <code>let</code> or <code>const</code> is declared. Attempting to read or write the variable in this zone throws a helpful <code>ReferenceError</code>, preventing silent bugs!
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Demystifying Closures</h2>
+        <p>
+          In most programming languages, when a function finishes executing, all its local variables are destroyed and purged from memory.
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-js); border-radius:var(--radius-sm);">
+          <strong>The Definition:</strong> A <strong>Closure</strong> is created when an inner function is defined inside an outer function. The inner function retains access to the outer function's variables, <em>even after the outer function has finished executing and returned!</em>
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Canonical Counter Closure</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">function createCounter() {
+  let count = 0; // Private state variable!
+
+  // The returned function forms a closure over 'count'
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+// Create two independent counters:
+const counterA = createCounter();
+const counterB = createCounter();
+
+console.log(counterA()); // 1
+console.log(counterA()); // 2
+console.log(counterA()); // 3
+
+// counterB has its own independent closure scope:
+console.log(counterB()); // 1 (Unaffected by counterA!)</code></pre>
+        </div>
+        <div class="code-explanation">
+          Notice that outside code <strong>cannot directly touch or alter <code>count</code></strong>! There is no <code>counterA.count = 999</code>. The only way to interact with <code>count</code> is through the returned function. This is how JavaScript implements <strong>Data Encapsulation and Private Variables</strong>!
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Real-World Recipe: Function Factories</h2>
+        <p>
+          Closures allow you to create customized, specialized utility functions dynamically:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Prefix Formatter Factory</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">function createLogger(prefix) {
+  return function(message) {
+    const time = new Date().toLocaleTimeString();
+    console.log(`[${prefix}] (${time}): ${message}`);
+  };
+}
+
+const authLog = createLogger("AUTH_SERVICE");
+const paymentLog = createLogger("PAYMENT_GATEWAY");
+
+authLog("User logged in successfully"); // [AUTH_SERVICE] (10:14:22 AM): User logged in successfully
+paymentLog("Stripe charge approved: $49.00"); // [PAYMENT_GATEWAY] (10:14:25 AM): Stripe charge approved</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. The Classic `for` Loop Closure Interview Trap</h2>
+        <p>
+          Before ES6, using <code>var</code> inside a loop with a timer created one of JavaScript's most infamous bugs:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: The Loop Closure Bug Fixed</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// THE BUG (using legacy var):
+for (var i = 1; i <= 3; i++) {
+  setTimeout(() => {
+    console.log("Buggy var:", i); // Prints: 4, 4, 4! (Because var is shared globally)
+  }, 100);
+}
+
+// THE FIX (using modern block-scoped let):
+for (let j = 1; j <= 3; j++) {
+  setTimeout(() => {
+    console.log("Correct let:", j); // Prints: 1, 2, 3! (Each iteration gets its own fresh 'j' binding)
+  }, 100);
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Test Closures Live</h2>
+        <p>
+          Inspect state preservation across multiple clicks in the sandbox:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Closure State Vault</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    button {
+      padding: 10px 18px;
+      font-size: 1rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h3>Private Closure Bank Account</h3>
+  <p>Balance: $<span id="balance-display">100</span></p>
+  <button id="deposit-btn">Deposit $25</button>
+
+  <script>
+    // Bank account module using closures
+    function createBankAccount(initialDeposit) {
+      let balance = initialDeposit; // Private variable
+
+      return {
+        deposit: function(amount) {
+          balance += amount;
+          return balance;
+        },
+        getBalance: function() {
+          return balance;
+        }
+      };
+    }
+
+    const myAccount = createBankAccount(100);
+    const displayEl = document.getElementById("balance-display");
+    const depositBtn = document.getElementById("deposit-btn");
+
+    depositBtn.addEventListener("click", () => {
+      const newBal = myAccount.deposit(25);
+      displayEl.textContent = newBal;
+      console.log(`Deposited $25. New private balance: $${newBal}`);
+    });
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Leaking global variables unintentionally:</strong> Assigning to an undeclared variable (e.g. <code>x = 10;</code> without let or const) creates a global property on <code>window</code> in non-strict mode! Always use <code>"use strict";</code>.</li>
+            <li><strong>Assuming closures make copies of variables:</strong> Closures capture <em>references</em> to variables, not static snapshots. If the outer variable changes, the closure sees the updated value!</li>
+            <li><strong>Unintentional memory leaks with closures:</strong> Storing massive objects inside closures attached to long-lived DOM elements prevents the Garbage Collector from freeing memory.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Use Closures for Memoization:</strong> You can cache expensive calculation results in a closure variable so subsequent calls with the same arguments return in 0ms!</li>
+            <li><strong>Inspect closures in Chrome DevTools:</strong> When paused at a breakpoint in DevTools, look at the <strong>Scope</strong> panel on the right. Chrome explicitly labels the <strong>Closure</strong> scope and lists every variable captured!</li>
+            <li><strong>Module Pattern:</strong> Before ES6 import/export, JavaScript libraries used Immediately Invoked Function Expressions (IIFEs) and closures to package entire libraries into clean single global variables without polluting the global namespace.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Scope determines variable visibility: Global, Function, and Block (<code>let</code>/<code>const</code>).</li>
+            <li>The Scope Chain resolves identifiers from inside outward.</li>
+            <li>Hoisting registers declarations during compilation; <code>let</code> and <code>const</code> reside in the Temporal Dead Zone until initialized.</li>
+            <li>A Closure gives an inner function access to its outer lexical scope even after the outer function has returned.</li>
+            <li>Closures enable private variables and persistent encapsulated state.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify the Variable Scope</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>In the following code, what is the scope of <code>apiKey</code>, and is it accessible in the global scope?<br>
+          <code>function connect() { const apiKey = "xyz123"; }</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Variables declared inside a function have function/block scope.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>apiKey</code> has <strong>Function (Local) Scope</strong>. It is NOT accessible in the global scope; attempting to access it outside throws a <code>ReferenceError</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Build a Multiplier Factory</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write a function <code>createMultiplier(factor)</code> that uses a closure to return a function that multiplies any number passed to it by <code>factor</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: return (x) => x * factor;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>function createMultiplier(factor) {
+  return (number) => number * factor;
+}
+
+const triple = createMultiplier(3);
+console.log(triple(10)); // 30</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Explain Temporal Dead Zone (TDZ)</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Why does <code>console.log(a); var a = 1;</code> print <code>undefined</code>, while <code>console.log(b); let b = 1;</code> throws an uncaught <code>ReferenceError</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Variable hoisting initialization vs Temporal Dead Zone.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>var</code> is hoisted and initialized with <code>undefined</code> during the creation phase.<br>
+              <code>let</code> is also hoisted, but remains uninitialized in the <strong>Temporal Dead Zone (TDZ)</strong>. Accessing an uninitialized let/const variable throws a strict <code>ReferenceError</code> by design.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 07 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="A closure remembers its outer lexical environment even after that outer function returns.">
+            <div class="quiz-question-text">1. What is the fundamental definition of a Closure in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A method to stop an infinite loop</div>
+              <div class="quiz-option"><span>B)</span> The syntax used to close script tags in HTML</div>
+              <div class="quiz-option"><span>C)</span> An inner function retaining access to outer variables even after the outer function has executed and returned</div>
+              <div class="quiz-option"><span>D)</span> A special type of CSS selector</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The Temporal Dead Zone refers to the state of a let/const variable before its declaration line is executed.">
+            <div class="quiz-question-text">2. What is the 'Temporal Dead Zone' (TDZ)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The time when the browser tab is asleep in the background</div>
+              <div class="quiz-option"><span>B)</span> The period within a scope where a let or const variable is hoisted but cannot be accessed before its declaration line</div>
+              <div class="quiz-option"><span>C)</span> An error thrown when the server times out</div>
+              <div class="quiz-option"><span>D)</span> The garbage collection cleanup phase</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="The Scope Chain searches outward from the local scope to enclosing parent scopes up to global.">
+            <div class="quiz-question-text">3. Which direction does the JavaScript Scope Chain search for variables?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> From the innermost local scope outward toward the global scope</div>
+              <div class="quiz-option"><span>B)</span> From global scope inward toward child functions</div>
+              <div class="quiz-option"><span>C)</span> Horizontally across sibling functions</div>
+              <div class="quiz-option"><span>D)</span> Randomly</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="let is block-scoped; it stays strictly confined inside the { } curly braces.">
+            <div class="quiz-question-text">4. Which keyword creates block-scoped variables that do NOT leak out of 'if' statements?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> var</div>
+              <div class="quiz-option"><span>B)</span> function</div>
+              <div class="quiz-option"><span>C)</span> global</div>
+              <div class="quiz-option"><span>D)</span> let (and const)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Closures restrict direct access to enclosed variables, exposing only designated methods.">
+            <div class="quiz-question-text">5. How do closures enable 'Private Variables' in JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> By using the 'private' keyword in CSS</div>
+              <div class="quiz-option"><span>B)</span> By keeping variables inside an outer function where outside code cannot touch them directly, allowing access only via returned methods</div>
+              <div class="quiz-option"><span>C)</span> By encrypting the variables using HTTPS</div>
+              <div class="quiz-option"><span>D)</span> By deleting the variables after 5 seconds</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Secure PIN Authenticator</h3>
+          <p>
+            In the live editor, create a function <code>createAuthenticator(secretPin)</code> that returns an object with a method <code>checkPin(attempt)</code> returning <code>true</code> or <code>false</code>. Notice that <code>secretPin</code> is completely private and cannot be read from the outside!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#scope" class="ref-pill">Scope &amp; Closures Reference</a>
+            <a href="../reference/glossary.html#scope" class="ref-pill">Glossary: Scope</a>
+            <a href="../reference/glossary.html#closure" class="ref-pill">Glossary: Closure</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Scope &amp; Hoisting Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="06-functions.html" class="btn btn-outline">&larr; Previous: Functions &amp; Arrow Functions</a>
+          <button class="mark-complete-btn" data-lesson-id="js-07">Mark as Complete</button>
+          <a href="08-arrays-and-array-methods.html" class="btn btn-primary">Next: Arrays &amp; Higher-Order Methods &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

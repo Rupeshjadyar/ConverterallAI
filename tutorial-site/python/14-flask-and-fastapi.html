@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Modern Web APIs: Flask vs High-Performance Async FastAPI — WebDev Academy</title>
+  <meta name="description" content="Build production-grade REST APIs in Python. Compare synchronous Flask vs asynchronous FastAPI with async/await, validate requests with Pydantic schemas, utilize automatic Swagger OpenAPI docs, and configure CORS.">
+  <meta name="keywords" content="Python API, Flask tutorial, FastAPI tutorial, async await Python, Pydantic validation, Swagger OpenAPI, REST API Python">
+  <meta property="og:title" content="Modern Web APIs: Flask vs High-Performance Async FastAPI">
+  <meta property="og:description" content="Build production-grade REST APIs in Python. Compare synchronous Flask vs asynchronous FastAPI with async/await, validate requests with Pydantic schemas, utilize automatic Swagger OpenAPI docs, and configure CORS.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="python" data-current-lesson="14-flask-and-fastapi.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 19 min read</span>
+            <span class="badge" style="background:var(--c-python-light); color:var(--c-python); border:1px solid var(--c-python-border);">Python Lesson 14</span>
+          </div>
+          <h1 class="lesson-title">Modern Web APIs: Flask vs High-Performance Async FastAPI</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build production-grade REST APIs in Python. Compare synchronous Flask vs asynchronous FastAPI with async/await, validate requests with Pydantic schemas, utilize automatic Swagger OpenAPI docs, and configure CORS.</span>
+            <span class="lang-hi">Python Web APIs seekhein: Flask vs FastAPI ka comparison, async/await high performance, Pydantic se request validation aur automatic Swagger documentation.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>HTTP methods (GET, POST, PUT, DELETE) and RESTful API architecture principles.</li><li>Building minimal, lightweight microservices with Flask routes and jsonify.</li><li>Why FastAPI is the modern standard: ASGI, async/await, and starlette concurrency.</li><li>Data validation and type safety using Pydantic BaseModel schemas.</li><li>Automatic interactive documentation with Swagger UI (/docs) and ReDoc (/redoc).</li><li>Handling CORS (Cross-Origin Resource Sharing) for frontend JavaScript consumers.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 13: Database Connectivity + OOP Fundamentals.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of a restaurant kitchen taking orders. <strong>Flask is a traditional single waiter (Synchronous WSGI)</strong>: the waiter takes an order from Table 1, walks into the kitchen, and stands there waiting 5 minutes for the steak to cook before he will talk to Table 2 (blocking I/O). <strong>FastAPI is a modern high-speed team using buzzer pagers (Asynchronous ASGI with async/await)</strong>: the waiter takes the order from Table 1, hands it to the kitchen, gives Table 1 a buzzer pager, and immediately walks over to take orders from Table 2, Table 3, and Table 4! While the steak cooks (database query / network call), the waiter serves 50 other customers without waiting idle!</span>
+            <span class="lang-hi">Restaurant ke waiter ki misaal lein: <strong>Flask ek traditional waiter hai (Synchronous)</strong>: Table 1 ka order liya, kitchen me khada raha jab tak khana nahi bana, aur tab tak Table 2 ko wait karwaya. <strong>FastAPI ek super-fast modern waiter hai (Async/Await)</strong>: Table 1 ka order kitchen ko diya aur turant Table 2, 3 aur 4 ka order lene chala gaya! Jab khana taiyaar hua toh serve kar diya. Isiliye FastAPI hazaron requests ek sath handle kar leta hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-python); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-python);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>WSGI vs ASGI:</strong><br>• <code>WSGI</code> (Web Server Gateway Interface, e.g. Flask/Django): Synchronous standard. One request per thread/worker. Blocks thread during I/O.<br>• <code>ASGI</code> (Asynchronous Server Gateway Interface, e.g. FastAPI): Asynchronous standard built on <code>asyncio</code>. Handles thousands of concurrent long-lived connections (WebSockets, SSE, async APIs) on a single event loop.</li><li><strong>Why is FastAPI so fast?</strong> Built on Starlette (high-performance async web framework) and Pydantic (data parsing in Rust/C), benchmarking close to Go and Node.js.</li><li><strong>Pydantic BaseModel:</strong> Parses, validates, and serializes JSON payloads automatically. If incoming JSON has invalid types (e.g. string instead of int), FastAPI automatically returns a clean <code>422 Unprocessable Entity</code> with detailed error messages.</li><li><strong>Dependency Injection in FastAPI:</strong> The <code>Depends()</code> utility allows clean, modular injection of database sessions, authentication credentials, and configuration into route endpoints.</li><li><strong>Automatic OpenAPI Documentation:</strong> FastAPI generates OpenAPI 3.1 JSON specifications automatically, serving interactive Swagger UI at <code>/docs</code> and ReDoc at <code>/redoc</code> with zero manual configuration!</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. REST API Architecture Fundamentals</h2>
+        <p>A <strong>REST (Representational State Transfer)</strong> API allows frontend clients (React, Vue, mobile apps, or vanilla JS) to communicate with a Python backend using standard HTTP verbs:</p>
+        <p>• <code>GET /items</code>: Read list of resources.<br>• <code>POST /items</code>: Create a new resource.<br>• <code>PUT /items/{id}</code>: Replace an existing resource.<br>• <code>DELETE /items/{id}</code>: Remove a resource.</p>
+        
+        <h2>2. Flask: The Lightweight Micro-Framework</h2>
+        <p>Created by Armin Ronacher, Flask is a minimal WSGI micro-framework that gives developers complete freedom without rigid boilerplate.</p>
+        <p>Routes are defined using decorators: <code>@app.route('/api/users', methods=['GET'])</code>, and JSON responses are returned using <code>jsonify()</code>.</p>
+        
+        <h2>3. FastAPI: The Modern Async API Standard</h2>
+        <p>Created by Sebastián Ramírez, <strong>FastAPI</strong> has become the industry standard for Python APIs, microservices, and AI inference servers.</p>
+        <p>By combining Python 3 type hints, Pydantic validation, and <code>async / await</code> non-blocking concurrency, FastAPI provides unmatched developer velocity and production speed.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: A Complete RESTful Microservice with Flask</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">from flask import Flask, jsonify, request, abort
+
+app = Flask(__name__)
+
+# In-memory mock database
+articles = [
+    {'id': 1, 'title': 'Learning Python', 'author': 'Aarav'},
+    {'id': 2, 'title': 'Mastering SQL', 'author': 'Priya'}
+]
+
+@app.route('/api/articles', methods=['GET'])
+def get_articles():
+    return jsonify({'status': 'success', 'data': articles}), 200
+
+@app.route('/api/articles/&lt;int:article_id&gt;', methods=['GET'])
+def get_article(article_id):
+    article = next((a for a in articles if a['id'] == article_id), None)
+    if not article:
+        abort(404, description='Article not found')
+    return jsonify(article), 200
+
+@app.route('/api/articles', methods=['POST'])
+def create_article():
+    payload = request.get_json()
+    if not payload or 'title' not in payload:
+        return jsonify({'error': 'Title is mandatory'}), 400
+    
+    new_article = {
+        'id': len(articles) + 1,
+        'title': payload['title'],
+        'author': payload.get('author', 'Anonymous')
+    }
+    articles.append(new_article)
+    return jsonify(new_article), 201
+
+if __name__ == '__main__':
+    # Run development server on port 5000
+    app.run(port=5000, debug=True)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Flask provides straightforward decorators for route handling and status code returns.
+        </div>
+        
+        <h3>Code Example 2: A High-Performance Asynchronous API with FastAPI & Pydantic</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Terminal install: pip install fastapi uvicorn pydantic
+from fastapi import FastAPI, HTTPException, status
+from pydantic import BaseModel, Field, EmailStr
+from typing import List, Optional
+import asyncio
+
+app = FastAPI(
+    title='Academy User Service',
+    description='Enterprise Asynchronous API with auto-documentation',
+    version='1.0.0'
+)
+
+# Pydantic Schema for strict request validation
+class UserCreate(BaseModel):
+    username: str = Field(min_length=3, max_length=30)
+    email: str = Field(pattern=r'^.+@.+\..+$')
+    age: int = Field(ge=13, le=120)
+    role: Optional[str] = 'student'
+
+class UserResponse(UserCreate):
+    user_id: int
+
+# In-memory storage
+db_users = []
+
+@app.post('/users', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def register_user(payload: UserCreate):
+    # Simulate non-blocking async database I/O
+    await asyncio.sleep(0.01)
+    
+    new_user = UserResponse(
+        user_id=len(db_users) + 1,
+        **payload.model_dump()
+    )
+    db_users.append(new_user)
+    return new_user
+
+@app.get('/users', response_model=List[UserResponse])
+async def list_users():
+    return db_users
+
+# Run with ASGI server: uvicorn main:app --reload</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how Pydantic's <code>Field</code> validates length, range, and format automatically before the endpoint code runs!
+        </div>
+        
+        <h3>Code Example 3: Configuring CORS (Cross-Origin Resource Sharing) in FastAPI</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# Allow frontend Single Page Apps (React / Vue) to call API from other domains
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['http://localhost:3000', 'https://myproductionapp.com'],
+    allow_credentials=True,
+    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
+    allow_headers=['*'],
+)</code></pre>
+        </div>
+        <div class="code-explanation">
+          • CORSMiddleware prevents browsers from blocking API requests originating from different frontend ports.
+        </div>
+        
+        <h3>Code Example 4: Dependency Injection in FastAPI (Authentication & DB Session Pattern)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python">from fastapi import Depends, Header, HTTPException
+
+# Reusable security dependency
+async def verify_auth_token(x_api_token: str = Header(...)):
+    if x_api_token != 'secret-admin-token-123':
+        raise HTTPException(status_code=401, detail='Invalid API Token')
+    return {'user_id': 1042, 'role': 'admin'}
+
+# Inject dependency into protected route
+@app.get('/admin/dashboard')
+async def admin_panel(current_user: dict = Depends(verify_auth_token)):
+    return {'message': f'Welcome, Admin user {current_user["user_id"]}'}</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>Depends(verify_auth_token)</code> runs before the route handler, centralizing authentication logic.
+        </div>
+        
+        <h3>Code Example 5: Comparing Performance: WSGI vs ASGI Concurrency</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># In WSGI (Flask):
+# 4 workers = at most 4 simultaneous requests can be processed.
+# If each request does a 1-second DB call, throughput is limited to 4 req/sec!
+
+# In ASGI (FastAPI + asyncio):
+# 1 worker with an event loop can hold 10,000 requests in flight concurrently
+# while waiting on async database network sockets!</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Non-blocking async I/O unlocks orders-of-magnitude higher concurrency for I/O-bound web services.
+        </div>
+        
+        <h3>Code Example 6: Consuming APIs from Python using the requests and httpx Libraries</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">python</span></div>
+          <pre class="code-content"><code data-lang="python"># Synchronous (requests library):
+# import requests
+# response = requests.get('https://api.github.com/users/octocat')
+# data = response.json()
+
+# Asynchronous (httpx library for FastAPI):
+# import httpx
+# async with httpx.AsyncClient() as client:
+#     response = await client.get('https://api.github.com/users/octocat')
+#     data = response.json()</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>httpx</code> is the async counterpart to <code>requests</code>, perfect for calling microservices inside FastAPI.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live Python Code Sandbox &amp; Interactive Runner</h2>
+        <p>Edit the Python script below and click <strong>Run Code</strong> to execute in a local sandbox environment:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Python Sandbox: Modern Web APIs: Flask vs High-Performance Async FastAPI</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"># Interactive API Payload Sandbox (Mock Pydantic Validation)
+def validate_product(payload):
+    errors = []
+    if not isinstance(payload.get('title'), str) or len(payload.get('title', '')) < 3:
+        errors.append('Title must be at least 3 characters long.')
+    if not isinstance(payload.get('price'), (int, float)) or payload.get('price', 0) <= 0:
+        errors.append('Price must be a positive number.')
+    
+    if errors:
+        return {'status': 422, 'errors': errors}
+    return {'status': 200, 'message': 'Payload is valid!', 'data': payload}
+
+print(validate_product({'title': 'MacBook Pro', 'price': 1999.00}))
+print(validate_product({'title': 'X', 'price': -10}))</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:monospace; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#38bdf8; margin-top:0;'&gt;&amp;#10003; Python 3 Sandbox Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Code to execute Python logic and inspect console output.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Blocking the async event loop with time.sleep():</strong> In an async FastAPI route, calling <code>time.sleep(5)</code> freezes the ENTIRE web server for all users! Always use non-blocking <code>await asyncio.sleep(5)</code>.</li><li><strong>Forgetting CORS middleware:</strong> Frontend React/Vue developers will receive a browser console error: <code>CORS policy: No 'Access-Control-Allow-Origin' header is present</code>.</li><li><strong>Returning raw sensitive model objects:</strong> Always use <code>response_model</code> in FastAPI to filter out sensitive attributes like password hashes before sending responses.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Python Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Interactive Swagger Docs:</strong> With FastAPI, navigate to <code>http://localhost:8000/docs</code> to test API endpoints interactively right from your browser!</li><li><strong>Background Tasks in FastAPI:</strong> Use <code>BackgroundTasks</code> to fire-and-forget asynchronous jobs (like sending confirmation emails) after returning the HTTP response instantly.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>REST APIs use standard HTTP verbs: GET, POST, PUT, DELETE.</li><li>Flask is a minimal synchronous WSGI micro-framework.</li><li>FastAPI is a modern asynchronous ASGI framework built on Pydantic and Starlette.</li><li>Pydantic enforces type validation and produces automatic OpenAPI/Swagger documentation.</li><li>CORSMiddleware allows frontend Single Page Apps to communicate with backend APIs.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Strengthen your Python engineering muscles with these curated coding tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Which HTTP method should be used to 1) retrieve a list of items, 2) create a new item, and 3) delete an item according to RESTful conventions?</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Match GET, POST, DELETE.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">-- 1. Retrieve items: GET /items
+-- 2. Create item: POST /items
+-- 3. Delete item: DELETE /items/{id}</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write a Pydantic model <code>StudentRegister</code> with fields: <code>name</code> (str, min length 2), <code>email</code> (str), and <code>grade</code> (int, must be between 1 and 12).</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use Field(min_length=2) and Field(ge=1, le=12).</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python">from pydantic import BaseModel, Field
+
+class StudentRegister(BaseModel):
+    name: str = Field(min_length=2)
+    email: str
+    grade: int = Field(ge=1, le=12)</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Explain the architectural difference between WSGI (used by Flask) and ASGI (used by FastAPI) in handling concurrent long-running requests.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Explain thread-per-request blocking vs single event-loop cooperative multitasking.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="python"># 1. WSGI (Flask):
+# Operates on a synchronous request-response protocol. Each incoming HTTP request
+# binds a worker thread. If the request executes a 2-second database call, the thread
+# is blocked from serving any other client. Scalability is limited by thread/process count.
+
+# 2. ASGI (FastAPI):
+# Operates on an asynchronous event loop (asyncio). When an endpoint awaits an I/O
+# operation (await db.query()), the worker immediately yields control back to the event
+# loop, serving thousands of other concurrent requests during the wait time.</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="2" data-explanation="FastAPI is the leading modern asynchronous ASGI Python web API framework.">
+          <div class="quiz-question-text">1. What ASGI framework has become the modern standard for high-performance Python APIs?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Django</div><div class="quiz-option"><span>B)</span> Flask</div><div class="quiz-option"><span>C)</span> FastAPI</div><div class="quiz-option"><span>D)</span> Bottle</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="FastAPI uses Pydantic for data parsing, validation, and serialization.">
+          <div class="quiz-question-text">2. What library does FastAPI use for request data validation and schema definitions?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SQLAlchemy</div><div class="quiz-option"><span>B)</span> Pydantic</div><div class="quiz-option"><span>C)</span> Marshmallow</div><div class="quiz-option"><span>D)</span> NumPy</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="FastAPI serves interactive Swagger UI documentation at <code>/docs</code>.">
+          <div class="quiz-question-text">3. What automatic URL does FastAPI provide out-of-the-box for interactive Swagger documentation?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> /swagger-help</div><div class="quiz-option"><span>B)</span> /docs</div><div class="quiz-option"><span>C)</span> /api/v1/help</div><div class="quiz-option"><span>D)</span> /specs</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Synchronous <code>time.sleep()</code> blocks the single event loop thread. You must use non-blocking <code>await asyncio.sleep()</code>.">
+          <div class="quiz-question-text">4. Why should you NOT use time.sleep() inside an async FastAPI route?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> It causes a syntax error</div><div class="quiz-option"><span>B)</span> It blocks the entire async event loop, freezing all concurrent requests for all users</div><div class="quiz-option"><span>C)</span> It shuts down the server</div><div class="quiz-option"><span>D)</span> It deletes the database</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="<code>CORSMiddleware</code> configures Cross-Origin Resource Sharing headers for cross-origin frontend consumers.">
+          <div class="quiz-question-text">5. What middleware must be configured in FastAPI to allow requests from a React frontend hosted on another port?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> SessionMiddleware</div><div class="quiz-option"><span>B)</span> CORSMiddleware</div><div class="quiz-option"><span>C)</span> StaticMiddleware</div><div class="quiz-option"><span>D)</span> SSLMiddleware</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, test the validator with a product having title 'OK' and verify that the 3-character error is triggered!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#rest-api" class="ref-pill">Glossary: REST API</a><a href="../reference/glossary.html#fastapi" class="ref-pill">Glossary: FastAPI</a><a href="15-django-fundamentals.html" class="ref-pill">Lesson 15: Full-Stack Django MVT</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="13-database-sqlite-postgres.html" class="btn btn-outline">&larr; 13. Database Connectivity</a>
+          <button class="mark-complete-btn" data-lesson-id="python-14">Mark as Complete</button>
+          <a href="15-django-fundamentals.html" class="btn btn-primary">15. Full-Stack Django MVT &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

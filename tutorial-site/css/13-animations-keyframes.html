@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Animations &amp; Keyframes — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="13-animations-keyframes.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 13</span>
+          </div>
+          <h1 class="lesson-title">CSS Animations &amp; @keyframes</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Craft continuous looping spinners, shimmering skeleton loaders, and multi-stage cinematic sequences.</span>
+            <span class="lang-hi">@keyframes, animation properties, loading spinners, skeleton shimmer effects aur animation-fill-mode seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Transitions vs Animations: Why animations run autonomously without user interaction.</li>
+            <li>Declaring multi-step motion timelines with <code>@keyframes</code> percentages.</li>
+            <li>The 8 animation sub-properties and the clean shorthand syntax.</li>
+            <li>Why <code>animation-fill-mode: forwards</code> is critical to prevent sudden snapping at the end.</li>
+            <li>Building an infinite SVG/CSS circular loading spinner.</li>
+            <li>Creating the modern YouTube/Facebook shimmer skeleton loading placeholder.</li>
+            <li>Pausing animations dynamically with <code>animation-play-state: paused</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="12-transitions-transforms.html">12. Transitions &amp; Transforms</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Stop-Motion Animator's Storyboard</div>
+          <p>
+            <span class="lang-en">Think of classic Disney or claymation filmmaking:
+            <br>&bull; <strong>Transition:</strong> Rolling a bowling ball down a ramp. You push it once, and gravity guides it from Point A to Point B.
+            <br>&bull; <strong>@keyframes Animation:</strong> A storyboard sheet with numbered camera frames!
+            <br>&bull; <strong>0% (Frame 1):</strong> The clay puppet is standing still.
+            <br>&bull; <strong>50% (Frame 12):</strong> The puppet jumps in the air, turns upside down, and waves.
+            <br>&bull; <strong>100% (Frame 24):</strong> The puppet lands gently on its feet.
+            <br>The browser acts as the automated camera operator, calculating every smooth micro-frame between your key milestone poses!</span>
+            <span class="lang-hi">Stop-motion animation aur Film Storyboard ki tarah sochiye: Transition keval Point A se Point B tak jata hai. Lekin @keyframes ek poori film ki script hai jisme aap 0%, 50%, aur 100% par alag-alag poses define kar sakte hain aur browser unke beech ki motion automatically render kar deta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Defining Timelines with <code>@keyframes</code></h2>
+        <p>
+          The <code>@keyframes</code> rule defines the visual poses across an animation timeline using percentages (0% represents the start, 100% represents the conclusion):
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The @keyframes Syntax</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. Define the named timeline */
+@keyframes pulseGlow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+/* 2. Bind the timeline to an HTML element */
+.live-beacon {
+  width: 14px;
+  height: 14px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  animation: pulseGlow 2s infinite ease-in-out;
+}</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The 8 Animation Properties &amp; Shorthand</h2>
+        <p>
+          CSS provides 8 granular controls for animation behavior:
+        </p>
+
+        <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem;">
+          <thead>
+            <tr style="background:var(--bg-card); text-align:left; border-bottom:2px solid var(--border-color);">
+              <th style="padding:10px;">Property</th>
+              <th style="padding:10px;">Purpose</th>
+              <th style="padding:10px;">Common Values</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-name</code></td>
+              <td style="padding:10px;">Identifies the <code>@keyframes</code> rule</td>
+              <td style="padding:10px;"><code>spin</code>, <code>fadeIn</code>, <code>shimmer</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-duration</code></td>
+              <td style="padding:10px;">Time taken to complete one full cycle</td>
+              <td style="padding:10px;"><code>0.5s</code>, <code>1200ms</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-timing-function</code></td>
+              <td style="padding:10px;">Acceleration curve</td>
+              <td style="padding:10px;"><code>linear</code>, <code>ease</code>, <code>cubic-bezier()</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-delay</code></td>
+              <td style="padding:10px;">Wait time before animation begins</td>
+              <td style="padding:10px;"><code>0s</code>, <code>0.3s</code>, <code>-0.5s</code> (starts midway!)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-iteration-count</code></td>
+              <td style="padding:10px;">How many times the animation repeats</td>
+              <td style="padding:10px;"><code>1</code>, <code>3</code>, <code>infinite</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-direction</code></td>
+              <td style="padding:10px;">Playback direction</td>
+              <td style="padding:10px;"><code>normal</code>, <code>reverse</code>, <code>alternate</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-fill-mode</code></td>
+              <td style="padding:10px;">Style retention before/after execution</td>
+              <td style="padding:10px;"><code>none</code>, <code>forwards</code>, <code>backwards</code>, <code>both</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-color);">
+              <td style="padding:10px;"><code>animation-play-state</code></td>
+              <td style="padding:10px;">Pause or resume motion</td>
+              <td style="padding:10px;"><code>running</code>, <code>paused</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Section 3 -->
+        <h2>3. The Snapping Trap: <code>animation-fill-mode: forwards</code></h2>
+        <p>
+          By default, when a one-shot animation finishes (100%), the element abruptly <strong>snaps back to its pre-animation styling</strong>! To instruct the browser to retain the final 100% keyframe appearance, you must specify <code>forwards</code>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Fade-In Entrance with `forwards`</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-dialog {
+  /* Crucial: 'forwards' keeps the modal at opacity: 1 and translateY(0) */
+  animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Real-World Recipe: The Infinite Circular Loading Spinner</h2>
+        <p>
+          A pure CSS spinner requires zero external images or heavy GIFs:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Pure CSS Loading Spinner</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e2e8f0;          /* Subtle light track */
+  border-top-color: #2563eb;          /* Vibrant active spinning tip */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite; /* Smooth robotic infinite spin */
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Real-World Recipe: Skeleton Shimmer Loading Placeholder</h2>
+        <p>
+          Top tech companies use shimmering skeleton gray cards while fetching data to make loading feel twice as fast:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Skeleton Screen Shimmer</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-box {
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 25%,
+    #f8fafc 50%,
+    #e2e8f0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Pausing Animations on Hover</h2>
+        <p>
+          Enhance user control by freezing marquee tickers or spinning logos whenever a user points their cursor at them:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Pausing Play State on Hover</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.news-ticker-track {
+  display: flex;
+  animation: scrollNews 20s linear infinite;
+}
+
+/* Pause the scrolling so the user can click or read comfortably */
+.news-ticker-track:hover {
+  animation-play-state: paused;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Animation Studio</h2>
+        <p>
+          Inspect the loading spinner and shimmer card in real time below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Animation Sandbox</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 30px;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid #cbd5e1;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .skeleton-card {
+    width: 260px;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .sk-line {
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+</style>
+</head>
+<body>
+  <h3>CSS Animations in Action</h3>
+  <div class="spinner"></div>
+
+  <div class="skeleton-card">
+    <div class="sk-line" style="width: 40%; height: 16px; margin-bottom: 12px;"></div>
+    <div class="sk-line" style="width: 90%;"></div>
+    <div class="sk-line" style="width: 75%;"></div>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Omitting <code>animation-fill-mode: forwards</code>:</strong> One-shot modal entrances suddenly flicker and reset back to invisible the microsecond the animation completes.</li>
+            <li><strong>Continuous heavy CPU animations:</strong> Running dozens of infinite non-stop animations drains mobile phone batteries rapidly. Always pause off-screen animations.</li>
+            <li><strong>Animating layout dimensions:</strong> Never animate <code>width</code> or <code>height</code> inside <code>@keyframes</code>. Use <code>transform: scale()</code> for hardware acceleration.</li>
+            <li><strong>Missing the <code>@</code> in <code>@keyframes</code>:</strong> Writing <code>keyframes myAnim { ... }</code> is invalid CSS and fails silently.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Negative animation-delay:</strong> Setting <code>animation-delay: -0.5s</code> starts the animation instantly as if it had already been running for half a second. Perfect for staggered multi-dot spinners!</li>
+            <li><strong>Use <code>alternate</code> direction for natural oscillation:</strong> <code>animation-direction: alternate</code> plays 0% &rarr; 100% and then reverses 100% &rarr; 0%, creating seamless back-and-forth pendulum motions.</li>
+            <li><strong>Respect <code>prefers-reduced-motion</code>:</strong> Always disable high-movement animations for users who request calm interfaces in their system settings.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>@keyframes</code> defines chronological poses using percentages from 0% to 100%.</li>
+            <li>Animations run autonomously without needing user triggers like <code>:hover</code>.</li>
+            <li><code>animation-fill-mode: forwards</code> retains final keyframe styles permanently.</li>
+            <li><code>animation-iteration-count: infinite</code> runs continuous loops for spinners.</li>
+            <li><code>animation-play-state: paused</code> freezes motion dynamically on cursor hover.</li>
+            <li>Stick to <code>transform</code> and <code>opacity</code> to prevent mobile frame stutters.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Infinite Spinner Shorthand</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Given a keyframe named <code>spin</code>, write the shorthand CSS animation property to run it continuously over 1 second at a constant robotic speed.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: animation: spin 1s linear infinite;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>animation: spin 1s linear infinite;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Prevent Animation Snap-Back</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>A slide-in banner animates onto the screen over 0.5s, but instantly disappears when the animation finishes. Which property and value fixes this issue?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: animation-fill-mode forwards.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>animation-fill-mode: forwards;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Pendulum Oscillating Motion</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>How do you configure an animation so that instead of restarting abruptly from 0% when reaching 100%, it plays backwards from 100% back to 0% in an infinite loop?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: animation-direction: alternate;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>animation-direction: alternate; animation-iteration-count: infinite;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 13 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="animation-fill-mode: forwards instructs the browser to retain the final 100% keyframe styles.">
+            <div class="quiz-question-text">1. Which property prevents an element from snapping back to its original styles after an animation finishes?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> animation-delay: 0s</div>
+              <div class="quiz-option"><span>B)</span> animation-fill-mode: forwards</div>
+              <div class="quiz-option"><span>C)</span> animation-direction: reverse</div>
+              <div class="quiz-option"><span>D)</span> animation-play-state: frozen</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Animations can execute automatically upon load and repeat infinitely without user interaction.">
+            <div class="quiz-question-text">2. What is a key advantage of CSS Animations (@keyframes) over CSS Transitions?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Animations require JavaScript</div>
+              <div class="quiz-option"><span>B)</span> Transitions are faster than animations</div>
+              <div class="quiz-option"><span>C)</span> Animations can execute automatically, loop indefinitely, and pass through multiple multi-stage keyframes</div>
+              <div class="quiz-option"><span>D)</span> Animations only work on text</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="linear timing maintains a perfectly constant velocity ideal for rotating wheels and spinners.">
+            <div class="quiz-question-text">3. Which timing function ensures an infinite circular spinner rotates at a constant, non-jerky speed?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> linear</div>
+              <div class="quiz-option"><span>B)</span> ease-in-out</div>
+              <div class="quiz-option"><span>C)</span> ease</div>
+              <div class="quiz-option"><span>D)</span> step-start</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="animation-play-state: paused temporarily freezes an animation in its active position.">
+            <div class="quiz-question-text">4. Which property freezes a running animation in place when hovered?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> animation-stop: true</div>
+              <div class="quiz-option"><span>B)</span> animation-duration: 0s</div>
+              <div class="quiz-option"><span>C)</span> animation-freeze: on</div>
+              <div class="quiz-option"><span>D)</span> animation-play-state: paused</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Negative delays skip forward in the timeline, starting the animation as if it had already run for that duration.">
+            <div class="quiz-question-text">5. What effect does a negative animation delay like 'animation-delay: -1s;' have?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It reverses the animation direction</div>
+              <div class="quiz-option"><span>B)</span> It starts immediately, as if the animation had already been running for 1 second</div>
+              <div class="quiz-option"><span>C)</span> It breaks the CSS parser</div>
+              <div class="quiz-option"><span>D)</span> It waits 1 second before doing anything</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Bouncing Ping Badge</h3>
+          <p>
+            In the live editor, create an <code>@keyframes bounce</code> that moves an element <code>translateY(-10px)</code> at 50% and back to <code>translateY(0)</code> at 100%, with <code>animation-direction: alternate</code> and <code>infinite</code> iteration!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#animations" class="ref-pill">CSS Animation Properties Reference</a>
+            <a href="../reference/glossary.html#animation" class="ref-pill">Glossary: Animation</a>
+            <a href="../reference/glossary.html#keyframes" class="ref-pill">Glossary: @keyframes</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Animation Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="12-transitions-transforms.html" class="btn btn-outline">&larr; Previous: Transitions &amp; Transforms</a>
+          <button class="mark-complete-btn" data-lesson-id="css-13">Mark as Complete</button>
+          <a href="14-css-variables-calc-clamp.html" class="btn btn-primary">Next: CSS Variables, Calc &amp; Clamp &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

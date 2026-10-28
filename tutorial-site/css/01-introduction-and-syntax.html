@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Introduction & Syntax — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="01-introduction-and-syntax.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 01</span>
+          </div>
+          <h1 class="lesson-title">CSS Introduction, Syntax and Where to Write It</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Learn how Cascading Style Sheets paint your HTML skeleton with colors, typography, spacing, and layouts.</span>
+            <span class="lang-hi">CSS kya hai, ruleset ka syntax kaise banta hai aur inline, internal aur external CSS mein kya fark hai.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What CSS is and how browsers apply rules to DOM nodes.</li>
+            <li>Anatomy of a CSS Ruleset: Selectors, Declaration Blocks, Properties, and Values.</li>
+            <li>The 3 ways to write CSS: <strong>Inline</strong>, <strong>Internal (<code>&lt;style&gt;</code>)</strong>, and <strong>External (<code>.css</code>)</strong>.</li>
+            <li>Why external stylesheets are the universal industry gold standard.</li>
+            <li>How the "Cascade" resolves conflicting style rules.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of the <a href="../html/index.html">HTML5 Mastery Course</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Gray Concrete House and the Interior Designer</div>
+          <p>
+            <span class="lang-en">When a construction crew finishes pouring concrete, laying bricks, and framing walls, you have a solid, weatherproof structure &mdash; but it is completely gray, cold, and uninviting. That gray concrete structure is raw <strong>HTML</strong>. Then the <strong>Interior Designer (CSS)</strong> arrives! They paint the living room walls ocean blue, hang warm amber lights from the ceiling, lay plush hardwood flooring, and position the velvet sofa in the center. The house has the exact same structural walls, but CSS makes it breathtaking to live in!</span>
+            <span class="lang-hi">Ek naye bane makan ki tarah sochiye. Mistri ne eent aur concrete se deewarein khadi kar di &mdash; yeh hai raw <strong>HTML</strong>. Ab <strong>Interior Designer (CSS)</strong> aata hai jo deewaron par royal blue paint karta hai, ceiling par light lagata hai aur sofa set karta hai. Deewarein wahi rehti hain, lekin CSS se ghar khoobsurat ban jata hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Anatomy of a CSS Rule</h2>
+        <p>
+          CSS is not a programming language like JavaScript or Python; it is a <strong>declarative stylesheet language</strong>. You don't write loops or math logic &mdash; you declare rules: <em>"Target these elements, and make them look like this"</em>.
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Anatomy of a CSS Ruleset</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/*  Selector   { Declaration Block }              */
+    h1         {
+      color: #2563eb;          /* Property : Value ; */
+      font-size: 2.5rem;       /* Property : Value ; */
+      text-align: center;      /* Property : Value ; */
+    }</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The 4 Building Blocks:</strong><br>
+          &bull; <strong>Selector (<code>h1</code>):</strong> Tells the browser which HTML elements to style.<br>
+          &bull; <strong>Declaration Block (<code>{ ... }</code>):</strong> Curly braces enclosing all styling rules.<br>
+          &bull; <strong>Property (<code>color</code>, <code>font-size</code>):</strong> The visual characteristic you are changing.<br>
+          &bull; <strong>Value (<code>#2563eb</code>, <code>2.5rem</code>):</strong> The specific styling setting applied to that property.<br>
+          &bull; <strong>Semicolon (<code>;</code>):</strong> Strictly terminates each individual declaration.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Three Ways to Write CSS</h2>
+        <p>
+          CSS can be injected into a webpage through three different locations:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Comparing the Three CSS Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- METHOD 1: External CSS (BEST PRACTICE)
+     Kept in a separate .css file; linked in &lt;head&gt; --&gt;
+&lt;link rel="stylesheet" href="css/styles.css"&gt;
+
+&lt;!-- METHOD 2: Internal CSS (Good for single-page isolated prototypes)
+     Placed inside a &lt;style&gt; block in the &lt;head&gt; --&gt;
+&lt;style&gt;
+  h2 {
+    color: #10b981;
+    font-weight: 700;
+  }
+&lt;/style&gt;
+
+&lt;!-- METHOD 3: Inline CSS (POOR PRACTICE - Avoid in production!)
+     Written directly on the HTML tag via style="" attribute --&gt;
+&lt;p style="color: red; font-size: 18px;"&gt;Urgent Warning message.&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why External CSS Wins Every Time:</strong><br>
+          1. <strong>Reusability:</strong> One single <code>styles.css</code> file can style 500 pages across your entire website.<br>
+          2. <strong>Browser Caching:</strong> After the user visits page 1, the browser caches the CSS file locally. Pages 2 through 500 load almost instantaneously!<br>
+          3. <strong>Clean Code:</strong> Keeps HTML files clean, readable, and lightweight.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Live CSS Properties</h2>
+        <p>Experiment with altering colors, margins, and borders in real time below:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Live CSS Syntax Lab</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 24px;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .hero-card {
+      background: #ffffff;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.15);
+    }
+    h2 {
+      color: #2563eb;
+      margin-top: 0;
+    }
+    .cta-btn {
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-card">
+    <h2>CSS Powers the Web!</h2>
+    <p>Change <code>#2563eb</code> to <code>#10b981</code> (emerald green) and click <strong>Run Code</strong>.</p>
+    <button type="button" class="cta-btn">Interactive Button</button>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. What is "The Cascade"?</h2>
+        <p>
+          The "C" in CSS stands for <strong>Cascading</strong>. When multiple CSS rules target the same element, the browser uses a waterfall (cascade) algorithm to determine which rule wins:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Principle of Order of Appearance</h3>
+        <p>When two rules have identical selector specificity, the rule written <strong>last in the stylesheet wins</strong>:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">p {
+  color: blue;
+}
+
+/* This rule appears LATER in the file, so it overrides the blue rule! */
+p {
+  color: green;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Result:</strong> All paragraphs will be <strong>green</strong>! The browser reads from top to bottom; later declarations overwrite earlier declarations of identical specificity.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Grouping Selectors with Commas</h3>
+        <p>Don't repeat yourself! Apply the exact same styles to multiple elements using a comma:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Grouping h1, h2, and h3 to share font-family and dark color */
+h1, h2, h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Efficiency:</strong> This single block replaces 3 redundant rule blocks, keeping your stylesheet lightweight and maintainable.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: CSS Comments Syntax</h3>
+        <p>CSS comments begin with <code>/*</code> and end with <code>*/</code> (different from HTML comments):</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* ==========================================================================
+   HEADER NAVIGATION STYLES
+   ========================================================================== */
+
+/* Single line explanation comment */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  /* background-color: red; <-- Temporarily commented out during debugging */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Keyboard Shortcut:</strong> Press <code>Ctrl + /</code> (or <code>Cmd + /</code> on Mac) in VS Code to instantly comment or uncomment any line of CSS.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Applied CSS Rules in JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Read the actual computed styles calculated by the browser
+const hero = document.querySelector(".hero-card");
+const computed = window.getComputedStyle(hero);
+
+console.log("Calculated Color:", computed.color);
+console.log("Calculated Padding:", computed.padding);
+console.log("Resolved Border:", computed.border);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Method:</strong> <code>window.getComputedStyle(element)</code> resolves all cascade conflicts, inheritance, and relative units (like rem/em), giving you the exact rendered pixel values.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting the semicolon (<code>;</code>):</strong> Omitting a semicolon at the end of a line invalidates the NEXT line of CSS, causing two properties to fail silently!</li>
+            <li><strong>Using HTML comment syntax in CSS:</strong> Never write <code>&lt;!-- comment --&gt;</code> in a CSS file! Browsers cannot parse it and will break your ruleset. Always use <code>/* comment */</code>.</li>
+            <li><strong>Overusing inline styles:</strong> Writing <code>style="color:red;"</code> directly in HTML tags destroys reusability. If you want to change red to blue across your site, you would have to edit 500 HTML files manually instead of one CSS file!</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Always link your external stylesheet inside the <code>&lt;head&gt;</code> before any HTML body elements render &mdash; this prevents the jarring "Flash of Unstyled Content" (FOUC).</li>
+            <li>Keep your CSS properties organized in a predictable order within each rule (e.g. Layout properties &rarr; Box Model &rarr; Visual Colors &rarr; Typography).</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>CSS rulesets consist of a <strong>selector</strong> and a <strong>declaration block</strong>.</li>
+            <li>Each declaration is a <code>property: value;</code> pair.</li>
+            <li>Use <strong>External CSS</strong> (<code>&lt;link rel="stylesheet"&gt;</code>) for production.</li>
+            <li>The <strong>Cascade</strong> determines which styles win when multiple rules conflict.</li>
+            <li>Group selectors with commas (<code>h1, h2, h3</code>) to share styles cleanly.</li>
+            <li>Comments are written as <code>/* comment */</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Fix the Missing Semicolon</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Find the syntax bug that prevents the font-size from taking effect in this rule:</p>
+          <pre class="code-content"><code data-lang="css">h1 {
+  color: #2563eb
+  font-size: 32px;
+}</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Look at the end of line 2.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The semicolon is missing after <code>#2563eb</code>! The browser attempts to parse <code>#2563eb font-size: 32px</code> as a single broken value. Corrected:<br>
+              <code>color: #2563eb;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Link an External Stylesheet</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write the exact HTML tag to connect an external stylesheet located at <code>assets/css/theme.css</code> inside the document's <code>&lt;head&gt;</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the link element with rel and href.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;link rel="stylesheet" href="assets/css/theme.css"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Cascade Resolution Prediction</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Predict the final text color of the button given these conflicting rules:</p>
+          <pre class="code-content"><code data-lang="css">button { color: red; }
+button { color: green; }
+button { color: purple; }</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Order of appearance when specificity is tied.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <strong>Purple</strong>! Because all three rules target the exact same element selector with equal specificity, the rule declared last in the stylesheet cascades and takes final precedence.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 01 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="CSS stands for Cascading Style Sheets.">
+            <div class="quiz-question-text">1. What does the acronym CSS stand for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Computer Style Software</div>
+              <div class="quiz-option"><span>B)</span> Cascading Style Sheets</div>
+              <div class="quiz-option"><span>C)</span> Creative Sheet System</div>
+              <div class="quiz-option"><span>D)</span> Color and Styling Syntax</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="External stylesheets are the industry standard because they separate concerns and enable browser caching.">
+            <div class="quiz-question-text">2. Which method of writing CSS is considered best practice for real-world production websites?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Writing style attributes on every HTML tag</div>
+              <div class="quiz-option"><span>B)</span> Putting all styles in the body tag</div>
+              <div class="quiz-option"><span>C)</span> Linking an external .css stylesheet file in the &lt;head&gt;</div>
+              <div class="quiz-option"><span>D)</span> Writing styles in JavaScript files</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Semicolons terminate each individual CSS declaration.">
+            <div class="quiz-question-text">3. What character terminates each declaration inside a CSS ruleset?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Semicolon (;)</div>
+              <div class="quiz-option"><span>B)</span> Colon (:)</div>
+              <div class="quiz-option"><span>C)</span> Period (.)</div>
+              <div class="quiz-option"><span>D)</span> Comma (,)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="/* comment */ is the standard comment syntax in CSS.">
+            <div class="quiz-question-text">4. Which of the following is the valid syntax for a CSS comment?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;!-- CSS Comment --&gt;</div>
+              <div class="quiz-option"><span>B)</span> // CSS Comment</div>
+              <div class="quiz-option"><span>C)</span> # CSS Comment</div>
+              <div class="quiz-option"><span>D)</span> /* CSS Comment */</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="When specificities are equal, the rule written last in the stylesheet takes precedence.">
+            <div class="quiz-question-text">5. In the CSS cascade, what happens if two identical selectors target the same element with conflicting colors?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The browser throws a syntax error</div>
+              <div class="quiz-option"><span>B)</span> The rule declared last in the stylesheet wins</div>
+              <div class="quiz-option"><span>C)</span> The rule declared first in the stylesheet wins</div>
+              <div class="quiz-option"><span>D)</span> The colors blend together</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Customize the Hero Card</h3>
+          <p>
+            In the live editor above, change the <code>.hero-card</code> border from <code>#2563eb</code> (blue) to <code>#7c3aed</code> (violet purple) and increase the border width from <code>2px</code> to <code>3px</code>. Click <strong>Run Code</strong> to preview your visual upgrade!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html" class="ref-pill">CSS Properties Directory</a>
+            <a href="../reference/glossary.html#css" class="ref-pill">Glossary: CSS</a>
+            <a href="../reference/glossary.html#cascade" class="ref-pill">Glossary: Cascade</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="index.html" class="btn btn-outline">&larr; CSS Course Index</a>
+          <button class="mark-complete-btn" data-lesson-id="css-01">Mark as Complete</button>
+          <a href="02-selectors-specificity.html" class="btn btn-primary">Next: Selectors &amp; Specificity &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

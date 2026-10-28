@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Elements & Attributes — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="02-elements-attributes.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- 1. Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 11 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 02</span>
+          </div>
+          <h1 class="lesson-title">HTML Elements and Core Attributes</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Learn how attributes empower HTML tags with identity, styling classes, tooltips, and interactive behavior.</span>
+            <span class="lang-hi">Seekhein kaise attributes HTML tags ko identity (id), styling classes aur extra capabilities dete hain.</span>
+          </p>
+        </div>
+
+        <!-- 2. What you will learn & Prerequisites -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The precise technical difference between a tag, an attribute, and an element.</li>
+            <li>Universal attributes available on every HTML element: <code>id</code>, <code>class</code>, <code>title</code>, and <code>hidden</code>.</li>
+            <li>How <strong>Boolean attributes</strong> work (e.g. <code>required</code>, <code>disabled</code>).</li>
+            <li>How custom <code>data-*</code> attributes store frontend state for JavaScript.</li>
+            <li>Best practices for quotes, case sensitivity, and ID uniqueness.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="01-introduction-structure.html">01. Intro &amp; Document Structure</a>.
+          </div>
+        </div>
+
+        <!-- 3. Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: Airline Luggage Tags</div>
+          <p>
+            <span class="lang-en">Imagine you check a suitcase at an airport. The physical suitcase is the <strong>Element</strong>. The handles you use to open and close it are the <strong>Tags</strong>. The barcode luggage tag stuck to the handle containing your passenger name, flight number, and destination is the <strong>Attribute</strong>. The suitcase still exists without the luggage tag, but the airline needs those attributes to know who owns it and where to route it!</span>
+            <span class="lang-hi">Airport par check-in kiye gaye suitcase ki tarah sochiye. Suitcase khud ek <strong>Element</strong> hai. Uska handle kholne aur band karne ka <strong>Tag</strong> hai. Aur uspe laga barcode tag jisme aapka naam aur flight number likha hota hai, woh <strong>Attribute</strong> hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Element vs Tag vs Attribute</h2>
+        <p>
+          New developers often use these three words interchangeably, but they have distinct, precise meanings:
+        </p>
+        <ul>
+          <li><strong>Tag:</strong> The literal characters enclosed in angle brackets, like <code>&lt;button&gt;</code> (opening tag) or <code>&lt;/button&gt;</code> (closing tag).</li>
+          <li><strong>Attribute:</strong> Special modifiers placed inside the opening tag (never in the closing tag) providing configuration values: <code>type="submit"</code>.</li>
+          <li><strong>Element:</strong> The complete unit: opening tag + attributes + content + closing tag: <code>&lt;button type="submit"&gt;Pay Now&lt;/button&gt;</code>.</li>
+        </ul>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Attribute Syntax Breakdown</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Attribute syntax: name="value" inside the opening tag --&gt;
+&lt;a href="https://example.com" target="_blank" title="Visit Example Site"&gt;
+  Read Full Article
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Syntax Rules:</strong><br>
+          &bull; Attributes always appear in the <strong>opening tag</strong> only.<br>
+          &bull; The standard pattern is <code>name="value"</code> (lowercase name, equals sign, double quotes).<br>
+          &bull; Multiple attributes are separated by a single space.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Universal Attributes: <code>id</code> and <code>class</code></h2>
+        <p>
+          These two attributes are the workhorses of web development. They bridge HTML with both CSS styling and JavaScript logic.
+        </p>
+        <ul>
+          <li><code>id</code>: A <strong>globally unique</strong> identifier. No two elements in the same HTML file should ever share the same ID. Think of it like a Social Security Number or Citizen National ID card.</li>
+          <li><code>class</code>: A <strong>reusable category</strong> label. Multiple elements can share the exact same class, and an individual element can possess multiple classes separated by spaces. Think of it like clothing tags ("shirt", "cotton", "blue").</li>
+        </ul>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Comparing ID vs Class</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- UNIQUE ID: Only one element on the page can have id="main-nav" --&gt;
+&lt;nav id="main-nav"&gt;
+  &lt;!-- REUSABLE CLASSES: Multiple elements share the "nav-link" class --&gt;
+  &lt;a href="index.html" class="nav-link active"&gt;Home&lt;/a&gt;
+  &lt;a href="about.html" class="nav-link"&gt;About&lt;/a&gt;
+  &lt;a href="contact.html" class="nav-link"&gt;Contact&lt;/a&gt;
+&lt;/nav&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-line Breakdown:</strong><br>
+          &bull; <code>id="main-nav"</code>: Uniquely identifies this exact navigation bar.<br>
+          &bull; <code>class="nav-link active"</code>: This element has TWO classes applied to it: <code>nav-link</code> and <code>active</code>, separated by a space.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Experiment: Test ID and Class Styling</h2>
+        <p>Notice how multiple items share the same class styling, while the ID targets a single element:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: ID and Class in Action</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Class selector begins with a dot (.) */
+    .product-card {
+      font-family: sans-serif;
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+    /* ID selector begins with a hash (#) */
+    #featured-item {
+      background-color: #fef3c7;
+      border-color: #f59e0b;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="product-card" id="featured-item">
+    &#11088; Featured: Mechanical Keyboard ($99)
+  </div>
+  <div class="product-card">
+    Standard: Wireless Mouse ($29)
+  </div>
+  <div class="product-card">
+    Standard: USB-C Cable ($12)
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Understanding Boolean Attributes</h2>
+        <p>
+          Some attributes do not need a value. Their sheer presence in the tag acts as <strong>true</strong>, while their absence acts as <strong>false</strong>.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Common Boolean Attributes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. disabled: Gray out an input and prevent typing --&gt;
+&lt;input type="text" value="System Locked" disabled&gt;
+
+&lt;!-- 2. required: Browser forces user to fill before submit --&gt;
+&lt;input type="email" placeholder="Enter your email" required&gt;
+
+&lt;!-- 3. checked: Pre-select a checkbox or radio button --&gt;
+&lt;input type="checkbox" id="terms" checked&gt;
+&lt;label for="terms"&gt;I agree to terms&lt;/label&gt;
+
+&lt;!-- 4. hidden: Hides element completely from screen and layout --&gt;
+&lt;p hidden&gt;This secret message is invisible to everyone.&lt;/p&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Important Rule:</strong> You do NOT need to write <code>disabled="true"</code> or <code>disabled="disabled"</code>. In modern HTML5, simply writing <code>disabled</code> is clean, standard, and preferred.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The <code>title</code> Attribute (Native Hover Tooltips)</h3>
+        <p>The <code>title</code> attribute provides native browser hover tooltips without any CSS or JavaScript:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Hover your mouse over these elements to see the tooltip popup --&gt;
+&lt;button title="Saves your changes permanently to local storage"&gt;
+  Save File
+&lt;/button&gt;
+
+&lt;abbr title="World Health Organization"&gt;WHO&lt;/abbr&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Accessibility Note:</strong> While convenient for desktop mice, title tooltips cannot be triggered on mobile touchscreens. For critical information, always prefer visible text.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Custom Data Attributes (<code>data-*</code>)</h3>
+        <p>HTML5 allows you to store private, custom data directly on any element using the <code>data-*</code> prefix:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Storing structured custom metadata for JavaScript --&gt;
+&lt;div class="user-badge"
+     data-user-id="9481"
+     data-role="admin"
+     data-status="active"&gt;
+  Jane Doe (Admin)
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this is powerful:</strong> JavaScript can instantly read this data via <code>element.dataset.role</code> or <code>element.dataset.userId</code> without polluting CSS classes or breaking HTML validation!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Reading Attributes with JavaScript</h3>
+        <p>How JavaScript reads, sets, and toggles attributes on live HTML elements:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const btn = document.querySelector("#submit-btn");
+
+// 1. Reading an attribute
+console.log(btn.getAttribute("type")); // "submit"
+
+// 2. Setting a new attribute
+btn.setAttribute("title", "Click to finalize registration");
+
+// 3. Checking if attribute exists
+if (btn.hasAttribute("disabled")) {
+  console.log("Button is currently locked.");
+}
+
+// 4. Reading custom data attributes
+console.log(btn.dataset.userId);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>API Summary:</strong> <code>getAttribute()</code>, <code>setAttribute()</code>, <code>hasAttribute()</code>, and <code>removeAttribute()</code> provide complete programmatic control.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Reusing the same <code>id</code> multiple times:</strong> An ID must be 100% unique on the page. If you have two elements with <code>id="profile"</code>, JavaScript's <code>document.getElementById()</code> will only ever find the first one, silently ignoring the second!</li>
+            <li><strong>Forgetting quotes around attribute values:</strong> Always wrap attribute values in straight double quotes (<code>class="btn-primary"</code>). Unquoted values fail as soon as there are spaces or special characters.</li>
+            <li><strong>Putting attributes inside the closing tag:</strong> Never write <code>&lt;/p class="end"&gt;</code>! Closing tags must never contain attributes.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Use <strong>classes</strong> for styling with CSS, and reserve <strong>IDs</strong> for unique anchor links (like <code>#section-1</code>) and specific JavaScript targets.</li>
+            <li>Separate multiple classes with spaces inside a single string: <code>class="card shadow-md p-4"</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Attributes live in opening tags: <code>&lt;tag attribute="value"&gt;</code>.</li>
+            <li><code>id</code> is unique to one element; <code>class</code> can be shared by many elements.</li>
+            <li>Multiple classes are separated by spaces (<code>class="btn btn-primary"</code>).</li>
+            <li>Boolean attributes (<code>disabled</code>, <code>required</code>) are true simply by existing.</li>
+            <li><code>data-*</code> attributes safely store custom data for JavaScript to read via <code>element.dataset</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): ID vs Class Decision</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>You have 5 different buttons on your page, and all 5 should share the exact same blue rounded style. Should you use an <code>id</code> or a <code>class</code> on these buttons?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Can an ID be reused across multiple elements?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> You must use a <strong>class</strong> (e.g. <code>class="btn-blue"</code>). IDs are strictly unique and cannot be shared across multiple elements.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Multiple Classes Syntax</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>How do you assign three classes &mdash; <code>card</code>, <code>dark-mode</code>, and <code>featured</code> &mdash; to a single <code>&lt;div&gt;</code> tag?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Do you write class three times or use spaces?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Separate them with spaces within a single <code>class</code> attribute:<br>
+              <code>&lt;div class="card dark-mode featured"&gt;&lt;/div&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Fixing the Broken Boolean Attribute</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>A developer wrote <code>&lt;input type="text" disabled="false"&gt;</code> wanting the input to be enabled. Why is the input still disabled in the browser?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: How do boolean attributes evaluate in HTML?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> In HTML, boolean attributes evaluate to <strong>true</strong> simply by being present in the tag, regardless of the value string! Even <code>disabled="false"</code> evaluates as disabled. To enable the input, you must completely remove the word <code>disabled</code> from the tag: <code>&lt;input type="text"&gt;</code>.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 02 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Attributes must always be placed within the opening tag.">
+            <div class="quiz-question-text">1. Where must HTML attributes always be placed?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Inside the closing tag</div>
+              <div class="quiz-option"><span>B)</span> Inside the opening tag</div>
+              <div class="quiz-option"><span>C)</span> In between the opening and closing tag</div>
+              <div class="quiz-option"><span>D)</span> Inside the CSS file only</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="IDs must be globally unique within the document.">
+            <div class="quiz-question-text">2. How many elements on the same page can share the same id value?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Up to 10</div>
+              <div class="quiz-option"><span>B)</span> Unlimited</div>
+              <div class="quiz-option"><span>C)</span> Exactly one; IDs must be unique</div>
+              <div class="quiz-option"><span>D)</span> As many as belong to the same parent</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Multiple classes are separated by spaces inside one class attribute.">
+            <div class="quiz-question-text">3. How do you apply multiple CSS classes to a single element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Separate them with spaces: class="alert alert-danger"</div>
+              <div class="quiz-option"><span>B)</span> Separate them with commas: class="alert, alert-danger"</div>
+              <div class="quiz-option"><span>C)</span> Write multiple class attributes: class="alert" class="alert-danger"</div>
+              <div class="quiz-option"><span>D)</span> Use a plus sign: class="alert+alert-danger"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Custom data attributes in HTML5 must always start with data-.">
+            <div class="quiz-question-text">4. What prefix is required for custom data attributes in HTML5?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> custom-</div>
+              <div class="quiz-option"><span>B)</span> meta-</div>
+              <div class="quiz-option"><span>C)</span> js-</div>
+              <div class="quiz-option"><span>D)</span> data-</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The title attribute creates a native browser hover tooltip.">
+            <div class="quiz-question-text">5. Which attribute produces a native tooltip popup when a mouse hovers over an element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> alt</div>
+              <div class="quiz-option"><span>B)</span> title</div>
+              <div class="quiz-option"><span>C)</span> tooltip</div>
+              <div class="quiz-option"><span>D)</span> popup</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Custom Product Card</h3>
+          <p>
+            In the interactive editor above, add a 4th product card for a "Gaming Monitor ($299)". Give it the class <code>product-card</code> and add a <code>title="High refresh rate display"</code> attribute. Run the code and hover over it with your cursor to see the tooltip!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html" class="ref-pill">HTML Attributes Directory</a>
+            <a href="../reference/glossary.html#attribute" class="ref-pill">Glossary: Attribute</a>
+            <a href="../reference/glossary.html#class" class="ref-pill">Glossary: Class</a>
+            <a href="../reference/glossary.html#id" class="ref-pill">Glossary: ID</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">HTML Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="01-introduction-structure.html" class="btn btn-outline">&larr; Previous: Intro &amp; Structure</a>
+          <button class="mark-complete-btn" data-lesson-id="html-02">Mark as Complete</button>
+          <a href="03-headings-paragraphs-text-formatting.html" class="btn btn-primary">Next: Headings &amp; Formatting &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

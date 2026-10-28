@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Strings, Numbers, Math &amp; Date — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="10-strings-numbers-math-date.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 10</span>
+          </div>
+          <h1 class="lesson-title">Strings, Numbers, Math &amp; Date APIs</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Format text, generate cryptographically random numbers, perform precision geometry, and master calendar timestamps.</span>
+            <span class="lang-hi">Standard Library: String methods (slice, replace, split), Math object (random, floor), aur Date handling seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Essential string methods: <code>trim</code>, <code>slice</code>, <code>replace</code>, <code>replaceAll</code>, <code>includes</code>, and <code>split</code>.</li>
+            <li>Multi-line template literals and expression embedding.</li>
+            <li>Safe numeric validation: <code>Number.isInteger()</code> and <code>Number.isNaN()</code>.</li>
+            <li>Formatting currency decimals with <code>toFixed(2)</code>.</li>
+            <li>The <code>Math</code> library: <code>floor</code>, <code>ceil</code>, <code>round</code>, and generating random integers in a range.</li>
+            <li>Working with the <code>Date</code> object, epoch timestamps, and the 0-indexed month pitfall.</li>
+            <li>Zero-dependency internationalization with <code>Intl.NumberFormat</code> and <code>Intl.DateTimeFormat</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="09-objects-and-this.html">09. Objects &amp; The 'this' Keyword</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Swiss Watchmaker's Precision Bench</div>
+          <p>
+            <span class="lang-en">Picture a high-end Swiss horologist assembling a luxury timepiece:
+            <br>&bull; <strong>String Tools:</strong> A laser engraver that trims rough edges (<code>trim()</code>), measures letter counts (<code>length</code>), and etches clean serial numbers.
+            <br>&bull; <strong>Math Tools:</strong> Precision micrometers and gears calculating exact angles, ratios, and rotations without a hair's breadth of error (<code>Math.floor()</code>, <code>Math.PI</code>).
+            <br>&bull; <strong>Date Engine:</strong> The ticking quartz crystal tracking milliseconds since an anchor moment in history, translating oscillations into months, days, and seconds!</span>
+            <span class="lang-hi">Gadi banane wale mechanic ke auzaron ki tarah sochiye: String tools text ko kaatne, jodane aur saaf karne ke liye hain; Math tools calculation aur random numbers ke liye hain; aur Date tools waqt aur calendar ko track karne ke liye hain!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. String Manipulation Mastery</h2>
+        <p>
+          Strings are immutable in JavaScript &mdash; methods never modify the original string, they always return a fresh new string:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Core String Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const rawEmail = "   User.Account@Domain.COM  \n";
+
+// 1. Cleaning input: trim and lowercase
+const cleanEmail = rawEmail.trim().toLowerCase();
+console.log(cleanEmail); // "user.account@domain.com"
+
+// 2. Searching within strings
+const statement = "JavaScript is the engine of the web";
+console.log(statement.includes("engine"));   // true
+console.log(statement.startsWith("Java"));   // true
+console.log(statement.endsWith("web"));      // true
+
+// 3. Slicing sections (start, endNonInclusive)
+const codeSnippet = statement.slice(0, 10);  // "JavaScript"
+
+// 4. Replacing content
+const promptText = "Cats are cool. Cats are fast.";
+console.log(promptText.replace("Cats", "Dogs"));    // "Dogs are cool. Cats are fast." (First match only)
+console.log(promptText.replaceAll("Cats", "Dogs")); // "Dogs are cool. Dogs are fast." (All matches!)
+
+// 5. Splitting strings into Arrays:
+const csv = "Apple,Banana,Orange";
+const fruitList = csv.split(","); // ["Apple", "Banana", "Orange"]</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Numbers &amp; Precision Rounding</h2>
+        <p>
+          JavaScript represents all numbers using IEEE 754 64-bit floating-point format. This introduces famous precision quirks like <code>0.1 + 0.2 === 0.30000000000000004</code>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Number Formatting &amp; Validation</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const rawPrice = 19.9567;
+
+// toFixed(digits): Formats to exact decimal places (RETURNS A STRING!)
+const formattedPrice = rawPrice.toFixed(2); // "19.96" (Rounded properly)
+
+// Safe Number Checking:
+console.log(Number.isInteger(42));    // true
+console.log(Number.isInteger(42.5));  // false
+
+// Checking for NaN safely:
+console.log(Number.isNaN(NaN));       // true
+console.log(Number.isNaN("hello"));   // false (Strictly tests without coercion!)</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The `Math` Object</h2>
+        <p>
+          The <code>Math</code> object contains mathematical constants and static utility functions:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Rounding and Random Ranges</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. The 4 Rounding Functions:
+console.log(Math.round(4.5)); // 5 (Standard round to nearest)
+console.log(Math.floor(4.9)); // 4 (Always rounds DOWN)
+console.log(Math.ceil(4.1));  // 5 (Always rounds UP)
+console.log(Math.trunc(4.9)); // 4 (Simply cuts off decimals)
+
+// 2. Extrema:
+console.log(Math.min(10, 5, 40, -2)); // -2
+console.log(Math.max(10, 5, 40, -2)); // 40
+
+// 3. THE RANDOM INTEGER FORMULA:
+// Math.random() returns a floating number from 0 (inclusive) up to 1 (exclusive)
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Generate a random dice roll (1 to 6):
+const diceRoll = getRandomInt(1, 6);
+console.log(`Dice rolled: ${diceRoll}`);</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The `Date` Object &amp; Timestamps</h2>
+        <p>
+          JavaScript dates represent milliseconds elapsed since the <strong>Unix Epoch (January 1, 1970 UTC)</strong>:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-error); border-radius:var(--radius-sm);">
+          <strong>The Infamous Month Trap:</strong> In JavaScript, months are <strong>0-indexed</strong>! <code>0</code> is January, <code>5</code> is June, and <code>11</code> is December. However, days of the month (<code>getDate()</code>) start at <code>1</code>!
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Creating &amp; Reading Dates</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Current Date & Time:
+const now = new Date();
+
+// 2. Specific Date: new Date(year, monthIndex, day, hour, min, sec)
+const launchDate = new Date(2026, 9, 26); // October 26, 2026! (Month 9 is October)
+
+// 3. Date Getters:
+console.log(now.getFullYear()); // 2026
+console.log(now.getMonth());    // 0-11
+console.log(now.getDate());     // 1-31 (Day of month)
+console.log(now.getDay());      // 0-6 (0 is Sunday, 6 is Saturday)
+
+// 4. Current Timestamp in Milliseconds (Great for performance timing):
+const timestamp = Date.now(); // e.g. 1761500000000</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Professional Internationalization (<code>Intl</code>)</h2>
+        <p>
+          Never build custom string-formatting hacks for currencies or dates. Modern browsers include the built-in <code>Intl</code> API for localized formatting without external dependencies:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Clean Localized Formatting</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. Currency Formatting (US Dollars vs Euros vs Indian Rupees):
+const usCurrency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+console.log(usCurrency.format(12499.50)); // "$12,499.50"
+
+const inrCurrency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" });
+console.log(inrCurrency.format(12499.50)); // "₹12,499.50"
+
+// 2. Human-Readable Date Formatting:
+const dateRenderer = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "full",
+  timeStyle: "short"
+});
+console.log(dateRenderer.format(new Date())); 
+// "Monday, October 26, 2026 at 11:30 PM"</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Test Built-in APIs</h2>
+        <p>
+          Generate random lottery numbers and format current localized time live:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Standard Library Playground</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h3>Standard Library Demo</h3>
+  <button id="roll-btn">Generate Random Lucky Number (1-100)</button>
+  <div id="output" class="box">Click button to generate...</div>
+
+  <script>
+    const outputEl = document.getElementById("output");
+    const rollBtn = document.getElementById("roll-btn");
+
+    function updateDisplay() {
+      // Generate random integer between 1 and 100
+      const luckyNum = Math.floor(Math.random() * 100) + 1;
+      
+      // Localized currency and time
+      const price = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(luckyNum * 12.5);
+      const nowFormatted = new Intl.DateTimeFormat("en-US", { timeStyle: "medium" }).format(new Date());
+
+      outputEl.innerHTML = `
+        &#127922; <strong>Lucky Number:</strong> ${luckyNum}<br>
+        &#128178; <strong>Calculated Prize:</strong> ${price}<br>
+        &#9200; <strong>Generated At:</strong> ${nowFormatted}
+      `;
+      console.log("Generated lucky number:", luckyNum);
+    }
+
+    rollBtn.addEventListener("click", updateDisplay);
+    updateDisplay();
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting that <code>toFixed()</code> returns a String:</strong> Writing <code>val.toFixed(2) + 10</code> results in string concatenation (e.g. <code>"19.9910"</code>). Wrap with <code>Number(val.toFixed(2))</code> if further math is required.</li>
+            <li><strong>Setting month to 12 in Date:</strong> In <code>new Date(2026, 12, 1)</code>, month 12 wraps around to January of 2027! Remember December is index <code>11</code>.</li>
+            <li><strong>Expecting <code>Math.random()</code> to generate integers:</strong> <code>Math.random()</code> returns a decimal between 0 and 1. You must multiply and use <code>Math.floor()</code>.</li>
+            <li><strong>Thinking strings can be modified in place:</strong> Writing <code>str[0] = "Z"</code> does not modify the string; strings are strictly immutable in JavaScript.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Reverse a string in one line:</strong> <code>str.split("").reverse().join("")</code> is the canonical reversal idiom.</li>
+            <li><strong>Pad numbers with leading zeros:</strong> Use <code>String(day).padStart(2, "0")</code> to ensure dates like <code>"5"</code> format cleanly as <code>"05"</code>!</li>
+            <li><strong>Use <code>crypto.randomUUID()</code>:</strong> Modern browsers have built-in UUID generation without needing any third-party npm package: <code>const id = crypto.randomUUID();</code>!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Strings are immutable; methods return fresh transformed strings.</li>
+            <li><code>toFixed(2)</code> formats decimals and returns a string.</li>
+            <li><code>Math.floor()</code> rounds down; <code>Math.ceil()</code> rounds up.</li>
+            <li>Random integer formula: <code>Math.floor(Math.random() * (max - min + 1)) + min</code>.</li>
+            <li>Date months are 0-indexed (0 = Jan, 11 = Dec); days are 1-indexed.</li>
+            <li>Use the native <code>Intl</code> API for localized currencies and dates.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Capitalize First Letter</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Given <code>const word = "javascript";</code>, write a one-line expression to capitalize only the first letter (<code>"Javascript"</code>).</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: word[0].toUpperCase() + word.slice(1).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>word.charAt(0).toUpperCase() + word.slice(1);</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Random Coin Flip</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write an arrow function <code>flipCoin()</code> that returns <code>"Heads"</code> roughly 50% of the time and <code>"Tails"</code> roughly 50% of the time using <code>Math.random()</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Math.random() < 0.5 ? "Heads" : "Tails".</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const flipCoin = () => Math.random() < 0.5 ? "Heads" : "Tails";</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Days Between Two Dates</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write a function <code>getDaysBetween(date1, date2)</code> that calculates the absolute number of full days between two JavaScript Date objects.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Subtract timestamps to get milliseconds, divide by (1000 * 60 * 60 * 24), and Math.abs().</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>function getDaysBetween(d1, d2) {
+  const diffMs = Math.abs(d2.getTime() - d1.getTime());
+  const msInDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diffMs / msInDay);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 10 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="toFixed(2) returns a string representation of the formatted number.">
+            <div class="quiz-question-text">1. What data type is returned by 'Number.prototype.toFixed(2)'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> number</div>
+              <div class="quiz-option"><span>B)</span> string</div>
+              <div class="quiz-option"><span>C)</span> boolean</div>
+              <div class="quiz-option"><span>D)</span> array</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="In JavaScript Date objects, months are 0-indexed (January is 0, December is 11).">
+            <div class="quiz-question-text">2. Which number represents the month of December in a JavaScript Date constructor?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 12</div>
+              <div class="quiz-option"><span>B)</span> 1</div>
+              <div class="quiz-option"><span>C)</span> 11 (0-indexed)</div>
+              <div class="quiz-option"><span>D)</span> 0</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Math.floor rounds down to the nearest integer (4.9 becomes 4).">
+            <div class="quiz-question-text">3. What is the output of 'Math.floor(4.9)'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 4</div>
+              <div class="quiz-option"><span>B)</span> 5</div>
+              <div class="quiz-option"><span>C)</span> 4.9</div>
+              <div class="quiz-option"><span>D)</span> NaN</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="String.prototype.split() breaks a string into an array of substrings based on a delimiter.">
+            <div class="quiz-question-text">4. Which string method splits a string into an array of substrings?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> slice()</div>
+              <div class="quiz-option"><span>B)</span> join()</div>
+              <div class="quiz-option"><span>C)</span> break()</div>
+              <div class="quiz-option"><span>D)</span> split()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The Intl namespace provides native localization for numbers, currencies, dates, and lists.">
+            <div class="quiz-question-text">5. What built-in JavaScript API provides localization for currencies and dates without external libraries?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Moment API</div>
+              <div class="quiz-option"><span>B)</span> Intl API</div>
+              <div class="quiz-option"><span>C)</span> Locale API</div>
+              <div class="quiz-option"><span>D)</span> Currency API</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Digital Clock Formatter</h3>
+          <p>
+            In the live editor, write a function that formats the current time into clean 2-digit format: <code>HH:MM:SS</code> using <code>.getHours()</code>, <code>.getMinutes()</code>, <code>.getSeconds()</code> and <code>.padStart(2, "0")</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#strings" class="ref-pill">Strings Reference</a>
+            <a href="../reference/js-reference.html#math" class="ref-pill">Math Object Reference</a>
+            <a href="../reference/js-reference.html#date" class="ref-pill">Date Object Reference</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Math &amp; Date Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="09-objects-and-this.html" class="btn btn-outline">&larr; Previous: Objects &amp; The 'this' Keyword</a>
+          <button class="mark-complete-btn" data-lesson-id="js-10">Mark as Complete</button>
+          <a href="11-dom-selecting-changing.html" class="btn btn-primary">Next: DOM Selecting &amp; Modifying &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

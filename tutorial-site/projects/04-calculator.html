@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 04: Interactive Calculator — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="04-calculator.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 30 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 04</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Interactive Calculator Engine</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Construct a precision standard &amp; scientific calculator. Master CSS Grid keypad layouts, finite state machines, floating point arithmetic safety, and full keyboard bindings.</span>
+            <span class="lang-hi">Complete interactive calculator banayein: CSS Grid keypad layout, calculation state machine, floating-point error safety, aur keyboard shortcuts.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Architectural Pillars</div>
+          <ul>
+            <li><strong>Keypad Grid Layout:</strong> A compact 4-column responsive grid with spans for <code>0</code> and <code>=</code> buttons.</li>
+            <li><strong>State Machine:</strong> Tracking <code>previousOperand</code>, <code>currentOperand</code>, <code>operation</code>, and <code>overwriteMode</code>.</li>
+            <li><strong>Float Safety:</strong> Avoiding classic <code>0.1 + 0.2 = 0.30000000000000004</code> bugs by rounding results cleanly with <code>Math.round((num + Number.EPSILON) * 1e10) / 1e10</code>.</li>
+            <li><strong>Keyboard Accessibility:</strong> Listening to <code>window.addEventListener('keydown', ...)</code> to map number keys, operators, Enter, and Escape.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Calculator</h2>
+          <p>
+            <span class="lang-en">Click buttons or type directly with your physical keyboard:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me calculator test karein (keyboard keys bhi kaam karti hain):</span>
+          </p>
+
+          <div class="try-it-container" id="editor-calc">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Calculator Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-calc')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-calc')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .calc { width: 100%; max-width: 320px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .display { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 14px; text-align: right; margin-bottom: 16px; min-height: 72px; display: flex; flex-direction: column; justify-content: space-between; }
+    .prev-num { font-size: 13px; color: #94a3b8; min-height: 16px; }
+    .curr-num { font-size: 28px; font-weight: bold; color: #38bdf8; word-break: break-all; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    button { padding: 14px 0; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; transition: filter 0.15s; }
+    button:hover { filter: brightness(1.2); }
+    .btn-num { background: #334155; color: white; }
+    .btn-op { background: #0ea5e9; color: white; }
+    .btn-action { background: #475569; color: #fbbf24; }
+    .btn-equal { background: #10b981; color: white; grid-column: span 2; }
+    .btn-zero { grid-column: span 2; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="calc"&gt;
+    &lt;div class="display"&gt;
+      &lt;div class="prev-num" id="prev-display"&gt;&lt;/div&gt;
+      &lt;div class="curr-num" id="curr-display"&gt;0&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="grid"&gt;
+      &lt;button class="btn-action" onclick="clearAll()"&gt;AC&lt;/button&gt;
+      &lt;button class="btn-action" onclick="delChar()"&gt;&amp;larr;&lt;/button&gt;
+      &lt;button class="btn-op" onclick="setOp('%')"&gt;%&lt;/button&gt;
+      &lt;button class="btn-op" onclick="setOp('/')"&gt;&amp;divide;&lt;/button&gt;
+      
+      &lt;button class="btn-num" onclick="appendNum('7')"&gt;7&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('8')"&gt;8&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('9')"&gt;9&lt;/button&gt;
+      &lt;button class="btn-op" onclick="setOp('*')"&gt;&amp;times;&lt;/button&gt;
+      
+      &lt;button class="btn-num" onclick="appendNum('4')"&gt;4&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('5')"&gt;5&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('6')"&gt;6&lt;/button&gt;
+      &lt;button class="btn-op" onclick="setOp('-')"&gt;&amp;minus;&lt;/button&gt;
+      
+      &lt;button class="btn-num" onclick="appendNum('1')"&gt;1&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('2')"&gt;2&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('3')"&gt;3&lt;/button&gt;
+      &lt;button class="btn-op" onclick="setOp('+')"&gt;+&lt;/button&gt;
+      
+      &lt;button class="btn-num btn-zero" onclick="appendNum('0')"&gt;0&lt;/button&gt;
+      &lt;button class="btn-num" onclick="appendNum('.')"&gt;.&lt;/button&gt;
+      &lt;button class="btn-equal" onclick="compute()"&gt;=&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    let prev = '';
+    let curr = '0';
+    let op = undefined;
+
+    const prevEl = document.getElementById('prev-display');
+    const currEl = document.getElementById('curr-display');
+
+    function updateDisplay() {
+      currEl.textContent = curr;
+      prevEl.textContent = op != null ? `${prev} ${op}` : '';
+    }
+
+    function appendNum(n) {
+      if (n === '.' && curr.includes('.')) return;
+      if (curr === '0' && n !== '.') curr = n;
+      else curr += n;
+      updateDisplay();
+    }
+
+    function setOp(operation) {
+      if (curr === '') return;
+      if (prev !== '') compute();
+      op = operation;
+      prev = curr;
+      curr = '';
+      updateDisplay();
+    }
+
+    function compute() {
+      let result;
+      const p = parseFloat(prev);
+      const c = parseFloat(curr);
+      if (isNaN(p) || isNaN(c)) return;
+
+      switch (op) {
+        case '+': result = p + c; break;
+        case '-': result = p - c; break;
+        case '*': result = p * c; break;
+        case '/': result = c === 0 ? 'Error' : p / c; break;
+        case '%': result = p * (c / 100); break;
+        default: return;
+      }
+
+      if (typeof result === 'number') {
+        result = Math.round((result + Number.EPSILON) * 1e8) / 1e8;
+      }
+
+      curr = result.toString();
+      op = undefined;
+      prev = '';
+      updateDisplay();
+    }
+
+    function clearAll() {
+      prev = '';
+      curr = '0';
+      op = undefined;
+      updateDisplay();
+    }
+
+    function delChar() {
+      if (curr.length === 1 || curr === 'Error') curr = '0';
+      else curr = curr.slice(0, -1);
+      updateDisplay();
+    }
+
+    // Keyboard support
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9' || e.key === '.') appendNum(e.key);
+      if (['+', '-', '*', '/', '%'].includes(e.key)) setOp(e.key);
+      if (e.key === 'Enter' || e.key === '=') compute();
+      if (e.key === 'Backspace') delChar();
+      if (e.key === 'Escape') clearAll();
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="03-todo-app.html" class="nav-btn prev-btn">&larr; Project 03: Todo App</a>
+          <button class="btn-complete" onclick="markLessonComplete('04-calculator.html')">&#10003; Mark as Complete</button>
+          <a href="05-quiz-app.html" class="nav-btn next-btn">Project 05: Quiz App &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

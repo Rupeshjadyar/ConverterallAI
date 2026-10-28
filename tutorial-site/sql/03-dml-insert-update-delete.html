@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>DML Commands: INSERT, UPDATE, DELETE & UPSERT — WebDev Academy</title>
+  <meta name="description" content="Master Data Manipulation Language (DML) to populate tables, update records safely with strict WHERE clauses, handle deletions, and implement modern UPSERT / ON CONFLICT patterns.">
+  <meta name="keywords" content="SQL DML, INSERT INTO, UPDATE WHERE, DELETE WHERE, UPSERT, ON CONFLICT, MERGE, SQL tutorial">
+  <meta property="og:title" content="DML Commands: INSERT, UPDATE, DELETE & UPSERT">
+  <meta property="og:description" content="Master Data Manipulation Language (DML) to populate tables, update records safely with strict WHERE clauses, handle deletions, and implement modern UPSERT / ON CONFLICT patterns.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="sql" data-current-lesson="03-dml-insert-update-delete.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 14 min read</span>
+            <span class="badge" style="background:var(--c-sql-light); color:var(--c-sql); border:1px solid var(--c-sql-border);">SQL Lesson 03</span>
+          </div>
+          <h1 class="lesson-title">DML Commands: INSERT, UPDATE, DELETE & UPSERT</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master Data Manipulation Language (DML) to populate tables, update records safely with strict WHERE clauses, handle deletions, and implement modern UPSERT / ON CONFLICT patterns.</span>
+            <span class="lang-hi">DML commands seekhein: naya data dalna (INSERT), purana data badalna (UPDATE), data delete karna aur UPSERT (insert ya update) karna.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The anatomy of INSERT INTO: Single-row, multi-row, and INSERT INTO SELECT.</li><li>Updating rows safely and understanding the catastrophe of missing WHERE clauses.</li><li>Deleting specific rows and cascade impacts.</li><li>Handling duplicate key collisions with UPSERT (INSERT ... ON DUPLICATE KEY UPDATE / ON CONFLICT).</li><li>Safe transactional workflows using BEGIN, COMMIT, and ROLLBACK.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Lesson 02: DDL Commands & Constraints.
+          </div>
+        </div>
+
+        <!-- 10th Class Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy (10th-Grade Mental Model)</div>
+          <p>
+            <span class="lang-en">Think of an address diary. <strong>DDL was buying the empty book and printing column headers (Name, Phone, City)</strong>. <strong>DML is writing names in the book with a pen (INSERT)</strong>. When a friend moves to a new city, you cross out the old city and write the new one (UPDATE). If someone leaves the company, you strike out their row (DELETE). But imagine an eraser that erased EVERY name in your entire diary if you didn't specify whose name you wanted to change &mdash; that is an UPDATE without a WHERE clause!</span>
+            <span class="lang-hi">Address diary ki misaal lein: DDL se humne diary ke panno par columns banaye the. <strong>DML kalam se entries likhna hai (INSERT)</strong>. Kisi ka phone number badla toh update kiya (UPDATE), koi company chhod gaya toh uska naam kaat diya (DELETE). Lekin bina WHERE clause ke UPDATE chalana poori diary par kaali siyahi phenk dene jaisa hai!</span>
+          </p>
+        </div>
+
+        <!-- Point-wise Interview Ready Cheat-sheet -->
+        <div class="callout" style="background:var(--bg-subtle); border-left:4px solid var(--c-sql); margin:1.5rem 0;">
+          <div class="callout-title" style="color:var(--c-sql);">&#128483;&#65039; How to Speak in an Interview (Crisp Speaking Points)</div>
+          <ul style="margin-top:0.5rem; line-height:1.75;">
+            <li><strong>What is DML?</strong> Data Manipulation Language is used to insert, modify, and delete data rows within database tables (INSERT, UPDATE, DELETE).</li><li><strong>Why is UPDATE without WHERE a catastrophic bug?</strong> If WHERE is omitted, the engine applies the update to EVERY SINGLE ROW in the table. In production, always test queries with SELECT first, run in transactions, or use safe update mode.</li><li><strong>What is UPSERT?</strong> An operation that attempts to INSERT a new row, but if a unique/primary key violation occurs, it gracefully updates the existing row instead. PostgreSQL: <code>ON CONFLICT DO UPDATE</code>; MySQL: <code>ON DUPLICATE KEY UPDATE</code>.</li><li><strong>INSERT INTO SELECT:</strong> Copies records from one table directly into another in a single bulk operation, highly optimized for data warehousing and archival.</li><li><strong>Row-level Locks during DML:</strong> When updating or deleting rows inside a transaction, the database places exclusive locks (X-locks) on the affected rows until COMMIT or ROLLBACK.</li>
+          </ul>
+        </div>
+
+        <!-- Teaching Sections -->
+        
+        <h2>1. What is Data Manipulation Language (DML)?</h2>
+        <p>Once tables are architected with DDL, applications interact with the data through <strong>DML (Data Manipulation Language)</strong>. DML statements operate on rows (records) inside existing tables without changing table schema definitions.</p>
+        <p>DML operations are fully transactional: they generate redo/undo logs and can be rolled back if an error or unexpected condition occurs.</p>
+        
+        <h2>2. INSERT INTO: Single, Bulk, and Subquery Inserts</h2>
+        <p>To store data, we specify the target table and list the columns explicitly. While SQL allows omitting column names if you provide values for all columns in exact order, <em>always specify column names explicitly in production code</em> so future schema alterations don't silently break your queries.</p>
+        <p>Modern database systems also allow bulk multi-row inserts in a single round-trip to the database, achieving up to 50x better throughput compared to looping individual INSERT statements.</p>
+        
+        <h2>3. UPDATE & DELETE: The Golden Rule of the WHERE Clause</h2>
+        <p>In software engineering, the #1 cause of catastrophic database outages is running an UPDATE or DELETE statement where the developer forgot the WHERE clause.</p>
+        <p><code>UPDATE employees SET salary = 100000;</code> will instantly overwrite the salary of all 50,000 employees in the company! Always write your condition first as <code>SELECT * FROM employees WHERE emp_id = 42;</code> before changing the verb to UPDATE or DELETE.</p>
+        
+
+        <!-- Code Examples -->
+        <h2>Practical Hands-On Code Demonstrations</h2>
+        
+        <h3>Code Example 1: Inserting Single and Multi-Row Records with Explicit Columns</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- 1. Single row insert
+INSERT INTO employees (emp_name, job_title, salary, department)
+VALUES ('Aditi Sen', 'Senior Software Engineer', 95000.00, 'Engineering');
+
+-- 2. Bulk multi-row insert (Fast &amp; efficient)
+INSERT INTO employees (emp_name, job_title, salary, department)
+VALUES 
+    ('Karan Mehta', 'Data Analyst', 68000.00, 'Analytics'),
+    ('Meera Nair', 'Product Manager', 110000.00, 'Product'),
+    ('Vikram Rao', 'DevOps Engineer', 92000.00, 'Infrastructure');</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Multi-row inserts wrap all rows into a single network packet, saving massive latency overhead compared to multiple single inserts.
+        </div>
+        
+        <h3>Code Example 2: Safe UPDATE with WHERE and Calculations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Give a 10% raise to all engineers in the 'Engineering' department
+UPDATE employees
+SET salary = salary * 1.10,
+    updated_at = CURRENT_TIMESTAMP
+WHERE department = 'Engineering'
+  AND is_active = TRUE;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Notice how the calculation <code>salary * 1.10</code> reads the current row's salary and applies the multiplier dynamically.
+        </div>
+        
+        <h3>Code Example 3: Controlled DELETE with Precise Conditions</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Delete unverified trial accounts older than 90 days
+DELETE FROM users
+WHERE is_email_verified = FALSE
+  AND created_at &lt; DATE_SUB(CURRENT_DATE, INTERVAL 90 DAY);</code></pre>
+        </div>
+        <div class="code-explanation">
+          • Always combine date filters and status flags to ensure only intended stale records are purged.
+        </div>
+        
+        <h3>Code Example 4: UPSERT in PostgreSQL (ON CONFLICT DO UPDATE)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Insert daily page view, or increment views if date already exists
+INSERT INTO page_analytics (page_url, view_date, total_views)
+VALUES ('/docs/sql', CURRENT_DATE, 1)
+ON CONFLICT (page_url, view_date)
+DO UPDATE SET 
+    total_views = page_analytics.total_views + 1,
+    last_visited_at = CURRENT_TIMESTAMP;</code></pre>
+        </div>
+        <div class="code-explanation">
+          • If a row with the same composite key <code>(page_url, view_date)</code> exists, PostgreSQL updates the row instead of throwing a unique violation error!
+        </div>
+        
+        <h3>Code Example 5: UPSERT in MySQL (ON DUPLICATE KEY UPDATE)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">INSERT INTO user_login_counts (user_id, login_count, last_login)
+VALUES (1042, 1, NOW())
+ON DUPLICATE KEY UPDATE
+    login_count = login_count + 1,
+    last_login = NOW();</code></pre>
+        </div>
+        <div class="code-explanation">
+          • The MySQL equivalent of upsert, preventing race conditions between checking existence and updating.
+        </div>
+        
+        <h3>Code Example 6: INSERT INTO SELECT (Data Archiving Pattern)</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">sql</span></div>
+          <pre class="code-content"><code data-lang="sql">-- Move inactive orders to an archive table before purging
+INSERT INTO orders_archive (order_id, user_id, amount, order_date)
+SELECT order_id, user_id, amount, order_date
+FROM active_orders
+WHERE order_status = 'CANCELLED'
+  AND order_date &lt; '2023-01-01';
+
+-- Now safely delete archived rows from active table
+DELETE FROM active_orders
+WHERE order_status = 'CANCELLED'
+  AND order_date &lt; '2023-01-01';</code></pre>
+        </div>
+        <div class="code-explanation">
+          • <code>INSERT INTO ... SELECT</code> is the standard enterprise design pattern for offloading historical data to keep production tables fast.
+        </div>
+        
+
+        <!-- Interactive Try-it Editor -->
+        <h2>Live SQL Sandbox &amp; Query Playground</h2>
+        <p>Edit the SQL script below and click <strong>Run Code</strong> to simulate local query compilation and review relational schema execution:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; SQL Sandbox: DML Commands: INSERT, UPDATE, DELETE & UPSERT</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Query (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea">-- Interactive DML Sandbox: INSERT, UPDATE, DELETE
+CREATE TABLE bank_accounts (
+    acc_id INT PRIMARY KEY,
+    holder_name VARCHAR(50),
+    balance DECIMAL(10,2)
+);
+
+INSERT INTO bank_accounts VALUES 
+(1, 'Alice', 5000.00),
+(2, 'Bob', 3200.00),
+(3, 'Charlie', 1500.00);
+
+-- Transfer 500 from Alice to Bob
+UPDATE bank_accounts SET balance = balance - 500 WHERE acc_id = 1;
+UPDATE bank_accounts SET balance = balance + 500 WHERE acc_id = 2;
+
+-- Delete accounts with balance under 2000
+DELETE FROM bank_accounts WHERE balance < 2000;
+
+SELECT * FROM bank_accounts;</textarea>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe" sandbox="allow-scripts" srcdoc="&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style='font-family:sans-serif; padding:1rem; background:#0f172a; color:#f8fafc;'&gt;&lt;h4 style='color:#2dd4bf; margin-top:0;'&gt;&amp;#10003; SQL Sandbox Engine Ready&lt;/h4&gt;&lt;p style='color:#94a3b8;'&gt;Click Run Query to execute your SQL statements and inspect relational output table schema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-danger">
+          <div class="callout-title">&#9888;&#65039; Common Beginner &amp; Production Mistakes</div>
+          <ul>
+            <li><strong>Running UPDATE/DELETE without WHERE:</strong> Never type <code>UPDATE table SET...</code> and press Enter before typing the WHERE clause. Senior engineers often type the WHERE clause first!</li><li><strong>Assuming DELETE frees hard drive space immediately:</strong> In many databases (PostgreSQL/SQLite), deleted rows are marked as 'dead tuples' and require a VACUUM or OPTIMIZE TABLE command to reclaim disk space.</li><li><strong>Not using transactions for multi-statement DML:</strong> If you deduct money from account A and the database crashes before crediting account B, money is lost. Always wrap multi-statement updates in <code>BEGIN ... COMMIT</code>.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Database Engineer Pro Tips</div>
+          <ul>
+            <li><strong>Use RETURNING clause (PostgreSQL / SQLite):</strong> Add <code>INSERT ... RETURNING id;</code> or <code>DELETE ... RETURNING *;</code> to get back the newly generated primary keys or the deleted rows in the exact same call!</li><li><strong>Soft Deletes vs Hard Deletes:</strong> In modern enterprise systems, rarely run physical <code>DELETE</code>. Instead, add a column <code>deleted_at TIMESTAMP NULL</code> and set it on deletion. This provides instant audit trails and effortless recovery.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9873; Quick Recap &amp; Key Takeaways</div>
+          <ul>
+            <li>DML modifies data rows inside tables (INSERT, UPDATE, DELETE).</li><li>Always specify column lists in INSERT statements for maintainability.</li><li>Never execute UPDATE or DELETE without a verified WHERE clause in production.</li><li>UPSERT (ON CONFLICT / ON DUPLICATE KEY UPDATE) solves race conditions when inserting potentially existing keys.</li><li>Use soft deletes (<code>deleted_at</code>) for business-critical data like orders and user accounts.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Hands-on Practice Challenges</h2>
+        <p>Test your conceptual understanding with these real-world interview and production database tasks:</p>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-beginner">Easy</span>
+            <h4>Exercise 1: Write an INSERT statement to add a new book to the <code>books</code> table with <code>title = 'Clean Code'</code>, <code>price = 45.00</code>, and <code>author_id = 3</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Specify columns explicitly inside parentheses.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">INSERT INTO books (title, price, author_id)
+VALUES ('Clean Code', 45.00, 3);</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-intermediate">Medium</span>
+            <h4>Exercise 2: Write an UPDATE query to apply a 15% discount to all products in the <code>products</code> table whose <code>category_id = 5</code> and whose current <code>price &gt; 100</code>.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use price = price * 0.85 and AND in the WHERE clause.</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">UPDATE products
+SET price = price * 0.85
+WHERE category_id = 5
+  AND price &gt; 100.00;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="badge badge-advanced">Hard</span>
+            <h4>Exercise 3: Write a query in PostgreSQL that inserts a user session into <code>active_sessions (session_token, user_id, last_active)</code>. If the <code>session_token</code> already exists, update <code>last_active</code> to the current timestamp instead of failing.</h4>
+          </div>
+          <p class="exercise-hint"><strong>💡 Hint:</strong> Use ON CONFLICT (session_token) DO UPDATE SET...</p>
+          <details class="exercise-solution">
+            <summary>Show Solution</summary>
+            <div class="code-block-wrapper" style="margin-top:0.75rem;">
+              <pre class="code-content"><code data-lang="sql">INSERT INTO active_sessions (session_token, user_id, last_active)
+VALUES ('sess_abc123xyz', 42, CURRENT_TIMESTAMP)
+ON CONFLICT (session_token)
+DO UPDATE SET last_active = CURRENT_TIMESTAMP;</code></pre>
+            </div>
+          </details>
+        </div>
+        
+
+        <!-- 5-Question MCQ Quiz -->
+        <h2>Knowledge Assessment Quiz</h2>
+        <div class="quiz-container">
+          
+        <div class="quiz-question-item" data-correct="2" data-explanation="If WHERE is omitted, SQL applies the update to every single record in the table!">
+          <div class="quiz-question-text">1. What will happen if you run: UPDATE customers SET is_active = false;</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Only the first customer will be deactivated</div><div class="quiz-option"><span>B)</span> The database will throw a syntax error</div><div class="quiz-option"><span>C)</span> EVERY customer in the entire table will be set to false</div><div class="quiz-option"><span>D)</span> Nothing, because WHERE is mandatory in SQL</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="UPSERT is a portmanteau of UPDATE and INSERT: insert if new, update if already existing.">
+          <div class="quiz-question-text">2. What is an 'UPSERT' in SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> An operation that uploads files to a cloud database</div><div class="quiz-option"><span>B)</span> An operation that inserts a row or updates it if a duplicate key conflict occurs</div><div class="quiz-option"><span>C)</span> A command that sorts a table in uppercase</div><div class="quiz-option"><span>D)</span> A way to undo a delete statement</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="PostgreSQL provides the <code>RETURNING</code> clause (e.g., <code>INSERT ... RETURNING user_id;</code>).">
+          <div class="quiz-question-text">3. Which clause allows you to return newly generated auto-increment IDs in PostgreSQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> FETCH</div><div class="quiz-option"><span>B)</span> RETURNING</div><div class="quiz-option"><span>C)</span> OUTPUT_ID</div><div class="quiz-option"><span>D)</span> GET_KEY</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Soft deletes preserve records for legal compliance, audit logging, and undo capabilities by toggling a flag.">
+          <div class="quiz-question-text">4. What is a 'Soft Delete'?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> Deleting data by unplugging the server power</div><div class="quiz-option"><span>B)</span> Marking a row as inactive (e.g. is_deleted = TRUE or deleted_at timestamp) without physically removing it from the database</div><div class="quiz-option"><span>C)</span> Deleting only half the columns of a table</div><div class="quiz-option"><span>D)</span> Deleting data with low compression</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+        <div class="quiz-question-item" data-correct="1" data-explanation="Multi-row inserts (<code>VALUES (1, 'A'), (2, 'B'), (3, 'C')</code>) are standard ANSI SQL.">
+          <div class="quiz-question-text">5. Can you insert multiple rows in a single INSERT statement in modern SQL?</div>
+          <div class="quiz-options">
+            <div class="quiz-option"><span>A)</span> No, SQL only allows one row per statement</div><div class="quiz-option"><span>B)</span> Yes, by separating value tuples with commas</div><div class="quiz-option"><span>C)</span> Only if all values are numbers</div><div class="quiz-option"><span>D)</span> Only on weekends</div>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Real-World Challenge</h3>
+          <p>In the sandbox above, write an UPDATE statement that adds 100 dollars bonus to all bank accounts with balance greater than 3000, then run SELECT to verify!</p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/glossary.html#dml" class="ref-pill">Glossary: DML</a><a href="02-ddl-create-alter-drop.html" class="ref-pill">Lesson 02: DDL Commands</a><a href="04-dql-select-where-operators.html" class="ref-pill">Lesson 04: DQL & Filtering</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study &amp; Interview Prep Notes</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal interview speaking notes, tricks, and syntax reminders..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="02-ddl-create-alter-drop.html" class="btn btn-outline">&larr; 02. DDL Commands</a>
+          <button class="mark-complete-btn" data-lesson-id="sql-03">Mark as Complete</button>
+          <a href="04-dql-select-where-operators.html" class="btn btn-primary">04. DQL: SELECT & Filtering &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

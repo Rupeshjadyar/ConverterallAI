@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Images & Figures — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="05-images-and-figures.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 11 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 05</span>
+          </div>
+          <h1 class="lesson-title">Images, Figures and Captions</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Embed graphics, optimize layout stability, write accessible alt text, and package media semantically with figures.</span>
+            <span class="lang-hi">Images ko sahi tarike se embed karna, layout shift (CLS) rokna aur <code>&lt;figure&gt;</code> ke sath captions lagana seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The syntax and mechanics of the void <code>&lt;img&gt;</code> element.</li>
+            <li>Why the <code>alt</code> attribute is strictly required for accessibility (WCAG) and SEO.</li>
+            <li>Preventing page jumping (Cumulative Layout Shift) with explicit <code>width</code> and <code>height</code>.</li>
+            <li>Packaging images and diagrams semantically using <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code>.</li>
+            <li>Boosting performance using native browser lazy loading: <code>loading="lazy"</code>.</li>
+            <li>Choosing between modern image formats: SVG, WebP, PNG, and JPEG.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="04-links-and-navigation.html">04. Links &amp; Navigation</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Museum Exhibit Plaque</div>
+          <p>
+            <span class="lang-en">Imagine walking through a museum art gallery. Every painting on the wall is placed in a protective frame (<strong><code>&lt;figure&gt;</code></strong>). Next to the painting is a brass plaque describing the title, artist, and year of creation (<strong><code>&lt;figcaption&gt;</code></strong>). If a visitor who is visually impaired approaches the exhibit with a tour guide, the guide verbally describes what the painting depicts &mdash; that verbal description is the <strong><code>alt</code> text</strong>! Without the plaque and guide, the artwork is mysterious and inaccessible.</span>
+            <span class="lang-hi">Ek museum ki tarah sochiye. Deewar par lagi tasveer ek frame mein hoti hai (<strong><code>&lt;figure&gt;</code></strong>). Uske neeche lagi peetal ki plate jisme tasveer ka naam likha hota hai woh hai <strong><code>&lt;figcaption&gt;</code></strong>. Aur kisi blind visitor ke liye guide jo tasveer bol kar samjhata hai, woh hai <strong><code>alt</code> text</strong>.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The <code>&lt;img&gt;</code> Element and Core Attributes</h2>
+        <p>
+          The <code>&lt;img&gt;</code> tag is a <strong>void element</strong> &mdash; it does not wrap text and never has a closing tag. It embeds an image by pointing to its file location:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Standard Accessible Image Markup</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;img src="images/team-meeting.jpg"
+     alt="Five engineers collaborating around a laptop discussing architecture"
+     width="800"
+     height="450"
+     loading="lazy"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Attribute Analysis:</strong><br>
+          &bull; <code>src</code>: The relative path or URL to the image file.<br>
+          &bull; <code>alt</code>: Alternative text read by screen readers and displayed if the file is missing.<br>
+          &bull; <code>width</code> and <code>height</code>: Aspect ratio hints for the browser rendering engine.<br>
+          &bull; <code>loading="lazy"</code>: Tells the browser not to download the image until the user scrolls near it.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Why <code>alt</code> Text is Non-Negotiable</h2>
+        <p>
+          The <code>alt</code> attribute serves three critical functions:
+        </p>
+        <ol>
+          <li><strong>Screen Readers:</strong> Over 2 billion people worldwide live with vision impairments. Screen readers speak the <code>alt</code> text aloud so users understand the visual information.</li>
+          <li><strong>Broken Connections:</strong> If the user is on a slow connection or the image fails to load (404), the browser displays the <code>alt</code> text in place of the missing picture.</li>
+          <li><strong>Search Engine Optimization:</strong> Google image bots cannot "see" images directly; they read your <code>alt</code> descriptions to index and rank your content.</li>
+        </ol>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Good vs Bad Alt Text</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- TERRIBLE: Missing alt completely (Violates WCAG rules!) --&gt;
+&lt;img src="cat.jpg"&gt;
+
+&lt;!-- POOR: Redundant filler words --&gt;
+&lt;img src="cat.jpg" alt="Picture of a cat photo image"&gt;
+
+&lt;!-- EXCELLENT: Concise, descriptive context --&gt;
+&lt;img src="cat.jpg" alt="Orange tabby kitten sleeping in a sunny windowsill"&gt;
+
+&lt;!-- PURELY DECORATIVE: Use empty alt="" so screen readers skip it cleanly --&gt;
+&lt;img src="decorative-divider.svg" alt="" role="presentation"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Screen Reader Tip:</strong> Never start alt text with "Image of..." or "Picture of...". Screen readers already announce "Graphic:" before reading the alt text!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Figures and Inline SVGs</h2>
+        <p>Notice how <code>&lt;figure&gt;</code> packages the visual with a neat semantic caption:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Figure &amp; Caption Demo</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; background: #f8fafc; }
+    figure {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 0 auto;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    figcaption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #64748b;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <figure>
+    <!-- Scalable Vector Graphic (Works 100% offline!) -->
+    <svg width="120" height="120" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="45" fill="#e0f2fe" stroke="#0284c7" stroke-width="4"/>
+      <polygon points="50,20 62,42 86,45 68,62 73,86 50,73 27,86 32,62 14,45 38,42" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    </svg>
+    <figcaption>Figure 1.1: Golden Achievement Star Vector Diagram</figcaption>
+  </figure>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Semantic Media Packaging with <code>&lt;figure&gt;</code> &amp; <code>&lt;figcaption&gt;</code></h2>
+        <p>
+          Before HTML5, developers wrapped images in random <code>&lt;div&gt;</code> tags and styled captions using paragraph classes. HTML5 introduced two dedicated semantic elements:
+        </p>
+        <ul>
+          <li><code>&lt;figure&gt;</code>: An independent content unit (photos, diagrams, code listings, charts) that can be moved to another part of the document without altering the flow.</li>
+          <li><code>&lt;figcaption&gt;</code>: The visible explanatory caption directly linked to that figure.</li>
+        </ul>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Proper Figure Structure</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;figure&gt;
+  &lt;img src="charts/revenue-q4.svg"
+       alt="Bar chart showing 42% revenue growth in fourth quarter"
+       width="600"
+       height="300"&gt;
+  &lt;figcaption&gt;Figure 4: Annual revenue growth trajectory (2025&ndash;2026)&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Hierarchy Rule:</strong> <code>&lt;figcaption&gt;</code> must be either the <em>very first</em> child or the <em>very last</em> child inside <code>&lt;figure&gt;</code>.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Preventing Cumulative Layout Shift (CLS)</h3>
+        <p>
+          Have you ever tried reading an article on your phone, and suddenly the text jumped 5 inches down the screen because a photo loaded? That frustrating bug is called <strong>Cumulative Layout Shift (CLS)</strong>:
+        </p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- BAD: Browser has no idea how tall the image will be until download finishes! --&gt;
+&lt;img src="banner.jpg" alt="Hero Banner"&gt;
+
+&lt;!-- GOOD: Browser reserves exact aspect ratio box immediately before image downloads! --&gt;
+&lt;img src="banner.jpg" alt="Hero Banner" width="1200" height="400"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How Browsers Reserve Space:</strong> Providing <code>width</code> and <code>height</code> attributes tells the browser the aspect ratio (1200 / 400 = 3:1). The browser calculates the placeholder height instantly, preventing any text jumping!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Web Image Formats Comparison</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">plaintext</span></div>
+          <pre class="code-content"><code data-lang="html">Format     Best Used For                         Key Advantage
+-------------------------------------------------------------------------------
+SVG        Logos, icons, geometric diagrams       Infinitely scalable, crystal clear at any zoom
+WebP       Modern web photos & UI graphics        30% smaller than JPEG with superior quality
+PNG        Screenshots, transparent graphics      Lossless clarity with alpha transparency
+JPEG/JPG   Photographs with millions of colors    Universal legacy browser compatibility</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Golden Rule:</strong> For logos and UI icons, always prefer <strong>SVG</strong>. For photographs, use <strong>WebP</strong> (with JPEG as legacy fallback).
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Image Loading States with JavaScript</h3>
+        <p>JavaScript can detect when an image has finished loading or failed to download:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const img = document.querySelector("img");
+
+img.addEventListener("load", function() {
+  console.log("Image loaded cleanly!");
+  console.log("Natural Dimensions: " + this.naturalWidth + "x" + this.naturalHeight + "px");
+});
+
+img.addEventListener("error", function() {
+  console.error("Failed to load image. Path is invalid or network is offline.");
+  this.alt = "Image failed to load";
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Properties:</strong> <code>naturalWidth</code> and <code>naturalHeight</code> give you the exact raw pixel dimensions of the image file on disk.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Treating <code>&lt;img&gt;</code> as a container tag:</strong> Never write <code>&lt;img src="..."&gt;&lt;/img&gt;</code>! <code>&lt;img&gt;</code> is a void element with no closing tag.</li>
+            <li><strong>Writing useless alt text:</strong> Writing <code>alt="image"</code> or <code>alt="photo"</code> gives zero value to someone using a screen reader. Describe what is actually happening in the scene.</li>
+            <li><strong>Uploading gigantic 10MB camera files:</strong> Always resize and compress photos before putting them on a website. Large images waste user bandwidth and slow down your site.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Always add <code>loading="lazy"</code> to images that are below the initial screen fold so the browser doesn't waste time downloading them on initial page load.</li>
+            <li>In CSS, add <code>img { max-width: 100%; height: auto; }</code> to your global stylesheet &mdash; this makes all images effortlessly responsive across mobile phones!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;img&gt;</code> is a void element requiring <code>src</code> and <code>alt</code>.</li>
+            <li><code>alt</code> text is mandatory for accessibility (WCAG), SEO, and fallback rendering.</li>
+            <li>Always specify <code>width</code> and <code>height</code> to eliminate Cumulative Layout Shift (CLS).</li>
+            <li>Wrap diagrams and illustrative photos in <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code>.</li>
+            <li>Use <code>loading="lazy"</code> for below-the-fold images to optimize load performance.</li>
+            <li>Use SVG for logos/icons and WebP for photos.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify the Missing Void Attribute</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>An auditor looks at this markup: <code>&lt;img src="hero.jpg"&gt;</code> and flags a WCAG accessibility violation. What essential attribute is missing?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: How will a visually impaired user know what the image shows?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> The <code>alt</code> attribute is completely missing! It must have a descriptive alternative text: <code>&lt;img src="hero.jpg" alt="Description of hero graphic"&gt;</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Preventing Layout Shift</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>How do you modify <code>&lt;img src="avatar.png" alt="User avatar"&gt;</code> to prevent the page from shifting layout when the 150x150 avatar image loads?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Provide the raw pixel dimensions.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Add <code>width="150" height="150"</code>:<br>
+              <code>&lt;img src="avatar.png" alt="User avatar" width="150" height="150"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Building a Complete Figure Package</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the complete HTML markup for an architectural diagram: wrap it in a <code>figure</code>, embed <code>blueprint.svg</code> with alt text "Floor plan of two-bedroom apartment", specify 800x600 dimensions, and add a <code>figcaption</code> reading "Diagram 1: Proposed Ground Floor Layout".</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: figcaption lives inside figure.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;figure&gt;
+  &lt;img src="blueprint.svg" alt="Floor plan of two-bedroom apartment" width="800" height="600"&gt;
+  &lt;figcaption&gt;Diagram 1: Proposed Ground Floor Layout&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 05 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="<img> is a void element that does not have a closing tag.">
+            <div class="quiz-question-text">1. Which of the following statements about &lt;img&gt; is true?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It must always end with &lt;/img&gt;</div>
+              <div class="quiz-option"><span>B)</span> It is a void element with no closing tag</div>
+              <div class="quiz-option"><span>C)</span> It can contain paragraphs inside it</div>
+              <div class="quiz-option"><span>D)</span> It was removed in HTML5</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="alt provides alternative text for accessibility and broken images.">
+            <div class="quiz-question-text">2. What is the essential purpose of the alt attribute?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To describe the image for screen readers and when images fail to load</div>
+              <div class="quiz-option"><span>B)</span> To change the brightness of the photo</div>
+              <div class="quiz-option"><span>C)</span> To create a link to another website</div>
+              <div class="quiz-option"><span>D)</span> To speed up your internet connection</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Setting width and height reserves the aspect ratio box, preventing Cumulative Layout Shift.">
+            <div class="quiz-question-text">3. Why should you always include width and height attributes on &lt;img&gt;?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Because images won't display without them</div>
+              <div class="quiz-option"><span>B)</span> To crop the photo automatically</div>
+              <div class="quiz-option"><span>C)</span> To prevent Cumulative Layout Shift (CLS) as images load</div>
+              <div class="quiz-option"><span>D)</span> To convert the image into SVG format</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="<figcaption> provides a caption for a <figure> element.">
+            <div class="quiz-question-text">4. Which tag provides a visible semantic caption for a &lt;figure&gt; element?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;label&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;caption&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;title&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;figcaption&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="SVG (Scalable Vector Graphics) is resolution-independent and never blurs at any size.">
+            <div class="quiz-question-text">5. Which image format is vector-based and remains razor-sharp at any zoom level?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> JPEG</div>
+              <div class="quiz-option"><span>B)</span> SVG</div>
+              <div class="quiz-option"><span>C)</span> GIF</div>
+              <div class="quiz-option"><span>D)</span> BMP</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Product Figure Card</h3>
+          <p>
+            In the interactive editor above, change the caption text to "Figure 2.1: Winner of the 2026 Innovation Award", and change the SVG star fill color from <code>#facc15</code> (yellow) to <code>#38bdf8</code> (cyan blue). Click <strong>Run Code</strong> to preview!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#img" class="ref-pill">&lt;img&gt; Tag</a>
+            <a href="../reference/html-tags-reference.html#figure" class="ref-pill">&lt;figure&gt; &amp; &lt;figcaption&gt;</a>
+            <a href="../reference/glossary.html#cls" class="ref-pill">Glossary: CLS</a>
+            <a href="../reference/glossary.html#svg" class="ref-pill">Glossary: SVG</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="04-links-and-navigation.html" class="btn btn-outline">&larr; Previous: Links &amp; Navigation</a>
+          <button class="mark-complete-btn" data-lesson-id="html-05">Mark as Complete</button>
+          <a href="06-lists.html" class="btn btn-primary">Next: Lists (ul, ol, dl) &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

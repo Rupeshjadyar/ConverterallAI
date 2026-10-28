@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Semantic HTML — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="10-semantic-html.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 13 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 10</span>
+          </div>
+          <h1 class="lesson-title">Semantic HTML: Meaningful Page Architecture</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Replace unreadable "div soup" with meaningful landmark tags that elevate accessibility, SEO, and maintainability.</span>
+            <span class="lang-hi">"Div soup" ki jagah semantic tags (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>) use karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What makes HTML "semantic" vs non-semantic.</li>
+            <li>The 7 core HTML5 structural landmarks: <code>header</code>, <code>nav</code>, <code>main</code>, <code>article</code>, <code>section</code>, <code>aside</code>, and <code>footer</code>.</li>
+            <li>The acid test to differentiate an <code>&lt;article&gt;</code> from a <code>&lt;section&gt;</code>.</li>
+            <li>How search engines and screen readers parse the accessibility tree.</li>
+            <li>Refactoring legacy <code>&lt;div class="header"&gt;</code> code into modern standards.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="09-form-validation.html">09. Form Validation</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: Moving House with Labeled Boxes</div>
+          <p>
+            <span class="lang-en">Imagine you are moving into a new home. You pack all your belongings into 50 identical plain brown cardboard boxes without writing anything on them. When the movers arrive, they have no idea what is fragile, what goes into the kitchen, or what belongs in the master bedroom &mdash; that is <strong>"Div Soup"</strong>! Now imagine writing bold labels on every box: <em>"Kitchen Glassware" (<code>&lt;header&gt;</code>)</em>, <em>"Tools" (<code>&lt;nav&gt;</code>)</em>, <em>"Living Room TV" (<code>&lt;main&gt;</code>)</em>. The movers instantly know where everything belongs without opening a single box &mdash; that is <strong>Semantic HTML</strong>!</span>
+            <span class="lang-hi">Ghar shift karne ki tarah sochiye. Agar aap 50 bina label wale brown dibbon (<code>&lt;div&gt;</code>) mein samaan pack karenge, toh kisi ko samajh nahi aayega kya kahan jayega. Lekin agar har dibbe par saaf label laga ho (Kitchen, Bedroom, Books), toh movers turant samajh jayenge. Yahi <strong>Semantic HTML</strong> ka fayda hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Problem of "Div Soup"</h2>
+        <p>
+          A <code>&lt;div&gt;</code> tag has zero semantic meaning. It simply stands for "division". In early web development, pages were littered with dozens of nested divs:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Non-Semantic "Div Soup" vs Semantic HTML5</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- OLD & POOR: Div Soup (Screen readers cannot navigate landmarks) --&gt;
+&lt;div id="header"&gt;
+  &lt;div id="nav"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="content"&gt;
+  &lt;div class="blog-post"&gt;...&lt;/div&gt;
+  &lt;div class="sidebar"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id="footer"&gt;...&lt;/div&gt;
+
+&lt;!-- MODERN & ACCESSIBLE: Semantic HTML5 Landmarks --&gt;
+&lt;header&gt;
+  &lt;nav&gt;...&lt;/nav&gt;
+&lt;/header&gt;
+&lt;main&gt;
+  &lt;article&gt;...&lt;/article&gt;
+  &lt;aside&gt;...&lt;/aside&gt;
+&lt;/main&gt;
+&lt;footer&gt;...&lt;/footer&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this matters to Screen Readers:</strong> Blind users can press single shortcut keys (like <strong>'D'</strong> in NVDA or JAWS) to jump straight to <code>&lt;main&gt;</code>, skipping past 50 navigation links! With div soup, they are forced to listen to the header links on every single page load.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The 7 Essential Structural Landmarks</h2>
+        <p>
+          HTML5 standardized 7 core elements that map to natural regions of a document:
+        </p>
+        <ul>
+          <li><code>&lt;header&gt;</code>: Introductory content, site branding, logo, search bar, and primary site navigation.</li>
+          <li><code>&lt;nav&gt;</code>: Major navigation blocks (site menus, breadcrumbs, pagination).</li>
+          <li><code>&lt;main&gt;</code>: The central, dominant content unique to this page. There can only be ONE visible <code>&lt;main&gt;</code> per page!</li>
+          <li><code>&lt;article&gt;</code>: A self-contained, independently distributable piece of content (blog posts, news stories, product listings, comments).</li>
+          <li><code>&lt;section&gt;</code>: A thematic grouping of content, typically with its own heading (e.g. "Features", "Pricing", "Testimonials").</li>
+          <li><code>&lt;aside&gt;</code>: Content tangentially related to the main content (sidebars, related links, author bios, ad spots).</li>
+          <li><code>&lt;footer&gt;</code>: Concluding metadata, copyright notices, terms links, and contact information.</li>
+        </ul>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Canonical Semantic Page Template</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Tech Chronicles Daily&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;Tech Chronicles&lt;/h1&gt;
+    &lt;nav&gt;
+      &lt;a href="/"&gt;Home&lt;/a&gt;
+      &lt;a href="/news"&gt;News&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;h2&gt;The Future of Semantic Web Design&lt;/h2&gt;
+      &lt;p&gt;Published on October 26, 2026 by Elena Rostova&lt;/p&gt;
+      &lt;p&gt;Semantic markup enables AI agents and screen readers to parse intent...&lt;/p&gt;
+    &lt;/article&gt;
+
+    &lt;aside&gt;
+      &lt;h3&gt;Trending Topics&lt;/h3&gt;
+      &lt;ul&gt;
+        &lt;li&gt;&lt;a href="#"&gt;CSS Grid 2026&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;Zero-Dependency Architecture&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/aside&gt;
+  &lt;/main&gt;
+
+  &lt;footer&gt;
+    &lt;p&gt;&copy; 2026 Tech Chronicles. All rights reserved.&lt;/p&gt;
+  &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Notice the clarity:</strong> Any developer, search engine, or accessibility tool reading this document understands its exact architecture without reading a single line of CSS!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Semantic Wireframe Studio</h2>
+        <p>Inspect how semantic tags produce a crystal-clear page wireframe:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Semantic Layout Visualizer</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 12px; background: #f1f5f9; color: #1e293b; }
+    header { background: #2563eb; color: white; padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; }
+    nav a { color: #bfdbfe; margin-right: 12px; text-decoration: none; font-weight: 500; }
+    main { display: flex; gap: 12px; margin-bottom: 12px; }
+    article { flex: 2; background: white; padding: 16px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    aside { flex: 1; background: #e0f2fe; padding: 16px; border-radius: 6px; }
+    footer { background: #0f172a; color: #94a3b8; padding: 12px; text-align: center; border-radius: 6px; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2 style="margin: 0 0 6px 0;">Portfolio Hub</h2>
+    <nav>
+      <a href="#">Projects</a>
+      <a href="#">Articles</a>
+      <a href="#">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h3 style="margin-top: 0; color: #2563eb;">Featured Article</h3>
+      <p>Semantic tags make web pages accessible by default. Clean code is maintainable code.</p>
+    </article>
+    <aside>
+      <h4 style="margin-top: 0;">Author Bio</h4>
+      <p style="font-size: 0.85rem;">Senior Software Educator focused on vanilla frontend fundamentals.</p>
+    </aside>
+  </main>
+
+  <footer>
+    &copy; 2026 WebDev Academy &bull; Built with Semantic HTML5
+  </footer>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. <code>&lt;article&gt;</code> vs <code>&lt;section&gt;</code>: The Syndication Test</h2>
+        <p>
+          The most frequently asked question in HTML is: <em>"When do I use <code>&lt;article&gt;</code> and when do I use <code>&lt;section&gt;</code>?"</em>
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Syndication Test</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. &lt;article&gt;: Passes the Syndication Test!
+     If you stripped this out of the website and republished it on an RSS feed,
+     Twitter card, or email newsletter, it still makes COMPLETE sense on its own. --&gt;
+&lt;article&gt;
+  &lt;h2&gt;Release Notes: Version 2.0&lt;/h2&gt;
+  &lt;p&gt;Today we are shipping dark mode and offline search...&lt;/p&gt;
+&lt;/article&gt;
+
+&lt;!-- 2. &lt;section&gt;: Fails the Syndication Test!
+     It is a sub-chapter of a larger whole. Taken out of context, it makes no sense. --&gt;
+&lt;section id="pricing"&gt;
+  &lt;h2&gt;Available Pricing Tiers&lt;/h2&gt;
+  &lt;!-- Pricing tables --&gt;
+&lt;/section&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Rule:</strong> If it could exist standalone in an RSS reader, use <code>&lt;article&gt;</code>. If it is merely a thematic chapter inside a larger page, use <code>&lt;section&gt;</code>.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Nesting Sections inside Articles (and vice-versa!)</h3>
+        <p>Articles can contain sections, and sections can contain articles:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- An article broken into thematic chapters with sections: --&gt;
+&lt;article&gt;
+  &lt;h1&gt;Complete Guide to CSS Flexbox&lt;/h1&gt;
+
+  &lt;section&gt;
+    &lt;h2&gt;The Main Axis&lt;/h2&gt;
+    &lt;p&gt;justify-content aligns items horizontally...&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;section&gt;
+    &lt;h2&gt;The Cross Axis&lt;/h2&gt;
+    &lt;p&gt;align-items aligns items vertically...&lt;/p&gt;
+  &lt;/section&gt;
+&lt;/article&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Semantic Rule:</strong> Every <code>&lt;section&gt;</code> should almost always have its own heading (<code>&lt;h2&gt;&ndash;&lt;h6&gt;</code>) to label its theme.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Additional Semantic HTML5 Gems</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. &lt;time&gt;: Machine-readable date format for search engines & calendars --&gt;
+&lt;p&gt;Conference date: &lt;time datetime="2026-11-15T09:00"&gt;November 15, 2026&lt;/time&gt;&lt;/p&gt;
+
+&lt;!-- 2. &lt;address&gt;: Author / organization contact info --&gt;
+&lt;address&gt;
+  Written by &lt;a href="mailto:alex@academy.org"&gt;Alex Miller&lt;/a&gt;&lt;br&gt;
+  San Francisco, California
+&lt;/address&gt;
+
+&lt;!-- 3. &lt;details&gt; and &lt;summary&gt;: Native interactive accordion with ZERO JavaScript! --&gt;
+&lt;details&gt;
+  &lt;summary&gt;Can I use this tutorial completely offline?&lt;/summary&gt;
+  &lt;p&gt;Yes! All assets, scripts, and editors run 100% locally from your hard drive.&lt;/p&gt;
+&lt;/details&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Power of <code>&lt;details&gt;</code>:</strong> You don't need a single line of JavaScript or external libraries to build interactive click-to-expand accordions!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Accessibility Roles with JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Every semantic tag automatically maps to an accessible ARIA landmark role
+const landmarks = {
+  header: document.querySelector("header") ? "banner" : "missing",
+  nav: document.querySelector("nav") ? "navigation" : "missing",
+  main: document.querySelector("main") ? "main" : "missing",
+  footer: document.querySelector("footer") ? "contentinfo" : "missing",
+  aside: document.querySelector("aside") ? "complementary" : "missing"
+};
+
+console.table(landmarks);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Automated Accessibility:</strong> When you use <code>&lt;nav&gt;</code>, the browser automatically applies the accessibility role <code>role="navigation"</code> for free.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Multiple <code>&lt;main&gt;</code> elements:</strong> An HTML document must never contain more than one visible <code>&lt;main&gt;</code> tag. It represents the singular dominant topic of the page.</li>
+            <li><strong>Wrapping every single link in <code>&lt;nav&gt;</code>:</strong> <code>&lt;nav&gt;</code> is strictly for <em>major</em> navigation blocks (site header, pagination, footer links). Don't wrap casual inline links inside paragraphs with <code>&lt;nav&gt;</code>!</li>
+            <li><strong>Replacing every div with section:</strong> If you are creating a generic wrapper purely for a CSS background color or visual flex container, use a plain <code>&lt;div&gt;</code>. Don't force a <code>&lt;section&gt;</code> where no thematic heading exists.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Search engines heavily favor pages with semantic landmarks because their automated crawlers can instantly separate main article content from distracting sidebars and copyright footers.</li>
+            <li>Whenever possible, use <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> for FAQ accordions &mdash; it provides built-in keyboard navigation (Enter key opens/closes) for free!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li>Semantic HTML uses meaningful tags rather than generic <code>&lt;div&gt;</code> containers.</li>
+            <li><code>&lt;header&gt;</code> = introductory branding/nav; <code>&lt;nav&gt;</code> = navigation links.</li>
+            <li><code>&lt;main&gt;</code> = singular primary content area (only 1 per document).</li>
+            <li><code>&lt;article&gt;</code> = standalone reusable content (passes syndication test).</li>
+            <li><code>&lt;section&gt;</code> = thematic sub-chapter with a heading.</li>
+            <li><code>&lt;aside&gt;</code> = tangentially related content (sidebars).</li>
+            <li><code>&lt;footer&gt;</code> = copyright, author info, and legal links.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Refactor Div Soup</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Refactor this non-semantic markup into clean semantic HTML5:</p>
+          <pre class="code-content"><code data-lang="html">&lt;div class="navigation-bar"&gt;
+  &lt;a href="/"&gt;Home&lt;/a&gt;
+  &lt;a href="/about"&gt;About&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Replace the div with the dedicated navigation tag.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;nav&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;a href="/about"&gt;About&lt;/a&gt;&lt;/nav&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Article vs Section Decision</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You are building a real estate website. Should an individual house listing card (featuring photo, price, address, and contact broker button) be an <code>&lt;article&gt;</code> or a <code>&lt;section&gt;</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Apply the Syndication Test.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> An <strong><code>&lt;article&gt;</code></strong>! The listing card makes complete standalone sense if shared independently on social media, an email alert, or a real estate aggregator feed.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Native Zero-JS Accordion</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write the HTML for a collapsible FAQ item reading "What are the payment options?" which reveals "We accept Visa, Mastercard, and Bank Wire" when clicked, using zero JavaScript.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use details and summary.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;details&gt;
+  &lt;summary&gt;What are the payment options?&lt;/summary&gt;
+  &lt;p&gt;We accept Visa, Mastercard, and Bank Wire.&lt;/p&gt;
+&lt;/details&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 10 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="A document should contain only one primary <main> element.">
+            <div class="quiz-question-text">1. How many visible &lt;main&gt; elements can a document contain?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Unlimited</div>
+              <div class="quiz-option"><span>B)</span> Exactly one</div>
+              <div class="quiz-option"><span>C)</span> One per section</div>
+              <div class="quiz-option"><span>D)</span> None, main is deprecated</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="<article> represents self-contained standalone content that passes the syndication test.">
+            <div class="quiz-question-text">2. Which semantic tag represents a self-contained composition that makes sense independently?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;section&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;aside&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;article&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;div&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="<aside> encapsulates sidebar, author bio, or secondary complementary content.">
+            <div class="quiz-question-text">3. Which tag is best suited for secondary sidebar content or related author bios?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;aside&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;footer&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;nav&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;section&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="<details> and <summary> provide native interactive disclosure widgets without JavaScript.">
+            <div class="quiz-question-text">4. Which pair of HTML tags creates a native collapsible disclosure accordion without any JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;accordion&gt; and &lt;item&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;collapse&gt; and &lt;content&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;dropdown&gt; and &lt;option&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;details&gt; and &lt;summary&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Semantic tags provide meaningful accessibility landmarks and improve SEO rankings.">
+            <div class="quiz-question-text">5. What is the major advantage of using semantic HTML over generic &lt;div&gt; tags?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It reduces HTML file size by 90%</div>
+              <div class="quiz-option"><span>B)</span> It improves screen reader navigation and search engine understanding</div>
+              <div class="quiz-option"><span>C)</span> It makes web pages load without CSS</div>
+              <div class="quiz-option"><span>D)</span> It automatically encrypts data</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Add a Native FAQ Section</h3>
+          <p>
+            In the live editor above, add a <code>&lt;details&gt;</code> element inside the <code>&lt;article&gt;</code> tag with <code>&lt;summary&gt;Click to view technical stack&lt;/summary&gt;</code>. Add a short paragraph inside. Click <strong>Run Code</strong> and test clicking the summary to watch it toggle open and closed!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#header" class="ref-pill">&lt;header&gt; &amp; &lt;footer&gt;</a>
+            <a href="../reference/html-tags-reference.html#nav" class="ref-pill">&lt;nav&gt; Landmark</a>
+            <a href="../reference/html-tags-reference.html#main" class="ref-pill">&lt;main&gt; Landmark</a>
+            <a href="../reference/html-tags-reference.html#article" class="ref-pill">&lt;article&gt; &amp; &lt;section&gt;</a>
+            <a href="../reference/glossary.html#semantic-html" class="ref-pill">Glossary: Semantic HTML</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="09-form-validation.html" class="btn btn-outline">&larr; Previous: Form Validation</a>
+          <button class="mark-complete-btn" data-lesson-id="html-10">Mark as Complete</button>
+          <a href="11-audio-video-iframe.html" class="btn btn-primary">Next: Audio, Video &amp; Iframes &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

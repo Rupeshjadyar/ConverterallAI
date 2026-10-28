@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Links & Navigation — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="04-links-and-navigation.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 04</span>
+          </div>
+          <h1 class="lesson-title">Links and Navigation (Hyperlinks &amp; Paths)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Connect your pages into a navigable web using anchor tags, relative paths, internal jumps, and safe targets.</span>
+            <span class="lang-hi">Anchor tags (<code>&lt;a&gt;</code>) ke zariye pages ko aapas mein jodein, relative paths samjhein aur on-page bookmark jumps banayein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How the <code>&lt;a&gt;</code> (anchor) tag binds the web together.</li>
+            <li>Mastering <strong>Relative File Paths</strong> (<code>./</code>, <code>../</code>, subfolders) vs <strong>Absolute URLs</strong>.</li>
+            <li>Smooth in-page navigation using <strong>Anchor Jumps</strong> (<code>href="#section-id"</code>).</li>
+            <li>Opening links in new tabs safely with <code>target="_blank"</code> and <code>rel="noopener noreferrer"</code>.</li>
+            <li>Creating functional <code>mailto:</code> (email) and <code>tel:</code> (phone call) trigger links.</li>
+            <li>Triggering automatic file downloads using the <code>download</code> attribute.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="03-headings-paragraphs-text-formatting.html">03. Headings &amp; Formatting</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Interstate Highway and Doorway Signs</div>
+          <p>
+            <span class="lang-en">Without hyperlinks, the internet would just be billions of isolated digital islands. <strong>Hyperlinks are the suspension bridges and highways</strong> that link islands together. A <strong>relative link</strong> is like telling someone in your house: <em>"Walk down the hallway into the kitchen (<code>./kitchen</code>)"</em>. An <strong>absolute link</strong> is like providing a complete global GPS coordinate with latitude and longitude: <em>"Fly to Tokyo, Japan at 35.6762&deg; N, 139.6503&deg; E"</em>. An <strong>anchor jump</strong> is an elevator that zips you straight to the 5th floor of the same building!</span>
+            <span class="lang-hi">Hyperlinks internet ke pul (bridges) aur highways hain. <strong>Relative link</strong> ghar ke andar kisi kamre ka rasta batane jaisa hai (jaise "kitchen mein jao"). <strong>Absolute link</strong> poora international GPS address hota hai. Aur <strong>anchor jump</strong> usi building ki kisi khas manzil par seedhe le jane wali elevator hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Anchor Tag (<code>&lt;a&gt;</code>) &amp; <code>href</code></h2>
+        <p>
+          The anchor tag creates a clickable hyperlink. Its most critical attribute is <code>href</code> (Hypertext Reference), which points to the destination address:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Basic Hyperlink Syntax</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Standard link to another page in the same project --&gt;
+&lt;a href="about.html"&gt;Learn About Our Team&lt;/a&gt;
+
+&lt;!-- Wrapping an image inside an anchor tag turns the image into a clickable link! --&gt;
+&lt;a href="index.html"&gt;
+  &lt;img src="logo.png" alt="Company Home"&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Rule:</strong> Any HTML element placed between <code>&lt;a&gt;</code> and <code>&lt;/a&gt;</code> becomes clickable, including text, icons, badges, or entire product cards.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Relative Paths vs Absolute URLs</h2>
+        <p>
+          Understanding relative paths is the single most common hurdle for new web developers:
+        </p>
+        <ul>
+          <li><strong>Absolute URL:</strong> Contains the entire domain and protocol (e.g. <code>https://mysite.com/blog/post.html</code>). Used for pointing to external sites.</li>
+          <li><strong>Relative Path:</strong> Describes where a file lives <em>relative to the current HTML file's location on the filesystem</em>. Essential for local offline development.</li>
+        </ul>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Directory Navigation Cheat Sheet</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. Sibling file in the same folder: --&gt;
+&lt;a href="contact.html"&gt;Contact&lt;/a&gt;
+
+&lt;!-- 2. Moving DOWN into a subfolder: --&gt;
+&lt;a href="lessons/lesson-01.html"&gt;Lesson 1&lt;/a&gt;
+
+&lt;!-- 3. Moving UP one folder level into the parent folder (../): --&gt;
+&lt;a href="../index.html"&gt;Back to Home&lt;/a&gt;
+
+&lt;!-- 4. Moving UP two folder levels (../../): --&gt;
+&lt;a href="../../dashboard.html"&gt;Master Dashboard&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Rule to Memorize:</strong><br>
+          &bull; <code>filename.html</code> = same directory.<br>
+          &bull; <code>foldername/filename.html</code> = dive down into folder.<br>
+          &bull; <code>../</code> = step up one directory backwards.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test In-Page Anchor Jumps</h2>
+        <p>Click the jump link below to see the page smoothly scroll down to Section 2:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Anchor Jumps &amp; Links</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html style="scroll-behavior: smooth;">
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; line-height: 1.6; }
+    .nav-bar { background: #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 20px; }
+    .spacer { height: 200px; background: #f8fafc; border: 1px dashed #cbd5e1; margin: 16px 0; padding: 10px; }
+    .target-box { background: #dcfce7; border: 2px solid #22c55e; padding: 16px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="#jump-target" style="color: #2563eb; font-weight: bold;">&darr; Jump directly to Section 2</a>
+  </div>
+
+  <h2>Section 1: Overview</h2>
+  <p>Scroll down or click the jump link above!</p>
+  <div class="spacer">Lots of content in between...</div>
+
+  <div id="jump-target" class="target-box">
+    <h3>Section 2: Destination Reached!</h3>
+    <p>You jumped straight to <code>id="jump-target"</code>.</p>
+    <a href="#" style="color: #16a34a;">&uarr; Back to Top</a>
+  </div>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Opening Links in New Tabs (<code>target="_blank"</code>) Safely</h2>
+        <p>
+          By default, clicking an anchor link loads the new page in the current browser tab (<code>target="_self"</code>). If you want the link to open in a fresh new tab, use <code>target="_blank"</code>.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Security with <code>rel="noopener noreferrer"</code></h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- SECURE NEW TAB LINK: Always pair target="_blank" with rel="noopener noreferrer" --&gt;
+&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;
+  External Documentation (Opens in new tab)
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Security Vulnerability Explained:</strong> When you open an external page with <code>target="_blank"</code> alone, the opened page gains access to your window object via <code>window.opener</code>. A malicious site could silently redirect your original page to a fake phishing site! <code>rel="noopener noreferrer"</code> severs this connection completely.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Email, Phone, and SMS Action Protocols</h3>
+        <p>Hyperlinks are not limited to webpages. They can trigger native phone calls and email clients:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. mailto: Opens the user's default email client with recipient & subject --&gt;
+&lt;a href="mailto:support@webdevacademy.org?subject=Question%20about%20HTML"&gt;
+  Email Support Team
+&lt;/a&gt;
+
+&lt;!-- 2. tel: On mobile phones, taps directly open the phone dialer --&gt;
+&lt;a href="tel:+18005550199"&gt;
+  Call Us Toll-Free: 1-800-555-0199
+&lt;/a&gt;
+
+&lt;!-- 3. sms: Opens text messaging on mobile --&gt;
+&lt;a href="sms:+18005550199"&gt;
+  Send Text Message
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Mobile Pro-Tip:</strong> Always use <code>tel:</code> for phone numbers on mobile sites so users can call your business with one tap instead of memorizing digits.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Triggering File Downloads with the <code>download</code> Attribute</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Forces the browser to download the file rather than navigating to it --&gt;
+&lt;a href="cheatsheet.pdf" download="HTML5-Mastery-Cheatsheet.pdf"&gt;
+  Download Free Cheatsheet (PDF)
+&lt;/a&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>How it works:</strong> The optional value inside <code>download="new-name.pdf"</code> tells the browser what name to give the file on the user's hard drive when downloaded.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Inspecting Link Clicks with JavaScript</h3>
+        <p>JavaScript can intercept anchor clicks, inspect the destination, or prevent navigation:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const link = document.querySelector("a");
+
+link.addEventListener("click", function(event) {
+  console.log("Navigating to:", this.href);
+  console.log("Protocol:", this.protocol); // "http:" or "file:"
+  console.log("Hash anchor:", this.hash);  // e.g. "#section-2"
+
+  // To prevent the browser from actually following the link:
+  // event.preventDefault();
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Crucial Method:</strong> <code>event.preventDefault()</code> is what Single Page Apps (SPAs) use to intercept link clicks and switch views without a full browser page reload.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Empty <code>href=""</code> or <code>href="#"</code>:</strong> Clicking <code>href="#"</code> causes the page to violently jump back to the very top. If building a button that triggers a script, use a <code>&lt;button&gt;</code> tag, not an anchor!</li>
+            <li><strong>Hardcoding <code>C:\Users\...</code> drive paths:</strong> Never write <code>href="C:\Users\John\Desktop\my-site\about.html"</code>! That path will only ever work on your personal laptop. As soon as you email the project or move folders, all links break. Always use relative paths like <code>href="about.html"</code>.</li>
+            <li><strong>Missing the hash symbol (<code>#</code>) in anchor jumps:</strong> To jump to <code>id="pricing"</code>, the link must be <code>href="#pricing"</code>, not <code>href="pricing"</code> (which looks for a file named pricing).</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Add <code>html { scroll-behavior: smooth; }</code> in your CSS to make all anchor jumps glide smoothly down the page instead of snapping instantly.</li>
+            <li>Give your link meaningful, descriptive anchor text. Avoid writing <em>"Click here"</em>. Instead, write <em>"Download our HTML5 Reference Guide"</em> &mdash; this dramatically boosts accessibility and search engine ranking.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;a href="url"&gt;</code> creates clickable hyperlinks.</li>
+            <li>Use <strong>relative paths</strong> (<code>./</code> same folder, <code>../</code> parent folder) for offline local sites.</li>
+            <li>Jump to sections on the same page using <code>href="#element-id"</code>.</li>
+            <li>Open external links in a new tab safely with <code>target="_blank" rel="noopener noreferrer"</code>.</li>
+            <li>Use <code>mailto:</code> for email and <code>tel:</code> for phone numbers.</li>
+            <li>Use <code>download</code> to save files directly to the user's device.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): In-Page Jump Link</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>You have a footer element with <code>id="site-footer"</code>. Write the exact anchor tag that jumps to that footer when clicked.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Remember the hash symbol (#).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>&lt;a href="#site-footer"&gt;Jump to Footer&lt;/a&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Relative Path Traversal</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Your current page is at <code>/courses/html/lesson-04.html</code>. You want to link back to the homepage at <code>/index.html</code>. What relative path must you write?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: How many directory levels up must you travel?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> You must travel up two levels: out of <code>html</code>, and out of <code>courses</code>:<br>
+              <code>&lt;a href="../../index.html"&gt;Home&lt;/a&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Security Audit on Links</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Examine this link: <code>&lt;a href="https://external-bank.com" target="_blank"&gt;Sign in&lt;/a&gt;</code>. What critical security attribute is missing?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Reverse tabnabbing vulnerability.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> It is missing <code>rel="noopener noreferrer"</code>. Without this, the external site could use JavaScript's <code>window.opener</code> to hijack the user's original tab.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 04 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="href stands for Hypertext Reference.">
+            <div class="quiz-question-text">1. What does the href attribute on an &lt;a&gt; tag stand for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Host Resource Entry File</div>
+              <div class="quiz-option"><span>B)</span> Hypertext Reference</div>
+              <div class="quiz-option"><span>C)</span> HTML Relational Element Finder</div>
+              <div class="quiz-option"><span>D)</span> Header Reference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="../ moves one folder level up into the parent directory.">
+            <div class="quiz-question-text">2. What does ../ signify in a relative file path?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Stay in the current folder</div>
+              <div class="quiz-option"><span>B)</span> Jump to the root hard drive</div>
+              <div class="quiz-option"><span>C)</span> Move up one folder level into the parent folder</div>
+              <div class="quiz-option"><span>D)</span> Delete the folder</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="target='_blank' instructs the browser to open the resource in a new tab.">
+            <div class="quiz-question-text">3. Which attribute opens a linked document in a new browser tab?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> target="_blank"</div>
+              <div class="quiz-option"><span>B)</span> target="_self"</div>
+              <div class="quiz-option"><span>C)</span> open="new-tab"</div>
+              <div class="quiz-option"><span>D)</span> rel="new"</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="tel: triggers phone dialers on mobile devices.">
+            <div class="quiz-question-text">4. Which protocol prefix creates a clickable phone number link?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> phone:</div>
+              <div class="quiz-option"><span>B)</span> callto:</div>
+              <div class="quiz-option"><span>C)</span> dial:</div>
+              <div class="quiz-option"><span>D)</span> tel:</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Anchor jumps start with # followed by the matching element ID.">
+            <div class="quiz-question-text">5. What symbol must precede the target ID when building an in-page anchor jump?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Dot (.)</div>
+              <div class="quiz-option"><span>B)</span> Hash (#)</div>
+              <div class="quiz-option"><span>C)</span> At sign (@)</div>
+              <div class="quiz-option"><span>D)</span> Dollar sign ($)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Build a Mini Table of Contents</h3>
+          <p>
+            In the interactive editor above, add a second jump link in the <code>.nav-bar</code> that links to a new section: <code>&lt;div id="faq"&gt;FAQ Section&lt;/div&gt;</code>. Test clicking both links to watch the smooth in-page navigation work!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#a" class="ref-pill">&lt;a&gt; Anchor Tag</a>
+            <a href="../reference/glossary.html#hyperlink" class="ref-pill">Glossary: Hyperlink</a>
+            <a href="../reference/glossary.html#relative-path" class="ref-pill">Glossary: Relative Path</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">HTML Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-headings-paragraphs-text-formatting.html" class="btn btn-outline">&larr; Previous: Headings &amp; Formatting</a>
+          <button class="mark-complete-btn" data-lesson-id="html-04">Mark as Complete</button>
+          <a href="05-images-and-figures.html" class="btn btn-primary">Next: Images &amp; Figures &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

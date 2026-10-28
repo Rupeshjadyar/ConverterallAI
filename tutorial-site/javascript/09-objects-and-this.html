@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Objects &amp; 'this' Keyword — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="09-objects-and-this.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 09</span>
+          </div>
+          <h1 class="lesson-title">Objects &amp; The 'this' Keyword</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Structure complex domain data. Understand methods, property access, dynamic keys, and the 4 rules of 'this' binding.</span>
+            <span class="lang-hi">Objects aur 'this' keyword: Dot vs bracket notation, object methods, explicit binding (call/apply/bind), aur arrow function 'this' seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Creating and organizing data models with Object Literals.</li>
+            <li>Dot notation vs Bracket notation (and when dynamic keys make brackets mandatory).</li>
+            <li>Adding, modifying, and safely deleting object properties.</li>
+            <li>Defining methods and understanding how the <strong><code>this</code></strong> keyword binds at runtime.</li>
+            <li>The 4 Rules of <code>this</code>: Default, Implicit, Explicit (<code>call/apply/bind</code>), and Lexical (Arrow).</li>
+            <li>Built-in static utilities: <code>Object.keys()</code>, <code>Object.values()</code>, and <code>Object.entries()</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="08-arrays-and-array-methods.html">08. Arrays &amp; Higher-Order Methods</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Official Passport Dossier</div>
+          <p>
+            <span class="lang-en">Think of an official national passport book:
+            <br>&bull; The passport itself is an <strong>Object</strong>.
+            <br>&bull; The printed fields are <strong>Properties</strong>: <code>fullName: "Jane Doe"</code>, <code>birthYear: 1995</code>, <code>citizenship: "Canada"</code>.
+            <br>&bull; The physical hologram sticker or signature is a <strong>Method</strong>: A built-in action the passport can perform to verify identity (<code>calculateAge()</code>).
+            <br>&bull; What is <strong><code>this</code></strong>? When the passport says <em>"The holder of THIS document"</em>, <code>this</code> points to the specific human whose photograph is on the page right now!</span>
+            <span class="lang-hi">Passport dossier ki tarah sochiye: Passport ek Object hai; usme likhe naam aur date of birth Properties hain; signature ya stamp ek Method hai. Aur <code>this</code> ka matlab hai "IS passport ka maalik" — yaani jis object ke dwara method ko bulaya gaya hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Object Literals: Properties &amp; Accessors</h2>
+        <p>
+          An Object is an unordered collection of related key-value pairs. Keys are strings (or Symbols), and values can be any valid JavaScript type:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Dot vs Bracket Notation</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const user = {
+  id: 101,
+  name: "Sophia Martinez",
+  email: "sophia@example.com",
+  "favorite framework": "Vanilla JS", // Property with spaces must be quoted!
+  age: 27
+};
+
+// 1. Dot Notation (Clean & Standard for fixed keys):
+console.log(user.name);  // "Sophia Martinez"
+user.age = 28;           // Updating a property
+
+// 2. Bracket Notation (Mandatory for special characters & dynamic variables):
+console.log(user["favorite framework"]); // "Vanilla JS"
+
+const fieldToInspect = "email";
+console.log(user[fieldToInspect]); // "sophia@example.com" (Evaluates variable!)
+
+// 3. Adding & Deleting:
+user.isAdmin = true; // Added
+delete user.age;     // Removed</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Object Methods and the 'this' Keyword</h2>
+        <p>
+          A function attached to an object is called a <strong>Method</strong>. Inside a method, the keyword <code>this</code> refers to the <strong>object that invoked the method</strong> (the object to the left of the dot):
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Method Declaration with `this`</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const bankAccount = {
+  owner: "Marcus Vance",
+  balance: 5000,
+
+  // Method shorthand syntax:
+  deposit(amount) {
+    this.balance += amount; // 'this' points directly to bankAccount
+    return `Deposited $${amount}. New balance: $${this.balance}`;
+  },
+
+  printStatement() {
+    console.log(`Account Owner: ${this.owner} | Funds: $${this.balance}`);
+  }
+};
+
+console.log(bankAccount.deposit(500)); // "Deposited $500. New balance: $5500"
+bankAccount.printStatement();          // "Account Owner: Marcus Vance | Funds: $5500"</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The 4 Binding Rules of 'this'</h2>
+        <p>
+          How <code>this</code> is determined is one of the most notoriously misunderstood concepts in web development. Memorize these four clear rules:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Four Binding Rules Demonstrated</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// RULE 1: Default Binding (Standalone function call)
+function showThis() {
+  console.log(this); // In non-strict mode: window (global). In "use strict": undefined!
+}
+showThis();
+
+// RULE 2: Implicit Binding (Object method call)
+const hero = {
+  alias: "Spider-Man",
+  greet() {
+    console.log(`I am ${this.alias}`);
+  }
+};
+hero.greet(); // 'this' is hero (Spider-Man)
+
+// RULE 3: Explicit Binding (call, apply, bind)
+function attack(damage, type) {
+  console.log(`${this.alias} strikes for ${damage} ${type} damage!`);
+}
+// Force 'this' to point to hero:
+attack.call(hero, 50, "web"); // Spider-Man strikes for 50 web damage!
+
+// RULE 4: Lexical Binding (Arrow Functions)
+// Arrow functions DO NOT have their own 'this'!
+// They inherit 'this' from wherever they were written!</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The Fatal Arrow Function Method Trap</h2>
+        <p>
+          Because arrow functions inherit <code>this</code> lexically from their enclosing scope, <strong>never use arrow functions as object methods</strong>:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Arrow Function Method Bug</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const person = {
+  name: "Emily",
+  // BAD: Arrow function method!
+  badGreet: () => {
+    console.log(`Hello, my name is ${this.name}`);
+  },
+  // GOOD: Standard method syntax!
+  goodGreet() {
+    console.log(`Hello, my name is ${this.name}`);
+  }
+};
+
+person.badGreet();  // "Hello, my name is undefined" ! ('this' is window, NOT person!)
+person.goodGreet(); // "Hello, my name is Emily" (Correct!)</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Static Object Utilities: Keys, Values &amp; Entries</h2>
+        <p>
+          The built-in global <code>Object</code> constructor provides essential static helper methods:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Object Reflection Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const config = {
+  theme: "dark",
+  fontSize: 16,
+  autoSave: true
+};
+
+// 1. Object.keys(): Returns array of property names
+console.log(Object.keys(config));   // ["theme", "fontSize", "autoSave"]
+
+// 2. Object.values(): Returns array of property values
+console.log(Object.values(config)); // ["dark", 16, true]
+
+// 3. Object.entries(): Returns array of [key, value] pairs (great for loops!)
+for (const [key, value] of Object.entries(config)) {
+  console.log(`Setting ${key} &rarr; ${value}`);
+}
+
+// 4. Object.freeze(): Prevents adding, removing, or modifying properties!
+const immutableConfig = Object.freeze({ apiVersion: "v2" });
+// immutableConfig.apiVersion = "v3"; // Fails silently (or throws in strict mode!)</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Object &amp; Method Studio</h2>
+        <p>
+          Interact with an object method and verify <code>this</code> binding in real time:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Object Explorer</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .badge { background: #3b82f6; color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h3>Digital Stopwatch Object</h3>
+  <p>Elapsed Time: <span id="timer-display" class="badge">0s</span></p>
+  <button id="tick-btn">Tick +1s</button>
+  <button id="reset-btn">Reset</button>
+
+  <script>
+    const stopwatch = {
+      seconds: 0,
+      tick() {
+        this.seconds++;
+        return `${this.seconds}s`;
+      },
+      reset() {
+        this.seconds = 0;
+        return `${this.seconds}s`;
+      }
+    };
+
+    const display = document.getElementById("timer-display");
+    
+    document.getElementById("tick-btn").addEventListener("click", () => {
+      display.textContent = stopwatch.tick();
+      console.log("Stopwatch ticked:", stopwatch.seconds);
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      display.textContent = stopwatch.reset();
+      console.log("Stopwatch reset!");
+    });
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Losing <code>this</code> when passing a method as a callback:</strong> Passing <code>setTimeout(user.greet, 1000)</code> tears the function away from <code>user</code>, causing <code>this</code> to become <code>window</code>! Fix: <code>setTimeout(() =&gt; user.greet(), 1000)</code> or <code>user.greet.bind(user)</code>.</li>
+            <li><strong>Using dot notation with dynamic variables:</strong> Writing <code>user.myVariable</code> looks for a literal key named <code>"myVariable"</code>! When using a variable as a key, you MUST use bracket notation: <code>user[myVariable]</code>.</li>
+            <li><strong>Assuming <code>Object.freeze()</code> is deep:</strong> <code>Object.freeze()</code> only freezes shallow 1st-level properties. Nested objects inside it remain mutable unless manually frozen recursively.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Property Shorthand:</strong> If your variable name matches your object key, write <code>{ name, age }</code> instead of <code>{ name: name, age: age }</code>.</li>
+            <li><strong>Computed Property Names:</strong> You can create dynamic keys inside the object literal declaration itself using brackets: <code>const obj = { [`key_${id}`]: "Dynamic Value" };</code>.</li>
+            <li><strong>Safely check property existence:</strong> Use <code>"propertyName" in object</code> or modern <code>Object.hasOwn(obj, "propertyName")</code> instead of relying on truthiness checks.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>Objects store data in key-value pairs; use dot notation for fixed keys and brackets for dynamic keys.</li>
+            <li>Methods are functions on objects; <code>this</code> refers to the calling object.</li>
+            <li>Never use arrow functions for object methods; they do not bind <code>this</code> to the object.</li>
+            <li>Explicitly bind <code>this</code> using <code>.call()</code>, <code>.apply()</code>, or <code>.bind()</code>.</li>
+            <li>Use <code>Object.keys()</code>, <code>Object.values()</code>, and <code>Object.entries()</code> for object iteration.</li>
+            <li><code>Object.freeze()</code> protects top-level properties from mutation.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Dynamic Property Lookup</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Given <code>const user = { name: "Alex", city: "Tokyo" };</code> and a variable <code>const key = "city";</code>, write the expression that reads the city name using the variable <code>key</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use bracket notation.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>user[key]</code> (Evaluates to "Tokyo").
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Fix the Broken 'this' Method</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Why does <code>const car = { brand: "Tesla", getBrand: () => this.brand }; car.getBrand();</code> return <code>undefined</code>, and how do you fix it?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Replace arrow function with standard method shorthand.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              Arrow functions lack their own <code>this</code> and inherit it from the outer global scope where <code>brand</code> is undefined. Fix it using standard method shorthand:
+              <pre><code>const car = {
+  brand: "Tesla",
+  getBrand() {
+    return this.brand;
+  }
+};</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Explicitly Bind a Detached Function</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Given a standalone function <code>function introduce() { return "Hi, I am " + this.name; }</code> and an object <code>const person = { name: "Liam" };</code>, write the code using <code>.bind()</code> to create a permanent new function <code>boundIntroduce</code> bound to <code>person</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: introduce.bind(person).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>const boundIntroduce = introduce.bind(person);</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 09 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="When a standard method is invoked as obj.method(), 'this' points to obj.">
+            <div class="quiz-question-text">1. In 'user.getProfile()', what does the 'this' keyword point to inside the standard getProfile method?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> The window global object</div>
+              <div class="quiz-option"><span>B)</span> The 'user' object</div>
+              <div class="quiz-option"><span>C)</span> undefined</div>
+              <div class="quiz-option"><span>D)</span> The DOM body</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Bracket notation is required when property names are stored in variables or contain hyphens/spaces.">
+            <div class="quiz-question-text">2. When is bracket notation (obj[key]) mandatory over dot notation (obj.key)?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Only inside loops</div>
+              <div class="quiz-option"><span>B)</span> When the object has more than 10 properties</div>
+              <div class="quiz-option"><span>C)</span> When the property key is stored in a dynamic variable or contains spaces / special characters</div>
+              <div class="quiz-option"><span>D)</span> Bracket notation is never mandatory</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Arrow functions inherit 'this' lexically from where they are defined, rather than binding to the object.">
+            <div class="quiz-question-text">3. Why should you avoid using Arrow Functions for object methods?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They do not bind their own 'this' context, causing 'this' to reference the outer enclosing scope</div>
+              <div class="quiz-option"><span>B)</span> They run 50% slower</div>
+              <div class="quiz-option"><span>C)</span> They cannot return numbers</div>
+              <div class="quiz-option"><span>D)</span> They are deprecated in ES6</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Object.entries() returns an array of [key, value] pairs.">
+            <div class="quiz-question-text">4. What does 'Object.entries({ a: 1, b: 2 })' return?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> ["a", "b"]</div>
+              <div class="quiz-option"><span>B)</span> [1, 2]</div>
+              <div class="quiz-option"><span>C)</span> { a: 1, b: 2 }</div>
+              <div class="quiz-option"><span>D)</span> [ ["a", 1], ["b", 2] ]</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="bind() returns a new function with 'this' permanently bound, without calling it immediately.">
+            <div class="quiz-question-text">5. How does Function.prototype.bind() differ from .call() and .apply()?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> bind() runs immediately; call() does not</div>
+              <div class="quiz-option"><span>B)</span> bind() returns a new function with 'this' bound for future invocation; call() and apply() invoke the function immediately</div>
+              <div class="quiz-option"><span>C)</span> bind() works only with arrays</div>
+              <div class="quiz-option"><span>D)</span> There is no difference</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Shopping Cart Object</h3>
+          <p>
+            In the live editor, create an object <code>cart</code> with an array <code>items: []</code> and methods <code>addItem(name, price)</code> and <code>getTotal()</code>. Add 3 items and log the calculated total using <code>cart.getTotal()</code>!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#objects" class="ref-pill">Objects Reference</a>
+            <a href="../reference/glossary.html#object" class="ref-pill">Glossary: Object</a>
+            <a href="../reference/glossary.html#this-keyword" class="ref-pill">Glossary: 'this' Keyword</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Objects Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="08-arrays-and-array-methods.html" class="btn btn-outline">&larr; Previous: Arrays &amp; Higher-Order Methods</a>
+          <button class="mark-complete-btn" data-lesson-id="js-09">Mark as Complete</button>
+          <a href="10-strings-numbers-math-date.html" class="btn btn-primary">Next: Strings, Numbers, Math &amp; Date &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

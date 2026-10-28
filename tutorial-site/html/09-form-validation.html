@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Form Validation — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="09-form-validation.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 09</span>
+          </div>
+          <h1 class="lesson-title">Form Validation (HTML5 Client-Side Rules)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Ensure data integrity, prevent empty submissions, and validate formats natively without external libraries.</span>
+            <span class="lang-hi">HTML5 ki native client-side validation seekhein: <code>required</code>, <code>pattern</code> regex, aur CSS ke <code>:valid</code>/<code>:invalid</code> states.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Why client-side validation is essential for instant user feedback.</li>
+            <li>Enforcing completion with the <code>required</code> boolean attribute.</li>
+            <li>Validating text length with <code>minlength</code> and <code>maxlength</code>.</li>
+            <li>Enforcing numerical boundaries with <code>min</code>, <code>max</code>, and <code>step</code>.</li>
+            <li>Power validation using regular expressions with the <code>pattern</code> attribute.</li>
+            <li>Styling valid and invalid input states natively with CSS <code>:valid</code> and <code>:invalid</code>.</li>
+            <li>Customizing native error tooltips with <code>setCustomValidity()</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="08-forms-and-inputs.html">08. Forms &amp; Inputs</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Airport Security Checkpoint</div>
+          <p>
+            <span class="lang-en">Imagine arriving at an international airport terminal. Before you are permitted to board the aircraft, you pass through the security checkpoint. The officer checks three strict rules: 1. You must possess a boarding pass (<strong><code>required</code></strong>). 2. Your carry-on luggage cannot weigh more than 10 kilograms (<strong><code>max="10"</code></strong>). 3. Your passport number must match the exact 9-character alphanumeric pattern on your ticket (<strong><code>pattern="[A-Z0-9]{9}"</code></strong>). If any of these rules are broken, you are stopped immediately right there at the gate before wasting airplane fuel!</span>
+            <span class="lang-hi">Airport security checkpoint ki tarah sochiye. Boarding pass hona zaroori hai (<code>required</code>), bag ka wajan 10kg se kam hona chahiye (<code>max="10"</code>) aur passport number ka format sahi hona chahiye (<code>pattern</code>). Koi bhi galti hoti hai toh security wahi rok leti hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Why Native HTML5 Validation is a Game Changer</h2>
+        <p>
+          In the early days of web development, validating an email address or checking if a password was 8 characters long required 50 lines of complex JavaScript. HTML5 built validation <strong>directly into the browser's C++ rendering engine</strong>. It is instant, accessible, works offline, and translates error messages into the user's native operating system language automatically!
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Standard HTML5 Validation Rules</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;form action="/register" method="POST"&gt;
+  &lt;!-- 1. required: Cannot be submitted empty --&gt;
+  &lt;label for="username"&gt;Username (Required):&lt;/label&gt;
+  &lt;input type="text" id="username" name="username" required&gt;
+
+  &lt;!-- 2. minlength & maxlength: Character length limits --&gt;
+  &lt;label for="pin"&gt;Security PIN (4 to 6 digits):&lt;/label&gt;
+  &lt;input type="text" id="pin" name="pin" minlength="4" maxlength="6" required&gt;
+
+  &lt;!-- 3. min, max, step: Numeric bounds --&gt;
+  &lt;label for="age"&gt;Age (18 to 99):&lt;/label&gt;
+  &lt;input type="number" id="age" name="age" min="18" max="99" value="21"&gt;
+
+  &lt;button type="submit"&gt;Register Account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Browser Behavior:</strong> When you click "Register Account" with an empty username, the browser cancels form submission, jumps directly to the invalid input, and pops up a native speech bubble: <em>"Please fill out this field."</em>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Advanced Validation with <code>pattern</code> (Regular Expressions)</h2>
+        <p>
+          The <code>pattern</code> attribute allows you to enforce strict custom character sequences using regular expression (Regex) syntax:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Common Pattern Attributes</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- 1. US Zip Code: Exactly 5 digits --&gt;
+&lt;label for="zip"&gt;Zip Code (5 digits):&lt;/label&gt;
+&lt;input type="text" id="zip" name="zip" pattern="[0-9]{5}" title="Please enter a 5-digit zip code (e.g. 90210)"&gt;
+
+&lt;!-- 2. Strong Password: Min 8 chars, at least 1 uppercase, 1 lowercase, 1 number --&gt;
+&lt;label for="strong-pwd"&gt;Secure Password:&lt;/label&gt;
+&lt;input type="password" id="strong-pwd" name="pwd"
+       pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+       title="Must contain at least one number, one uppercase, one lowercase letter, and at least 8 characters"&gt;
+
+&lt;!-- 3. Telephone Format: XXX-XXX-XXXX --&gt;
+&lt;label for="phone"&gt;Phone Number:&lt;/label&gt;
+&lt;input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="123-456-7890"&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Role of <code>title</code> with <code>pattern</code>:</strong> Whenever an input fails a <code>pattern</code> test, the browser displays the text inside the <code>title</code> attribute inside the error popup! Always provide a clear, helpful <code>title</code> explaining the expected format.
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Test Live Form Validation</h2>
+        <p>Try submitting this form with invalid inputs and watch the instant native validation trigger:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Live CSS Validation Styling</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; color: #1e293b; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; }
+    input {
+      width: 100%; padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;
+      outline: none; transition: border-color 0.2s;
+    }
+    /* Native CSS validation pseudo-classes */
+    input:focus:invalid {
+      border-color: #ef4444; /* Red border when typing invalid format */
+      background-color: #fef2f2;
+    }
+    input:focus:valid {
+      border-color: #10b981; /* Green border when input satisfies all rules! */
+      background-color: #f0fdf4;
+    }
+    button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <form onsubmit="event.preventDefault(); alert('All validation checks passed! Form ready for server.');">
+    <div class="field">
+      <label for="v-email">Email (Required):</label>
+      <input type="email" id="v-email" required placeholder="name@domain.com">
+    </div>
+
+    <div class="field">
+      <label for="v-code">Promo Code (3 Letters + 2 Digits, e.g. WEB26):</label>
+      <input type="text" id="v-code" pattern="[A-Za-z]{3}[0-9]{2}" required placeholder="WEB26" title="3 letters followed by 2 numbers">
+    </div>
+
+    <button type="submit">Validate and Submit</button>
+  </form>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. CSS Validation Pseudo-Classes (<code>:valid</code> and <code>:invalid</code>)</h2>
+        <p>
+          CSS gives you real-time visual hooks into the browser's validation state without writing any JavaScript:
+        </p>
+        <ul>
+          <li><code>:required</code>: Selects any input with the <code>required</code> attribute.</li>
+          <li><code>:optional</code>: Selects inputs without the <code>required</code> attribute.</li>
+          <li><code>:valid</code>: Selects inputs whose current value satisfies all rules.</li>
+          <li><code>:invalid</code>: Selects inputs whose current value breaks at least one rule.</li>
+        </ul>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Styling Valid and Invalid States</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;style&gt;
+  /* Mark required labels with a red asterisk */
+  label:has(+ input:required)::after {
+    content: " *";
+    color: #ef4444;
+  }
+
+  /* Show green checkmark icon when valid */
+  input:valid {
+    border-color: #16a34a;
+  }
+&lt;/style&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Modern CSS Selector:</strong> <code>label:has(+ input:required)</code> automatically finds labels followed by a required input and adds a red asterisk!
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The <code>novalidate</code> Attribute</h3>
+        <p>If you want to handle all validation manually in custom JavaScript without the browser showing its default speech bubbles:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- novalidate disables the browser's default validation popups --&gt;
+&lt;form action="/process" method="POST" novalidate&gt;
+  &lt;input type="email" id="custom-email" required&gt;
+  &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>When to use:</strong> Professional developers add <code>novalidate</code> when designing bespoke error message banners, inline toast alerts, or custom animated tooltips.
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Custom Error Messages with <code>setCustomValidity()</code></h3>
+        <p>You can override the browser's default error text with friendly, custom messages in JavaScript:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const emailInput = document.querySelector("#user-email");
+
+emailInput.addEventListener("input", function() {
+  if (this.validity.typeMismatch) {
+    this.setCustomValidity("Please enter a valid work email ending in @company.com!");
+  } else {
+    // Reset to empty string to mark the field valid!
+    this.setCustomValidity("");
+  }
+});</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Critical Rule of <code>setCustomValidity()</code>:</strong> If you pass a non-empty string, the browser marks the input as invalid. You MUST pass an empty string (<code>""</code>) when the input is valid, or the form will never submit!
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: The Constraint Validation API</h3>
+        <p>JavaScript exposes the exact reason an input failed via <code>element.validity</code>:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">const input = document.querySelector("input");
+const v = input.validity;
+
+console.log("Is Empty when Required?", v.valueMissing);
+console.log("Format Mismatch (e.g. bad email)?", v.typeMismatch);
+console.log("Violated Regex Pattern?", v.patternMismatch);
+console.log("Below Minimum Number?", v.rangeUnderflow);
+console.log("Above Maximum Number?", v.rangeOverflow);
+console.log("Is Everything 100% Valid?", v.valid);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this is powerful:</strong> You don't have to write manual regex or length checks &mdash; simply check <code>input.validity.valueMissing</code> or <code>input.validity.patternMismatch</code>!
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Assuming client-side validation is enough for security:</strong> Client validation is purely for USER EXPERIENCE. Anyone can bypass HTML validation by opening DevTools or using cURL! <em>Always re-validate all data on the backend server before saving to a database.</em></li>
+            <li><strong>Not providing a <code>title</code> attribute with <code>pattern</code>:</strong> If an input fails a cryptic regex pattern and has no title, the browser just says <em>"Please match the requested format"</em>, leaving the user completely baffled as to what they did wrong.</li>
+            <li><strong>Forgetting that <code>type="email"</code> requires a dot in real domains:</strong> By default, HTML5 accepts <code>test@localhost</code> as valid. To enforce real domain structures, pair it with a pattern.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Combine <code>minlength</code> and <code>maxlength</code> on password inputs to prevent users from creating dangerously short 3-character passwords.</li>
+            <li>Use the CSS pseudo-class <code>:user-invalid</code> instead of <code>:invalid</code> in modern browsers &mdash; this ensures fields don't turn bright red before the user has even finished typing!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>required</code> prevents empty submissions.</li>
+            <li><code>minlength</code> and <code>maxlength</code> limit character counts.</li>
+            <li><code>min</code>, <code>max</code>, and <code>step</code> constrain numeric values.</li>
+            <li><code>pattern</code> validates custom sequences with regular expressions.</li>
+            <li>Style valid/invalid inputs natively with CSS <code>:valid</code> and <code>:invalid</code>.</li>
+            <li>Use <code>novalidate</code> on <code>&lt;form&gt;</code> to suppress native tooltips.</li>
+            <li>Never rely on client-side validation alone for security &mdash; always validate on the server!</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Enforce Minimum Password Length</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Modify <code>&lt;input type="password" id="pass"&gt;</code> so that the browser requires at least 8 characters and stops empty submissions.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use the required and minlength attributes.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;input type="password" id="pass" required minlength="8"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Ticket Quantity Boundaries</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Write an input for concert tickets that allows purchasing between 1 and 6 tickets, in increments of 1, with a default value of 2.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use type="number" with min, max, step, and value.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;input type="number" id="tickets" name="tickets" min="1" max="6" step="1" value="2"&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Airport Flight Code Pattern</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Create an input that only accepts valid 3-letter IATA airport codes in uppercase (e.g. JFK, LAX, DEL). Include an explanatory tooltip.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Regex character set [A-Z] with quantifier {3}.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>&lt;input type="text" id="airport" name="airport"
+       pattern="[A-Z]{3}"
+       title="Please enter a 3-letter uppercase airport code (e.g. JFK, LHR)" required&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 09 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="required is a boolean attribute that blocks empty form submissions.">
+            <div class="quiz-question-text">1. Which attribute ensures an input field cannot be left blank during submission?</div>
+            <div class="quiz-options">
+              <div class="quiz-options"><span>A)</span> validate="true"</div>
+              <div class="quiz-option"><span>B)</span> not-null</div>
+              <div class="quiz-option"><span>C)</span> required</div>
+              <div class="quiz-option"><span>D)</span> mandatory</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="The pattern attribute accepts regular expressions for custom character validation.">
+            <div class="quiz-question-text">2. Which attribute takes a regular expression (Regex) to validate custom input formats?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> regex</div>
+              <div class="quiz-option"><span>B)</span> pattern</div>
+              <div class="quiz-option"><span>C)</span> format</div>
+              <div class="quiz-option"><span>D)</span> rule</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="The title attribute provides the message text displayed in the pattern failure popup.">
+            <div class="quiz-question-text">3. When using the pattern attribute, where does the browser get the explanation message to show the user?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> From the alt attribute</div>
+              <div class="quiz-option"><span>B)</span> From the name attribute</div>
+              <div class="quiz-option"><span>C)</span> From the placeholder attribute</div>
+              <div class="quiz-option"><span>D)</span> From the title attribute</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="novalidate disables the default native browser validation popups.">
+            <div class="quiz-question-text">4. What attribute on &lt;form&gt; suppresses the browser's native error bubble tooltips?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> novalidate</div>
+              <div class="quiz-option"><span>B)</span> silent</div>
+              <div class="quiz-option"><span>C)</span> no-popup</div>
+              <div class="quiz-option"><span>D)</span> skip-validation</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Client-side validation can be bypassed easily; server-side validation is required for real security.">
+            <div class="quiz-question-text">5. Is client-side HTML5 validation sufficient on its own to secure a website database?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, browsers prevent all malicious inputs</div>
+              <div class="quiz-option"><span>B)</span> Yes, if you use strong pattern regular expressions</div>
+              <div class="quiz-option"><span>C)</span> No, client validation can be bypassed and must always be verified on the server</div>
+              <div class="quiz-option"><span>D)</span> Only for GET requests, but not POST requests</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Add a VIP Code Validator</h3>
+          <p>
+            In the live editor above, add a new field for a "VIP Passcode" that requires exactly 4 numbers (e.g. <code>pattern="[0-9]{4}"</code>) with <code>required</code>. Notice how the input border dynamically changes from red to green when you finish typing exactly 4 digits!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#form" class="ref-pill">&lt;form&gt; &amp; novalidate</a>
+            <a href="../reference/html-tags-reference.html#input" class="ref-pill">&lt;input&gt; Validation Attributes</a>
+            <a href="../reference/css-properties-reference.html" class="ref-pill">CSS :valid &amp; :invalid</a>
+            <a href="../reference/glossary.html#validation" class="ref-pill">Glossary: Validation</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="08-forms-and-inputs.html" class="btn btn-outline">&larr; Previous: Forms &amp; Inputs</a>
+          <button class="mark-complete-btn" data-lesson-id="html-09">Mark as Complete</button>
+          <a href="10-semantic-html.html" class="btn btn-primary">Next: Semantic HTML &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

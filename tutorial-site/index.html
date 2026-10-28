@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="./">
+  <title>WebDev Academy — Complete Offline HTML, CSS & JavaScript Curriculum</title>
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <style>
+    .home-hero {
+      background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-subtle) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 3.5rem 2.5rem;
+      margin: 1.5rem 0 3rem 0;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--state-success-bg);
+      color: var(--state-success);
+      border: 1px solid rgba(22, 163, 74, 0.25);
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-desc {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin-bottom: 2rem;
+    }
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+    .btn-hero-primary {
+      background: var(--accent-primary);
+      color: #fff;
+      padding: 0.8rem 1.6rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: var(--shadow-md);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-hero-primary:hover {
+      background: var(--accent-hover);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .resume-card {
+      display: none;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-left: 4px solid var(--state-success);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      box-shadow: var(--shadow-sm);
+      align-items: center;
+      justify-content: space-between;
+    }
+    .resume-card.active {
+      display: flex;
+    }
+    .course-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+    .course-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-xs);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-medium);
+    }
+    .card-strip {
+      height: 6px;
+      border-radius: var(--radius-full);
+      margin-bottom: 1.25rem;
+    }
+    .strip-html { background: var(--c-html); }
+    .strip-css { background: var(--c-css); }
+    .strip-js { background: var(--c-js); }
+    .strip-projects { background: var(--c-projects); }
+    .strip-start { background: var(--accent-primary); }
+
+    .course-card h3 {
+      font-size: 1.35rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    .course-card p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      flex: 1;
+      margin-bottom: 1.5rem;
+      line-height: 1.55;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .roadmap-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin: 3.5rem 0;
+    }
+    .roadmap-step {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .roadmap-step:last-child {
+      margin-bottom: 0;
+    }
+    .step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      color: var(--accent-primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+      border: 2px solid var(--border-focus);
+    }
+    .step-content h4 {
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+    }
+    .step-content p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2rem; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .roadmap-section { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body data-course="home">
+  <!-- Shared Injected Header -->
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <main class="main-content" style="padding-top: 1rem;">
+      <div class="content-inner" style="max-width: 1080px;">
+
+        <!-- Hero Section -->
+        <section class="home-hero">
+          <div class="hero-badge">
+            <span>&#9679;</span> 100% Offline Compatible &bull; Zero External Dependencies
+          </div>
+          <h1 class="hero-title">Master Modern Web Development from Zero to Advanced</h1>
+          <p class="hero-desc">
+            <span class="lang-en">Learn HTML5, CSS3, and modern vanilla JavaScript from absolute zero. Includes live interactive code editors, built-in documentation, real-world projects, quizzes, and self-contained coding challenges.</span>
+            <span class="lang-hi">HTML5, modern CSS3 aur vanilla JavaScript seekhein bilkul zero se. Har concept ke saath live code editor, quiz, projects aur built-in reference bina internet ke chalega.</span>
+          </p>
+
+          <div class="hero-buttons">
+            <a href="getting-started/01-how-the-web-works.html" class="btn-hero-primary">Start from Scratch (Lesson 1) &rarr;</a>
+            <a href="playground/index.html" class="btn btn-outline" style="padding: 0.8rem 1.4rem; font-size:1rem;">Open Live Playground</a>
+            <a href="reference/glossary.html" class="btn btn-outline" style="padding: 0.8rem 1.4rem; font-size:1rem;">Reference & Glossary</a>
+          </div>
+        </section>
+
+        <!-- Continue Where You Left Off Banner -->
+        <div id="resume-banner" class="resume-card">
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; text-transform:uppercase; color:var(--state-success); letter-spacing:0.05em;">Welcome Back!</div>
+            <div id="resume-title" style="font-weight:700; font-size:1.1rem; color:var(--text-primary); margin-top:0.25rem;">Resume your previous lesson</div>
+          </div>
+          <a id="resume-link" href="#" class="btn btn-success" style="padding:0.6rem 1.25rem;">Continue &rarr;</a>
+        </div>
+
+        <!-- Learning Stats Row -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-number">56+</div>
+            <div class="stat-label">Full Lessons</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">300+</div>
+            <div class="stat-label">Code Demos</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">9</div>
+            <div class="stat-label">Guided Projects</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">0</div>
+            <div class="stat-label">External Calls (100% Offline)</div>
+          </div>
+        </div>
+
+        <!-- Course Tracks Grid -->
+        <h2 style="font-size:1.85rem; font-weight:800; margin: 3rem 0 0.5rem 0; color:var(--text-primary);">Core Curriculum Tracks</h2>
+        <p style="color:var(--text-secondary); margin-bottom: 2rem;">Follow our structured curriculum designed to build solid muscle memory and industry-ready coding skills.</p>
+
+        <div class="course-cards-grid">
+          <!-- Getting Started -->
+          <div class="course-card">
+            <div class="card-strip strip-start"></div>
+            <h3>Getting Started</h3>
+            <p>What is a browser, how servers and DNS communicate, how to set up your text editor, and how to use DevTools.</p>
+            <div class="card-footer">
+              <span>4 Beginner Lessons</span>
+              <a href="getting-started/01-how-the-web-works.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Begin &rarr;</a>
+            </div>
+          </div>
+
+          <!-- HTML5 -->
+          <div class="course-card">
+            <div class="card-strip strip-html"></div>
+            <h3>HTML5 Mastery</h3>
+            <p>From document skeletons to semantic containers, modern accessible forms, tables, multimedia, and SEO meta tags.</p>
+            <div class="card-footer">
+              <span>14 Comprehensive Lessons</span>
+              <a href="html/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Explore &rarr;</a>
+            </div>
+          </div>
+
+          <!-- CSS3 -->
+          <div class="course-card">
+            <div class="card-strip strip-css"></div>
+            <h3>Modern CSS3</h3>
+            <p>Master the Box Model, Flexbox, CSS Grid, media queries, keyframe animations, CSS variables, and clean BEM architecture.</p>
+            <div class="card-footer">
+              <span>16 Detailed Lessons</span>
+              <a href="css/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Explore &rarr;</a>
+            </div>
+          </div>
+
+          <!-- JavaScript -->
+          <div class="course-card">
+            <div class="card-strip strip-js"></div>
+            <h3>Vanilla JavaScript</h3>
+            <p>Variables, functions, closures, DOM manipulation, event delegation, ES6+ classes, Promises, async/await, and localStorage.</p>
+            <div class="card-footer">
+              <span>22 Core Lessons</span>
+              <a href="javascript/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Explore &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Python 3 Track -->
+          <div class="course-card">
+            <div class="card-strip" style="background:var(--c-python)"></div>
+            <h3>Python 3 & AI Masterclass</h3>
+            <p>From core syntax & data structure trees to FastAPI, Django, NumPy/Pandas, Machine Learning with Scikit-Learn, and PyTorch deep learning.</p>
+            <div class="card-footer">
+              <span>20 In-Depth Modules</span>
+              <a href="python/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Learn &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Java & Spring Boot Track -->
+          <div class="course-card">
+            <div class="card-strip" style="background:var(--c-java)"></div>
+            <h3>Enterprise Java & Spring Boot</h3>
+            <p>Master JVM memory internals, OOP architecture, Multithreading, Streams, Spring Boot 3 REST APIs, Spring Data JPA, and Microservices.</p>
+            <div class="card-footer">
+              <span>18 Full Modules</span>
+              <a href="java/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Learn &rarr;</a>
+            </div>
+          </div>
+
+          <!-- SQL Database Track -->
+          <div class="course-card">
+            <div class="card-strip" style="background:var(--c-sql)"></div>
+            <h3>SQL & Relational Databases</h3>
+            <p>Master DDL, DML, complex Joins, Subqueries, CTEs, Window Functions, B-Tree Indexing, and ACID transactions with 75 interview Q&A.</p>
+            <div class="card-footer">
+              <span>11 Core Modules</span>
+              <a href="sql/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Learn &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Projects -->
+          <div class="course-card">
+            <div class="card-strip strip-projects"></div>
+            <h3>9 Step-by-Step Projects</h3>
+            <p>Build real portfolios, calculators, todo apps, interactive quizzes, stopwatches, weather dashboards, and expense trackers.</p>
+            <div class="card-footer">
+              <span>9 Production Builds</span>
+              <a href="projects/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Build &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Practice & Challenges -->
+          <div class="course-card">
+            <div class="card-strip" style="background:var(--c-practice)"></div>
+            <h3>Practice & Interviews</h3>
+            <p>Algorithm and frontend challenges graded Easy, Medium, and Hard, plus 50+ detailed frontend interview questions.</p>
+            <div class="card-footer">
+              <span>Practice Tests & Q&A</span>
+              <a href="practice/index.html" class="btn btn-outline" style="padding:0.3rem 0.75rem; font-size:0.85rem;">Practice &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Learning Path Roadmap -->
+        <section class="roadmap-section">
+          <h2 style="margin-top:0; font-size:1.75rem; font-weight:800; color:var(--text-primary); margin-bottom:1.5rem;">Your Recommended Step-by-Step Roadmap</h2>
+
+          <div class="roadmap-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>The Foundation (Getting Started + HTML5)</h4>
+              <p>Understand the client-server relationship, install your tools, and master the markup skeleton that gives structure to all web content.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Visual Craftsmanship (Modern CSS3)</h4>
+              <p>Take your static HTML and bring it to life with colors, responsive typography, 1D Flexbox, 2D Grid layouts, and fluid transitions.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Interactivity & Logic (Vanilla JavaScript)</h4>
+              <p>Add intelligence to your pages: handle user events, modify the DOM dynamically, save state in LocalStorage, and fetch data asynchronously.</p>
+            </div>
+          </div>
+
+          <div class="roadmap-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>Portfolio Capstone Projects</h4>
+              <p>Tie all three languages together into complete, polished, bug-free applications you can proudly showcase in technical interviews.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Shared Injected Footer -->
+  <footer id="app-footer"></footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/progress.js"></script>
+  <script src="assets/js/search-index.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script src="assets/js/highlighter.js"></script>
+  <script src="assets/js/editor.js"></script>
+  <script src="assets/js/quiz.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Handle "Continue where you left off"
+    document.addEventListener('DOMContentLoaded', function() {
+      const last = window.Progress ? window.Progress.getLastVisited() : null;
+      if (last && last.url && last.title) {
+        const banner = document.getElementById('resume-banner');
+        const titleEl = document.getElementById('resume-title');
+        const linkEl = document.getElementById('resume-link');
+        if (banner && titleEl && linkEl) {
+          titleEl.textContent = 'Continue: ' + last.title;
+          linkEl.href = last.url;
+          banner.classList.add('active');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

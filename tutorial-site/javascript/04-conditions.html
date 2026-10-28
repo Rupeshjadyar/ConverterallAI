@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Conditionals &amp; Branching — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="04-conditions.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 04</span>
+          </div>
+          <h1 class="lesson-title">Conditionals &amp; Decision Branching</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Teach your code how to make intelligent decisions using if/else, ternary operators, and switch statements.</span>
+            <span class="lang-hi">Conditionals aur Decision Making: if, else if, else, ternary operator (?:), switch-case, aur guard clauses seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>How programs make binary and multi-way decisions using <code>if</code>, <code>else if</code>, and <code>else</code>.</li>
+            <li>Block scoping rules inside conditional statements.</li>
+            <li>The elegant <strong>Ternary Operator (<code>condition ? yes : no</code>)</strong> for concise assignments.</li>
+            <li>Multi-branch dispatching with <code>switch (val) { case ... break; }</code> and fall-through mechanics.</li>
+            <li>The Senior Developer's secret weapon: <strong>Guard Clauses</strong> (eliminating the nested "Pyramid of Doom").</li>
+            <li>Evaluating compound conditions with <code>&amp;&amp;</code>, <code>||</code>, and operator precedence.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="03-operators-type-conversion.html">03. Operators &amp; Type Coercion</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Railway Track Switcher</div>
+          <p>
+            <span class="lang-en">Imagine an express locomotive speeding down a railway track:
+            <br>&bull; A mechanical track switch sits at a fork in the road.
+            <br>&bull; <strong>If</strong> the signal light is Green &rarr; the train continues down Track A to Paris.
+            <br>&bull; <strong>Else if</strong> the signal light is Amber &rarr; the train diverts down Track B to Brussels.
+            <br>&bull; <strong>Else</strong> &rarr; the emergency brakes activate and the train stops safely.
+            <br>Conditional logic in programming is that railway track switch! It reads runtime facts (is the user logged in? do they have enough money?) and routes program execution down the correct track.</span>
+            <span class="lang-hi">Railway track switch ki tarah sochiye: Train seedhi jaa rahi hai. Agar signal hara hai toh train Track A par jayegi; agar peela hai toh Track B par; warna ruk jayegi. Program me <code>if/else</code> wahi switch hai jo faisla karta hai ki aage kaunsa code execute hoga!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Classic `if`, `else if`, `else` Chain</h2>
+        <p>
+          The <code>if</code> statement evaluates an expression inside parentheses. If the expression evaluates to truthy, the code block <code>{ ... }</code> executes:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Multi-Tier Decision Logic</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const userAge = 19;
+const hasLicense = true;
+
+if (userAge >= 18 && hasLicense) {
+  console.log("Eligible to drive a car independently.");
+} else if (userAge >= 16) {
+  console.log("Eligible for a learner's permit with adult supervision.");
+} else {
+  console.log("Too young to drive. Please take public transit.");
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Crucial Execution Law:</strong> As soon as <em>one</em> condition in the chain evaluates to true, its code block executes and the entire remaining <code>else if / else</code> chain is skipped!
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Block Scoping Inside Conditionals</h2>
+        <p>
+          Variables declared with <code>const</code> or <code>let</code> inside a conditional block <strong>do not leak outside</strong> that block:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Block Scope Boundaries</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const isMember = true;
+
+if (isMember) {
+  const discountRate = 0.20; // 20% discount
+  let bonusPoints = 50;
+  console.log(`Discount applied: ${discountRate * 100}%`);
+}
+
+// Accessing discountRate here throws ReferenceError!
+// console.log(discountRate); // Uncaught ReferenceError: discountRate is not defined</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Ternary Operator (<code>?:</code>)</h2>
+        <p>
+          When you want to assign a value based on a condition in a single concise line, the ternary operator is the cleanest solution:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-js); border-radius:var(--radius-sm); font-family:var(--font-mono);">
+          const result = condition ? valueIfTrue : valueIfFalse;
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Ternary Assignment vs If/Else</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const score = 85;
+
+// The Verbose 5-line way:
+let statusText;
+if (score >= 50) {
+  statusText = "Passed";
+} else {
+  statusText = "Failed";
+}
+
+// The Professional 1-line Ternary way:
+const examResult = score >= 50 ? "Passed" : "Failed";
+console.log(`Student status: ${examResult}`);
+
+// Inline inside template strings:
+console.log(`Battery: ${batteryLevel}% (${batteryLevel > 20 ? "Good" : "Low"})`);</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. The `switch` Statement: Multi-Branch Matching</h2>
+        <p>
+          When checking a single variable against many discrete constant values (like user roles or status codes), a <code>switch</code> statement is cleaner than 10 consecutive <code>else if</code> blocks:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Switch with Case Fall-Through</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const userRole = "editor";
+
+switch (userRole) {
+  case "admin":
+    console.log("Full administrative dashboard access.");
+    break; // REQUIRED! Stops execution from bleeding into next case
+
+  case "editor":
+  case "moderator": // Grouping multiple cases together
+    console.log("Can edit and approve content.");
+    break;
+
+  case "viewer":
+    console.log("Read-only access granted.");
+    break;
+
+  default:
+    console.warn("Unrecognized role. Access denied.");
+    break;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>The Missing Break Danger:</strong> If you omit the <code>break;</code> statement, JavaScript enters "fall-through" mode, executing all subsequent cases regardless of whether they match!
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. The Senior Pattern: Guard Clauses (Kill the Pyramid)</h2>
+        <p>
+          Junior developers write deeply nested conditions that look like a pyramid. Senior developers use <strong>Guard Clauses</strong> &mdash; checking for failure conditions early and exiting immediately:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Nested Pyramid vs Clean Guard Clauses</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// BAD: The Nested "Pyramid of Doom"
+function processOrderBad(user, cart) {
+  if (user) {
+    if (user.isActive) {
+      if (cart.length > 0) {
+        if (user.balance >= cart.total) {
+          // Actual work buried 5 levels deep!
+          return "Order processed successfully!";
+        } else {
+          return "Insufficient balance";
+        }
+      } else {
+        return "Cart is empty";
+      }
+    } else {
+      return "User account suspended";
+    }
+  } else {
+    return "User not found";
+  }
+}
+
+// GOOD: Senior Flat Architecture with Guard Clauses (Early Returns)
+function processOrderGood(user, cart) {
+  if (!user) return "User not found";
+  if (!user.isActive) return "User account suspended";
+  if (cart.length === 0) return "Cart is empty";
+  if (user.balance < cart.total) return "Insufficient balance";
+
+  // Clean, flat primary business logic!
+  return "Order processed successfully!";
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Test Decision Logic Live</h2>
+        <p>
+          Change <code>userRole</code> and <code>accountBalance</code> below and click <strong>Run Code</strong>:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Decision Branching Sandbox</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h3>Decision Logic Result</h3>
+  <div id="output" style="font-family:monospace; background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:8px;"></div>
+
+  <script>
+    const outputEl = document.getElementById("output");
+
+    // Try modifying these values:
+    const userRole = "admin";
+    const accountBalance = 150;
+    const itemPrice = 80;
+
+    let permissionMessage;
+    switch (userRole) {
+      case "admin":
+        permissionMessage = "Full Administrator Privileges";
+        break;
+      case "guest":
+        permissionMessage = "Limited Guest Access";
+        break;
+      default:
+        permissionMessage = "Standard Member Access";
+        break;
+    }
+
+    const purchaseStatus = accountBalance >= itemPrice
+      ? "Purchase Approved! Funds deducted."
+      : "Transaction Declined: Insufficient balance.";
+
+    console.log("Permission:", permissionMessage);
+    console.log("Purchase:", purchaseStatus);
+
+    outputEl.innerHTML = `
+      <strong>Role Check:</strong> ${permissionMessage}<br>
+      <strong>Transaction:</strong> ${purchaseStatus}
+    `;
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Accidental assignment in condition:</strong> Writing <code>if (score = 100)</code> uses the single equals assignment operator, setting score to 100 and evaluating as truthy! Always use <code>===</code>: <code>if (score === 100)</code>.</li>
+            <li><strong>Forgetting <code>break;</code> in a switch:</strong> Omitting <code>break</code> causes unwanted case fall-through, executing unexpected code blocks.</li>
+            <li><strong>Deeply nested ternary operators:</strong> Writing <code>a ? b ? c : d : e ? f : g</code> is an unreadable nightmare. Use ternaries only for single, straightforward conditions.</li>
+            <li><strong>Missing curly braces on single-line ifs:</strong> While <code>if (x) doSomething();</code> is valid syntax, omitting <code>{ }</code> causes catastrophic bugs when another line is added later. Always use braces!</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Object lookup tables instead of massive switch statements:</strong> For mapping strings to outputs, use an object literal: <code>const roleMap = { admin: "All Access", user: "Read Only" }; return roleMap[role] ?? "Guest";</code>.</li>
+            <li><strong>Early exit guard clauses:</strong> Keep your main logic at zero indentation depth by handling errors and edge cases at the very top of the function.</li>
+            <li><strong>Group cases for readability:</strong> You can stack <code>case "png": case "jpg": case "webp":</code> together to run the same image-processing block.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li><code>if / else if / else</code> routes code along logical conditional tracks.</li>
+            <li>Variables declared with <code>const</code> and <code>let</code> stay trapped inside their block.</li>
+            <li>Ternary operator: <code>condition ? valueIfTrue : valueIfFalse</code>.</li>
+            <li>Always include <code>break;</code> in <code>switch</code> statements unless intentional fall-through is required.</li>
+            <li>Use Guard Clauses with early returns to eliminate nested pyramids of doom.</li>
+            <li>Never use single <code>=</code> inside an <code>if</code> check.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Refactor to a Ternary</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Refactor this code into a single line with the ternary operator:<br>
+          <code>let badge; if (isPro) { badge = "Gold"; } else { badge = "Silver"; }</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: const badge = isPro ? ... : ...;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>const badge = isPro ? "Gold" : "Silver";</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Guard Clause Conversion</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Rewrite this function to use a guard clause at the top instead of wrapping the return statement in an if block:<br>
+          <code>function sendEmail(email) { if (email) { return "Sent to " + email; } }</code></p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: if (!email) return null;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>function sendEmail(email) {
+  if (!email) return null;
+  return `Sent to ${email}`;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Object Lookup Alternative</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Instead of a 4-branch switch statement checking <code>status === "pending"</code>, <code>"active"</code>, <code>"completed"</code>, write an object lookup dictionary that maps each status to its hex color code, with a fallback to <code>"#94a3b8"</code>.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: const colors = { pending: "...", ... }; return colors[status] ?? fallback;</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const statusColors = {
+  pending: "#f59e0b",
+  active: "#3b82f6",
+  completed: "#10b981"
+};
+
+const color = statusColors[status] ?? "#94a3b8";</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 04 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="In an if/else if chain, once a condition matches, its block runs and all subsequent else if/else blocks are skipped.">
+            <div class="quiz-question-text">1. What happens when the first 'if' condition evaluates to true in an if / else if / else chain?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> All following else if conditions are also checked</div>
+              <div class="quiz-option"><span>B)</span> The entire program restarts</div>
+              <div class="quiz-option"><span>C)</span> Its block executes, and the rest of the chain is completely skipped</div>
+              <div class="quiz-option"><span>D)</span> The browser throws an error</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Single = is an assignment operator, which changes the variable value and converts to truthy/falsy.">
+            <div class="quiz-question-text">2. What bug occurs if you write 'if (isLoggedIn = true)' with a single equals sign?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A syntax error occurs immediately</div>
+              <div class="quiz-option"><span>B)</span> It assigns true to isLoggedIn rather than comparing, causing the condition to always pass</div>
+              <div class="quiz-option"><span>C)</span> It converts isLoggedIn to a string</div>
+              <div class="quiz-option"><span>D)</span> Nothing, it works identically to ===</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Omitting break causes execution to fall through to the next case automatically.">
+            <div class="quiz-question-text">3. What happens in a switch statement if you forget the 'break;' keyword at the end of a case?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Execution 'falls through' into the subsequent case block, executing it unconditionally</div>
+              <div class="quiz-option"><span>B)</span> The switch statement loops forever</div>
+              <div class="quiz-option"><span>C)</span> The browser tab crashes</div>
+              <div class="quiz-option"><span>D)</span> It automatically jumps to default</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Guard clauses handle edge cases and errors early with returns, keeping the core code flat and un-nested.">
+            <div class="quiz-question-text">4. What is the main architectural benefit of using 'Guard Clauses'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> They encrypt server credentials</div>
+              <div class="quiz-option"><span>B)</span> They compress JavaScript bundle size</div>
+              <div class="quiz-option"><span>C)</span> They force code to run asynchronously</div>
+              <div class="quiz-option"><span>D)</span> They eliminate deep, nested 'pyramids of doom' by checking failure states early and returning immediately</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Variables declared with let and const are strictly block-scoped to the enclosing curly braces.">
+            <div class="quiz-question-text">5. Is a variable declared with 'const x = 10;' inside an 'if (true) { ... }' block accessible outside the block?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, const is globally scoped</div>
+              <div class="quiz-option"><span>B)</span> No, const is block-scoped and exists only inside those curly braces</div>
+              <div class="quiz-option"><span>C)</span> Only if declared in strict mode</div>
+              <div class="quiz-option"><span>D)</span> Yes, if referenced inside a console.log</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Discount Voucher Validator</h3>
+          <p>
+            In the live editor, write an <code>if/else</code> chain that checks a variable <code>voucherCode</code>: if it is <code>"SAVE20"</code>, display a 20% discount message; if <code>"HALFOFF"</code>, display 50%; otherwise display "Invalid promo code".
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#control-flow" class="ref-pill">Control Flow Reference</a>
+            <a href="../reference/glossary.html#conditional" class="ref-pill">Glossary: Conditionals</a>
+            <a href="../reference/glossary.html#ternary-operator" class="ref-pill">Glossary: Ternary Operator</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript Decision Control Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="03-operators-type-conversion.html" class="btn btn-outline">&larr; Previous: Operators &amp; Type Coercion</a>
+          <button class="mark-complete-btn" data-lesson-id="js-04">Mark as Complete</button>
+          <a href="05-loops.html" class="btn btn-primary">Next: Loops &amp; Iteration &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

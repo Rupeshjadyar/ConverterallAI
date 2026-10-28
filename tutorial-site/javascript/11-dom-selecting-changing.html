@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>DOM Selecting &amp; Modifying — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="11-dom-selecting-changing.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 17 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 11</span>
+          </div>
+          <h1 class="lesson-title">DOM: Selecting &amp; Modifying Elements</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Bridge JavaScript logic to user interface. Query nodes, manipulate classLists, update text safely, and handle data attributes.</span>
+            <span class="lang-hi">DOM (Document Object Model): querySelector, textContent vs innerHTML, classList manipulation, aur dataset seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>What the <strong>Document Object Model (DOM)</strong> is and how browsers construct the node tree.</li>
+            <li>Selecting elements: <code>querySelector</code>, <code>querySelectorAll</code>, and <code>getElementById</code>.</li>
+            <li>The crucial security &amp; performance differences between <code>textContent</code>, <code>innerHTML</code>, and <code>innerText</code>.</li>
+            <li>Reading and modifying HTML attributes and modern <code>dataset</code> properties.</li>
+            <li>Manipulating CSS dynamically via <code>element.style</code> and the pro-grade <code>classList</code> API.</li>
+            <li>Iterating over NodeLists and avoiding common selection pitfalls.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="10-strings-numbers-math-date.html">10. Strings, Numbers, Math &amp; Date</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Puppet Theater Marionette Controls</div>
+          <p>
+            <span class="lang-en">Think of a classic wooden puppet theater:
+            <br>&bull; The stage and the wooden marionette puppets are the <strong>HTML document</strong>.
+            <br>&bull; The <strong>DOM (Document Object Model)</strong> is the complex network of thin control strings attached to the puppet's elbows, chin, and knees.
+            <br>&bull; <strong>JavaScript</strong> is the puppeteer standing above the stage! By tugging on a string (<code>button.classList.add("active")</code>), JavaScript instantly moves the puppet's arm, turns its head, or changes its painted expression without rebuilding the wooden stage from scratch!</span>
+            <span class="lang-hi">Puppet theater ki tarah sochiye: HTML stage aur lakdi ki kathputli hai; DOM kathputli ke haath-pairon se bandhi doriyan hain; aur JavaScript puppeteer (kalakar) hai jo doriyan kheench kar kathputli ko nachata hai, text badalta hai aur colors change karta hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. What is the DOM?</h2>
+        <p>
+          When a web browser loads an HTML file, it parses the raw text and converts it into a hierarchical tree of JavaScript objects called the <strong>Document Object Model (DOM)</strong>.
+        </p>
+        <p>
+          The root entry point to this tree is the global <code>document</code> object. Through <code>document</code>, JavaScript has full programmatic access to read, change, add, or delete any HTML tag, attribute, or CSS style on the page in real time!
+        </p>
+
+        <!-- Section 2 -->
+        <h2>2. Selecting Elements: Modern vs Legacy</h2>
+        <p>
+          Modern JavaScript provides two versatile CSS-selector based query methods that replace older legacy methods:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Selecting DOM Elements</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">// 1. querySelector: Returns the FIRST matching element (or null)
+// Accepts ANY valid CSS selector!
+const mainHeader = document.querySelector("#app-header");
+const primaryBtn = document.querySelector(".btn-primary");
+const activeNavLink = document.querySelector("nav > ul li.active a");
+
+// 2. querySelectorAll: Returns a static NodeList of ALL matching elements
+const allCards = document.querySelectorAll(".card");
+console.log(`Found ${allCards.length} cards.`);
+
+// You can loop over a NodeList directly with for...of or forEach:
+allCards.forEach((card, index) => {
+  console.log(`Card #${index + 1}:`, card);
+});
+
+// 3. Fast ID Selector (Fastest raw performance for ID lookup):
+const submitButton = document.getElementById("submit-btn");</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Updating Content: `textContent` vs `innerHTML`</h2>
+        <p>
+          Updating text on screen is the most common DOM operation. Understanding the security difference between these properties is vital:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Safe Text vs HTML Injection</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const titleEl = document.querySelector("#title");
+const bioEl = document.querySelector("#bio");
+
+// 1. textContent (SENIOR STANDARD):
+// Safe, fast, renders raw text, automatically escapes HTML tags!
+titleEl.textContent = "Welcome to our Platform!";
+
+// 2. innerHTML:
+// Parses string as live HTML markup.
+bioEl.innerHTML = "Senior Engineer at <strong>Acme Corp</strong>";
+
+// DANGER: NEVER use innerHTML with untrusted user input!
+// An attacker can inject malicious <script> or <img onerror="..."> (XSS Attack!)
+const userInput = "<img src=x onerror=alert('HACKED!')>";
+// bioEl.innerHTML = userInput; // CRITICAL VULNERABILITY!
+bioEl.textContent = userInput;   // SAFE! Displays the raw text harmlessly.</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Manipulating CSS with `classList`</h2>
+        <p>
+          Senior developers rarely modify inline styles directly (e.g. <code>el.style.color = "red"</code>). Instead, they define clean state classes in CSS and toggle them using the <code>classList</code> API:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The `classList` Methods</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const modal = document.querySelector(".modal-backdrop");
+
+// 1. Add class
+modal.classList.add("is-visible");
+
+// 2. Remove class
+modal.classList.remove("is-hidden");
+
+// 3. Toggle class (Adds if absent; removes if present!)
+modal.classList.toggle("dark-theme");
+
+// 4. Check if class exists (returns boolean true/false)
+if (modal.classList.contains("is-visible")) {
+  console.log("Modal dialog is currently displayed on screen.");
+}
+
+// 5. Replace an existing class with a new one
+modal.classList.replace("theme-blue", "theme-purple");</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Reading &amp; Modifying Attributes &amp; Dataset</h2>
+        <p>
+          HTML elements have attributes (like <code>src</code>, <code>href</code>, <code>disabled</code>) and custom <code>data-*</code> attributes:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Attributes and HTML5 Datasets</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;button id="pay-btn" data-user-id="4820" data-currency="USD" disabled&gt;
+  Pay Now
+&lt;/button&gt;</code></pre>
+        </div>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const payBtn = document.querySelector("#pay-btn");
+
+// 1. Standard Attributes:
+console.log(payBtn.hasAttribute("disabled")); // true
+payBtn.removeAttribute("disabled"); // Button becomes clickable!
+payBtn.setAttribute("aria-label", "Proceed to payment checkout");
+
+// 2. HTML5 Custom Data Attributes (dataset):
+// 'data-user-id' in HTML automatically converts to camelCase 'userId' in JS!
+console.log(payBtn.dataset.userId);   // "4820"
+console.log(payBtn.dataset.currency); // "USD"
+
+// Modify dataset:
+payBtn.dataset.status = "ready"; // Adds data-status="ready" to the HTML!</code></pre>
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Direct Inline Styles (When Justified)</h2>
+        <p>
+          Direct style manipulation via <code>element.style</code> is reserved for dynamic calculations that cannot be pre-written in CSS (e.g. mouse cursor coordinates, dynamic slider percentages):
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: CamelCase Inline Styles</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="javascript">const progressBar = document.querySelector(".progress-fill");
+
+// Notice CSS properties with hyphens become camelCase:
+// background-color -> backgroundColor
+// min-width -> minWidth
+const progressPercent = 75;
+
+progressBar.style.width = `${progressPercent}%`;
+progressBar.style.backgroundColor = "#10b981";
+progressBar.style.transition = "width 0.3s ease";</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: DOM Manipulation Playground</h2>
+        <p>
+          Toggle classes and update text interactively below:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: DOM Interactive Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; JavaScript Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .card {
+      padding: 20px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      background: white;
+      transition: all 0.3s ease;
+      max-width: 300px;
+    }
+    /* Dynamic active state */
+    .card.is-highlighted {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+    }
+    button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div id="target-card" class="card" data-card-id="101">
+    <h3 id="card-title">Default Card</h3>
+    <p id="card-desc">Click button to modify my DOM properties!</p>
+    <button id="toggle-btn">Toggle Highlight</button>
+  </div>
+
+  <script>
+    const card = document.getElementById("target-card");
+    const title = document.getElementById("card-title");
+    const desc = document.getElementById("card-desc");
+    const btn = document.getElementById("toggle-btn");
+
+    btn.addEventListener("click", () => {
+      // Toggle class
+      const isNowActive = card.classList.toggle("is-highlighted");
+      
+      if (isNowActive) {
+        title.textContent = "&#128640; Activated!";
+        desc.textContent = `Card #${card.dataset.cardId} is highlighted via classList!`;
+      } else {
+        title.textContent = "Default Card";
+        desc.textContent = "Click button to modify my DOM properties!";
+      }
+      
+      console.log("Card toggled. Highlight state:", isNowActive);
+    });
+  </script>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting that <code>querySelectorAll</code> returns a NodeList:</strong> You cannot write <code>document.querySelectorAll(".card").style.color = "red"</code>! You must loop over the items with <code>forEach()</code> or iterate with <code>for...of</code>.</li>
+            <li><strong>Missing the dot (<code>.</code>) in class queries:</strong> Writing <code>document.querySelector("btn")</code> looks for a custom HTML tag <code>&lt;btn&gt;</code>! To target a class, write <code>document.querySelector(".btn")</code>.</li>
+            <li><strong>Using <code>innerHTML</code> for plain text:</strong> <code>innerHTML</code> forces the browser to invoke its internal HTML parser, which is slower and creates Cross-Site Scripting (XSS) risks. Use <code>textContent</code> for pure text.</li>
+            <li><strong>Directly overriding <code>className</code>:</strong> Writing <code>el.className = "active"</code> deletes all other existing classes on that element. Always use <code>el.classList.add("active")</code>.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Scope selections to container elements:</strong> Instead of querying from <code>document</code> every time, query from a parent container: <code>const cardTitle = card.querySelector(".title");</code> for cleaner component encapsulation.</li>
+            <li><strong>Check if element exists before modifying:</strong> Prevent null pointer crashes: <code>const btn = document.querySelector(".btn"); if (btn) { btn.classList.add("ready"); }</code> (or optional chaining <code>btn?.classList.add("ready")</code>).</li>
+            <li><strong>Batch class updates:</strong> <code>classList.add()</code> and <code>classList.remove()</code> accept multiple class names: <code>el.classList.add("bold", "text-blue", "shadow");</code>!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>The DOM is a tree of JavaScript objects representing the HTML page.</li>
+            <li><code>querySelector</code> selects first match; <code>querySelectorAll</code> returns a NodeList of all matches.</li>
+            <li>Use <code>textContent</code> for safe, fast text updates. Avoid <code>innerHTML</code> with user input.</li>
+            <li>Use <code>classList.add()</code>, <code>remove()</code>, <code>toggle()</code>, and <code>contains()</code> for clean CSS state management.</li>
+            <li>Read <code>data-*</code> HTML attributes via the <code>element.dataset</code> camelCase API.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Select by Class and Toggle State</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the JavaScript lines to select the first element with class <code>.sidebar</code> and toggle the class <code>is-collapsed</code> on it.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: querySelector and classList.toggle.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const sidebar = document.querySelector(".sidebar");
+sidebar.classList.toggle("is-collapsed");</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Change All Subtitles</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>Using <code>querySelectorAll</code>, select all elements with class <code>.subtitle</code> on the page and change their text to <code>"Updated Subtitle"</code> using a loop.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Loop over the NodeList with forEach or for...of and set textContent.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const subtitles = document.querySelectorAll(".subtitle");
+subtitles.forEach(el => {
+  el.textContent = "Updated Subtitle";
+});</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Read Custom Data Attribute</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>An element is defined as: <code>&lt;div id="product" data-product-sku="SKU-9902" data-stock-count="45"&gt;&lt;/div&gt;</code>. Write the code to read both values using the <code>dataset</code> property.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: dataset converts kebab-case to camelCase.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>const productEl = document.getElementById("product");
+const sku = productEl.dataset.productSku;     // "SKU-9902"
+const stock = Number(productEl.dataset.stockCount); // 45</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 11 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="textContent safely escapes HTML tags, protecting applications from XSS script injections.">
+            <div class="quiz-question-text">1. Why is 'textContent' preferred over 'innerHTML' when updating plain text?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> textContent automatically formats currency</div>
+              <div class="quiz-option"><span>B)</span> textContent is faster and protects against Cross-Site Scripting (XSS) vulnerabilities by escaping HTML</div>
+              <div class="quiz-option"><span>C)</span> innerHTML was removed from HTML5</div>
+              <div class="quiz-option"><span>D)</span> textContent converts text to uppercase</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="querySelectorAll returns a static NodeList collection.">
+            <div class="quiz-question-text">2. What type of collection does 'document.querySelectorAll()' return?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> A standard Array</div>
+              <div class="quiz-option"><span>B)</span> A single DOM Element</div>
+              <div class="quiz-option"><span>C)</span> A JSON string</div>
+              <div class="quiz-option"><span>D)</span> A NodeList</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="classList.toggle adds the class if absent, and removes it if present.">
+            <div class="quiz-question-text">3. What does 'element.classList.toggle("open")' do?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Adds 'open' if it is missing, or removes it if it is already present</div>
+              <div class="quiz-option"><span>B)</span> Deletes all classes from the element</div>
+              <div class="quiz-option"><span>C)</span> Renames the element to 'open'</div>
+              <div class="quiz-option"><span>D)</span> Hides the element permanently</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="data-user-role in HTML converts to dataset.userRole in JavaScript.">
+            <div class="quiz-question-text">4. How do you access the HTML attribute 'data-user-role="admin"' via JavaScript?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> element.data.user_role</div>
+              <div class="quiz-option"><span>B)</span> element.getUserRole()</div>
+              <div class="quiz-option"><span>C)</span> element.dataset.userRole</div>
+              <div class="quiz-option"><span>D)</span> element["data-user-role"]()</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Inline styles via element.style translate hyphenated CSS names to camelCase.">
+            <div class="quiz-question-text">5. What is the correct JavaScript syntax to change an element's background color via inline styles?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> element.style["background-color: blue"]</div>
+              <div class="quiz-option"><span>B)</span> element.style.backgroundColor = "blue";</div>
+              <div class="quiz-option"><span>C)</span> element.css.color = "blue";</div>
+              <div class="quiz-option"><span>D)</span> element.background = "blue";</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Live Search Filter Highlighting Script</h3>
+          <p>
+            In the live editor, query all list items and add a class <code>.is-matched</code> (giving it a yellow background) if the item's <code>textContent</code> includes a search term!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/js-reference.html#dom" class="ref-pill">DOM Methods Reference</a>
+            <a href="../reference/glossary.html#dom" class="ref-pill">Glossary: DOM</a>
+            <a href="../reference/glossary.html#classlist" class="ref-pill">Glossary: classList API</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">JavaScript DOM Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="10-strings-numbers-math-date.html" class="btn btn-outline">&larr; Previous: Strings, Numbers, Math &amp; Date</a>
+          <button class="mark-complete-btn" data-lesson-id="js-11">Mark as Complete</button>
+          <a href="12-dom-creating-removing.html" class="btn btn-primary">Next: DOM Creating &amp; Removing Nodes &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

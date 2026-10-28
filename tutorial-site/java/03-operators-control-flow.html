@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="03">
+  <title>Java Operators & Modern Control Flow (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Java arithmetic, logical, short-circuit operators, if-else, enhanced switch expressions (Java 14+ yield), and loops with break/continue labels.">
+  <meta name="keywords" content="Java operators, short circuit && ||, Java switch expressions, yield keyword, Java loops, labeled break continue">
+  <meta property="og:title" content="Java Operators & Modern Control Flow (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Master Java arithmetic, logical, short-circuit operators, if-else, enhanced switch expressions (Java 14+ yield), and loops with break/continue labels.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-primary">Beginner</span>
+            <span class="badge badge-outline">⏱️ 15 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">03. Operators, Modern Switch Expressions & Loops</h1>
+          <p class="lesson-subtitle">Directing the flow of program execution: Short-circuit logic, modern arrow switch syntax with yield, and labeled loop breaks.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 02 (Variables & Data Types).</p>
+            <ul>
+              <li>Master arithmetic, relational, and bitwise operators.</li><li>Understand short-circuit evaluation (`&&` and `||`) vs non-short-circuit (`&` and `|`).</li><li>Compare legacy `switch` statements with modern Java 14+ `switch` expressions using arrow `->` and `yield`.</li><li>Understand while, do-while, traditional for, and enhanced for-each loops.</li><li>Use labeled break and continue statements in nested loops.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Airport Security Check & Train Track Switches Analogy</h3>
+      <p>Think of operators and control flow like an international airport terminal:</p>
+      <ul>
+        <li><strong>Short-Circuit <code>&amp;&amp;</code>:</strong> You must have BOTH a valid passport AND a boarding pass. The officer checks your passport first. If your passport is expired, they immediately reject you without even wasting 1 second looking at your boarding pass!</li>
+        <li><strong>Modern Switch Expression:</strong> Instead of the old, clunky train track where forgetting a handbrake (<code>break;</code>) caused your train to derail and smash through every station below (fall-through trap), modern switch uses precision electronic switches (<code>case MONDAY -&gt; "Work";</code>) that deliver an exact package with zero accidental fall-through!</li>
+      </ul>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (Airport चेकिंग और बिजली का स्विच)</h3>
+      <p>सोचिए आप स्कूल के गेट पर खड़े हैं। गार्ड को दो चीजें चाहिए: स्कूल ड्रेस और ID कार्ड (<code>hasUniform &amp;&amp; hasIdCard</code>)।</p>
+      <p>अगर आपने स्कूल ड्रेस ही नहीं पहनी, तो गार्ड आपका ID कार्ड देखेगा भी नहीं, सीधे बाहर कर देगा! इसी को कहते हैं <strong>Short-Circuit Evaluation</strong> (कंप्यूटर समय बचाता है)।</p>
+      <p>पुराने <code>switch</code> में अगर आप <code>break;</code> लिखना भूल जाते थे, तो गाड़ी नीचे के सारे स्टेशनों में टकराती हुई घुस जाती थी (Fall-through bug)। जावा के नए Switch (<code>case -></code>) में ऐसा कोई खतरा नहीं होता!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. Short-Circuit vs Bitwise Operators</h3>
+      <p>Understanding the critical difference between <code>&amp;&amp;</code> (short-circuit) and <code>&amp;</code> (bitwise / eager logical):</p>
+      <div class="code-box">
+        <pre><code class="language-java">String user = null;
+
+// SAFE: Short-circuit stops if first condition is false
+if (user != null && user.length() > 0) {
+    System.out.println("Valid user");
+}
+
+// CRASH: Non-short-circuit evaluates BOTH sides unconditionally -> throws NullPointerException!
+if (user != null & user.length() > 0) { // Throws java.lang.NullPointerException!
+    System.out.println("Boom");
+}</code></pre>
+      </div>
+
+      <h3>2. Modern Switch Expressions (Java 14+ Standard)</h3>
+      <p>Java 14 introduced expressions for <code>switch</code> that return values directly, eliminate fall-through bugs, and use <code>yield</code> for multi-line blocks:</p>
+      <div class="code-box">
+        <pre><code class="language-java">public static String getDayType(DayOfWeek day) {
+    return switch (day) {
+        case MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY -> "Weekday";
+        case SATURDAY, SUNDAY -> {
+            System.out.println("Enjoy your weekend!");
+            yield "Weekend"; // yield returns value from multi-line block
+        }
+    };
+}</code></pre>
+      </div>
+
+      <h3>3. Labeled Breaks in Nested Matrix Iteration</h3>
+      <p>When searching inside 2D grids, standard <code>break</code> only exits the innermost loop. Labeled breaks jump clean out of outer loops:</p>
+      <div class="code-box">
+        <pre><code class="language-java">searchGrid:
+for (int r = 0; r < matrix.length; r++) {
+    for (int c = 0; c < matrix[r].length; c++) {
+        if (matrix[r][c] == target) {
+            System.out.println("Found at (" + r + "," + c + ")");
+            break searchGrid; // Instantly breaks out of BOTH loops!
+        }
+    }
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What are the enhancements introduced to the switch statement in modern Java (Java 14 to 21)? How does short-circuit evaluation optimize execution?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Switch as an Expression:</strong> In modern Java, switch can act as an expression returning a value directly, eliminating repetitive assignment statements.</li><li><strong>Arrow Syntax & No Fall-Through:</strong> Arrow case labels (case ->) prevent accidental fall-through bugs without needing explicit break statements.</li><li><strong>The yield Keyword:</strong> When a case block contains multiple statements, yield is used instead of return to produce the value of the switch expression.</li><li><strong>Pattern Matching (Java 17/21):</strong> Switch now supports type pattern matching, allowing inspection of object classes and extraction of typed variables safely without manual casting.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "Short-circuit evaluation guarantees that in (A && B), B is never executed if A is false. In modern Java, switch expressions enforce exhaustiveness at compile-time and prevent fall-through errors."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Modern Switch Expression with Type Exhaustiveness</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class ModernSwitchDemo {
+    public static int calculateFee(String membershipTier) {
+        return switch (membershipTier.toUpperCase()) {
+            case "PLATINUM" -> 0;
+            case "GOLD"     -> 50;
+            case "SILVER"   -> 100;
+            default         -> 150;
+        };
+    }
+
+    public static void main(String[] args) {
+        int fee = calculateFee("GOLD");
+        System.out.println("Annual Fee: $" + fee); // $50
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Enhanced For-Each Loop and Break/Continue</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class LoopDemo {
+    public static void main(String[] args) {
+        int[] numbers = {10, 20, -5, 30, -1, 40};
+        int sum = 0;
+
+        for (int num : numbers) {
+            if (num < 0) {
+                System.out.println("Skipping negative number: " + num);
+                continue; // Skips current iteration
+            }
+            if (sum + num > 50) {
+                System.out.println("Threshold exceeded at " + num + ", terminating loop.");
+                break; // Terminates the loop
+            }
+            sum += num;
+        }
+        System.out.println("Calculated Sum: " + sum);
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('03')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-03" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class ControlFlowSandbox {
+    public static void main(String[] args) {
+        int score = 88;
+        String grade = switch (score / 10) {
+            case 10, 9 -> "A+ (Outstanding)";
+            case 8     -> "A (Excellent)";
+            case 7     -> "B (Good)";
+            default    -> "Pass / Needs Improvement";
+        };
+        System.out.println("Score: " + score + " -> Grade: " + grade);
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-03" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Forgetting `break` in Legacy Switch:</strong> In classic switch statements, omitting break causes execution to fall through into subsequent cases, producing catastrophic business logic errors.</li><li><strong>Using `==` on Strings in Conditionals:</strong> Writing `if (role == "ADMIN")` checks object memory reference identity rather than string content. Always write `if ("ADMIN".equals(role))`.</li><li><strong>Modifying Collections inside Enhanced For-Each:</strong> Calling `list.remove()` inside an enhanced `for (Item x : list)` loop throws `ConcurrentModificationException`. Use an `Iterator` or `removeIf()`.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Use Pattern Matching in Switch (Java 17+):</strong> You can switch on `Object obj` directly with `case String s -> s.length();` without manual `instanceof` casts.</li><li><strong>Place Constants First in String Comparisons:</strong> Write `"ACTIVE".equals(status)` instead of `status.equals("ACTIVE")` to avoid `NullPointerException` if `status` is null.</li><li><strong>Prefer Switch over Deeply Nested If-Else Chains:</strong> JVM compiles dense switch statements into O(1) `tableswitch` or `lookupswitch` bytecodes for superior performance.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>&& and || are short-circuiting::</strong> They skip evaluating right-hand operands when the result is already determined.</li><li><strong>Java 14+ switch expressions::</strong> Use `->` arrow syntax, return values, eliminate fall-through, and use `yield` in multi-line blocks.</li><li><strong>Labeled loops::</strong> Allow breaking out of outer loops from deeply nested iterations.</li><li><strong>Always compare strings with .equals()::</strong> Never use `==` for object values.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Refactor Legacy Switch to Arrow Syntax</h4>
+        <p>Convert this classic switch with breaks into a modern Java 14 switch expression:</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">// Modern Java 14+ Expression
+String result = switch (statusCode) {
+    case 200 -> "OK";
+    case 404 -> "Not Found";
+    case 500 -> "Internal Server Error";
+    default  -> "Unknown Status";
+};</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Labeled Loop Search</h4>
+        <p>Search a 2D integer matrix for the number 99. When found, print coordinates and stop all outer loops immediately.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">outer:
+for (int i = 0; i < grid.length; i++) {
+    for (int j = 0; j < grid[i].length; j++) {
+        if (grid[i][j] == 99) {
+            System.out.println("Found at [" + i + "][" + j + "]");
+            break outer;
+        }
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Guard Against Null in Complex Condition</h4>
+        <p>Explain why <code>user.getProfile().getAddress() != null</code> can throw a <code>NullPointerException</code> and how to safely write it using short-circuit operators.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> If <code>user</code> or <code>user.getProfile()</code> is <code>null</code>, calling methods on it throws NPE. With short-circuiting: <code>if (user != null &amp;&amp; user.getProfile() != null &amp;&amp; user.getProfile().getAddress() != null)</code>, execution safely halts at the first null without crashing.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What keyword is used in a modern Java multi-line switch case to return a value?</strong></p>
+        <label><input type="radio" name="q1" value="0"> return</label><br>
+        <label><input type="radio" name="q1" value="1"> yield</label><br>
+        <label><input type="radio" name="q1" value="0"> send</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: If expression `A` in `(A && B)` is false, is `B` evaluated?</strong></p>
+        <label><input type="radio" name="q2" value="0"> Yes, always</label><br>
+        <label><input type="radio" name="q2" value="1"> No, because of short-circuit evaluation</label><br>
+        <label><input type="radio" name="q2" value="0"> Only in debug mode</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: What exception is thrown if you remove an item from a list during an enhanced for-each loop?</strong></p>
+        <label><input type="radio" name="q3" value="1"> ConcurrentModificationException</label><br>
+        <label><input type="radio" name="q3" value="0"> IndexOutOfBoundsException</label><br>
+        <label><input type="radio" name="q3" value="0"> NullPointerException</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Do arrow switch cases (`case ->`) suffer from accidental fall-through bugs?</strong></p>
+        <label><input type="radio" name="q4" value="0"> Yes, unless break is written</label><br>
+        <label><input type="radio" name="q4" value="1"> No, they execute only the matching case and terminate</label><br>
+        <label><input type="radio" name="q4" value="0"> Only if default is missing</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: What is the result of `false || true && false`?</strong></p>
+        <label><input type="radio" name="q5" value="1"> false (&& has higher precedence than ||)</label><br>
+        <label><input type="radio" name="q5" value="0"> true</label><br>
+        <label><input type="radio" name="q5" value="0"> Compile error</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a HTTP Status Code & Error Categorizer</strong>
+            </div>
+            <div class="callout-body">
+              <p>Write a class that takes an HTTP status code (200, 301, 400, 404, 500) and uses a switch expression to categorize it into Informational, Success, Redirection, Client Error, or Server Error.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public class HttpStatusEvaluator {
+    public static String categorize(int statusCode) {
+        // TODO: Implement using modern switch expression
+        return "";
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="02-syntax-data-types-variables.html" class="btn btn-outline">&larr; Prev: Data Types</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-03')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="04-methods-arrays-strings.html" class="btn btn-primary">Next: Methods, Arrays & String Pool &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Score: 88 -> Grade: A (Excellent)\nSwitch expression evaluated without fall-through.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

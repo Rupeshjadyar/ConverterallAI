@@ -27,6 +27,12 @@ import { SQL_TOPICS } from './sql/sql.models';
 
         <!-- Quick Action CTA Buttons -->
         <div class="hero-actions">
+          <a routerLink="/typing-speed-test" class="btn-primary-glow" style="background: linear-gradient(135deg, #0284c7, #06b6d4); border: 1px solid rgba(6, 182, 212, 0.4);">
+            ⚡ Typing Speed Test
+          </a>
+          <a routerLink="/ai-chat" class="btn-primary-glow" style="background: linear-gradient(135deg, #2563eb, #7c3aed); border: 1px solid rgba(124, 58, 237, 0.4);">
+            ✨ AI Chat Playground
+          </a>
           <a routerLink="/developer-tools/sql" class="btn-primary-glow">
             📚 Start SQL Learn (102 Slides) →
           </a>

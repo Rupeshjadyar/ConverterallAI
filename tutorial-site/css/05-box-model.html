@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>The CSS Box Model — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="05-box-model.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-beginner">Beginner</span>
+            <span class="reading-time">&#128338; 15 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 05</span>
+          </div>
+          <h1 class="lesson-title">The CSS Box Model: Margin, Border, Padding &amp; Content</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Master the physical foundation of web layout. Understand why <code>box-sizing: border-box</code> is essential for sanity.</span>
+            <span class="lang-hi">Web layout ki physical buniyad samjhein: Content, Padding, Border, Margin aur <code>box-sizing: border-box</code> ka jadoo.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The 4 concentric layers of every HTML element: Content, Padding, Border, and Margin.</li>
+            <li>Why the default <code>content-box</code> model breaks designs and causes horizontal scrollbars.</li>
+            <li>How <code>box-sizing: border-box</code> transforms element sizing into intuitive math.</li>
+            <li>Clockwise shorthand conventions (TRBL: Top, Right, Bottom, Left).</li>
+            <li>The bizarre phenomenon of <strong>Margin Collapsing</strong> and how to tame it.</li>
+            <li>Horizontal page centering using <code>margin-inline: auto</code> and <code>max-width</code>.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="04-fonts-and-text.html">04. Fonts &amp; Typography</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Amazon Parcel Delivery</div>
+          <p>
+            <span class="lang-en">Picture an Amazon delivery parcel arriving at your front door:
+            <br>&bull; <strong>Content:</strong> The fragile smartphone you bought inside the box.
+            <br>&bull; <strong>Padding:</strong> The protective bubble wrap wrapped directly around the phone inside the cardboard.
+            <br>&bull; <strong>Border:</strong> The rigid cardboard carton box itself with its tape.
+            <br>&bull; <strong>Margin:</strong> The empty lawn space between this Amazon box and the pizza box delivered beside it on your porch!</span>
+            <span class="lang-hi">Amazon parcel ki tarah sochiye: Box ke andar rakha phone <strong>Content</strong> hai, phone ke aas-paas lipti bubble wrap <strong>Padding</strong> hai, bahar ka gatta/carton <strong>Border</strong> hai, aur do parcels ke beech ki doori <strong>Margin</strong> hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Four Concentric Layers of the Box Model</h2>
+        <p>
+          In CSS, absolutely <em>everything</em> is a rectangular box. Even circular avatar images or curved pill buttons are rendered as rectangular bounding boxes under the hood. Let's inspect the four concentric layers from the inside out:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: The Four Box Model Layers Defined</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.card {
+  /* 1. CONTENT: Where text, images, or child elements live */
+  width: 300px;
+  height: 150px;
+  background-color: #f8fafc;
+
+  /* 2. PADDING: Space INSIDE the border, around the content */
+  padding: 24px;
+
+  /* 3. BORDER: The frame wrapping around content + padding */
+  border: 2px solid #cbd5e1;
+
+  /* 4. MARGIN: Invisible cushion OUTSIDE the border, pushing neighbors away */
+  margin: 32px;
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Line-by-Line Breakdown:</strong><br>
+          &bull; <code>width: 300px</code> &amp; <code>height: 150px</code>: Sets the dimensions of the core content area.<br>
+          &bull; <code>padding: 24px</code>: Adds 24px of breathable inner room between the text and the border edge.<br>
+          &bull; <code>border: 2px solid #cbd5e1</code>: Outlines the perimeter of the box.<br>
+          &bull; <code>margin: 32px</code>: Guarantees 32px of blank separation from any adjacent sibling elements.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. The Historic Defect: <code>content-box</code> vs <code>border-box</code></h2>
+        <p>
+          By default in standard CSS, elements use <code>box-sizing: content-box</code>. Under this legacy formula:
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-error); border-radius:var(--radius-sm); font-family:var(--font-mono);">
+          <strong>Total Rendered Width</strong> = width + padding-left + padding-right + border-left + border-right
+        </p>
+        <p>
+          If you specify <code>width: 100%</code> and then add <code>padding: 20px</code>, your element will be <code>100% + 40px</code> wide &mdash; overflowing outside its parent container and spawning an ugly horizontal scrollbar!
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: How `border-box` Solves the Math</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* The Troublemaker: content-box */
+.broken-box {
+  box-sizing: content-box;
+  width: 300px;
+  padding: 20px;
+  border: 5px solid #ef4444;
+  /* Total rendered width = 300 + 40 + 10 = 350px! NOT 300px! */
+}
+
+/* The Professional Standard: border-box */
+.modern-box {
+  box-sizing: border-box;
+  width: 300px;
+  padding: 20px;
+  border: 5px solid #10b981;
+  /* Total rendered width = EXACTLY 300px! */
+  /* The browser automatically shrinks the inner content to 250px */
+}</code></pre>
+        </div>
+        <div class="code-explanation">
+          With <code>box-sizing: border-box</code>, whatever <code>width</code> you declare is the <strong>absolute final outer width</strong> including padding and border. Web development suddenly behaves like normal human geometry!
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. The Professional Universal Reset</h2>
+        <p>
+          Senior frontend engineers apply the universal border-box reset at the very top of every CSS project. It ensures all tags and pseudo-elements inherit predictable box calculations:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Universal `border-box` Reset</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Apply border-box globally to all elements and their pseudo-elements */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default browser margin resets for predictable spacing */
+body, h1, h2, h3, p, figure, blockquote, dl, dd {
+  margin: 0;
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Spacing Shorthand Conventions (TRBL)</h2>
+        <p>
+          Both <code>padding</code> and <code>margin</code> support 1, 2, 3, and 4 value shorthands. Memorize the <strong>Clockwise Rule</strong>: <strong>T</strong>op &rarr; <strong>R</strong>ight &rarr; <strong>B</strong>ottom &rarr; <strong>L</strong>eft (TRBL &mdash; pronounced <em>"trouble"</em>):
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: Clockwise Shorthand Variations</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1 Value: All 4 sides equal */
+padding: 16px; /* top = right = bottom = left = 16px */
+
+/* 2 Values: [vertical] [horizontal] */
+padding: 12px 24px; /* top/bottom = 12px, left/right = 24px */
+
+/* 3 Values: [top] [horizontal] [bottom] */
+padding: 10px 20px 30px; /* top = 10px, left/right = 20px, bottom = 30px */
+
+/* 4 Values: [top] [right] [bottom] [left] (Clockwise) */
+margin: 10px 15px 20px 25px;
+
+/* Modern Logical Properties (Self-documenting!) */
+padding-block: 16px;   /* Top & Bottom */
+padding-inline: 24px;  /* Left & Right */</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Margin Collapsing: The Vertical Mystery</h2>
+        <p>
+          When two vertical block margins touch each other, they <strong>do not add together</strong>. Instead, they "collapse" into a single margin equal to whichever margin is largest.
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Margin Collapsing in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">h1 {
+  margin-bottom: 40px;
+}
+
+p {
+  margin-top: 25px;
+}
+
+/* The vertical distance between the h1 and p is NOT 65px (40 + 25).
+   The margins collapse: Math.max(40, 25) = EXACTLY 40px! */</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Important Caveat:</strong> Margin collapsing <em>only</em> happens vertically (top/bottom) on block-level elements in normal document flow. Horizontal margins (left/right) <strong>never</strong> collapse! Margins on Flexbox or CSS Grid items also do not collapse.
+        </div>
+
+        <!-- Section 6 -->
+        <h2>6. Centering Blocks with <code>margin: auto</code></h2>
+        <p>
+          To center any block element horizontally inside its parent container, specify a <code>width</code> or <code>max-width</code>, and set horizontal margins to <code>auto</code>:
+        </p>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Perfectly Centering a Content Container</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">.container {
+  /* Must have a width less than 100% so space remains on sides */
+  max-width: 800px;
+  width: 90%;
+
+  /* The magic centering trick */
+  margin: 0 auto; 
+  /* Or modern logical syntax: */
+  margin-inline: auto;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>7. Interactive Lab: Inspect the Box Model Live</h2>
+        <p>
+          Toggle <code>box-sizing</code> between <code>content-box</code> and <code>border-box</code> below and watch how the total width shifts:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Box Model Inspector</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 20px;
+    background: #f1f5f9;
+  }
+  .wrapper {
+    background: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  .box-a {
+    box-sizing: content-box;
+    width: 250px;
+    padding: 25px;
+    border: 5px solid #ef4444;
+    background: #fee2e2;
+    margin-bottom: 20px;
+  }
+  .box-b {
+    box-sizing: border-box;
+    width: 250px;
+    padding: 25px;
+    border: 5px solid #10b981;
+    background: #d1fae5;
+  }
+  strong { display: block; margin-bottom: 6px; }
+  span { font-size: 0.85rem; color: #475569; }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="box-a">
+      <strong>content-box (width: 250px)</strong>
+      <span>Rendered width: 250 + 50 + 10 = 310px!</span>
+    </div>
+    <div class="box-b">
+      <strong>border-box (width: 250px)</strong>
+      <span>Rendered width: Exactly 250px!</span>
+    </div>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Forgetting <code>box-sizing: border-box</code>:</strong> Adding padding to inputs or columns causes them to burst through grid layouts.</li>
+            <li><strong>Applying vertical margins to inline elements:</strong> <code>&lt;span&gt;</code> and <code>&lt;a&gt;</code> ignore <code>margin-top</code> and <code>margin-bottom</code> unless set to <code>display: inline-block</code> or <code>block</code>.</li>
+            <li><strong>Negative margins without intent:</strong> Negative margins pull elements closer or overlap them, which can disrupt normal page flow if used accidentally.</li>
+            <li><strong>Confusing Padding and Margin:</strong> Padding carries the background color of the element; margin is always transparent.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Inspect with Chrome DevTools:</strong> Hovering an element in DevTools displays the box model in 4 colors: Blue (Content), Green (Padding), Yellow (Border), and Orange (Margin).</li>
+            <li><strong>Use <code>outline</code> instead of <code>border</code> for temporary debugging:</strong> Borders consume physical layout pixels and push other elements around. <code>outline: 2px dashed red</code> floats above layout without shifting a single pixel!</li>
+            <li><strong>Adopt <code>gap</code> over margin where possible:</strong> Modern CSS Flexbox and Grid provide the <code>gap</code> property, eliminating tricky margin-collapsing and first-child/last-child margin resets.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>The Box Model consists of: <strong>Content</strong> (inner), <strong>Padding</strong> (inner cushion), <strong>Border</strong> (frame), and <strong>Margin</strong> (outer cushion).</li>
+            <li>Under <code>box-sizing: border-box</code>, declared width covers content + padding + border.</li>
+            <li>Always put <code>*, *::before, *::after { box-sizing: border-box; }</code> in your base stylesheet.</li>
+            <li>Shorthand is clockwise: <strong>TRBL</strong> (Top, Right, Bottom, Left).</li>
+            <li>Vertical margins on adjacent blocks collapse to the single largest value.</li>
+            <li>Center block elements horizontally with <code>max-width: [size]; margin-inline: auto;</code>.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>8. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Equal Padding Shorthand</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the shorthand CSS property to give a card 20px of vertical padding (top and bottom) and 35px of horizontal padding (left and right).</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: The 2-value shorthand format is [vertical] [horizontal].</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>padding: 20px 35px;</code> (or <code>padding-block: 20px; padding-inline: 35px;</code>)
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Horizontal Center Stage</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You have a <code>&lt;div class="article-wrapper"&gt;</code> that should never exceed 720px wide, but should scale down on mobile and stay centered on desktop screens. Write its CSS.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Combine max-width, width in %, and margin: 0 auto.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.article-wrapper {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Calculate Rendered Dimensions</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>An element has: <code>box-sizing: content-box; width: 400px; padding: 15px 30px; border: 4px solid black; margin: 20px;</code>. What is the total rendered pixel width occupied on screen (excluding margin)?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Width + Left Padding + Right Padding + Left Border + Right Border.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              Width = 400px<br>
+              Horizontal Padding = 30px (left) + 30px (right) = 60px<br>
+              Horizontal Border = 4px (left) + 4px (right) = 8px<br>
+              <strong>Total Rendered Width = 400 + 60 + 8 = 468px!</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 05 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="box-sizing: border-box ensures padding and borders stay inside the declared width.">
+            <div class="quiz-question-text">1. What is the primary benefit of box-sizing: border-box?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> It automatically creates round borders</div>
+              <div class="quiz-option"><span>B)</span> The declared width includes padding and border, preventing unexpected layout expansion</div>
+              <div class="quiz-option"><span>C)</span> It makes elements render in 3D</div>
+              <div class="quiz-option"><span>D)</span> It doubles the margin between elements</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="TRBL: Top, Right, Bottom, Left (Clockwise).">
+            <div class="quiz-question-text">2. In the 4-value shorthand 'margin: 10px 20px 30px 40px;', what does 40px represent?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Top margin</div>
+              <div class="quiz-option"><span>B)</span> Right margin</div>
+              <div class="quiz-option"><span>C)</span> Left margin</div>
+              <div class="quiz-option"><span>D)</span> Bottom margin</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="Adjacent vertical margins collapse to the single largest value: Math.max(50, 30) = 50px.">
+            <div class="quiz-question-text">3. Element A has margin-bottom: 50px. Directly below it, Element B has margin-top: 30px. What is the actual vertical gap between them?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 50px (they collapse to the maximum)</div>
+              <div class="quiz-option"><span>B)</span> 80px (50px + 30px)</div>
+              <div class="quiz-option"><span>C)</span> 20px (50px - 30px)</div>
+              <div class="quiz-option"><span>D)</span> 0px</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="Padding is inside the border and carries the element's background; margin is transparent outside the border.">
+            <div class="quiz-question-text">4. Which of the following is true regarding Padding vs Margin?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Margin is inside the border, Padding is outside</div>
+              <div class="quiz-option"><span>B)</span> Margins always display background images</div>
+              <div class="quiz-option"><span>C)</span> Horizontal margins collapse, vertical margins do not</div>
+              <div class="quiz-option"><span>D)</span> Padding displays the element's background color, while Margin is always transparent</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Inline elements like span/a ignore vertical margins; they only accept horizontal margins unless display is altered.">
+            <div class="quiz-question-text">5. Why does applying 'margin-top: 50px' to a standard &lt;span&gt; have no vertical effect?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Spans are deprecated in HTML5</div>
+              <div class="quiz-option"><span>B)</span> Spans only support em units</div>
+              <div class="quiz-option"><span>C)</span> Spans are inline elements, and vertical margins do not apply to inline elements</div>
+              <div class="quiz-option"><span>D)</span> The browser cache is corrupted</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Craft a Pro-Grade Card Component</h3>
+          <p>
+            In the interactive sandbox editor above, build a card element with <code>border-radius: 12px</code>, <code>padding: 24px</code>, a subtle border <code>1px solid #e2e8f0</code>, and <code>box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1)</code>. Test how changing the padding keeps the outer container dimensions completely stable!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#box-model" class="ref-pill">Box Model Properties Reference</a>
+            <a href="../reference/glossary.html#box-model" class="ref-pill">Glossary: Box Model</a>
+            <a href="../reference/glossary.html#margin-collapse" class="ref-pill">Glossary: Margin Collapse</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Layout &amp; Box Model Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="04-fonts-and-text.html" class="btn btn-outline">&larr; Previous: Fonts &amp; Typography</a>
+          <button class="mark-complete-btn" data-lesson-id="css-05">Mark as Complete</button>
+          <a href="06-display-visibility-overflow.html" class="btn btn-primary">Next: Display, Visibility &amp; Overflow &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

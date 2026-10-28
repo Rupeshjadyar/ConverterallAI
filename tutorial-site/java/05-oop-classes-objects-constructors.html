@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="05">
+  <title>Java OOP Classes, Objects & Encapsulation (10th-Grade & Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Java Object-Oriented Programming (OOP) foundation: classes, objects, constructors, this keyword, access modifiers (public, private, protected, package-private), and encapsulation.">
+  <meta name="keywords" content="Java OOP, classes and objects, constructors, this keyword, access modifiers, encapsulation, getters setters">
+  <meta property="og:title" content="Java OOP Classes, Objects & Encapsulation (10th-Grade & Interview Ready)">
+  <meta property="og:description" content="Master Java Object-Oriented Programming (OOP) foundation: classes, objects, constructors, this keyword, access modifiers (public, private, protected, package-private), and encapsulation.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-warning">Intermediate</span>
+            <span class="badge badge-outline">⏱️ 17 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">05. OOP Foundations: Classes, Objects, Constructors & Encapsulation</h1>
+          <p class="lesson-subtitle">The architecture of Java applications: Blueprints, memory instantiation, constructor chaining, access boundaries, and bulletproof encapsulation.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 04 (Methods, Arrays & Strings).</p>
+            <ul>
+              <li>Understand the relationship between a Class (blueprint) and an Object (instance in Heap).</li><li>Master Default, No-arg, and Parameterized constructors, plus `this()` constructor chaining.</li><li>Compare all 4 Java Access Modifiers: `public`, `protected`, default (package-private), and `private`.</li><li>Implement true Encapsulation with defensive copying.</li><li>Understand Java static members (methods, variables, static blocks) vs instance members.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Architectural House Blueprints & Bank ATM Analogy</h3>
+      <p><strong>Class vs Object:</strong> An architect draws a blueprint of a 3-bedroom villa on paper (<strong>Class</strong>). You cannot live inside a piece of paper, turn on its lights, or cook in its kitchen. But when builders pour concrete on empty land using that blueprint, you have an actual physical house with doors and running water (<strong>Object instantiated in Heap memory</strong>). You can build 50 identical physical houses from 1 single paper blueprint!</p>
+      <p><strong>Encapsulation:</strong> Think of a Bank ATM machine. The bank does not allow random customers to walk inside the vault and grab cash bundles directly (that would be <code>public double balance;</code> &mdash; complete disaster!).</p>
+      <p>Instead, the money is locked inside a thick steel vault (<code>private double balance;</code>), and you are provided a safe, regulated keypad interface with PIN validation (<code>public void withdraw(double amount)</code> &mdash; Encapsulation!).</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (मकान का नक्शा और बैंक का ATM)</h3>
+      <p><strong>Class और Object:</strong> इंजीनियर जो कागज पर घर का नक्शा बनाता है, वह है <strong>Class</strong>। आप नक्शे के अंदर सो नहीं सकते। जब उस नक्शे को देखकर ईंट-सीमेंट से असली मकान खड़ा किया जाता है, तो वह बनता है <strong>Object</strong>! एक ही नक्शे से आप 100 मकान बना सकते हैं।</p>
+      <p><strong>Encapsulation (कैप्सूल जैसा सुरक्षा कवच):</strong> मान लीजिए बैंक में तिजोरी का ताला खुला छोड़ दिया जाए (public), तो कोई भी पैसे चुरा लेगा। इसलिए बैंक वाले पैसे को लोहे की तिजोरी में बंद रखते हैं (private), और आपको बाहर एक ATM मशीन देते हैं (Getters/Setters) जो पिन चेक करने के बाद ही पैसे देती है!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The 4 Java Access Modifiers Matrix</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Modifier</th>
+            <th>Same Class</th>
+            <th>Same Package</th>
+            <th>Subclass (Different Pkg)</th>
+            <th>World (Everywhere)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>public</code></td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td><code>protected</code></td><td>Yes</td><td>Yes</td><td>Yes (via inheritance)</td><td>No</td></tr>
+          <tr><td><em>default (no keyword)</em></td><td>Yes</td><td>Yes</td><td>No</td><td>No</td></tr>
+          <tr><td><code>private</code></td><td>Yes</td><td>No</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. Constructor Chaining with `this()`</h3>
+      <p>Constructors can invoke other constructors in the same class to eliminate redundant code. <code>this()</code> MUST be the very first statement:</p>
+      <div class="code-box">
+        <pre><code class="language-java">public class BankAccount {
+    private String accountNumber;
+    private double balance;
+    private String accountType;
+
+    // 1-arg constructor calls 3-arg constructor
+    public BankAccount(String accountNumber) {
+        this(accountNumber, 0.0, "SAVINGS"); // Constructor chaining!
+    }
+
+    // Master parameterized constructor
+    public BankAccount(String accountNumber, double balance, String accountType) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.accountType = accountType;
+    }
+}</code></pre>
+      </div>
+
+      <h3>3. Defensive Copying for True Encapsulation</h3>
+      <p>Beginners think getters/setters alone provide complete encapsulation. If your class holds mutable objects (like <code>java.util.Date</code> or <code>List</code>), you must defensively copy them to prevent caller tampering:</p>
+      <div class="code-box">
+        <pre><code class="language-java">public final class EmployeeRecord {
+    private final String name;
+    private final Date joiningDate;
+
+    public EmployeeRecord(String name, Date joiningDate) {
+        this.name = name;
+        this.joiningDate = new Date(joiningDate.getTime()); // Defensive copy on input!
+    }
+
+    public Date getJoiningDate() {
+        return new Date(this.joiningDate.getTime());         // Defensive copy on output!
+    }
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is Encapsulation, and how do you achieve it in Java? What is the difference between static and instance variables?"</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Core Definition of Encapsulation:</strong> Encapsulation is the bundling of data (fields) and the methods that operate on that data into a single unit (class), while hiding internal state details using private access modifiers.</li><li><strong>Benefits of Encapsulation:</strong> Data integrity (validation logic inside setters), read-only or write-only flexibility, decoupling internal implementation from external consumers.</li><li><strong>Static vs Instance Variables:</strong> Instance variables belong to a specific object instance in the Heap (each object gets its own copy). Static variables belong to the Class itself in Metaspace and are shared across all instances.</li><li><strong>Static Context Rules:</strong> A static method cannot directly access instance fields or call `this` because static methods run without any object instance context.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "Encapsulation is not just about making fields private and adding getters and setters; it is about protecting the object's invariants through validation, immutability, and defensive copying."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Complete Encapsulated BankAccount Class</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class BankAccount {
+    private final String accountNumber;
+    private double balance; // Protected from unauthorized direct mutation
+
+    public BankAccount(String accountNumber, double initialDeposit) {
+        if (initialDeposit < 0) {
+            throw new IllegalArgumentException("Initial deposit cannot be negative!");
+        }
+        this.accountNumber = accountNumber;
+        this.balance = initialDeposit;
+    }
+
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
+        this.balance += amount;
+    }
+
+    public void withdraw(double amount) {
+        if (amount > this.balance) {
+            throw new IllegalStateException("Insufficient funds! Available: " + this.balance);
+        }
+        this.balance -= amount;
+    }
+
+    public double getBalance() { return this.balance; }
+    public String getAccountNumber() { return this.accountNumber; }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Static Initialization Blocks and Class Counters</h4>
+        <div class="code-box">
+          <pre><code class="language-java">public class ServerInstance {
+    private static int activeConnections = 0; // Shared across all server instances
+    private final String serverId;
+
+    static {
+        System.out.println("Static Block: Executed once when ServerInstance class is loaded by JVM");
+    }
+
+    public ServerInstance(String serverId) {
+        this.serverId = serverId;
+        activeConnections++;
+    }
+
+    public static int getActiveConnections() {
+        return activeConnections; // Static method accessing static variable
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('05')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-05" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class OopSandbox {
+    public static void main(String[] args) {
+        System.out.println("Testing Encapsulated BankAccount:");
+        BankAccount acc = new BankAccount("ACC-9021", 500.0);
+        acc.deposit(250.0);
+        System.out.println("Balance after deposit: $" + acc.getBalance());
+        
+        try {
+            acc.withdraw(1000.0); // Should fail validation!
+        } catch (Exception e) {
+            System.out.println("Validation Caught: " + e.getMessage());
+        }
+    }
+}
+
+class BankAccount {
+    private double balance;
+    public BankAccount(String accNo, double bal) { this.balance = bal; }
+    public void deposit(double amt) { this.balance += amt; }
+    public void withdraw(double amt) {
+        if (amt > balance) throw new IllegalStateException("Insufficient funds");
+        balance -= amt;
+    }
+    public double getBalance() { return balance; }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-05" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Exposing Mutable Objects via Getters:</strong> Returning `return this.datesList;` directly allows external code to call `.clear()` or mutate your class's private data.</li><li><strong>Attempting to use `this` inside a `static` method:</strong> Static methods exist without an object instance, so `this` does not exist and causes a compile error.</li><li><strong>Omitting a No-Arg Constructor when adding a Parameterized Constructor:</strong> Once you define any constructor, Java removes the compiler-generated default constructor, which can break frameworks like Hibernate/Jackson.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Always Keep Fields `private`:</strong> Make fields `private` by default. Only expose methods that provide meaningful business operations, not mindless getters and setters.</li><li><strong>Favor Immutability:</strong> Mark fields `final` wherever possible. Immutable objects are inherently thread-safe and free from side-effects.</li><li><strong>Understand JavaBean Conventions:</strong> Frameworks (Spring, Hibernate, Jackson) rely on getters following `getFieldName()` and boolean getters following `isFieldName()`.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Class is the blueprint;:</strong> Object is the instance in Heap memory.</li><li><strong>Encapsulation hides data via `private` access:</strong> and provides verified access via methods and defensive copying.</li><li><strong>4 Access Modifiers::</strong> public, protected, package-private (default), and private.</li><li><strong>static belongs to the Class in Metaspace;:</strong> instance members belong to individual objects on the Heap.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Create an Encapsulated Student Class</h4>
+        <p>Create a <code>Student</code> class with private fields <code>rollNumber</code> and <code>percentage</code>. In <code>setPercentage()</code>, throw an <code>IllegalArgumentException</code> if the value is not between 0.0 and 100.0.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public class Student {
+    private int rollNumber;
+    private double percentage;
+
+    public void setPercentage(double percentage) {
+        if (percentage < 0.0 || percentage > 100.0) {
+            throw new IllegalArgumentException("Percentage must be between 0 and 100");
+        }
+        this.percentage = percentage;
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Constructor Chaining</h4>
+        <p>Implement a <code>Product</code> class with constructors that default the currency to "USD" if not specified, using <code>this(...)</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public class Product {
+    private String id;
+    private double price;
+    private String currency;
+
+    public Product(String id, double price) {
+        this(id, price, "USD"); // Chained call
+    }
+
+    public Product(String id, double price, String currency) {
+        this.id = id;
+        this.price = price;
+        this.currency = currency;
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Fix the Encapsulation Leak</h4>
+        <p>Why does returning <code>private List&lt;String&gt; roles;</code> in <code>getRoles()</code> leak encapsulation, and how do you fix it?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> The caller can execute <code>user.getRoles().clear()</code> or add rogue roles directly. Fix by returning an unmodifiable view: <code>return Collections.unmodifiableList(this.roles);</code> or returning a shallow copy: <code>return new ArrayList&lt;&gt;(this.roles);</code>.</p>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: What access modifier makes a member accessible only within the same package and by subclasses in other packages?</strong></p>
+        <label><input type="radio" name="q1" value="0"> package-private (default)</label><br>
+        <label><input type="radio" name="q1" value="1"> protected</label><br>
+        <label><input type="radio" name="q1" value="0"> private</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: Where must the `this()` constructor call be placed in a constructor?</strong></p>
+        <label><input type="radio" name="q2" value="1"> As the very first line of the constructor</label><br>
+        <label><input type="radio" name="q2" value="0"> Anywhere inside the constructor</label><br>
+        <label><input type="radio" name="q2" value="0"> Inside the return statement</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: Does Java provide a default no-argument constructor if you write your own parameterized constructor?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Yes, Java always provides it</label><br>
+        <label><input type="radio" name="q3" value="1"> No, Java removes it unless you explicitly define one</label><br>
+        <label><input type="radio" name="q3" value="0"> Only in abstract classes</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: Where are static variables stored in modern Java?</strong></p>
+        <label><input type="radio" name="q4" value="0"> Stack Memory</label><br>
+        <label><input type="radio" name="q4" value="1"> Metaspace / Class Area</label><br>
+        <label><input type="radio" name="q4" value="0"> Thread Register</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Can a static method call `this.instanceMethod()`?</strong></p>
+        <label><input type="radio" name="q5" value="0"> Yes, without issues</label><br>
+        <label><input type="radio" name="q5" value="1"> No, static methods have no instance context</label><br>
+        <label><input type="radio" name="q5" value="0"> Only if declared synchronized</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build an Enterprise User Entity with Defensive Copying</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create an immutable UserAccount class containing userId, email, and a list of security roles that prevents external code from mutating the internal list of roles.</p>
+              <div class="code-box">
+                <pre><code class="language-java">import java.util.*;
+
+public final class UserAccount {
+    private final String userId;
+    private final List<String> roles;
+
+    // TODO: Implement constructor and defensive getter
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="04-methods-arrays-strings.html" class="btn btn-outline">&larr; Prev: Methods, Arrays & Strings</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-05')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="06-oop-inheritance-polymorphism.html" class="btn btn-primary">Next: Inheritance & Polymorphism &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Testing Encapsulated BankAccount:\nBalance after deposit: $750.0\nValidation Caught: Insufficient funds\nEncapsulation preserved object integrity safely.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

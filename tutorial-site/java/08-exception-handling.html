@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <meta name="course" content="java">
+  <meta name="lesson" content="08">
+  <title>Java Exception Handling & Try-with-Resources (Interview Ready) | WebDev Academy</title>
+  <meta name="description" content="Master Checked vs Unchecked exceptions, Throwable hierarchy, Error vs Exception, multi-catch, custom business exceptions, and try-with-resources with AutoCloseable.">
+  <meta name="keywords" content="Java exceptions, checked vs unchecked, try with resources, AutoCloseable, custom exceptions, Throwable hierarchy">
+  <meta property="og:title" content="Java Exception Handling & Try-with-Resources (Interview Ready)">
+  <meta property="og:description" content="Master Checked vs Unchecked exceptions, Throwable hierarchy, Error vs Exception, multi-catch, custom business exceptions, and try-with-resources with AutoCloseable.">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body class="line-numbers">
+  <div id="site-header"></div>
+  <div class="site-container">
+    <aside id="site-sidebar"></aside>
+    <main class="main-content">
+      <div class="content-wrapper">
+        <div class="lesson-header">
+          <div class="lesson-badge-group">
+            <span class="badge" style="background:var(--c-java);color:#fff;">Java Track</span>
+            <span class="badge badge-warning">Intermediate</span>
+            <span class="badge badge-outline">⏱️ 17 min read</span>
+            <span class="badge badge-outline">🎯 10th-Grade + Interview Edition</span>
+          </div>
+          <h1 class="lesson-title">08. Robust Exception Handling & Resource Management</h1>
+          <p class="lesson-subtitle">Zero-crash enterprise applications: Checked vs Unchecked exceptions, clean stack traces, custom business exceptions, and try-with-resources.</p>
+        </div>
+
+        <div class="card callout-card info-card">
+          <div class="callout-header">
+            <span class="callout-icon">🎯</span>
+            <strong>What You Will Master in This Lesson</strong>
+          </div>
+          <div class="callout-body">
+            <p><strong>Prerequisites:</strong> Lesson 07 (Abstraction & Interfaces).</p>
+            <ul>
+              <li>Master the Throwable hierarchy: Error vs Exception (Checked vs RuntimeException).</li><li>Know when to throw Checked vs Unchecked exceptions in clean architecture.</li><li>Eliminate resource leaks with `try-with-resources` and the `AutoCloseable` interface.</li><li>Use Multi-Catch blocks and re-throwing with preserved stack traces.</li><li>Author custom business domain exceptions.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lang-toggle-bar">
+          <button class="btn btn-sm btn-outline active" data-lang="en">English Notes</button>
+          <button class="btn btn-sm btn-outline" data-lang="hi">Hinglish 10th-Grade Summary (आसान भाषा में)</button>
+        </div>
+
+        <!-- Section 1: Real-Life Analogy -->
+        <section id="analogy">
+          <h2>1. Real-World Analogy (10th-Grade Explanations)</h2>
+          <div class="card" style="border-left: 4px solid var(--c-java); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <div class="lang-text" data-lang="en">
+                
+      <h3>The Fire Drill vs The Earthquake Analogy</h3>
+      <p><strong>1. Error (The Earthquake):</strong> The physical foundation of the building crumbles (<code>OutOfMemoryError</code>, <code>StackOverflowError</code>). As a software developer, your code cannot catch an earthquake and pretend everything is fine. The JVM must shut down!</p>
+      <p><strong>2. Checked Exception (The Rain Forecast):</strong> The weather department says it will rain today (e.g. <code>FileNotFoundException</code>, <code>SQLException</code>). The compiler acts like your caring parent: <em>"You cannot step out the door until you hold an umbrella (try-catch) or sign a waiver (throws)!"</em></p>
+      <p><strong>3. Unchecked / RuntimeException (Tripping Over Your Shoelaces):</strong> You forgot to tie your shoelaces and tripped (<code>NullPointerException</code>, <code>ArrayIndexOutOfBoundsException</code>). It was completely preventable by writing careful code! The compiler doesn't force you to carry an umbrella for this.</p>
+    
+              </div>
+              <div class="lang-text" data-lang="hi" style="display:none;">
+                
+      <h3>10वीं कक्षा के लिए आसान भाषा में (भूकंप, बारिश और केले का छिलका)</h3>
+      <p><strong>Error (भूकंप):</strong> जब कंप्यूटर की रैम (RAM) ही खत्म हो जाए (<code>OutOfMemoryError</code>)। इसमें आपका कोड कुछ नहीं कर सकता, प्रोग्राम बंद होना ही पड़ेगा।</p>
+      <p><strong>Checked Exception (बारिश):</strong> जब फाइल न मिले या इंटरनेट कट जाए (<code>IOException</code>)। कंपाइलर पहले ही कहता है: <em>"छतरी (try-catch) लेकर निकलो, वरना कोड कंपाइल ही नहीं होगा!"</em></p>
+      <p><strong>Unchecked Exception (केले के छिलके पर फिसलना):</strong> जब आपने <code>null</code> वेरिएबल पर मेथड कॉल कर दिया (<code>NullPointerException</code>)। यह प्रोग्रामर की लापरवाही है, जिसे <code>if (x != null)</code> चेक लगाकर सुधारा जाना चाहिए था!</p>
+    
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Technical Deep-Dive -->
+        <section id="deep-dive">
+          <h2>2. Technical Deep-Dive & Architecture</h2>
+          
+      <h3>1. The Java Throwable Hierarchy</h3>
+      <pre><code>               java.lang.Throwable
+                       |
+        +--------------+--------------+
+        |                             |
+ java.lang.Error             java.lang.Exception
+ (Unrecoverable JVM failures)          |
+  - OutOfMemoryError           +-------+-------+
+  - StackOverflowError         |               |
+                       Checked Exceptions  java.lang.RuntimeException
+                       (Compile-time)      (Unchecked / Programmer bugs)
+                        - IOException       - NullPointerException
+                        - SQLException      - ArithmeticException
+                        - ClassNotFound     - IllegalArgumentException</code></pre>
+
+      <h3>2. Try-with-Resources (Java 7+ AutoCloseable)</h3>
+      <p>Before Java 7, closing database connections or files required messy nested <code>finally</code> blocks. Try-with-resources guarantees automatic resource closure even if exceptions occur:</p>
+      <div class="code-box">
+        <pre><code class="language-java">// Any object implementing java.lang.AutoCloseable is closed automatically!
+try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
+     Connection conn = dataSource.getConnection()) {
+    
+    String line = reader.readLine();
+    // Do work...
+} catch (IOException | SQLException e) {
+    // Multi-catch block handles both!
+    logger.error("Processing failed: " + e.getMessage(), e);
+} // Both reader and conn are closed here cleanly in reverse order!</code></pre>
+      </div>
+
+      <h3>3. Creating Domain-Specific Custom Exceptions</h3>
+      <div class="code-box">
+        <pre><code class="language-java">public class InsufficientFundsException extends RuntimeException {
+    private final double deficit;
+
+    public InsufficientFundsException(String message, double deficit) {
+        super(message);
+        this.deficit = deficit;
+    }
+
+    public double getDeficit() { return deficit; }
+}</code></pre>
+      </div>
+    
+        </section>
+
+        <!-- Section 3: Interview Speaking Points -->
+        <section id="interview-points">
+          <h2>3. 🎙️ How to Answer in an Interview (Point-Wise Speaking Notes)</h2>
+          <div class="card" style="background: rgba(224, 86, 36, 0.05); border: 1px solid rgba(224, 86, 36, 0.2); margin-bottom: 1.5rem;">
+            <div class="card-body">
+              <p>When the interviewer asks <em>"What is the difference between Checked and Unchecked exceptions? Explain try-with-resources and suppressed exceptions."</em>, deliver these punchy technical bullet points without stammering:</p>
+              <ul class="styled-list">
+                <li><strong>Checked vs Unchecked Distinction:</strong> Checked exceptions inherit directly from Exception (excluding RuntimeException) and are verified at compile-time; methods must handle them via try-catch or declare them with throws. Unchecked exceptions inherit from RuntimeException and represent preventable programming defects.</li><li><strong>AutoCloseable & Resource Management:</strong> Try-with-resources manages objects implementing AutoCloseable. Resources are closed in the reverse order of their declaration, and close() is guaranteed to execute before catch or finally blocks.</li><li><strong>Suppressed Exceptions:</strong> If an exception is thrown in the try block AND another exception is thrown during close(), the try exception is propagated while the close() exception is attached as a suppressed exception via getSuppressed().</li><li><strong>Best Practice for Enterprise APIs:</strong> Modern frameworks (like Spring) favor Unchecked runtime exceptions for business logic to prevent bloated method signatures and boilerplate exception wrapping.</li>
+              </ul>
+              <div class="alert-box alert-success" style="margin-top:1rem;">
+                <strong>💡 Interview Golden Rule:</strong> State: "Checked exceptions are for recoverable environmental failures (I/O, network); Unchecked exceptions are for programmer errors or business validation failures. Never swallow exceptions with empty catch blocks."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Code Examples -->
+        <section id="code-examples">
+          <h2>4. Practical Code Examples (Step-by-Step)</h2>
+          <p>Every line is crafted with industry best practices and enterprise design standards:</p>
+          
+      <div class="code-example-card">
+        <h4>Example 1: Safe File Reading with Try-with-Resources</h4>
+        <div class="code-box">
+          <pre><code class="language-java">import java.io.*;
+
+public class FileReadDemo {
+    public static void printFirstLine(String filePath) {
+        try (var br = new BufferedReader(new FileReader(filePath))) {
+            String firstLine = br.readLine();
+            System.out.println("First Line: " + firstLine);
+        } catch (FileNotFoundException e) {
+            System.err.println("File does not exist: " + filePath);
+        } catch (IOException e) {
+            System.err.println("Failed to read file: " + e.getMessage());
+        }
+    }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="code-example-card">
+        <h4>Example 2: Custom Resource Implementing AutoCloseable</h4>
+        <div class="code-box">
+          <pre><code class="language-java">class DatabaseSession implements AutoCloseable {
+    public DatabaseSession() {
+        System.out.println("Session opened.");
+    }
+    public void executeQuery() {
+        System.out.println("Executing SQL query...");
+    }
+    @Override
+    public void close() {
+        System.out.println("Session closed cleanly via AutoCloseable.");
+    }
+}
+
+public class CustomResourceDemo {
+    public static void main(String[] args) {
+        try (var session = new DatabaseSession()) {
+            session.executeQuery();
+        } // Auto-closes here!
+    }
+}</code></pre>
+        </div>
+      </div>
+    
+        </section>
+
+        <!-- Section 5: Try It Live Sandbox -->
+        <section id="try-it">
+          <h2>5. ⚡ Live Mock Execution Sandbox</h2>
+          <p>Inspect the Java code and test its execution output instantly:</p>
+          <div class="interactive-sandbox card" style="padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <span class="badge" style="background:#e05624; color:#fff;">Java 17 / 21 LTS Playground</span>
+              <button class="btn btn-sm btn-primary run-sandbox-btn" onclick="runSandboxCode('08')">▶ Run Code</button>
+            </div>
+            <textarea id="sandbox-code-08" class="form-control" style="font-family:monospace; height:180px; font-size:13px; line-height:1.5;">public class ExceptionSandbox {
+    public static void main(String[] args) {
+        try {
+            int result = divide(10, 0);
+            System.out.println("Result: " + result);
+        } catch (ArithmeticException e) {
+            System.out.println("Caught cleanly: Cannot divide by zero!");
+        } finally {
+            System.out.println("Finally block always executes.");
+        }
+    }
+
+    static int divide(int a, int b) {
+        return a / b;
+    }
+}</textarea>
+            <div style="margin-top:1rem;">
+              <strong>Terminal Output:</strong>
+              <div id="sandbox-output-08" style="background:#1e1e1e; color:#4ec9b0; padding:1rem; border-radius:6px; font-family:monospace; min-height:80px; margin-top:0.5rem; white-space:pre-wrap;">Output will appear here after clicking 'Run Code'...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Common Pitfalls & Senior Tips -->
+        <section id="pitfalls">
+          <h2>6. ⚠️ Common Mistakes & Senior Architect Tips</h2>
+          <div class="grid grid-2" style="margin-bottom:1.5rem;">
+            <div class="card" style="border-top:3px solid var(--c-error);">
+              <div class="card-body">
+                <h4 style="color:var(--c-error);">❌ Common Rookie Mistakes</h4>
+                <ul>
+                  <li><strong>Swallowing Exceptions with Empty Catch:</strong> Writing `catch (Exception e) {}` silences errors, making production bugs impossible to debug. Always log the error or re-throw!</li><li><strong>Catching `Throwable` or `Error`:</strong> Catching `Throwable` will capture JVM-level `OutOfMemoryError` and prevent the JVM from safely handling critical failures.</li><li><strong>Returning from a `finally` Block:</strong> A `return` statement inside `finally` discards any exception thrown in the `try` block, masking critical crashes.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card" style="border-top:3px solid var(--c-success);">
+              <div class="card-body">
+                <h4 style="color:var(--c-success);">🚀 Senior Developer Pro-Tips</h4>
+                <ul>
+                  <li><strong>Preserve Original Cause when Wrapping:</strong> Always pass the cause when throwing new exceptions: `throw new OrderException("Failed", e)` so the root cause stack trace is preserved.</li><li><strong>Use Standard Exceptions Wherever Possible:</strong> Prefer `IllegalArgumentException`, `IllegalStateException`, and `NullPointerException` over creating hundreds of redundant custom classes.</li><li><strong>Fail Fast:</strong> Validate input arguments at the beginning of methods and throw descriptive exceptions immediately before executing expensive operations.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 7: Quick Recap -->
+        <section id="recap">
+          <h2>7. 🧠 Quick Recap (Revision Cheatsheet)</h2>
+          <div class="card" style="background:var(--bg-secondary); margin-bottom:1.5rem;">
+            <div class="card-body">
+              <ul class="styled-list">
+                <li><strong>Throwable divides into Error and Exception.:</strong> Never catch Error.</li><li><strong>Checked exceptions require try-catch or throws;:</strong> Unchecked (RuntimeException) do not.</li><li><strong>Try-with-resources automatically closes AutoCloseable objects:</strong> preventing leaks.</li><li><strong>Multi-catch syntax: `catch (IOException | SQLException e)`:</strong> reduces duplicated error handling.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 8: Practice Exercises -->
+        <section id="exercises">
+          <h2>8. 🏋️ Practice Challenges (Easy, Medium, Hard)</h2>
+          
+      <div class="exercise-item card">
+        <h4>Exercise 1 (Easy): Categorize Exception Types</h4>
+        <p>Categorize into Checked or Unchecked: <code>NullPointerException</code>, <code>SQLException</code>, <code>IllegalArgumentException</code>, <code>IOException</code>.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong><br>
+            - <strong>Unchecked:</strong> <code>NullPointerException</code>, <code>IllegalArgumentException</code> (both extend RuntimeException).<br>
+            - <strong>Checked:</strong> <code>SQLException</code>, <code>IOException</code> (both extend Exception directly).</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 2 (Medium): Predict Finally Execution</h4>
+        <p>If a try block calls <code>System.exit(0);</code>, does the finally block execute?</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <p><strong>Solution:</strong> <strong>No!</strong> <code>System.exit(0)</code> terminates the JVM process immediately, so the finally block will NOT execute.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="exercise-item card">
+        <h4>Exercise 3 (Hard): Implement AutoCloseable</h4>
+        <p>Write a class <code>NetworkClient</code> that implements <code>AutoCloseable</code> and prints "Disconnected socket" on close.</p>
+        <details>
+          <summary>Show Solution</summary>
+          <div class="code-box">
+            <pre><code class="language-java">public class NetworkClient implements AutoCloseable {
+    @Override
+    public void close() {
+        System.out.println("Disconnected socket cleanly.");
+    }
+}</code></pre>
+          </div>
+        </details>
+      </div>
+    
+        </section>
+
+        <!-- Section 9: 5-Question Quiz -->
+        <section id="quiz">
+          <h2>9. 📝 5-Question Knowledge Check</h2>
+          <div class="card quiz-card" style="margin-bottom:1.5rem;">
+            <div class="card-body">
+              
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q1: Which superclass do all Checked exceptions inherit from directly (excluding RuntimeException)?</strong></p>
+        <label><input type="radio" name="q1" value="0"> java.lang.Error</label><br>
+        <label><input type="radio" name="q1" value="1"> java.lang.Exception</label><br>
+        <label><input type="radio" name="q1" value="0"> java.lang.Throwable</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q2: What interface must a resource implement to be used inside a `try-with-resources` block?</strong></p>
+        <label><input type="radio" name="q2" value="1"> java.lang.AutoCloseable</label><br>
+        <label><input type="radio" name="q2" value="0"> java.io.Serializable</label><br>
+        <label><input type="radio" name="q2" value="0"> java.lang.Cloneable</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q3: In what order are resources closed in a try-with-resources statement?</strong></p>
+        <label><input type="radio" name="q3" value="0"> Random order</label><br>
+        <label><input type="radio" name="q3" value="1"> In reverse order of their declaration</label><br>
+        <label><input type="radio" name="q3" value="0"> In the exact same order</label>
+      </div>
+      <div class="quiz-question" style="margin-bottom:1.5rem;">
+        <p><strong>Q4: What happens if an empty catch block `catch (Exception e) {}` is used?</strong></p>
+        <label><input type="radio" name="q4" value="1"> The error is swallowed, creating silent production bugs</label><br>
+        <label><input type="radio" name="q4" value="0"> It accelerates JVM garbage collection</label><br>
+        <label><input type="radio" name="q4" value="0"> It compiles to a native C++ handler</label>
+      </div>
+      <div class="quiz-question">
+        <p><strong>Q5: Can `OutOfMemoryError` be reliably caught and recovered from in standard application code?</strong></p>
+        <label><input type="radio" name="q5" value="0"> Yes, with a try-catch block</label><br>
+        <label><input type="radio" name="q5" value="1"> No, it represents catastrophic JVM memory exhaustion</label><br>
+        <label><input type="radio" name="q5" value="0"> Only in Java 21</label>
+      </div>
+    
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 10: Mini Real-World Task -->
+        <section id="mini-task">
+          <h2>10. 🛠️ Hands-On Mini Task</h2>
+          <div class="card callout-card info-card">
+            <div class="callout-header">
+              <span class="callout-icon">💻</span>
+              <strong>Enterprise Task: Build a Resilient Retry Utility with Custom Exceptions</strong>
+            </div>
+            <div class="callout-body">
+              <p>Create an idempotent retry utility that executes a remote action up to 3 times upon catching TransientNetworkException, and throws ServiceUnavailableException if all retries fail.</p>
+              <div class="code-box">
+                <pre><code class="language-java">public class RetryService {
+    public static void executeWithRetry(Runnable action, int maxAttempts) {
+        // TODO: Implement retry loop with exponential backoff handling
+    }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Lesson Navigation Footer -->
+        <nav class="lesson-navigation" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <a href="07-oop-abstraction-interfaces.html" class="btn btn-outline">&larr; Prev: Abstraction & Interfaces</a>
+          <button class="btn btn-outline mark-complete-btn" onclick="markLessonComplete('java-08')">
+            ✅ Mark Lesson as Completed
+          </button>
+          <a href="09-collections-framework.html" class="btn btn-primary">Next: Collections Framework &rarr;</a>
+        </nav>
+
+      </div>
+    </main>
+    <aside id="site-toc"></aside>
+  </div>
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    function runSandboxCode(id) {
+      var out = document.getElementById('sandbox-output-' + id);
+      out.textContent = "Compiling & executing in JVM environment...
+
+" + "Caught cleanly: Cannot divide by zero!\nFinally block always executes.\nSafe exception recovery demonstrated.";
+    }
+
+    document.querySelectorAll('.lang-toggle-bar button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-toggle-bar button').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var lang = this.getAttribute('data-lang');
+        document.querySelectorAll('.lang-text').forEach(function(el) {
+          if (el.getAttribute('data-lang') === lang) {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

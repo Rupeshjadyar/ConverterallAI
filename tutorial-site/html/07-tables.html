@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>HTML Tables & Data Grids — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="html" data-current-lesson="07-tables.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 12 min read</span>
+            <span class="badge" style="background:var(--c-html-light); color:var(--c-html); border:1px solid var(--c-html-border);">HTML Lesson 07</span>
+          </div>
+          <h1 class="lesson-title">Tables: Organizing Tabular Data</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Structure multi-dimensional datasets, pricing grids, and schedules with accessible tables, captions, and cell spans.</span>
+            <span class="lang-hi">Tabular data (jaise timetables, pricing plans aur spreadsheets) ko <code>&lt;table&gt;</code>, thead, tbody aur colspans ke saath structure karna seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>The proper semantic structure of an HTML table: <code>&lt;table&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, and <code>&lt;tfoot&gt;</code>.</li>
+            <li>The difference between rows (<code>&lt;tr&gt;</code>), header cells (<code>&lt;th&gt;</code>), and data cells (<code>&lt;td&gt;</code>).</li>
+            <li>Merging cells horizontally with <code>colspan</code> and vertically with <code>rowspan</code>.</li>
+            <li>Accessibility requirements: <code>&lt;caption&gt;</code> and the <code>scope</code> attribute.</li>
+            <li>Essential CSS table resets like <code>border-collapse: collapse;</code>.</li>
+            <li>Why tables must NEVER be used for page layouts (a notorious 1990s legacy mistake).</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="06-lists.html">06. Lists</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Train Station Departure Board</div>
+          <p>
+            <span class="lang-en">Walk into any central railway station and look up at the electronic departure board. At the very top is a clear title (<strong><code>&lt;caption&gt;</code></strong>): <em>"Departures to Metro Regions"</em>. Below it is the header row (<strong><code>&lt;thead&gt;</code></strong>) with fixed columns: <em>"Train #", "Destination", "Time", "Platform"</em>. Beneath are the rows of running trains (<strong><code>&lt;tbody&gt;</code></strong>). If a long freight train occupies two platforms simultaneously, it spans across rows (<strong><code>rowspan</code></strong>). That 2-dimensional grid is exactly what an HTML table represents!</span>
+            <span class="lang-hi">Railway station ke timetable display ki tarah sochiye. Upar board ka title hota hai (<strong><code>&lt;caption&gt;</code></strong>), headings hoti hain (Train No, Time, Platform - <strong><code>&lt;thead&gt;</code></strong>), aur har train ki row <strong><code>&lt;tbody&gt;</code></strong> mein hoti hai.</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. The Semantic Table Architecture</h2>
+        <p>
+          A professional HTML table is cleanly organized into three logical zones: a header, a body, and a summary footer:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Standard Accessible Table</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;table&gt;
+  &lt;caption&gt;Quarterly Employee Performance Metrics&lt;/caption&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th scope="col"&gt;Employee Name&lt;/th&gt;
+      &lt;th scope="col"&gt;Role&lt;/th&gt;
+      &lt;th scope="col"&gt;Projects Completed&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Sophia Martinez&lt;/td&gt;
+      &lt;td&gt;Frontend Architect&lt;/td&gt;
+      &lt;td&gt;14&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Liam Johnson&lt;/td&gt;
+      &lt;td&gt;UI Designer&lt;/td&gt;
+      &lt;td&gt;18&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;th scope="row" colspan="2"&gt;Total Completed Projects&lt;/th&gt;
+      &lt;td&gt;32&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Tag Anatomy:</strong><br>
+          &bull; <code>&lt;caption&gt;</code>: Accessible title read by screen readers; visually renders centered at the top.<br>
+          &bull; <code>&lt;thead&gt;</code>: Contains the column header labels (<code>&lt;th&gt;</code>).<br>
+          &bull; <code>&lt;tbody&gt;</code>: Contains the core dataset rows (<code>&lt;tr&gt;</code> and <code>&lt;td&gt;</code>).<br>
+          &bull; <code>&lt;tfoot&gt;</code>: Contains totals, averages, or summary calculations.<br>
+          &bull; <code>scope="col"</code> and <code>scope="row"</code>: Explicitly tells screen readers which direction the header applies.
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Merging Cells: <code>colspan</code> and <code>rowspan</code></h2>
+        <p>
+          Just like "Merge Cells" in Microsoft Excel or Google Sheets, HTML allows table cells to span multiple columns or rows:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: Colspan and Rowspan in Action</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- colspan="2": Merges 2 columns horizontally across the row --&gt;
+&lt;tr&gt;
+  &lt;th colspan="2"&gt;Weekend Hours&lt;/th&gt;
+  &lt;td&gt;10:00 AM - 4:00 PM&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;!-- rowspan="2": Merges 2 rows vertically down the column --&gt;
+&lt;tr&gt;
+  &lt;td rowspan="2"&gt;Morning Shift&lt;/td&gt;
+  &lt;td&gt;9:00 AM - 11:00 AM: Code Review&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;!-- Notice: Only 1 td here because Morning Shift spans into this row! --&gt;
+  &lt;td&gt;11:00 AM - 1:00 PM: Feature Development&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Crucial Arithmetic Rule:</strong> When using <code>rowspan="2"</code>, the subsequent row must have ONE LESS <code>&lt;td&gt;</code> cell. If you don't remove it, the extra cell gets pushed out to the right, breaking your table layout!
+        </div>
+
+        <!-- Try it Yourself 1 -->
+        <h2>Interactive Playground: Live Table Grid Studio</h2>
+        <p>Inspect how CSS borders, alternating zebra rows, and cell padding transform an HTML table:</p>
+
+        <div class="try-editor-container">
+          <div class="try-editor-header">
+            <div class="try-editor-title">&#9881; Try It Yourself: Styled Pricing Matrix</div>
+            <div class="try-editor-actions">
+              <button class="btn btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+              <button class="btn btn-outline btn-reset">Reset</button>
+            </div>
+          </div>
+          <div class="try-editor-body">
+            <div class="try-code-pane">
+              <textarea class="try-code-textarea"><!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; }
+    table {
+      width: 100%;
+      border-collapse: collapse; /* Essential: merges double borders into crisp single lines */
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th {
+      background-color: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f8fafc; /* Alternating zebra rows */
+    }
+    tbody tr:hover {
+      background-color: #eff6ff;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <thead>
+      <tr>
+        <th>Plan</th>
+        <th>Storage</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Starter</td>
+        <td>10 GB</td>
+        <td>Free</td>
+      </tr>
+      <tr>
+        <td>Pro</td>
+        <td>100 GB</td>
+        <td>$12/mo</td>
+      </tr>
+      <tr>
+        <td>Enterprise</td>
+        <td>Unlimited</td>
+        <td>$49/mo</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html></textarea>
+              <div class="try-console-bar"></div>
+            </div>
+            <div class="try-preview-pane">
+              <iframe class="try-preview-iframe"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Responsive Tables on Mobile Devices</h2>
+        <p>
+          Wide tables with 8 or 10 columns can easily break on mobile screens. The standard industry solution is wrapping the table in a container with horizontal scroll:
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: The Responsive Wrapper Technique</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;!-- Wrap any wide table in an overflow-x container --&gt;
+&lt;div class="table-responsive" style="overflow-x: auto; width: 100%;"&gt;
+  &lt;table style="min-width: 600px;"&gt;
+    &lt;!-- Full table contents --&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Why this works:</strong> On mobile screens, the user can swipe horizontally to scroll through table columns without distorting the rest of the website's layout.
+        </div>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: The <code>&lt;colgroup&gt;</code> and <code>&lt;col&gt;</code> Column Formatter</h3>
+        <p>You can apply styling (like background colors or column widths) to an entire column at once:</p>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;table&gt;
+  &lt;colgroup&gt;
+    &lt;col style="background-color: #f1f5f9; width: 40%;"&gt;
+    &lt;col style="width: 30%;"&gt;
+    &lt;col style="width: 30%;"&gt;
+  &lt;/colgroup&gt;
+  &lt;!-- rows follow --&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Efficiency:</strong> Instead of writing <code>class="highlight"</code> on 100 different <code>&lt;td&gt;</code> cells in the first column, you configure the column once in <code>&lt;colgroup&gt;</code>!
+        </div>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Complete Schedule Grid with Mixed Spans</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">html</span></div>
+          <pre class="code-content"><code data-lang="html">&lt;table border="1"&gt;
+  &lt;caption&gt;Weekly Workshop Timetable&lt;/caption&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Time&lt;/th&gt;
+    &lt;th&gt;Monday&lt;/th&gt;
+    &lt;th&gt;Wednesday&lt;/th&gt;
+    &lt;th&gt;Friday&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;10:00 AM&lt;/td&gt;
+    &lt;td rowspan="2"&gt;HTML5 Deep Dive (2 hrs)&lt;/td&gt;
+    &lt;td&gt;CSS Grid Lab&lt;/td&gt;
+    &lt;td rowspan="2"&gt;Full Project Build (2 hrs)&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;11:00 AM&lt;/td&gt;
+    &lt;td&gt;Flexbox Exercises&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;12:00 PM&lt;/td&gt;
+    &lt;td colspan="3" align="center"&gt;&mdash; Lunch Break for All &mdash;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Structure Insight:</strong> Notice how the Lunch Break row uses <code>colspan="3"</code> to span all three workshop days effortlessly.
+        </div>
+
+        <!-- Code Example 6 -->
+        <h3>Code Example 6: Querying Table Data with JavaScript</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">javascript</span></div>
+          <pre class="code-content"><code data-lang="js">// Read table row data programmatically
+const rows = document.querySelectorAll("tbody tr");
+const dataset = [];
+
+rows.forEach(row => {
+  const cells = row.querySelectorAll("td");
+  dataset.push({
+    plan: cells[0].textContent,
+    storage: cells[1].textContent,
+    price: cells[2].textContent
+  });
+});
+
+console.table(dataset);</code></pre>
+        </div>
+        <div class="code-explanation">
+          <strong>Key Integration:</strong> JavaScript can extract structured arrays of objects directly from semantic HTML tables in seconds.
+        </div>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Using tables for page layout:</strong> In 1998, developers used tables to build sidebars and headers. In modern web development, this is strictly forbidden! Use <strong>CSS Flexbox</strong> and <strong>CSS Grid</strong> for layout. Use <code>&lt;table&gt;</code> strictly for tabular datasets.</li>
+            <li><strong>Forgetting <code>border-collapse: collapse;</code>:</strong> By default, browsers give tables ugly double borders with strange gaps between cells. Always add <code>border-collapse: collapse;</code> in CSS.</li>
+            <li><strong>Miscounting cells during rowspans:</strong> If a row has 4 columns and one cell has <code>colspan="2"</code>, that row should only have 3 cell elements total (2 + 1 + 1 = 4).</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips</div>
+          <ul>
+            <li>Always right-align numerical columns (currency, metrics, percentages) using <code>text-align: right;</code> &mdash; this makes numbers significantly easier for human eyes to compare down a column.</li>
+            <li>Always provide <code>&lt;caption&gt;</code> &mdash; screen readers use the caption as an announcement hook when navigating between multiple tables on a financial or statistical page.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#128260; Quick Recap</div>
+          <ul>
+            <li><code>&lt;table&gt;</code> organizes 2D tabular datasets (never page layouts).</li>
+            <li>Structure with <code>&lt;caption&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, and <code>&lt;tfoot&gt;</code>.</li>
+            <li><code>&lt;tr&gt;</code> = table row; <code>&lt;th&gt;</code> = header cell; <code>&lt;td&gt;</code> = data cell.</li>
+            <li><code>colspan</code> merges columns horizontally; <code>rowspan</code> merges rows vertically.</li>
+            <li>Use <code>scope="col"</code> and <code>scope="row"</code> for accessibility compliance.</li>
+            <li>Use <code>border-collapse: collapse;</code> in CSS for clean, crisp single-pixel borders.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <h2>Practice Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Identify Header vs Data Cells</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>What is the semantic difference between <code>&lt;th&gt;</code> and <code>&lt;td&gt;</code>?</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Think about which one labels a column and which one holds row values.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> <code>&lt;th&gt;</code> represents a <strong>Table Header</strong> cell (bold, centered, announced as a header by screen readers). <code>&lt;td&gt;</code> represents a standard <strong>Table Data</strong> cell.
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Horizontal Colspan</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You have a 4-column table. Write the markup for a single row where one cell spans across all 4 columns with the text "No records found".</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: Use colspan=4 inside a tr.</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>&lt;tr&gt;&lt;td colspan="4" align="center"&gt;No records found&lt;/td&gt;&lt;/tr&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Fixing the Broken Rowspan Arithmetic</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Spot and correct the bug in this 2-column table:</p>
+          <pre class="code-content"><code data-lang="html">&lt;tr&gt;
+  &lt;td rowspan="2"&gt;Category&lt;/td&gt;
+  &lt;td&gt;Item A&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Extra Cell&lt;/td&gt;
+  &lt;td&gt;Item B&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: How many columns does row 2 have when Category spans into it?</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong> Because "Category" spans vertically into the second row, row 2 already has its first column occupied! Having two cells (Extra Cell + Item B) in row 2 creates 3 total columns, blowing out the grid. Delete "Extra Cell":<br>
+              <pre><code>&lt;tr&gt;
+  &lt;td rowspan="2"&gt;Category&lt;/td&gt;
+  &lt;td&gt;Item A&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Item B&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 07 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="Modern CSS Grid and Flexbox must be used for layout; <table> is only for tabular datasets.">
+            <div class="quiz-question-text">1. When should you use the HTML &lt;table&gt; tag in modern web development?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> To create sidebars and page headers</div>
+              <div class="quiz-option"><span>B)</span> To align buttons on mobile phones</div>
+              <div class="quiz-option"><span>C)</span> Strictly for presenting tabular datasets and grids of information</div>
+              <div class="quiz-option"><span>D)</span> To create responsive photo galleries</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="colspan merges cells horizontally across columns.">
+            <div class="quiz-question-text">2. Which attribute merges a table cell across multiple columns horizontally?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> rowspan</div>
+              <div class="quiz-option"><span>B)</span> colspan</div>
+              <div class="quiz-option"><span>C)</span> span</div>
+              <div class="quiz-option"><span>D)</span> width</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation="border-collapse: collapse merges neighboring borders into a crisp single line.">
+            <div class="quiz-question-text">3. Which CSS property eliminates ugly double-borders between table cells?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> border-collapse: collapse;</div>
+              <div class="quiz-option"><span>B)</span> border-spacing: double;</div>
+              <div class="quiz-option"><span>C)</span> border-style: none;</div>
+              <div class="quiz-option"><span>D)</span> table-layout: fixed;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="<caption> provides a visible title for the table and helps screen reader navigation.">
+            <div class="quiz-question-text">4. Which tag provides an accessible title/description for the entire table?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> &lt;title&gt;</div>
+              <div class="quiz-option"><span>B)</span> &lt;header&gt;</div>
+              <div class="quiz-option"><span>C)</span> &lt;summary&gt;</div>
+              <div class="quiz-option"><span>D)</span> &lt;caption&gt;</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="scope='col' or scope='row' explicitly connects header cells to their data cells for screen readers.">
+            <div class="quiz-question-text">5. What attribute on a &lt;th&gt; tag links it explicitly to a column or row for screen readers?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> role</div>
+              <div class="quiz-option"><span>B)</span> scope</div>
+              <div class="quiz-option"><span>C)</span> target</div>
+              <div class="quiz-option"><span>D)</span> type</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Add an "Ultimate" Pricing Plan</h3>
+          <p>
+            In the live editor above, add a 4th row to the pricing table for an "Ultimate" plan with "1 TB" storage and a price of "$99/mo". Notice how the alternating zebra styling automatically colors the new row cleanly!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/html-tags-reference.html#table" class="ref-pill">&lt;table&gt; Tag</a>
+            <a href="../reference/html-tags-reference.html#tr" class="ref-pill">&lt;tr&gt;, &lt;th&gt;, &lt;td&gt;</a>
+            <a href="../reference/html-tags-reference.html#caption" class="ref-pill">&lt;caption&gt;</a>
+            <a href="../reference/glossary.html#table" class="ref-pill">Glossary: Table</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="06-lists.html" class="btn btn-outline">&larr; Previous: Lists (ul, ol, dl)</a>
+          <button class="mark-complete-btn" data-lesson-id="html-07">Mark as Complete</button>
+          <a href="08-forms-and-inputs.html" class="btn btn-primary">Next: Forms &amp; Inputs &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

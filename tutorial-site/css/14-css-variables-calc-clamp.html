@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>CSS Variables, Calc &amp; Clamp — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="css" data-current-lesson="14-css-variables-calc-clamp.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-intermediate">Intermediate</span>
+            <span class="reading-time">&#128338; 16 min read</span>
+            <span class="badge" style="background:var(--c-css-light); color:var(--c-css); border:1px solid var(--c-css-border);">CSS Lesson 14</span>
+          </div>
+          <h1 class="lesson-title">CSS Custom Properties (Variables), Calc &amp; Clamp</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build scalable design systems with scoped CSS variables, dynamic math expressions, and fluid typography.</span>
+            <span class="lang-hi">CSS Custom Properties (--variables), dynamic math (calc), aur fluid scaling (min, max, clamp) seekhein.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Declaring and consuming CSS Custom Properties with <code>--var-name</code> and <code>var()</code>.</li>
+            <li>Global scope (<code>:root</code>) vs component-level local encapsulation.</li>
+            <li>Fallback defense strategies: <code>var(--color-primary, #2563eb)</code>.</li>
+            <li>Instant Dark/Light theming by updating variables at runtime.</li>
+            <li>Dynamic math calculations with <code>calc()</code> (and why spacing around operators is mandatory).</li>
+            <li>Modern mathematical trio: <code>min()</code>, <code>max()</code>, and fluid <code>clamp()</code>.</li>
+            <li>Real-world design system architecture: Color scales, spacing ladders, and radii.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="13-animations-keyframes.html">13. CSS Animations &amp; Keyframes</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Global Company Style Guide</div>
+          <p>
+            <span class="lang-en">Imagine working at a multinational bank:
+            <br>&bull; <strong>Without CSS Variables:</strong> 400 branches each order their own shade of blue paint by memory. If the CEO decides to rebrand to navy blue next year, painters must physically visit all 400 branches and scrape walls individually (editing 4,000 CSS files!).
+            <br>&bull; <strong>With CSS Variables:</strong> The CEO writes down the official brand code in the corporate handbook: <code>--brand-blue: #0052cc;</code>. All 400 branches link directly to this single token. When the CEO updates the token, every branch changes instantly overnight!</span>
+            <span class="lang-hi">Company ke brand guideline ki tarah sochiye: Bina variable ke agar company ka color badalna ho toh 100 jagah jaa kar code badalna padta hai. CSS Variables (--variable) ke sath aap sirf :root me ek baar color badalte hain aur poori website ek second me update ho jaati hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <h2>1. Declaring &amp; Consuming CSS Variables</h2>
+        <p>
+          CSS Custom Properties always start with two hyphens (<code>--</code>). They are case-sensitive and inherit down the DOM tree just like standard font properties:
+        </p>
+
+        <!-- Code Example 1 -->
+        <h3>Code Example 1: Global Variables in :root</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* :root matches the <html> element, giving global scope to variables */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --radius-md: 8px;
+  --space-unit: 16px;
+}
+
+/* Consuming the variables using var() */
+.card {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  padding: var(--space-unit);
+  border: 1px solid #e2e8f0;
+}
+
+.card-btn {
+  background-color: var(--color-primary);
+  /* Fallback: if --radius-md isn't defined, use 4px */
+  border-radius: var(--radius-md, 4px);
+}</code></pre>
+        </div>
+
+        <!-- Section 2 -->
+        <h2>2. Instant Dark Theme Architecture</h2>
+        <p>
+          With CSS variables, creating a complete Dark/Light mode theme engine requires changing just a handful of color tokens on <code>body[data-theme="dark"]</code>:
+        </p>
+
+        <!-- Code Example 2 -->
+        <h3>Code Example 2: The Modern Token-Swapping Theme Engine</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">:root {
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --border-app: #e2e8f0;
+}
+
+/* When the user toggles dark mode, we just override the variable tokens! */
+[data-theme="dark"] {
+  --bg-app: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f8fafc;
+  --border-app: #334155;
+}
+
+/* Notice that our components NEVER need duplicate dark mode rules! */
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-app);
+}</code></pre>
+        </div>
+
+        <!-- Section 3 -->
+        <h2>3. Dynamic Calculations with <code>calc()</code></h2>
+        <p>
+          The <code>calc()</code> function allows you to perform basic arithmetic operations (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>) directly inside CSS, mixing completely different units together!
+        </p>
+        <p style="background:var(--bg-card); padding:1rem; border-left:4px solid var(--c-error); border-radius:var(--radius-sm);">
+          <strong>The Fatal Syntax Trap:</strong> In <code>calc()</code>, the <code>+</code> and <code>-</code> operators <strong>MUST have spaces around them</strong>! Writing <code>calc(100% - 20px)</code> works, but <code>calc(100%-20px)</code> fails as an invalid expression because the browser interprets <code>-20px</code> as a negative number.
+        </p>
+
+        <!-- Code Example 3 -->
+        <h3>Code Example 3: Mixing Viewport and Fixed Units with calc()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">:root {
+  --nav-height: 60px;
+}
+
+/* Full screen height minus the fixed sticky navbar */
+.main-layout {
+  min-height: calc(100vh - var(--nav-height));
+}
+
+/* Responsive sidebar with exact remaining column width */
+.sidebar {
+  width: 260px;
+}
+.content-area {
+  width: calc(100% - 260px);
+}</code></pre>
+        </div>
+
+        <!-- Section 4 -->
+        <h2>4. Modern Mathematical Functions: min(), max(), clamp()</h2>
+        <p>
+          Modern CSS math eliminates cumbersome JavaScript resize listeners and multiple media queries:
+        </p>
+
+        <!-- Code Example 4 -->
+        <h3>Code Example 4: min(), max(), and clamp()</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* 1. min(a, b): Picks whichever value is SMALLER at this exact moment */
+.responsive-modal {
+  /* On mobile takes 90% width; on desktop caps strictly at 500px */
+  width: min(90%, 500px);
+}
+
+/* 2. max(a, b): Picks whichever value is LARGER at this exact moment */
+.banner {
+  /* Never smaller than 300px, but expands with viewport */
+  height: max(300px, 40vh);
+}
+
+/* 3. clamp(MIN, PREFERRED, MAX): The Ultimate Value Lock */
+.fluid-heading {
+  /* Never smaller than 1.5rem, never bigger than 3rem, scales with 4vw */
+  font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Fluid responsive padding */
+.container {
+  padding: clamp(1rem, 5vw, 4rem);
+}</code></pre>
+        </div>
+
+        <!-- Section 5 -->
+        <h2>5. Scoped Component Variables</h2>
+        <p>
+          Variables don't just belong in <code>:root</code>. You can declare variables directly on specific components to customize variants cleanly without selector specificity bloat:
+        </p>
+
+        <!-- Code Example 5 -->
+        <h3>Code Example 5: Component-Level Scoped Variables</h3>
+        <div class="code-block-wrapper">
+          <div class="code-header"><span class="code-lang">css</span></div>
+          <pre class="code-content"><code data-lang="css">/* Base Button Token Contract */
+.btn {
+  --btn-bg: #e2e8f0;
+  --btn-color: #0f172a;
+  
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* Modifiers just override the local tokens! */
+.btn-primary {
+  --btn-bg: #2563eb;
+  --btn-color: #ffffff;
+}
+
+.btn-danger {
+  --btn-bg: #ef4444;
+  --btn-color: #ffffff;
+}</code></pre>
+        </div>
+
+        <!-- Live Try-It Editor -->
+        <h2>6. Interactive Lab: Test Variables &amp; Theming</h2>
+        <p>
+          Change <code>--theme-color</code> below and watch all buttons, badges, and headers change together:
+        </p>
+
+        <div class="try-it-editor">
+          <div class="editor-header">
+            <span class="editor-title">&#128736; Live Editor: Design Token Studio</span>
+            <div class="editor-actions">
+              <button class="btn btn-sm btn-outline btn-reset">Reset</button>
+              <button class="btn btn-sm btn-primary btn-run">Run Code (Ctrl+Enter)</button>
+            </div>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-pane">
+              <div class="pane-label">HTML &amp; CSS Source</div>
+              <textarea class="editor-textarea" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  :root {
+    /* Try changing this color to #10b981 (green) or #ec4899 (pink) */
+    --brand-color: #3b82f6;
+    --brand-bg: #eff6ff;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 24px;
+    background: #f8fafc;
+  }
+
+  .card {
+    background: white;
+    border: 2px solid var(--brand-color);
+    border-radius: var(--radius);
+    padding: 20px;
+    max-width: 320px;
+  }
+
+  .badge {
+    background: var(--brand-bg);
+    color: var(--brand-color);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .btn {
+    margin-top: 16px;
+    background: var(--brand-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">ACTIVE TOKEN</span>
+    <h3 style="margin-top:8px;">Design System Power</h3>
+    <p style="color:#64748b; font-size:0.9rem; margin-top:6px;">
+      Change <code>--brand-color</code> at the top and click Run!
+    </p>
+    <button class="btn">Get Started</button>
+  </div>
+</body>
+</html></textarea>
+            </div>
+            <div class="editor-pane">
+              <div class="pane-label">Live Preview</div>
+              <iframe class="editor-preview-frame"></iframe>
+            </div>
+          </div>
+          <div class="editor-console">
+            <div class="console-label">Console Log Output</div>
+            <div class="console-log-area">Ready...</div>
+          </div>
+        </div>
+
+        <!-- Common Mistakes -->
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Common Beginner Mistakes</div>
+          <ul>
+            <li><strong>Missing spaces around <code>calc()</code> operators:</strong> <code>calc(100%-40px)</code> causes the entire rule to be ignored by the browser. Always write <code>calc(100% - 40px)</code>.</li>
+            <li><strong>Case sensitivity bugs:</strong> <code>--brandColor</code> and <code>--brandcolor</code> are two completely separate variables. Standardize on lowercase kebab-case (e.g. <code>--brand-color</code>).</li>
+            <li><strong>Forgetting <code>var()</code> wrapper:</strong> Writing <code>color: --brand-color;</code> does nothing. You must wrap the variable name in the <code>var(...)</code> function: <code>color: var(--brand-color);</code>.</li>
+            <li><strong>Using CSS variables in media query parameters:</strong> You cannot write <code>@media (min-width: var(--breakpoint-tablet))</code>. CSS variables are not evaluated inside media query conditions.</li>
+          </ul>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Pro Tips from Senior Engineers</div>
+          <ul>
+            <li><strong>Inspect &amp; modify live in DevTools:</strong> Variables show up under <code>:root</code> in the Chrome DevTools Styles pane. You can click the color swatch to live-test colors across your entire site in real time!</li>
+            <li><strong>Pass variables into SVG:</strong> Setting <code>fill: var(--icon-color, currentColor);</code> on SVG vector icons lets them adapt dynamically to their surrounding text color automatically.</li>
+            <li><strong>Manipulate variables via JavaScript:</strong> You can read and write variables in vanilla JS via <code>document.documentElement.style.setProperty('--brand-color', '#ff0000');</code> for interactive user customizers!</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9889; Quick Recap</div>
+          <ul>
+            <li>CSS Variables begin with <code>--</code> and are consumed via <code>var(--name, fallback)</code>.</li>
+            <li>Global tokens are declared inside <code>:root</code>.</li>
+            <li>Dark mode is achieved by swapping variable values on <code>[data-theme="dark"]</code>.</li>
+            <li><code>calc()</code> allows mixing units (e.g. <code>vh</code> and <code>px</code>); operators must have whitespace around them.</li>
+            <li><code>clamp(min, preferred, max)</code> locks values between bounds while scaling fluidly.</li>
+            <li><code>width: min(90%, 600px)</code> is a clean one-liner for responsive dialogs.</li>
+          </ul>
+        </div>
+
+        <!-- 3 Practice Exercises -->
+        <h2>7. Practice Coding Exercises</h2>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 1 (Easy): Consuming a Variable with Fallback</span>
+            <span class="badge badge-beginner">Easy</span>
+          </div>
+          <p>Write the CSS declaration for a button's <code>background-color</code> that consumes the custom property <code>--accent-color</code>, but falls back to <code>#2563eb</code> if the variable is not defined.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: var(--property, fallback).</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>background-color: var(--accent-color, #2563eb);</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 2 (Medium): Full-Height Minus Sticky Header</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </div>
+          <p>You have a top navigation bar of 70px. Write the CSS declaration using <code>calc()</code> to ensure a hero section takes up exactly the rest of the visible screen height.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: min-height: calc(100vh - 70px);</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <pre><code>.hero-section {
+  min-height: calc(100vh - 70px);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card">
+          <div class="exercise-header">
+            <span class="exercise-title">Exercise 3 (Hard): Fluid Container Spacing</span>
+            <span class="badge badge-advanced">Hard</span>
+          </div>
+          <p>Write a single CSS declaration using <code>clamp()</code> to set horizontal padding that never drops below 16px, never exceeds 64px, and scales with 5% of viewport width.</p>
+          <button class="btn btn-outline btn-toggle-hint">Show Hint</button>
+          <button class="btn btn-outline btn-toggle-sol">Show Solution</button>
+          <div class="exercise-hint">Hint: padding-inline: clamp(16px, 5vw, 64px);</div>
+          <div class="exercise-solution">
+            <div class="code-explanation">
+              <strong>Solution:</strong><br>
+              <code>padding-inline: clamp(16px, 5vw, 64px);</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Question Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-header">
+            <h3 style="margin:0; font-size:1.3rem;">&#9989; Lesson 14 Knowledge Check</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">5 Questions &bull; Instant Feedback</span>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-question-item" data-correct="2" data-explanation="All CSS Custom Properties must begin with two dashes (--).">
+            <div class="quiz-question-text">1. What prefix is strictly required to declare a CSS Custom Property?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> $</div>
+              <div class="quiz-option"><span>B)</span> @</div>
+              <div class="quiz-option"><span>C)</span> -- (two hyphens)</div>
+              <div class="quiz-option"><span>D)</span> #</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Whitespace around addition (+) and subtraction (-) operators is required so the parser can distinguish subtraction from negative unit literals.">
+            <div class="quiz-question-text">2. Why does 'width: calc(100%-30px);' fail in browsers?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> calc() cannot subtract pixels</div>
+              <div class="quiz-option"><span>B)</span> The + and - operators in calc() strictly require spaces around them (e.g. 100% - 30px)</div>
+              <div class="quiz-option"><span>C)</span> calc() only works in JavaScript</div>
+              <div class="quiz-option"><span>D)</span> 30px is an invalid unit</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-question-item" data-correct="0" data-explanation=":root matches the document root element (html) and provides universal global scope.">
+            <div class="quiz-question-text">3. Why are global CSS variables typically declared inside ':root'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> :root targets the top-level document element (&lt;html&gt;), making variables accessible across the entire stylesheet</div>
+              <div class="quiz-option"><span>B)</span> :root makes variables read-only</div>
+              <div class="quiz-option"><span>C)</span> It is faster than body</div>
+              <div class="quiz-option"><span>D)</span> Variables cannot be placed anywhere else</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-question-item" data-correct="3" data-explanation="min(90%, 600px) chooses whichever value is smaller at any given window width.">
+            <div class="quiz-question-text">4. In 'width: min(90%, 600px);', what width will be rendered if the viewport is 1200px wide?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> 1080px (90% of 1200)</div>
+              <div class="quiz-option"><span>B)</span> 1200px</div>
+              <div class="quiz-option"><span>C)</span> 90px</div>
+              <div class="quiz-option"><span>D)</span> 600px (because 600px is smaller than 1080px)</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-question-item" data-correct="1" data-explanation="Media query conditional parameters do not evaluate CSS variables.">
+            <div class="quiz-question-text">5. Can CSS Custom Properties be used inside '@media (min-width: var(--bp-md))'?</div>
+            <div class="quiz-options">
+              <div class="quiz-option"><span>A)</span> Yes, always</div>
+              <div class="quiz-option"><span>B)</span> No, CSS variables cannot currently be evaluated inside media query expressions</div>
+              <div class="quiz-option"><span>C)</span> Only in Firefox</div>
+              <div class="quiz-option"><span>D)</span> Only if declared in :root</div>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-score-banner"></div>
+        </div>
+
+        <!-- Mini Task -->
+        <div class="mini-task-card">
+          <h3>&#127919; Mini-Task: Create a Custom Themed Card</h3>
+          <p>
+            In the live editor, define a local scoped variable <code>--card-accent: #8b5cf6</code> directly on <code>.card</code> and set its border and button to use that variable. Notice how clean it is to create new card variations without altering global tokens!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="related-refs">
+          <h4>Related Internal Reference Pages</h4>
+          <div class="ref-pill-list">
+            <a href="../reference/css-properties-reference.html#variables" class="ref-pill">CSS Custom Properties Reference</a>
+            <a href="../reference/glossary.html#custom-property" class="ref-pill">Glossary: Custom Property (Variable)</a>
+            <a href="../reference/glossary.html#calc" class="ref-pill">Glossary: calc() Function</a>
+            <a href="../reference/cheatsheets.html" class="ref-pill">CSS Math Functions Cheatsheet</a>
+          </div>
+        </div>
+
+        <!-- Student Notes -->
+        <div class="notes-container">
+          <div class="notes-header">
+            <span style="font-weight:700; color:var(--text-primary);">&#128221; Your Study Notes for this Lesson</span>
+            <button class="btn btn-outline btn-save-notes">Save Note</button>
+          </div>
+          <textarea class="notes-textarea" placeholder="Jot down personal takeaways..."></textarea>
+        </div>
+
+        <!-- Lesson Navigation Bottom -->
+        <div class="lesson-nav-bottom">
+          <a href="13-animations-keyframes.html" class="btn btn-outline">&larr; Previous: CSS Animations &amp; Keyframes</a>
+          <button class="mark-complete-btn" data-lesson-id="css-14">Mark as Complete</button>
+          <a href="15-modern-layout-patterns.html" class="btn btn-primary">Next: Modern Layout Patterns &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <aside id="app-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

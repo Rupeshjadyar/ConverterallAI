@@ -44,6 +44,94 @@ app.get('/ads.txt', (req: Request, res: Response) => {
   res.type('text/plain').send('google.com, pub-9707682105347147, DIRECT, f08c47fec0942fa0\n');
 });
 
+/* Robots.txt Endpoint */
+app.get('/robots.txt', (req: Request, res: Response) => {
+  const robotsPath = join(process.cwd(), 'src', 'robots.txt');
+  if (existsSync(robotsPath)) {
+    res.type('text/plain').sendFile(robotsPath);
+  } else {
+    res.type('text/plain').send("User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /api/\n\nSitemap: https://converterallai.com/sitemap.xml\n");
+  }
+});
+
+/* Sitemap.xml Endpoint */
+app.get('/sitemap.xml', (req: Request, res: Response) => {
+  const sitemapPath = join(process.cwd(), 'src', 'sitemap.xml');
+  if (existsSync(sitemapPath)) {
+    res.type('application/xml').sendFile(sitemapPath);
+  } else {
+    res.status(404).end();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   MICROSOFT EDGE TTS ZERO-COST PROXY ENDPOINT (/api/tts)
+   ═══════════════════════════════════════════════════════════════ */
+app.options('/api/tts', (req: Request, res: Response) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(204).end();
+});
+
+app.post('/api/tts', async (req: Request, res: Response): Promise<void> => {
+  res.header('Access-Control-Allow-Origin', '*');
+  try {
+    const { text, voice, rate, pitch } = req.body || {};
+    if (!text || !text.trim()) {
+      res.status(400).json({ error: 'Text parameter is required.' });
+      return;
+    }
+
+    const selectedVoice = (voice || 'hi-IN-MadhurNeural').trim();
+    const rateVal = rate || '+0%';
+    const pitchVal = pitch || '+0Hz';
+
+    const { spawn } = await import('node:child_process');
+    const args = [
+      '-m', 'edge_tts',
+      '--text', text.trim(),
+      '--voice', selectedVoice,
+      `--rate=${rateVal}`,
+      `--pitch=${pitchVal}`,
+      '--write-media', '-'
+    ];
+
+    const child = spawn('python', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+    
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Content-Disposition', 'attachment; filename="converted.mp3"');
+
+    child.stdout.pipe(res);
+
+    let errorBuffer = '';
+    child.stderr.on('data', (d) => {
+      errorBuffer += d.toString();
+    });
+
+    child.on('error', (err) => {
+      console.error('TTS Spawn Error:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Failed to start TTS engine', details: err.message });
+      }
+    });
+
+    child.on('close', (code) => {
+      if (code !== 0 && !res.headersSent) {
+        res.status(500).json({ error: 'TTS engine error', details: errorBuffer });
+      }
+    });
+    return;
+  } catch (err: any) {
+    console.error('Server TTS Error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'TTS Synthesis failed', details: err.message });
+    }
+    return;
+  }
+});
+
+
 /* ═══════════════════════════════════════════════════════════════
    REAL-TIME GLOBAL TELEMETRY & ANALYTICS BACKEND
    ═══════════════════════════════════════════════════════════════ */

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>LocalStorage &amp; SessionStorage — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="javascript" data-current-lesson="20-localstorage-sessionstorage.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Lesson Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 18 min read</span>
+            <span class="badge" style="background:var(--c-js-light); color:var(--c-js); border:1px solid var(--c-js-border);">JS Lesson 20</span>
+          </div>
+          <h1 class="lesson-title">Client-Side Persistence: LocalStorage &amp; SessionStorage</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Persist user preferences, drafts, and app state directly in the user's browser. Master key-value storage, JSON serializing, storage limits, and multi-tab synchronization.</span>
+            <span class="lang-hi">Browser me data save karein: LocalStorage vs SessionStorage, JSON data store karna, 5MB quota handle karna, aur cross-tab sync.</span>
+          </p>
+        </div>
+
+        <!-- What you will learn -->
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; What You Will Learn</div>
+          <ul>
+            <li>Comparing client-side storage technologies: Cookies vs LocalStorage vs SessionStorage vs IndexedDB.</li>
+            <li>The Web Storage API methods: <code>setItem()</code>, <code>getItem()</code>, <code>removeItem()</code>, <code>clear()</code>, and <code>key()</code>.</li>
+            <li>The fundamental string-only constraint and how to safely serialize objects and arrays.</li>
+            <li>Understanding the Same-Origin Policy boundary (protocol + domain + port).</li>
+            <li>Handling storage limits (~5MB quota) and intercepting <code>QuotaExceededError</code>.</li>
+            <li>Listening to real-time changes across browser tabs with the <code>'storage'</code> event.</li>
+            <li>Architecting a production-ready, type-safe <code>StorageManager</code> wrapper class.</li>
+          </ul>
+          <div class="prereq-line">
+            <strong>Prerequisites:</strong> Completion of <a href="19-fetch-api-and-json.html">19. Fetch API &amp; JSON</a>.
+          </div>
+        </div>
+
+        <!-- Analogy -->
+        <div class="callout callout-analogy">
+          <div class="callout-title">&#127775; Real-Life Analogy: The Permanent Locker vs The Day-Use Desk Drawer</div>
+          <p>
+            <span class="lang-en">Imagine storing belongings at your office or school:
+            <br>&bull; <strong>LocalStorage (Your Assigned Steel Locker):</strong> You place your favorite coffee mug, headphones, and notebooks inside and lock it. You go home for the night, shut down your computer, or go on vacation for a month. When you return, everything is still exactly where you left it. It never expires unless you deliberately throw it away or clear your locker!
+            <br>&bull; <strong>SessionStorage (The Conference Room Desk Drawer):</strong> You place meeting notes in the desk drawer during a morning session. The moment the meeting ends and you leave the room (closing the browser tab), the cleaning crew empties the drawer completely! It only survives as long as that specific tab remains open.</span>
+            <span class="lang-hi">Locker vs Day-use drawer ki tarah samjhein: <code>localStorage</code> ek permanent steel locker jaisa hai &mdash; browser band karne ya computer restart karne ke baad bhi data wahi rehta hai. <code>sessionStorage</code> ek temporary desk drawer hai &mdash; jaise hi tab close karenge, saara data gayab ho jata hai!</span>
+          </p>
+        </div>
+
+        <!-- Section 1 -->
+        <section id="storage-comparison">
+          <h2>1. Comparing Client-Side Storage Mechanisms</h2>
+          <p>
+            <span class="lang-en">Modern browsers offer several client-side storage options. Choosing the right mechanism depends on data size, persistence requirements, and whether the server needs direct access:</span>
+            <span class="lang-hi">Browser me data save karne ke alag-alag tarike hote hain. Har tarike ka capacity aur lifespan alag hota hai:</span>
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Storage Type</th>
+                  <th>Capacity Limit</th>
+                  <th>Lifespan</th>
+                  <th>Sent with HTTP Requests?</th>
+                  <th>Primary Use Case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Cookies</strong></td>
+                  <td>~4 KB</td>
+                  <td>Configurable expiration date</td>
+                  <td><strong>Yes (Every HTTP request)</strong></td>
+                  <td>Session tokens, auth cookies, tracking</td>
+                </tr>
+                <tr>
+                  <td><strong>LocalStorage</strong></td>
+                  <td><strong>~5 MB to 10 MB</strong></td>
+                  <td>Permanent (until user/code clears)</td>
+                  <td>No (Purely client-side)</td>
+                  <td>User theme (dark/light), UI state, drafts</td>
+                </tr>
+                <tr>
+                  <td><strong>SessionStorage</strong></td>
+                  <td><strong>~5 MB</strong></td>
+                  <td>Until browser tab closes</td>
+                  <td>No (Purely client-side)</td>
+                  <td>Multi-step wizards, checkout form state</td>
+                </tr>
+                <tr>
+                  <td><strong>IndexedDB</strong></td>
+                  <td>Hundreds of MB / GBs</td>
+                  <td>Permanent</td>
+                  <td>No</td>
+                  <td>Offline databases, large media, PWA assets</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="web-storage-api">
+          <h2>2. The Web Storage API Core Methods</h2>
+          <p>
+            <span class="lang-en">Both <code>localStorage</code> and <code>sessionStorage</code> implement the exact same <code>Storage</code> interface on the global <code>window</code> object. You interact with them using identical method calls:</span>
+            <span class="lang-hi"><code>localStorage</code> aur <code>sessionStorage</code> dono me bilkul same methods use hote hain:</span>
+          </p>
+
+          <!-- Code Example 1 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Basic Storage CRUD Operations</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// 1. CREATE or UPDATE: setItem(key, value)
+localStorage.setItem("themePreference", "dark");
+localStorage.setItem("fontSize", "16px");
+
+// 2. READ: getItem(key) -> Returns string or null if not found
+const currentTheme = localStorage.getItem("themePreference");
+console.log("Current theme:", currentTheme); // "dark"
+
+const missingKey = localStorage.getItem("nonExistentKey");
+console.log("Missing key:", missingKey); // null
+
+// 3. DELETE a specific key: removeItem(key)
+localStorage.removeItem("fontSize");
+
+// 4. CHECK TOTAL KEYS and loop by index
+console.log("Total items stored:", localStorage.length);
+for (let i = 0; i < localStorage.length; i++) {
+  const keyName = localStorage.key(i);
+  console.log(`Key #${i}: ${keyName} = ${localStorage.getItem(keyName)}`);
+}
+
+// 5. PURGE EVERYTHING: clear()
+// Warning: Wipes all key-value pairs for the current origin!
+// localStorage.clear();</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="string-only-constraint">
+          <h2>3. The String-Only Constraint &amp; JSON Serialization</h2>
+          <p>
+            <span class="lang-en">The Web Storage API <strong>only stores strings</strong>. If you attempt to pass an object, an array, or a boolean, JavaScript will automatically invoke <code>.toString()</code> on it, silently converting your rich data into the useless string <code>"[object Object]"</code>!</span>
+            <span class="lang-hi">Web Storage sirf aur sirf text strings store karta hai. Agar aap direct object ya array pass karenge toh JS usko <code>"[object Object]"</code> bana dega. Isliye hamesha JSON.stringify aur JSON.parse use karein:</span>
+          </p>
+
+          <!-- Code Example 2 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Storing and Retrieving Objects &amp; Arrays</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// BAD PRACTICE: Storing raw object directly
+const user = { name: "Ananya", score: 95 };
+localStorage.setItem("user_bad", user);
+console.log(localStorage.getItem("user_bad")); // Output: "[object Object]" (Data lost!)
+
+// CORRECT PRACTICE: Always serialize with JSON!
+const gameState = {
+  player: "Rohan",
+  level: 4,
+  inventory: ["laser-sword", "health-potion", "shield"],
+  highScore: 12400
+};
+
+// 1. Serialize object to JSON string before saving
+localStorage.setItem("rpg_save_data", JSON.stringify(gameState));
+
+// 2. Retrieve string and parse back into live JavaScript object
+const savedDataString = localStorage.getItem("rpg_save_data");
+
+if (savedDataString) {
+  const restoredGameState = JSON.parse(savedDataString);
+  console.log("Player name:", restoredGameState.player); // "Rohan"
+  console.log("Inventory items:", restoredGameState.inventory.length); // 3
+} else {
+  console.log("No save game found. Initializing new game...");
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="quota-management">
+          <h2>4. Storage Limits &amp; Defensive Quota Handling</h2>
+          <p>
+            <span class="lang-en">Browsers allocate roughly 5MB (sometimes up to 10MB) per origin for <code>localStorage</code>. While 5MB is huge for text settings (approx. 5 million characters), storing large base64 images or massive offline datasets can quickly fill it up. When storage is full, <code>setItem()</code> throws a <code>QuotaExceededError</code>.</span>
+            <span class="lang-hi">LocalStorage ki limit lagbhag 5MB hoti hai. Agar limit bhar jaye toh browser <code>QuotaExceededError</code> throw karta hai. Hamesha try-catch me wrap karein:</span>
+          </p>
+
+          <!-- Code Example 3 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Defensive Safe Storage Wrapper</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>const StorageHelper = {
+  set(key, value) {
+    try {
+      const serialized = JSON.stringify(value);
+      localStorage.setItem(key, serialized);
+      return true;
+    } catch (error) {
+      if (error.name === "QuotaExceededError" || error.code === 22) {
+        console.error("Storage Quota Exceeded! Purging temporary cache...");
+        // Cleanup strategy: Remove non-essential cached entries
+        localStorage.removeItem("cached_feed");
+      } else {
+        console.error("Storage error:", error.message);
+      }
+      return false;
+    }
+  },
+
+  get(key, defaultValue = null) {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+      console.warn(`Corrupted storage item for key '${key}', returning default.`);
+      return defaultValue;
+    }
+  }
+};</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="storage-event-cross-tab">
+          <h2>5. Cross-Tab Communication with the Storage Event</h2>
+          <p>
+            <span class="lang-en">When two or more tabs of the same website are open in the browser, changes made to <code>localStorage</code> in Tab A automatically fire a <code>'storage'</code> event inside Tab B and Tab C! This allows you to synchronize user settings (e.g. switching to dark mode or logging out) across all open tabs instantly.</span>
+            <span class="lang-hi">Jab ek website ke do tabs open hon aur ek tab me LocalStorage change ho, toh doosre tab me <code>'storage'</code> event fire hota hai. Isse aap dark mode ya login state ko sabhi tabs me sync kar sakte hain:</span>
+          </p>
+
+          <!-- Code Example 4 -->
+          <div class="code-block-container">
+            <div class="code-block-header">
+              <span class="code-lang">JavaScript — Cross-Tab Synchronizer</span>
+              <button class="btn-copy" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre class="code-block" data-lang="javascript"><code>// Note: 'storage' event fires ONLY on OTHER tabs/windows of the same origin,
+// not in the tab that made the change!
+window.addEventListener("storage", function(event) {
+  console.log("Storage changed in another tab!");
+  console.log("Modified Key:", event.key);
+  console.log("Old Value:", event.oldValue);
+  console.log("New Value:", event.newValue);
+  console.log("Origin URL:", event.url);
+
+  if (event.key === "themePreference") {
+    // Apply the newly chosen theme immediately
+    document.documentElement.setAttribute("data-theme", event.newValue);
+  }
+
+  if (event.key === "auth_user" && event.newValue === null) {
+    // User logged out in another tab; log out here too!
+    alert("Session ended in another tab. Redirecting to login...");
+    window.location.reload();
+  }
+});</code></pre>
+          </div>
+        </section>
+
+        <!-- Interactive Playground -->
+        <section id="try-it-live">
+          <h2>6. Interactive Try-It Editor: Live Persistent Sticky Notes</h2>
+          <p>
+            <span class="lang-en">Type notes into the live editor, click "Save Note", and refresh the preview pane or reset code. Notice how your notes survive intact across preview updates!</span>
+            <span class="lang-hi">Neeche diye gaye interactive editor me note likhein aur save karein. Page reload karne par bhi data browser me surakshit rehta hai:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-storage">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live LocalStorage Notes App</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-storage')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-storage')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    textarea { width: 100%; height: 70px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 6px; padding: 10px; font-size: 14px; box-sizing: border-box; }
+    .btn-group { margin-top: 8px; display: flex; gap: 8px; }
+    button { padding: 8px 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-add { background: #38bdf8; color: #0f172a; }
+    .btn-clear { background: #ef4444; color: white; }
+    #notes-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; }
+    .note-card { background: #1e293b; border-left: 4px solid #38bdf8; padding: 8px 12px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .note-del { background: transparent; color: #94a3b8; font-size: 16px; border: none; cursor: pointer; }
+    .note-del:hover { color: #ef4444; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h3&gt;Persistent Sticky Notes&lt;/h3&gt;
+  &lt;textarea id="note-input" placeholder="Type a reminder note..."&gt;&lt;/textarea&gt;
+  &lt;div class="btn-group"&gt;
+    &lt;button class="btn-add" onclick="addNote()"&gt;Save Note&lt;/button&gt;
+    &lt;button class="btn-clear" onclick="clearAll()"&gt;Clear All&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div id="notes-container"&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    const STORAGE_KEY = 'demo_persistent_notes';
+
+    function getNotes() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : ["Welcome to persistent offline storage!"];
+    }
+
+    function render() {
+      const container = document.getElementById('notes-container');
+      const notes = getNotes();
+      container.innerHTML = '';
+      notes.forEach((text, idx) =&gt; {
+        const div = document.createElement('div');
+        div.className = 'note-card';
+        div.innerHTML = `&lt;span&gt;${text}&lt;/span&gt;&lt;button class="note-del" onclick="deleteNote(${idx})"&gt;&amp;times;&lt;/button&gt;`;
+        container.appendChild(div);
+      });
+    }
+
+    function addNote() {
+      const input = document.getElementById('note-input');
+      const val = input.value.trim();
+      if (!val) return;
+      const notes = getNotes();
+      notes.push(val);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      input.value = '';
+      render();
+    }
+
+    function deleteNote(idx) {
+      const notes = getNotes();
+      notes.splice(idx, 1);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      render();
+    }
+
+    function clearAll() {
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+    }
+
+    render();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Mistakes & Pro Tips -->
+        <div class="callout callout-mistake">
+          <div class="callout-title">&#9888; Common Storage Security &amp; Performance Mistakes</div>
+          <ul>
+            <li><strong>Storing Sensitive Credentials:</strong> NEVER store unencrypted passwords, credit card numbers, or high-privilege API secret keys in <code>localStorage</code>. Any malicious third-party script injected via XSS (Cross-Site Scripting) can read the entire contents of <code>localStorage</code> with a single line of JavaScript!</li>
+            <li><strong>Synchronous Blocking of UI Thread:</strong> Unlike IndexedDB, <code>localStorage</code> is completely synchronous. Reading or writing megabytes of JSON freezes the main JavaScript UI thread, causing noticeable lag and frame drops.</li>
+            <li><strong>Assuming Unlimited Lifetime:</strong> Some mobile browsers (like iOS Safari in certain battery-saver or storage-constrained modes) may automatically purge <code>localStorage</code> for sites not visited within 7 days. Use storage as an enhancement, not your only source of truth.</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#128161; Senior Pro Tips</div>
+          <ul>
+            <li><strong>Namespace Your Storage Keys:</strong> Prefix your keys with your app name (e.g. <code>app_v1_theme</code> instead of just <code>theme</code>). This prevents naming collisions if multiple scripts or subdomains share origin storage.</li>
+            <li><strong>Version Your Storage Schema:</strong> Always store a schema version (e.g. <code>{ version: 2, data: ... }</code>). When updating your web app, check the version and migrate or reset old legacy data schemas gracefully.</li>
+          </ul>
+        </div>
+
+        <!-- Quick Recap -->
+        <div class="callout callout-recap">
+          <div class="callout-title">&#9989; Quick Recap</div>
+          <ul>
+            <li><code>localStorage</code> persists permanently across sessions; <code>sessionStorage</code> is wiped when the tab closes.</li>
+            <li>Use <code>setItem(key, value)</code>, <code>getItem(key)</code>, <code>removeItem(key)</code>, and <code>clear()</code>.</li>
+            <li>Web Storage only accepts strings: always wrap objects in <code>JSON.stringify()</code> and <code>JSON.parse()</code>.</li>
+            <li>Storage is bound to the Same-Origin Policy (protocol, domain, port).</li>
+            <li>Listen to <code>window.addEventListener('storage', ...)</code> to sync changes across different open tabs in real time.</li>
+          </ul>
+        </div>
+
+        <!-- Practice Exercises -->
+        <section id="exercises">
+          <h2>Hands-On Practice Exercises</h2>
+
+          <!-- Exercise 1 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-easy">Easy</span>
+              <h4>Exercise 1: Page Visit Counter</h4>
+            </div>
+            <p>Write a script that tracks how many times the user has visited the page. If it's their first time, set the count to 1 and log "Welcome to your first visit!". On subsequent visits, increment the count by 1 and log "Welcome back! Visit #X".</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function trackVisits() {
+  const currentCount = localStorage.getItem("site_visit_count");
+  const count = currentCount ? parseInt(currentCount, 10) + 1 : 1;
+  localStorage.setItem("site_visit_count", count.toString());
+
+  if (count === 1) {
+    console.log("Welcome to your first visit!");
+  } else {
+    console.log(`Welcome back! Visit #${count}`);
+  }
+}
+
+trackVisits();</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 2 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-medium">Medium</span>
+              <h4>Exercise 2: Storage with Automatic Expiration (TTL)</h4>
+            </div>
+            <p>Write two functions: <code>setWithExpiry(key, value, ttlMs)</code> that stores a value with an expiration timestamp, and <code>getWithExpiry(key)</code> that returns <code>null</code> and removes the key if the expiration time has elapsed.</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function setWithExpiry(key, value, ttlMs) {
+  const now = new Date();
+  const item = {
+    value: value,
+    expiry: now.getTime() + ttlMs
+  };
+  localStorage.setItem(key, JSON.stringify(item));
+}
+
+function getWithExpiry(key) {
+  const itemStr = localStorage.getItem(key);
+  if (!itemStr) return null;
+
+  try {
+    const item = JSON.parse(itemStr);
+    const now = new Date().getTime();
+    if (now > item.expiry) {
+      // Expired! Delete and return null
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
+  } catch (err) {
+    return null;
+  }
+}
+
+// Test with 2 second TTL:
+setWithExpiry("temp_discount", "SAVE50", 2000);
+console.log(getWithExpiry("temp_discount")); // "SAVE50"
+// After 2.5 seconds: getWithExpiry("temp_discount") returns null!</code></pre>
+            </details>
+          </div>
+
+          <!-- Exercise 3 -->
+          <div class="exercise-card">
+            <div class="exercise-header">
+              <span class="exercise-difficulty diff-hard">Hard</span>
+              <h4>Exercise 3: Calculate Remaining LocalStorage Capacity</h4>
+            </div>
+            <p>Write a function <code>getStorageUsageInfo()</code> that computes the total bytes currently consumed by all keys and values in <code>localStorage</code>, formatted in Kilobytes (KB) and Megabytes (MB).</p>
+            <details class="exercise-solution">
+              <summary>View Solution</summary>
+              <pre class="code-block" data-lang="javascript"><code>function getStorageUsageInfo() {
+  let totalChars = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
+    // In UTF-16 (JavaScript strings), each character is roughly 2 bytes
+    totalChars += (key.length + value.length);
+  }
+
+  const bytes = totalChars * 2;
+  const kb = (bytes / 1024).toFixed(2);
+  const mb = (bytes / (1024 * 1024)).toFixed(3);
+
+  return {
+    itemCount: localStorage.length,
+    bytes: bytes,
+    kilobytes: kb + " KB",
+    megabytes: mb + " MB"
+  };
+}
+
+console.log(getStorageUsageInfo());</code></pre>
+            </details>
+          </div>
+        </section>
+
+        <!-- 5-Question Interactive Quiz -->
+        <section id="lesson-quiz">
+          <h2>Interactive Quiz: LocalStorage &amp; SessionStorage</h2>
+          <div class="quiz-container" id="quiz-js-20">
+            <div class="quiz-question-card" data-q="0">
+              <p class="quiz-q-text">1. What is the fundamental difference in lifetime between LocalStorage and SessionStorage?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'LocalStorage does not expire in 24 hours.')">LocalStorage expires after 24 hours; SessionStorage is permanent</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! LocalStorage persists until explicitly deleted, while SessionStorage is destroyed when the browser tab is closed.')">LocalStorage persists until cleared; SessionStorage is cleared when the tab closes</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Both can be cleared by code.')">SessionStorage cannot be cleared with JavaScript code</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Lifetimes are completely different.')">There is no lifetime difference between them</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="1">
+              <p class="quiz-q-text">2. What happens if you run <code>localStorage.setItem('user', { id: 1 })</code> without JSON.stringify?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not throw a TypeError.')">It throws a TypeError: Value must be string</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! JS converts the object to a string by calling toString(), storing the useless string [object Object].')">It stores the string '[object Object]'</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does not auto-stringify.')">It automatically converts it to valid JSON</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does store a value.')">It silently ignores the command without saving anything</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="2">
+              <p class="quiz-q-text">3. What is the typical storage quota limit per origin in modern browsers for LocalStorage?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '4KB is the limit for cookies.')">4 Kilobytes</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '500KB is too small.')">500 Kilobytes</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Most desktop and mobile browsers allocate approximately 5MB (some up to 10MB) per origin.')">Approximately 5 Megabytes</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, '500MB is typical for IndexedDB, not LocalStorage.')">500 Megabytes</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="3">
+              <p class="quiz-q-text">4. When is the window <code>'storage'</code> event dispatched?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It does NOT fire in the tab where the change occurred.')">Only inside the active tab that made the change</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! The storage event fires on other open tabs and windows of the same origin to facilitate synchronization.')">On all other open tabs of the same origin</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'It only fires for changes, not on initial load.')">Every time the browser is launched</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'Different origins have strict cross-origin isolation.')">Across all websites on the user machine</button>
+              </div>
+            </div>
+
+            <div class="quiz-question-card" data-q="4">
+              <p class="quiz-q-text">5. Why should you NEVER store sensitive authentication secrets or passwords in LocalStorage?</p>
+              <div class="quiz-options">
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'LocalStorage is not transmitted with HTTP requests.')">Because LocalStorage is automatically sent with every HTTP request</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, true, 'Correct! Any malicious script injected via an XSS vulnerability can read all localStorage data immediately.')">Any injected script (XSS) can easily read all LocalStorage data</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'LocalStorage survives page refreshes.')">Because it deletes automatically when the user refreshes</button>
+                <button class="quiz-btn" onclick="checkAnswer(this, false, 'LocalStorage can be encrypted with code, but plain storage is vulnerable.')">Because the browser encrypts it with an unbreakable key</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mini-Task -->
+        <div class="callout callout-task">
+          <div class="callout-title">&#128736; Mini-Task: Build an Auto-Saving Form Draft</div>
+          <p>
+            Build a feedback form with inputs for "Subject" and "Message". As the user types (using the <code>input</code> event), automatically save their draft to <code>localStorage</code>. When the page reloads, pre-fill any saved draft into the fields. When the user clicks "Submit", clear the draft from storage and show an alert!
+          </p>
+        </div>
+
+        <!-- Related References -->
+        <div class="callout callout-ref">
+          <div class="callout-title">&#128279; Related Built-in References</div>
+          <p>
+            &bull; Explore Web Storage methods in our <a href="../reference/js-reference.html#storage">JavaScript Built-in Reference</a>.<br>
+            &bull; Review Same-Origin Policy and Web Storage in our <a href="../reference/glossary.html#same-origin-policy">Technical Glossary</a>.<br>
+            &bull; Next lesson: Master pattern matching with <a href="21-regex-basics.html">21. Regular Expressions (RegEx) Basics</a>.
+          </p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="19-fetch-api-and-json.html" class="nav-btn prev-btn">&larr; Previous: Fetch API &amp; JSON</a>
+          <button class="btn-complete" onclick="markLessonComplete('20-localstorage-sessionstorage.html')">&#10003; Mark as Complete</button>
+          <a href="21-regex-basics.html" class="nav-btn next-btn">Next: RegEx Basics &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/quiz.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

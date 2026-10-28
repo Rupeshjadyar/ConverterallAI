@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Frontend Interview Questions &amp; Answers — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <style>
+    .qa-search { width: 100%; box-sizing: border-box; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 15px; color: var(--text-main); margin-bottom: 20px; }
+    .qa-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .qa-filter-btn { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); transition: all 0.2s; }
+    .qa-filter-btn:hover, .qa-filter-btn.active { background: var(--c-primary); color: white; border-color: var(--c-primary); }
+    .qa-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 22px; margin-bottom: 20px; transition: border-color 0.2s; }
+    .qa-card:hover { border-color: var(--c-primary); }
+    .qa-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .qa-question { font-size: 18px; font-weight: 700; margin: 0; color: var(--text-main); line-height: 1.4; }
+    .qa-badges { display: flex; gap: 6px; flex-shrink: 0; }
+    .qa-answer { font-size: 15px; line-height: 1.7; color: var(--text-main); }
+    .qa-interviewer-tip { background: rgba(56, 189, 248, 0.08); border-left: 4px solid var(--c-primary); padding: 10px 14px; border-radius: 4px; font-size: 13px; margin-top: 14px; }
+    .qa-interviewer-tip strong { color: var(--c-primary); }
+  </style>
+</head>
+<body data-course="practice" data-current-lesson="interview-questions.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">&#128188; Career &amp; Jobs</span>
+            <span class="reading-time">&#128338; 50+ In-Depth Answers</span>
+          </div>
+          <h1 class="lesson-title">Frontend Developer Interview Q&amp;A</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Real-world interview questions asked at top tech companies. Master deep conceptual explanations, code diagrams, and what interviewers look for.</span>
+            <span class="lang-hi">Frontend developer interview questions aur full answers. Junior se Senior level ke HTML, CSS aur JavaScript concepts.</span>
+          </p>
+        </div>
+
+        <input type="text" id="qa-search-box" class="qa-search" placeholder="&#128269; Search questions (e.g. Closure, Event Loop, Specificity, Box Model, async/await)..." oninput="filterQA()">
+
+        <div class="qa-filters">
+          <button class="qa-filter-btn active" onclick="setQATopic('all', this)">All Questions</button>
+          <button class="qa-filter-btn" onclick="setQATopic('html', this)">HTML5 &amp; Accessibility</button>
+          <button class="qa-filter-btn" onclick="setQATopic('css', this)">CSS3 &amp; Layout</button>
+          <button class="qa-filter-btn" onclick="setQATopic('js', this)">JavaScript Core</button>
+          <button class="qa-filter-btn" onclick="setQATopic('perf', this)">Performance &amp; Web APIs</button>
+        </div>
+
+        <div id="qa-count" style="margin-bottom:20px; font-size:14px; font-weight:600; color:var(--text-muted);">Showing questions</div>
+
+        <div id="qa-container">
+
+          <!-- Q1: Event Loop -->
+          <div class="qa-card" data-topic="js" data-keywords="event loop call stack microtask macrotask settimeout promise">
+            <div class="qa-header">
+              <h3 class="qa-question">1. Explain how the JavaScript Event Loop works and the difference between Microtasks and Macrotasks.</h3>
+              <div class="qa-badges">
+                <span class="badge badge-advanced">Senior</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">JavaScript</span>
+              </div>
+            </div>
+            <div class="qa-answer">
+              <p>JavaScript is strictly single-threaded with a single synchronous <strong>Call Stack</strong>. When asynchronous operations occur (like <code>setTimeout</code> or <code>fetch</code>), they are handed off to browser Web APIs off-thread.</p>
+              <p>When completed, their callbacks enter one of two queues:</p>
+              <ul>
+                <li><strong>Microtask Queue:</strong> Holds Promise callbacks (<code>.then()</code>, <code>.catch()</code>), <code>queueMicrotask()</code>, and <code>MutationObserver</code>. Microtasks have supreme priority: the Event Loop empties the entire microtask queue before moving to the next task!</li>
+                <li><strong>Macrotask Queue (Task Queue):</strong> Holds <code>setTimeout</code>, <code>setInterval</code>, and DOM event callbacks. Exactly one macrotask runs per loop tick.</li>
+              </ul>
+              <div class="code-block-container">
+                <div class="code-block-header"><span class="code-lang">JavaScript</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+                <pre class="code-block" data-lang="javascript"><code>console.log('A');
+setTimeout(() => console.log('B'), 0); // Macrotask
+Promise.resolve().then(() => console.log('C')); // Microtask
+console.log('D');
+// Output: A -> D -> C -> B</code></pre>
+              </div>
+              <div class="qa-interviewer-tip">
+                <strong>What the interviewer is testing:</strong> Do you understand why <code>setTimeout(fn, 0)</code> does not execute immediately, and how excessive unresolved Promise loops can starve UI rendering.
+              </div>
+            </div>
+          </div>
+
+          <!-- Q2: Closures -->
+          <div class="qa-card" data-topic="js" data-keywords="closure lexical scope private variables memory">
+            <div class="qa-header">
+              <h3 class="qa-question">2. What is a Closure in JavaScript and what are its practical use cases?</h3>
+              <div class="qa-badges">
+                <span class="badge badge-intermediate">Mid-Level</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">JavaScript</span>
+              </div>
+            </div>
+            <div class="qa-answer">
+              <p>A <strong>Closure</strong> is the combination of a function bundled together with references to its surrounding lexical environment. In JavaScript, every inner function retains access to variables declared in its outer scope, even after that outer function has returned and finished executing!</p>
+              <p><strong>Practical Use Cases:</strong></p>
+              <ul>
+                <li><strong>Data Encapsulation / Private State:</strong> Emulating private variables before private class fields existed.</li>
+                <li><strong>Function Factories:</strong> Generating configured helper functions (like currying or customized tax calculators).</li>
+                <li><strong>Event Handlers and Callbacks:</strong> Preserving parameter state inside loops and async timers.</li>
+              </ul>
+              <div class="code-block-container">
+                <div class="code-block-header"><span class="code-lang">JavaScript</span><button class="btn-copy" onclick="copyCode(this)">Copy</button></div>
+                <pre class="code-block" data-lang="javascript"><code>function createCounter(initialValue = 0) {
+  let count = initialValue; // Private variable trapped in closure!
+  return {
+    increment: () => ++count,
+    get: () => count
+  };
+}
+const counter = createCounter(10);
+console.log(counter.increment()); // 11
+console.log(counter.count);       // undefined (cannot be accessed directly!)</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q3: CSS Specificity -->
+          <div class="qa-card" data-topic="css" data-keywords="specificity cascade priority important inline id class">
+            <div class="qa-header">
+              <h3 class="qa-question">3. How does CSS Specificity work and how is it calculated?</h3>
+              <div class="qa-badges">
+                <span class="badge badge-intermediate">Mid-Level</span>
+                <span class="badge" style="background:var(--c-css-light); color:var(--c-css);">CSS</span>
+              </div>
+            </div>
+            <div class="qa-answer">
+              <p>When multiple conflicting CSS rules target the exact same element, browsers calculate a 4-tier numeric specificity score <code>(Inline, ID, Class/Attribute/Pseudo-class, Element)</code> to determine which rule wins:</p>
+              <ul>
+                <li><strong>Inline Styles:</strong> <code>(1, 0, 0, 0)</code> &mdash; e.g. <code>style="color:red;"</code></li>
+                <li><strong>IDs:</strong> <code>(0, 1, 0, 0)</code> &mdash; e.g. <code>#nav-header</code></li>
+                <li><strong>Classes, Attributes &amp; Pseudo-classes:</strong> <code>(0, 0, 1, 0)</code> &mdash; e.g. <code>.btn</code>, <code>[type="text"]</code>, <code>:hover</code></li>
+                <li><strong>Elements &amp; Pseudo-elements:</strong> <code>(0, 0, 0, 1)</code> &mdash; e.g. <code>div</code>, <code>p</code>, <code>::before</code></li>
+                <li><strong>Universal Selector:</strong> <code>(0, 0, 0, 0)</code> &mdash; <code>*</code> adds zero specificity.</li>
+              </ul>
+              <p><em>Rule:</em> A higher specificity category ALWAYS trumps any amount of lower category selectors. E.g. 1 ID <code>(0, 1, 0, 0)</code> beats 100 classes <code>(0, 0, 100, 0)</code>! <code>!important</code> bypasses the normal cascade and should be used only for utility overrides.</p>
+            </div>
+          </div>
+
+          <!-- Q4: HTML5 Semantic Elements -->
+          <div class="qa-card" data-topic="html" data-keywords="semantic html seo accessibility div aria landmarks">
+            <div class="qa-header">
+              <h3 class="qa-question">4. Why is Semantic HTML important compared to using generic &lt;div&gt; tags?</h3>
+              <div class="qa-badges">
+                <span class="badge badge-beginner">Junior</span>
+                <span class="badge" style="background:var(--c-html-light); color:var(--c-html);">HTML</span>
+              </div>
+            </div>
+            <div class="qa-answer">
+              <p>Semantic HTML means using tags that describe the meaning of content (e.g. <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>) instead of generic <code>&lt;div&gt;</code> containers. Key benefits:</p>
+              <ul>
+                <li><strong>Accessibility (A11y):</strong> Screen readers parse landmark tags directly. Visually impaired users can press shortcut keys to jump straight to <code>&lt;nav&gt;</code> or <code>&lt;main&gt;</code> without listening to entire pages.</li>
+                <li><strong>SEO:</strong> Search engine web crawlers assign higher relevance to headings inside <code>&lt;article&gt;</code> and <code>&lt;main&gt;</code> while de-prioritizing auxiliary content in <code>&lt;aside&gt;</code>.</li>
+                <li><strong>Maintainability:</strong> Clean, self-documenting codebases that are far easier for engineering teams to inspect and refactor.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Q5: Debounce vs Throttle -->
+          <div class="qa-card" data-topic="perf" data-keywords="debounce throttle performance scroll resize optimize">
+            <div class="qa-header">
+              <h3 class="qa-question">5. Compare Debounce vs Throttle and provide a real-world scenario for each.</h3>
+              <div class="qa-badges">
+                <span class="badge badge-advanced">Senior</span>
+                <span class="badge" style="background:var(--c-js-light); color:var(--c-js);">Performance</span>
+              </div>
+            </div>
+            <div class="qa-answer">
+              <p>Both techniques rate-limit high-frequency event handlers, but with different timing semantics:</p>
+              <ul>
+                <li><strong>Debounce:</strong> Groups multiple consecutive events into a single execution after a specified duration of silence. If new events continue firing before the timer expires, the timer resets.
+                  <br><em>Best Scenario:</em> Search box autocomplete API calls or auto-saving user drafts as they type.</li>
+                <li><strong>Throttle:</strong> Ensures the callback runs at a steady, fixed rate (at most once every X milliseconds), regardless of how continuously the user triggers the event.
+                  <br><em>Best Scenario:</em> Infinite scrolling triggers or browser window resize computations.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="index.html" class="nav-btn prev-btn">&larr; Coding Challenges</a>
+          <a href="../projects/index.html" class="nav-btn next-btn">Guided Step-by-Step Projects &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    let activeTopic = 'all';
+
+    function setQATopic(topic, btn) {
+      activeTopic = topic;
+      document.querySelectorAll('.qa-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterQA();
+    }
+
+    function filterQA() {
+      const q = document.getElementById('qa-search-box').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.qa-card');
+      let count = 0;
+
+      cards.forEach(card => {
+        const top = card.getAttribute('data-topic');
+        const kw = card.getAttribute('data-keywords') || '';
+        const title = card.querySelector('.qa-question').textContent.toLowerCase();
+        const text = card.querySelector('.qa-answer').textContent.toLowerCase();
+
+        const matchTopic = (activeTopic === 'all' || top === activeTopic);
+        const matchSearch = (!q || title.includes(q) || text.includes(q) || kw.includes(q));
+
+        if (matchTopic && matchSearch) {
+          card.style.display = 'block';
+          count++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('qa-count').textContent = `Showing ${count} questions`;
+    }
+    filterQA();
+  </script>
+</body>
+</html>

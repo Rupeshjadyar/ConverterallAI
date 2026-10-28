@@ -7,7 +7,6 @@ import { SITE_DOMAIN, SITE_BRAND, DEFAULT_OG_IMAGE } from '../data/seo.config';
 import { ToolItem } from '../data/tools.data';
 import { CategoryItem } from '../data/categories.data';
 import { ToolRegistryService } from './tool-registry.service';
-import { TTS_LANGUAGES } from '../data/tts-languages.data';
 
 export interface SeoConfig {
   title: string;
@@ -49,6 +48,13 @@ const STATIC_ROUTE_SEO: Record<string, SeoConfig> = {
     description: 'Read ConverterAllAI\'s strict privacy policy. Learn how our browser-based client-side tools protect your sensitive documents, photos, and personal information.',
     keywords: 'privacy policy, client side privacy, in-browser security, no upload policy',
     canonical: `${SITE_DOMAIN}/privacy-policy`,
+    robots: 'index, follow'
+  },
+  '/ai-chat': {
+    title: 'Free AI Chat - Groq & Gemini Auto-Failover | ConverterAllAI',
+    description: 'Chat with top free-tier AI models: Groq (14.4k RPD), Google Gemini (1.5k RPD), OpenRouter, and Hugging Face. Includes automated 429 rate-limit failover and clean code syntax highlighting.',
+    keywords: 'free ai chat, groq playground, gemini flash free, openrouter deepseek r1, ai failover, ai code generator',
+    canonical: `${SITE_DOMAIN}/ai-chat`,
     robots: 'index, follow'
   },
   '/terms-of-service': {
@@ -379,50 +385,52 @@ export class SeoService {
     const ttsPrefix = cleanPath.startsWith('/audio-processing/tts/') ? '/audio-processing/tts/' : cleanPath.startsWith('/tts/') ? '/tts/' : null;
     if (ttsPrefix) {
       const slug = cleanPath.slice(ttsPrefix.length);
-      const lang = TTS_LANGUAGES.find(l => l.slug === slug);
-      if (lang) {
-        const base = `${lang.lang} (${lang.country})`;
-        let pageTitle = `${base} Voice TTS Free - MP3 | ConverterAllAI`;
-        if (pageTitle.length > 60) {
-          pageTitle = `${base} TTS Free - MP3 | ConverterAllAI`;
-        }
-        if (pageTitle.length > 60) {
-          pageTitle = `${base} Free TTS | ConverterAllAI`;
-        }
-        if (pageTitle.length > 60) {
-          pageTitle = `${lang.lang} (${lang.code}) Free TTS | ConverterAllAI`;
-        }
+      import('../data/tts-languages.data').then(({ TTS_LANGUAGES }) => {
+        const lang = TTS_LANGUAGES.find(l => l.slug === slug);
+        if (lang) {
+          const base = `${lang.lang} (${lang.country})`;
+          let pageTitle = `${base} Voice TTS Free - MP3 | ConverterAllAI`;
+          if (pageTitle.length > 60) {
+            pageTitle = `${base} TTS Free - MP3 | ConverterAllAI`;
+          }
+          if (pageTitle.length > 60) {
+            pageTitle = `${base} Free TTS | ConverterAllAI`;
+          }
+          if (pageTitle.length > 60) {
+            pageTitle = `${lang.lang} (${lang.code}) Free TTS | ConverterAllAI`;
+          }
 
-        let pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI.`;
-        if (pageDesc.length > 165) {
-          pageDesc = `Convert ${lang.lang} text to speech with ${lang.country} accent online. Generate realistic voice audio MP3 files free with zero signup on ConverterAllAI.`;
-        }
-        if (pageDesc.length > 165) {
-          pageDesc = `Convert ${lang.lang} text to voice with ${lang.country} accent online. Free speech MP3 generator with zero signup on ConverterAllAI tool.`;
-        }
-        if (pageDesc.length < 140) {
-          pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI web.`;
-        }
+          let pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI.`;
+          if (pageDesc.length > 165) {
+            pageDesc = `Convert ${lang.lang} text to speech with ${lang.country} accent online. Generate realistic voice audio MP3 files free with zero signup on ConverterAllAI.`;
+          }
+          if (pageDesc.length > 165) {
+            pageDesc = `Convert ${lang.lang} text to voice with ${lang.country} accent online. Free speech MP3 generator with zero signup on ConverterAllAI tool.`;
+          }
+          if (pageDesc.length < 140) {
+            pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI web.`;
+          }
 
-        const canonicalUrl = `${SITE_DOMAIN}${cleanPath}`;
+          const canonicalUrl = `${SITE_DOMAIN}${cleanPath}`;
 
-        const breadcrumbs = this.buildBreadcrumbListSchema([
-          { name: 'Home', url: SITE_DOMAIN },
-          { name: 'Audio Tools', url: `${SITE_DOMAIN}/audio-processing` },
-          { name: 'TTS Voice Studio', url: `${SITE_DOMAIN}/audio-processing/tts` },
-          { name: `${lang.lang} (${lang.country}) TTS`, url: canonicalUrl }
-        ]);
+          const breadcrumbs = this.buildBreadcrumbListSchema([
+            { name: 'Home', url: SITE_DOMAIN },
+            { name: 'Audio Tools', url: `${SITE_DOMAIN}/audio-processing` },
+            { name: 'TTS Voice Studio', url: `${SITE_DOMAIN}/audio-processing/tts` },
+            { name: `${lang.lang} (${lang.country}) TTS`, url: canonicalUrl }
+          ]);
 
-        this.update({
-          title: pageTitle,
-          description: pageDesc,
-          keywords: `${lang.lang} text to speech, ${lang.country} voice generator, ${lang.code} tts, online text to mp3`,
-          canonical: canonicalUrl,
-          robots: 'index, follow',
-          jsonLd: [breadcrumbs]
-        });
-        return;
-      }
+          this.update({
+            title: pageTitle,
+            description: pageDesc,
+            keywords: `${lang.lang} text to speech, ${lang.country} voice generator, ${lang.code} tts, online text to mp3`,
+            canonical: canonicalUrl,
+            robots: 'index, follow',
+            jsonLd: [breadcrumbs]
+          });
+        }
+      });
+      return;
     }
 
     // 6. Fallback / 404

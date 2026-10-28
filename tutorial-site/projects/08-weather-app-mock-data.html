@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="root-path" content="../">
+  <title>Project 08: Weather App (Offline Mock Data) — WebDev Academy</title>
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body data-course="projects" data-current-lesson="08-weather-app-mock-data.html">
+  <header id="app-header"></header>
+
+  <div class="layout-container">
+    <aside id="app-sidebar"></aside>
+
+    <main class="main-content">
+      <div class="content-inner">
+
+        <!-- Header -->
+        <div class="lesson-header">
+          <div class="lesson-meta">
+            <span class="badge badge-advanced">Advanced</span>
+            <span class="reading-time">&#128338; 35 min build</span>
+            <span class="badge" style="background:var(--c-projects-light); color:var(--c-projects); border:1px solid var(--c-projects-border);">Project 08</span>
+          </div>
+          <h1 class="lesson-title">Guided Project: Offline Weather Dashboard (Mock API)</h1>
+          <p class="lesson-subtitle">
+            <span class="lang-en">Build an enterprise-grade weather forecasting interface. Master async/await data handling, temperature unit conversion (&deg;C/&deg;F), and self-contained offline mock JSON endpoints.</span>
+            <span class="lang-hi">Complete Weather App banayein: 100% offline mock REST API, Celsius/Fahrenheit toggle, multi-city search, aur 5-day weather forecast.</span>
+          </p>
+        </div>
+
+        <div class="callout callout-learn">
+          <div class="callout-title">&#128218; Core Technical Concepts</div>
+          <ul>
+            <li><strong>Zero-Dependency Offline REST Emulation:</strong> Simulating real HTTP endpoints and network latency with custom Promise wrappers.</li>
+            <li><strong>Dynamic Unit Calculations:</strong> Toggling between Celsius and Fahrenheit (<code>(C * 9/5) + 32</code>) across all forecast cards simultaneously.</li>
+            <li><strong>Asynchronous State Management:</strong> Rendering loading spinners, error badges for invalid cities, and smooth DOM repaints.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Sandbox -->
+        <section id="try-it-live">
+          <h2>Interactive Try-It Sandbox: Live Working Weather Dashboard</h2>
+          <p>
+            <span class="lang-en">Search for cities (e.g. "Mumbai", "London", "Tokyo", "New York", "Delhi") or click the &deg;C/&deg;F toggle:</span>
+            <span class="lang-hi">Neeche diye gaye live sandbox me weather app test karein:</span>
+          </p>
+
+          <div class="try-it-container" id="editor-weather">
+            <div class="try-it-header">
+              <span class="try-it-title">&#9654; Live Weather Dashboard Runner</span>
+              <div class="try-it-actions">
+                <button class="btn-run" onclick="runLiveEditor('editor-weather')">&#9658; Run Code</button>
+                <button class="btn-reset" onclick="resetLiveEditor('editor-weather')">&#8635; Reset</button>
+              </div>
+            </div>
+            <div class="try-it-editor-grid">
+              <div class="editor-pane">
+                <textarea class="code-input" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .weather-card { width: 100%; max-width: 440px; background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .search-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    input { flex: 1; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 14px; }
+    button.btn-search { padding: 10px 14px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; }
+    .unit-toggle { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .btn-unit { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
+    .hero-weather { text-align: center; padding: 16px 0; border-bottom: 1px solid #334155; }
+    .city-name { font-size: 24px; font-weight: bold; }
+    .temp-large { font-size: 48px; font-weight: 800; color: #38bdf8; margin: 6px 0; }
+    .cond-text { font-size: 15px; color: #94a3b8; font-weight: 600; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+    .meta-item { background: #0f172a; border: 1px solid #334155; padding: 10px; border-radius: 6px; text-align: center; }
+    .meta-val { font-size: 16px; font-weight: bold; color: white; margin-top: 2px; }
+    .meta-label { font-size: 11px; color: #94a3b8; }
+    .forecast-title { font-size: 13px; font-weight: bold; color: #94a3b8; margin-bottom: 8px; }
+    .forecast-strip { display: flex; justify-content: space-between; gap: 6px; }
+    .day-pill { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 4px; flex: 1; text-align: center; font-size: 11px; }
+    .day-temp { font-weight: bold; color: #38bdf8; margin-top: 4px; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="weather-card"&gt;
+    &lt;div class="search-row"&gt;
+      &lt;input id="city-input" value="Mumbai" placeholder="Enter city (e.g. London, Tokyo)..."&gt;
+      &lt;button class="btn-search" onclick="fetchWeather()"&gt;Search&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div class="unit-toggle"&gt;
+      &lt;button class="btn-unit" id="unit-btn" onclick="toggleUnit()"&gt;&amp;deg;C &amp;rarr; &amp;deg;F&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div class="hero-weather"&gt;
+      &lt;div class="city-name" id="city-title"&gt;Mumbai, IN&lt;/div&gt;
+      &lt;div class="temp-large" id="temp-display"&gt;31&amp;deg;C&lt;/div&gt;
+      &lt;div class="cond-text" id="cond-display"&gt;&#9728; Sunny &amp; Humid&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="meta-grid"&gt;
+      &lt;div class="meta-item"&gt;
+        &lt;div class="meta-label"&gt;HUMIDITY&lt;/div&gt;
+        &lt;div class="meta-val" id="hum-val"&gt;78%&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class="meta-item"&gt;
+        &lt;div class="meta-label"&gt;WIND SPEED&lt;/div&gt;
+        &lt;div class="meta-val" id="wind-val"&gt;14 km/h&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="forecast-title"&gt;5-DAY FORECAST&lt;/div&gt;
+    &lt;div class="forecast-strip" id="forecast-box"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    // 100% Offline Mock Weather Database
+    const MOCK_DB = {
+      mumbai: { name: "Mumbai, IN", tempC: 31, cond: "&#9728; Sunny &amp; Humid", hum: "78%", wind: "14 km/h", f: [31, 32, 30, 29, 31] },
+      london: { name: "London, UK", tempC: 16, cond: "&#127783; Light Drizzle", hum: "84%", wind: "22 km/h", f: [16, 15, 17, 18, 14] },
+      tokyo: { name: "Tokyo, JP", tempC: 22, cond: "&#9925; Partly Cloudy", hum: "62%", wind: "11 km/h", f: [22, 23, 21, 20, 24] },
+      delhi: { name: "Delhi, IN", tempC: 34, cond: "&#9728; Clear Sky", hum: "45%", wind: "9 km/h", f: [34, 35, 36, 33, 34] },
+      newyork: { name: "New York, US", tempC: 19, cond: "&#9729; Overcast", hum: "58%", wind: "18 km/h", f: [19, 21, 18, 16, 20] }
+    };
+
+    let isFahrenheit = false;
+    let currentData = MOCK_DB.mumbai;
+
+    function formatTemp(celsius) {
+      if (!isFahrenheit) return `${celsius}&amp;deg;C`;
+      const f = Math.round((celsius * 9/5) + 32);
+      return `${f}&amp;deg;F`;
+    }
+
+    function renderWeather() {
+      document.getElementById('city-title').textContent = currentData.name;
+      document.getElementById('temp-display').innerHTML = formatTemp(currentData.tempC);
+      document.getElementById('cond-display').innerHTML = currentData.cond;
+      document.getElementById('hum-val').textContent = currentData.hum;
+      document.getElementById('wind-val').textContent = currentData.wind;
+
+      const fBox = document.getElementById('forecast-box');
+      fBox.innerHTML = '';
+      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+      currentData.f.forEach((temp, idx) =&gt; {
+        const pill = document.createElement('div');
+        pill.className = 'day-pill';
+        pill.innerHTML = `&lt;div&gt;${days[idx]}&lt;/div&gt;&lt;div class="day-temp"&gt;${formatTemp(temp)}&lt;/div&gt;`;
+        fBox.appendChild(pill);
+      });
+    }
+
+    // Mock Fetch Simulator
+    async function fetchWeather() {
+      const cityKey = document.getElementById('city-input').value.toLowerCase().replace(/\s+/g, '');
+      const btn = document.querySelector('.btn-search');
+      btn.textContent = '...';
+
+      // Simulate 200ms latency
+      await new Promise(r =&gt; setTimeout(r, 200));
+      btn.textContent = 'Search';
+
+      if (MOCK_DB[cityKey]) {
+        currentData = MOCK_DB[cityKey];
+        renderWeather();
+      } else {
+        alert("City not found in offline mock DB! Available: Mumbai, London, Tokyo, Delhi, New York");
+      }
+    }
+
+    function toggleUnit() {
+      isFahrenheit = !isFahrenheit;
+      document.getElementById('unit-btn').innerHTML = isFahrenheit ? '&amp;deg;F &amp;rarr; &amp;deg;C' : '&amp;deg;C &amp;rarr; &amp;deg;F';
+      renderWeather();
+    }
+
+    renderWeather();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+              </div>
+              <div class="preview-pane">
+                <iframe class="live-preview" sandbox="allow-scripts allow-modals"></iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="lesson-navigation">
+          <a href="07-image-gallery-lightbox.html" class="nav-btn prev-btn">&larr; Project 07: Image Gallery</a>
+          <button class="btn-complete" onclick="markLessonComplete('08-weather-app-mock-data.html')">&#10003; Mark as Complete</button>
+          <a href="09-expense-tracker.html" class="nav-btn next-btn">Project 09: Expense Tracker &rarr;</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Side Table of Contents -->
+    <aside class="right-toc" id="right-toc"></aside>
+  </div>
+
+  <footer id="app-footer"></footer>
+
+  <script src="../assets/js/highlighter.js"></script>
+  <script src="../assets/js/editor.js"></script>
+  <script src="../assets/js/progress.js"></script>
+  <script src="../assets/js/theme.js"></script>
+  <script src="../assets/js/search-index.js"></script>
+  <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
