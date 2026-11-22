@@ -1,0 +1,66 @@
+<div class="ttt-container">
+      
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Tic-Tac-Toe Neon ❌⭕</h1>
+        </div>
+
+        <div class="header-controls">
+          <div class="mode-select">
+            <label>Mode:</label>
+            <select [ngModel]="gameMode()" (ngModelChange)="setMode($event)">
+              <option value="unbeatable">🤖 vs Unbeatable AI</option>
+              <option value="easy">🤖 vs Casual AI</option>
+              <option value="2p">👥 2 Players (Pass & Play)</option>
+            </select>
+          </div>
+          <button (click)="resetGame()" class="btn-top">🔄 Restart</button>
+        </div>
+      </div>
+
+      <div class="ttt-arena">
+        
+        <!-- Scoreboard -->
+        <div class="scoreboard glass">
+          <div class="score-card player-x" [class.turn-glow]="turn() === 'X' && !winner()">
+            <span class="player-label">PLAYER X (You)</span>
+            <span class="score-num">{{ xWins() }}</span>
+          </div>
+
+          <div class="score-card ties-card">
+            <span class="player-label">TIES</span>
+            <span class="score-num">{{ ties() }}</span>
+          </div>
+
+          <div class="score-card player-o" [class.turn-glow]="turn() === 'O' && !winner()">
+            <span class="player-label">{{ gameMode() === '2p' ? 'PLAYER O' : 'AI BOT (O)' }}</span>
+            <span class="score-num">{{ oWins() }}</span>
+          </div>
+        </div>
+
+        <!-- 3x3 Grid Board -->
+        <div class="board-frame glass">
+          <div class="ttt-grid">
+            <div *ngFor="let cell of board; let idx = index" 
+                 class="ttt-cell" 
+                 [ngClass]="getCellClass(idx)"
+                 (click)="onCellClick(idx)">
+              
+              <span *ngIf="cell === 'X'" class="mark-x">✕</span>
+              <span *ngIf="cell === 'O'" class="mark-o">◯</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result Status -->
+        <div *ngIf="winner()" class="winner-box glass">
+          <h2 *ngIf="winner() === 'X'">🎉 Player X Takes The Win!</h2>
+          <h2 *ngIf="winner() === 'O'">🎉 Player O (AI) Wins!</h2>
+          <h2 *ngIf="winner() === 'draw'">🤝 It's a Tie Game!</h2>
+          <button (click)="resetGame()" class="btn-play-again">Play Next Round ➔</button>
+        </div>
+
+      </div>
+
+    </div>

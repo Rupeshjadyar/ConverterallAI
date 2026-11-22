@@ -1,0 +1,17 @@
+<nav aria-label="Breadcrumb" class="breadcrumbs-container">
+      <ol class="breadcrumbs-list">
+        @for (crumb of resolvedCrumbs; track crumb.url; let idx = $index; let last = $last) {
+          <li class="breadcrumb-item">
+            @if (!last) {
+              <a [routerLink]="crumb.url" class="breadcrumb-link">
+                @if (idx === 0) { <span class="crumb-icon">🏠</span> }
+                <span>{{ crumb.name }}</span>
+              </a>
+              <span class="breadcrumb-sep" aria-hidden="true">/</span>
+            } @else {
+              <span class="breadcrumb-current" aria-current="page">{{ crumb.name }}</span>
+            }
+          </li>
+        }
+      </ol>
+    </nav>

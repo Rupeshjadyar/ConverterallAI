@@ -88,7 +88,6 @@ export class AudioEditorComponent implements OnInit, OnDestroy {
   redoStack: AudioHistoryState[] = [];
 
   // Export State
-  exportFormat: 'mp3' | 'wav' | 'ogg' | 'aac' = 'mp3';
   exportBitrate: string = '320kbps';
   isProcessing: boolean = false;
   processingMessage: string = '';
@@ -839,17 +838,18 @@ export class AudioEditorComponent implements OnInit, OnDestroy {
   async exportAudioFile(): Promise<void> {
     if (!this.activeBuffer || !this.isBrowser) return;
     this.isProcessing = true;
-    this.processingMessage = `Encoding & Exporting ${this.exportFormat.toUpperCase()} Audio...`;
+    this.processingMessage = 'Exporting WAV audio…';
 
     try {
       const wavBlob = this.bufferToWav(this.activeBuffer);
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `edited-audio-${Date.now()}.${this.exportFormat}`;
+      a.download = `edited-audio-${Date.now()}.wav`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Export error:', e);
     } finally {

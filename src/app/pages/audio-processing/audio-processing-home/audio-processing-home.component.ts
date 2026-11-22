@@ -104,8 +104,8 @@ export class AudioProcessingHomeComponent implements OnInit {
     },
     {
       id: 'video-to-audio',
-      name: 'Video to Audio MP3 Extractor',
-      description: 'Extract MP3/WAV audio tracks from MP4, WebM, MOV, and AVI videos in-browser.',
+      name: 'Video to WAV Extractor',
+      description: 'Extract a WAV audio track from a video your browser can decode.',
       icon: '🎬',
       color: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
       route: '/audio-processing/video-to-audio',
@@ -116,7 +116,7 @@ export class AudioProcessingHomeComponent implements OnInit {
     {
       id: 'format-converter',
       name: 'Audio Format Converter',
-      description: 'Convert MP3, WAV, OGG, and AAC files in batch with custom bitrate selection.',
+      description: 'Convert browser-supported audio files to WAV or MP3 in batches.',
       icon: '🔁',
       color: 'linear-gradient(135deg, #64748b 0%, #334155 100%)',
       route: '/audio-processing/format-converter',

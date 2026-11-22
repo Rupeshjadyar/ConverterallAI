@@ -1,0 +1,71 @@
+name: Verify and deploy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run seo:audit
+
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: image
+        run: echo "ref=ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+      - name: Build and smoke test the container
+        env:
+          IMAGE: ${{ steps.image.outputs.ref }}
+        run: |
+          docker build --tag "$IMAGE" .
+          docker run --detach --name converterall --publish 127.0.0.1:4000:4000 "$IMAGE"
+          curl --fail --retry 10 --retry-connrefused --retry-delay 1 http://127.0.0.1:4000/healthz
+          node scripts/seo-http-smoke.mjs
+      - name: Publish the verified image
+        env:
+          IMAGE: ${{ steps.image.outputs.ref }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "$REGISTRY_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker push "$IMAGE"
+
+  deploy:
+    if: vars.ENABLE_PRODUCTION_DEPLOY == 'true'
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: converterall-production
+    steps:
+      - name: Request rollout of the verified image
+        env:
+          DEPLOY_WEBHOOK: ${{ secrets.DEPLOY_WEBHOOK }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          IMAGE: ${{ needs.publish.outputs.image }}
+        run: |
+          test -n "$DEPLOY_TOKEN"
+          jq -nc --arg image "$IMAGE" '{image:$image}' | curl --fail-with-body --max-time 30 \
+            --proto '=https' --header "Authorization: Bearer $DEPLOY_TOKEN" \
+            --header 'Content-Type: application/json' --data-binary @- "$DEPLOY_WEBHOOK"

@@ -13,7 +13,7 @@
 
 
 
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 interface CompressedImage {
@@ -40,6 +40,8 @@ interface CompressedImage {
   styleUrls: ['./image-compressor.css'],
 })
 export class ImageCompressor implements OnInit, OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   /* ─── STATE ─── */
   images: CompressedImage[] = [];
   isDragging = false;
@@ -60,10 +62,7 @@ export class ImageCompressor implements OnInit, OnDestroy {
   readonly MAX_FILES = 20;
   ngOnInit(): void {}
   ngOnDestroy(): void {
-    this.images.forEach(i => {
-      URL.revokeObjectURL(i.originalUrl);
-      if (i.compressedUrl && i.compressedUrl !== i.originalUrl) URL.revokeObjectURL(i.compressedUrl);
-    });
+    this.clearAll();
     clearTimeout(this.toastTimer);
   }
   /* ═══════════════════ DRAG & DROP ═══════════════════ */
@@ -100,11 +99,14 @@ export class ImageCompressor implements OnInit, OnDestroy {
   async runQueue(): Promise<void> {
     if (this.busy) return;
     this.busy = true;
-    const queued = this.images.filter(i => i.status === 'queued');
-    for (const img of queued) {
+    let img = this.images.find(item => item.status === 'queued');
+    while (img) {
       img.status = 'compressing';
+      this.cdr.markForCheck();
       try { await this.compress(img); img.status = 'done'; }
       catch (err: any) { img.status = 'error'; img.errorMsg = err?.message || 'Failed'; }
+      if (this.images.includes(img)) this.cdr.markForCheck();
+      img = this.images.find(item => item.status === 'queued');
     }
     this.busy = false;
     const done = this.doneImages;
@@ -139,7 +141,9 @@ export class ImageCompressor implements OnInit, OnDestroy {
         else if (mime === 'image/bmp' || mime === 'image/gif') mime = 'image/jpeg';
         c.toBlob(blob => {
           if (!blob) { reject(new Error('Compression failed')); return; }
-          if (blob.size >= img.originalSize) {
+          if (!this.images.includes(img)) { resolve(); return; }
+          const sameImageFormatAndSize = blob.type === img.file.type && w === img.origW && h === img.origH;
+          if (blob.size >= img.originalSize && sameImageFormatAndSize) {
             img.compressedBlob = img.file;
             img.compressedSize = img.originalSize;
             img.compressedUrl = img.originalUrl;
@@ -148,7 +152,7 @@ export class ImageCompressor implements OnInit, OnDestroy {
             img.compressedBlob = blob;
             img.compressedSize = blob.size;
             img.compressedUrl = URL.createObjectURL(blob);
-            img.reduction = Math.round(((img.originalSize - blob.size) / img.originalSize) * 100);
+            img.reduction = Math.max(0, Math.round(((img.originalSize - blob.size) / img.originalSize) * 100));
           }
           resolve();
         }, mime, this.quality / 100);
@@ -183,7 +187,8 @@ export class ImageCompressor implements OnInit, OnDestroy {
   }
   download(img: CompressedImage): void {
     if (!img.compressedBlob) return;
-    const ext = this.format !== 'auto' ? this.format : (img.file.type === 'image/png' ? 'png' : img.file.type === 'image/webp' ? 'webp' : 'jpg');
+    const outputType = img.compressedBlob.type;
+    const ext = outputType === 'image/png' ? 'png' : outputType === 'image/webp' ? 'webp' : 'jpg';
     const name = img.file.name.replace(/\.[^.]+$/, '') + '_compressed.' + ext;
     const a = document.createElement('a');
     a.href = img.compressedUrl; a.download = name;

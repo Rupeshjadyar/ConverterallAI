@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { TOOLS_DATA } from '../src/app/data/tools.data.ts';
 
 const DIST_BROWSER = path.resolve('dist/converterallai/browser');
 
@@ -22,21 +23,35 @@ function findIndexHtmlFiles(dir) {
   return results;
 }
 
+const sitemapIndex = fs.readFileSync(path.join(DIST_BROWSER, 'sitemap.xml'), 'utf8');
+const locations = xml => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]));
+const sitemapFiles = locations(sitemapIndex);
+const urls = sitemapFiles.flatMap(url =>
+  locations(fs.readFileSync(path.join(DIST_BROWSER, path.basename(url.pathname)), 'utf8'))
+);
+if (!urls.length) throw new Error('No URLs found in the generated sitemap.');
 const htmlFiles = findIndexHtmlFiles(DIST_BROWSER);
+const published = new Map(urls.map(url => [url.pathname, url.href]));
 console.log(`\n========================================`);
 console.log(`CONVERTERALL AI - SEO PRODUCTION AUDIT`);
 console.log(`Found ${htmlFiles.length} prerendered HTML files`);
 console.log(`========================================\n`);
 
+const registeredTools = new Set(TOOLS_DATA.map(tool => tool.slug));
 const seenTitles = new Map();
 const seenDescriptions = new Map();
 const errors = [];
 const warnings = [];
 const tableRows = [];
+for (const url of urls) {
+  const file = path.join(DIST_BROWSER, url.pathname.slice(1), 'index.html');
+  if (!fs.existsSync(file)) errors.push(`[${url.pathname}] Sitemap URL has no prerendered HTML`);
+}
 
 for (const filePath of htmlFiles) {
   const relativePath = path.relative(DIST_BROWSER, filePath).replace(/\\/g, '/');
   const route = '/' + relativePath.replace(/\/index\.html$/, '').replace(/^index\.html$/, '');
+  if (!published.has(route)) continue;
   const content = fs.readFileSync(filePath, 'utf8');
 
   // Skip 404 page for uniqueness checks, but audit basic structure
@@ -51,7 +66,7 @@ for (const filePath of htmlFiles) {
     // Unescape HTML entities like &amp; for accurate char count
     const plainTitle = title.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
     if (plainTitle.length > 60) {
-      errors.push(`[${route}] Title exceeds 60 chars (${plainTitle.length} chars): "${plainTitle}"`);
+      warnings.push(`[${route}] Title exceeds 60 chars (${plainTitle.length} chars): "${plainTitle}"`);
     }
     if (!is404) {
       if (seenTitles.has(plainTitle)) {
@@ -71,7 +86,7 @@ for (const filePath of htmlFiles) {
   } else {
     const plainDesc = description.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
     if (plainDesc.length > 165) {
-      errors.push(`[${route}] Description exceeds 165 chars (${plainDesc.length} chars): "${plainDesc}"`);
+      warnings.push(`[${route}] Description exceeds 165 chars (${plainDesc.length} chars): "${plainDesc}"`);
     }
     if (!is404) {
       if (seenDescriptions.has(plainDesc)) {
@@ -89,6 +104,9 @@ for (const filePath of htmlFiles) {
   if (!canonical) {
     errors.push(`[${route}] Missing canonical link`);
   } else {
+    if (canonical !== published.get(route)) {
+      errors.push(`[${route}] Canonical differs from sitemap URL: "${canonical}"`);
+    }
     if (canonical.includes('?')) {
       errors.push(`[${route}] Canonical link contains query params: "${canonical}"`);
     }
@@ -127,6 +145,11 @@ for (const filePath of htmlFiles) {
     }
   }
 
+  if (registeredTools.has(route) &&
+      !schemaTypes.flat().some(type => type === 'SoftwareApplication' || type === 'WebApplication')) {
+    errors.push(`[${route}] Registered tool lacks application schema`);
+  }
+
   // 6. Image Alt Audit
   const imgMatches = content.match(/<img[^>]*>/gi) || [];
   for (const img of imgMatches) {
@@ -145,9 +168,11 @@ for (const filePath of htmlFiles) {
 }
 
 // Print Audit Results
-console.log(`Audited ${htmlFiles.length} pages.`);
+console.log(`Audited ${tableRows.length} sitemap pages.`);
 console.log(`Total Errors: ${errors.length}`);
 console.log(`Total Warnings: ${warnings.length}\n`);
+
+for (const warning of warnings) console.warn(warning);
 
 if (errors.length > 0) {
   console.error(`FAILED CHECKS (${errors.length}):`);

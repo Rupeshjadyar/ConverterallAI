@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { BMI_HI, TOOL_ALIASES } from './data/tool-locales.data';
+import { TTS_LANGUAGES } from './data/tts-languages.data';
+
 export const routes: Routes = [
     {
         path: '',
@@ -94,7 +97,7 @@ export const routes: Routes = [
     },
     {
         path: 'image-processing/jpeg-to-png',
-        redirectTo: 'image-processing/format-converter',
+        redirectTo: '/image-processing/format-converter',
         pathMatch: 'full'
     },
     {
@@ -124,7 +127,7 @@ export const routes: Routes = [
     },
     {
         path: 'tts/:slug',
-        redirectTo: 'audio-processing/tts/:slug',
+        redirectTo: '/audio-processing/tts/:slug',
         pathMatch: 'full'
     },
     {
@@ -173,6 +176,7 @@ export const routes: Routes = [
     },
     {
         path: 'audio-processing/tts/:slug',
+        canMatch: [(_route, segments) => TTS_LANGUAGES.some(language => language.slug === segments[2]?.path)],
         loadComponent: () => import('./pages/audio-processing/tts/tts-language/tts-language.component').then(m => m.TtsLanguageComponent)
     },
     {
@@ -387,7 +391,7 @@ export const routes: Routes = [
     },
     {
         path: 'games/typing-test',
-        redirectTo: 'typing-speed-test',
+        redirectTo: '/typing-speed-test',
         pathMatch: 'full'
     },
     {
@@ -601,9 +605,16 @@ export const routes: Routes = [
     },
     {
         path: 'developer-tools/ai-chat',
-        redirectTo: 'ai-chat',
+        redirectTo: '/ai-chat',
         pathMatch: 'full'
     },
+    {
+        path: BMI_HI.slice(1),
+        loadComponent: () => import('./pages/calculators/home/calculators/bmi-hindi.component').then(m => m.BmiHindiComponent)
+    },
+    ...Object.entries(TOOL_ALIASES).map(([path, redirectTo]) => ({
+        path: path.slice(1), redirectTo, pathMatch: 'full' as const
+    })),
     {
         path: '404',
         loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)

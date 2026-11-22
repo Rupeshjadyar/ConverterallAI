@@ -1,0 +1,30 @@
+<div class="tool-container">
+  <a routerLink="/pdf-processing" class="back-link">← PDF Tools</a>
+  <h1>{{ tool().title }}</h1>
+  <p>{{ tool().description }}</p>
+  <section class="file-panel" (dragover)="$event.preventDefault()" (drop)="drop($event)">
+    <label for="pdf-tool-file">Choose or drop a PDF</label>
+    <input id="pdf-tool-file" type="file" accept=".pdf,application/pdf" [disabled]="busy()" (change)="choose($event)">
+    @if (file(); as selected) {
+      <p>{{ selected.name }}</p>
+      @if (needsPassword()) {
+        <label for="pdf-tool-password">{{ kind() === 'protect' ? 'New password' : 'Current password' }}</label>
+        <input id="pdf-tool-password" type="password" [(ngModel)]="password" [disabled]="busy()"
+          [attr.autocomplete]="kind() === 'protect' ? 'new-password' : 'current-password'">
+        @if (kind() === 'protect') {
+          <label for="pdf-tool-confirmation">Confirm password</label>
+          <input id="pdf-tool-confirmation" type="password" [(ngModel)]="confirmation"
+            autocomplete="new-password" [disabled]="busy()">
+        }
+      }
+      <div class="tool-actions">
+        <button type="button" (click)="convert()" [disabled]="busy()">{{ tool().title }}</button>
+        @if (output()) {
+          <button type="button" (click)="download()">Download file</button>
+        }
+      </div>
+    }
+    @if (status()) { <p role="status">{{ status() }}</p> }
+    @if (error()) { <p role="alert" class="error">{{ error() }}</p> }
+  </section>
+</div>

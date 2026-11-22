@@ -1,0 +1,200 @@
+.ttt-container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      font-family: inherit;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .back-link {
+      font-size: 0.85rem;
+      color: #a78bfa;
+      text-decoration: none;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      display: inline-block;
+    }
+
+    .game-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-color, #fff);
+      margin: 0;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .mode-select select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text-color, #fff);
+      padding: 0.4rem 0.75rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .btn-top {
+      padding: 0.45rem 1rem;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b5cf6, #38bdf8);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.6rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s;
+    }
+
+    .player-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .score-num {
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .player-x .player-label { color: #38bdf8; }
+    .player-x .score-num { color: #38bdf8; }
+    .player-x.turn-glow {
+      border-color: #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .player-o .player-label { color: #ec4899; }
+    .player-o .score-num { color: #ec4899; }
+    .player-o.turn-glow {
+      border-color: #ec4899;
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
+    }
+
+    .ties-card .player-label { color: #94a3b8; }
+    .ties-card .score-num { color: #fff; }
+
+    /* Board Frame */
+    .board-frame {
+      padding: 1rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+      margin-bottom: 1.5rem;
+    }
+
+    .ttt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+    }
+
+    .ttt-cell {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .ttt-cell:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: scale(1.02);
+    }
+
+    .cell-win {
+      background: rgba(139, 92, 246, 0.3) !important;
+      border-color: #a855f7 !important;
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+      animation: winPulse 0.8s infinite alternate;
+    }
+
+    @keyframes winPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+
+    .mark-x {
+      font-size: clamp(3rem, 10vw, 4.5rem);
+      font-weight: 900;
+      color: #38bdf8;
+      text-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mark-o {
+      font-size: clamp(3rem, 10vw, 4.5rem);
+      font-weight: 900;
+      color: #ec4899;
+      text-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.3); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Winner Box */
+    .winner-box {
+      padding: 1.5rem;
+      border-radius: 18px;
+      text-align: center;
+      animation: popIn 0.3s;
+    }
+
+    .winner-box h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .btn-play-again {
+      padding: 0.65rem 1.75rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #38bdf8);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+    }

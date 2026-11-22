@@ -1,0 +1,175 @@
+<div class="chapter-content">
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Database Relationships</span>
+          <span class="badge-slides">PPT Slides 83 - 87</span>
+        </div>
+        <h1 class="chapter-title">11. Foreign Keys &amp; Referential Integrity</h1>
+        <p class="chapter-subtitle">
+          Master relational table linkage: Parent-Child relations, Referential Actions (CASCADE, RESTRICT, SET NULL, NO ACTION), multi-table cascading foreign keys, and ALTER TABLE constraint management.
+        </p>
+      </div>
+
+      <!-- Section 1: Foreign Key Definition -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">11.1</span> Foreign Key Architecture (Slide 83)
+        </h2>
+        <p class="section-text">
+          A <strong>FOREIGN KEY</strong> (referencing key) is a column or set of columns in one table that references the <strong>PRIMARY KEY</strong> in another table. It establishes a binding link that enforces <strong>referential integrity</strong> across the database.
+        </p>
+
+        <div class="rel-diagram-box">
+          <div class="table-box parent-box">
+            <div class="t-badge">Parent Table</div>
+            <div class="t-name"><code>Person</code> / <code>Departments</code></div>
+            <div class="t-key">🔑 PRIMARY KEY (id)</div>
+          </div>
+          <div class="rel-arrow">
+            <span class="arrow-line">──────────────────────▶</span>
+            <span class="arrow-label">Referenced By Foreign Key</span>
+          </div>
+          <div class="table-box child-box">
+            <div class="t-badge">Child Table</div>
+            <div class="t-name"><code>Contact</code> / <code>Employees</code></div>
+            <div class="t-key">🔗 FOREIGN KEY (person_id)</div>
+          </div>
+        </div>
+
+        <ul class="styled-points">
+          <li>The <strong>Parent Table</strong> holds the authoritative original key values.</li>
+          <li>The <strong>Child Table</strong> contains the foreign key referencing the parent table's primary key.</li>
+          <li>MySQL allows defining foreign keys either during initial <code>CREATE TABLE</code> or dynamically via <code>ALTER TABLE</code>.</li>
+        </ul>
+      </section>
+
+      <!-- Section 2: Referential Options -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">11.2</span> The 4 Referential Action Options (Slide 84)
+        </h2>
+        <p class="section-text">
+          When a row in the parent table is deleted or updated, what should happen to matching rows in child tables? MySQL provides four <code>ON DELETE</code> and <code>ON UPDATE</code> clauses:
+        </p>
+
+        <div class="options-matrix">
+          <div class="option-card cascade">
+            <div class="opt-head">
+              <span class="opt-badge">CASCADE</span>
+              <h4>Automatic Cascade</h4>
+            </div>
+            <p>
+              When a row is deleted or updated in the parent table, all matching rows in child tables are <strong>automatically deleted or updated</strong> synchronously.
+            </p>
+          </div>
+
+          <div class="option-card restrict">
+            <div class="opt-head">
+              <span class="opt-badge">RESTRICT</span>
+              <h4>Strict Prohibition</h4>
+            </div>
+            <p>
+              MySQL strictly <strong>prohibits</strong> deleting or modifying a row in the parent table as long as any child table possesses a referencing row.
+            </p>
+          </div>
+
+          <div class="option-card setnull">
+            <div class="opt-head">
+              <span class="opt-badge">SET NULL</span>
+              <h4>Nullify Foreign Key</h4>
+            </div>
+            <p>
+              If the parent row is deleted or modified, matching foreign key column values in the child table are safely reset to <code>NULL</code> (requires foreign key column to permit NULLs).
+            </p>
+          </div>
+
+          <div class="option-card noaction">
+            <div class="opt-head">
+              <span class="opt-badge">NO ACTION</span>
+              <h4>Standard SQL Reject</h4>
+            </div>
+            <p>
+              Similar to RESTRICT. If dependent child records exist, the parent delete or update statement will fail and throw a referential integrity constraint error.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Multi-Table Setup & ALTER TABLE -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">11.3</span> Practical Foreign Key Implementation (Slides 85 - 87)
+        </h2>
+
+        <h3 class="sub-heading">1. Multi-Table Cascading Schema (Slide 85)</h3>
+        <p class="section-text">
+          A real-world relational schema demonstrating <code>demo1</code> (parent) &rarr; <code>emp</code> (child of demo1) &rarr; <code>stud</code> (child referencing both demo1 and emp):
+        </p>
+
+        <app-sql-code-box
+          title="Multi-Table Foreign Key Script (Slide 85)"
+          code="-- 1. Create Parent Table demo1
+CREATE TABLE demo1 (
+  id INT,
+  name VARCHAR(66),
+  PRIMARY KEY (id)
+);
+INSERT INTO demo1 VALUES (1, 'Aditi'), (2, 'Simran');
+
+-- 2. Create Child Table emp referencing demo1
+CREATE TABLE emp (
+  e_id INT,
+  name VARCHAR(88),
+  id INT,
+  PRIMARY KEY (e_id),
+  FOREIGN KEY (id) REFERENCES demo1(id)
+);
+INSERT INTO emp VALUES (11, 'xyz', 1), (13, 'pqr', 2);
+
+-- 3. Create Child Table stud referencing both demo1 and emp
+CREATE TABLE stud (
+  s_id INT,
+  s_name VARCHAR(88),
+  age INT,
+  id INT,
+  e_id INT,
+  PRIMARY KEY (s_id),
+  FOREIGN KEY (id) REFERENCES demo1(id),
+  FOREIGN KEY (e_id) REFERENCES emp(e_id)
+);
+INSERT INTO stud VALUES (111, 'Amit', 9, 1, 11), (112, 'Riya', 9, 1, 11);"
+        ></app-sql-code-box>
+
+        <h3 class="sub-heading mt-4">2. Adding Foreign Keys via ALTER TABLE (Slide 86)</h3>
+        <p class="section-text">
+          You can append foreign key constraints to existing populated tables using <code>ALTER TABLE ADD CONSTRAINT</code>:
+        </p>
+
+        <app-sql-code-box
+          title="ALTER TABLE ADD CONSTRAINT (Slide 86)"
+          code="ALTER TABLE Contact
+ADD CONSTRAINT fk_person
+FOREIGN KEY (Person_Id) REFERENCES Person (ID)
+ON DELETE CASCADE
+ON UPDATE RESTRICT;"
+        ></app-sql-code-box>
+
+        <h3 class="sub-heading mt-4">3. Dropping a Foreign Key (Slide 87)</h3>
+        <div class="syntax-line">Syntax: <code>ALTER TABLE table_name DROP FOREIGN KEY fk_constraint_name;</code></div>
+        <app-sql-code-box
+          title="DROP FOREIGN KEY (Slide 87)"
+          code="ALTER TABLE contact
+DROP FOREIGN KEY fk_customer;"
+        ></app-sql-code-box>
+      </section>
+
+      <!-- Footer Navigation -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/subqueries" class="nav-btn prev-btn">
+          ← 10. Subqueries &amp; Nested Queries
+        </a>
+        <a routerLink="/developer-tools/sql/joins" class="nav-btn next-btn">
+          Next: 12. SQL Joins (Venn &amp; Visualizers) →
+        </a>
+      </div>
+    </div>

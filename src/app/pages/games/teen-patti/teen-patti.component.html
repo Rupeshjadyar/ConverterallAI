@@ -1,0 +1,223 @@
+<div class="teen-patti-container">
+      
+      <!-- Top Navigation -->
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Teen Patti Royale (3-Patti) 🎴</h1>
+        </div>
+
+        <div class="header-right">
+          <div class="wallet-badge">
+            <span class="chip-icon">🪙</span>
+            <span class="wallet-amt">₹{{ userChips().toLocaleString() }}</span>
+          </div>
+          <button (click)="startNewRound()" class="btn-top-action" [disabled]="roundInProgress() && !roundFinished()">
+            🔄 Deal New Hand
+          </button>
+        </div>
+      </div>
+
+      <!-- Poker Table Arena -->
+      <div class="poker-arena">
+        <div class="poker-table">
+          
+          <!-- Table Center: Pot & Dealer Info -->
+          <div class="table-center">
+            <div class="pot-box">
+              <span class="pot-label">TOTAL POT</span>
+              <div class="pot-amount">
+                <span class="chip-glow">🪙</span>
+                <span>₹{{ pot().toLocaleString() }}</span>
+              </div>
+              <span class="boot-info">Boot: ₹{{ currentBoot }} | Stake: ₹{{ currentStake() }}</span>
+            </div>
+
+            <!-- Round Result Banner -->
+            <div *ngIf="roundFinished()" class="winner-banner">
+              <div class="winner-title">🏆 {{ winnerMessage() }}</div>
+              <div class="winner-hand">{{ winnerHand() }}</div>
+              <button (click)="startNewRound()" class="btn-next-hand">Play Next Hand ➔</button>
+            </div>
+          </div>
+
+          <!-- BOT 1 (Top Center: Vikram) -->
+          <div class="player-seat seat-top" [class.folded]="players[1].isFolded" [class.current-turn]="activeTurn() === 1 && !roundFinished()">
+            <div class="player-card">
+              <div class="avatar-box">
+                <span>{{ players[1].avatar }}</span>
+                <span *ngIf="activeTurn() === 1 && !roundFinished()" class="turn-dot"></span>
+              </div>
+              <div class="player-details">
+                <span class="player-name">{{ players[1].name }}</span>
+                <span class="player-chips">₹{{ players[1].chips.toLocaleString() }}</span>
+                <span class="action-tag" [class.action-fold]="players[1].isFolded">{{ players[1].lastAction }}</span>
+              </div>
+            </div>
+            <div class="cards-fan">
+              <div *ngFor="let c of players[1].cards" class="card-back" [class.show-card]="roundFinished()">
+                <ng-container *ngIf="roundFinished()">
+                  <span class="card-val" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">{{ c.label }}{{ c.suit }}</span>
+                </ng-container>
+                <span *ngIf="!roundFinished()">🎴</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOT 2 (Left: Priya) -->
+          <div class="player-seat seat-left" [class.folded]="players[2].isFolded" [class.current-turn]="activeTurn() === 2 && !roundFinished()">
+            <div class="player-card">
+              <div class="avatar-box">
+                <span>{{ players[2].avatar }}</span>
+                <span *ngIf="activeTurn() === 2 && !roundFinished()" class="turn-dot"></span>
+              </div>
+              <div class="player-details">
+                <span class="player-name">{{ players[2].name }}</span>
+                <span class="player-chips">₹{{ players[2].chips.toLocaleString() }}</span>
+                <span class="action-tag" [class.action-fold]="players[2].isFolded">{{ players[2].lastAction }}</span>
+              </div>
+            </div>
+            <div class="cards-fan">
+              <div *ngFor="let c of players[2].cards" class="card-back" [class.show-card]="roundFinished()">
+                <ng-container *ngIf="roundFinished()">
+                  <span class="card-val" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">{{ c.label }}{{ c.suit }}</span>
+                </ng-container>
+                <span *ngIf="!roundFinished()">🎴</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOT 3 (Right: Aman) -->
+          <div class="player-seat seat-right" [class.folded]="players[3].isFolded" [class.current-turn]="activeTurn() === 3 && !roundFinished()">
+            <div class="player-card">
+              <div class="avatar-box">
+                <span>{{ players[3].avatar }}</span>
+                <span *ngIf="activeTurn() === 3 && !roundFinished()" class="turn-dot"></span>
+              </div>
+              <div class="player-details">
+                <span class="player-name">{{ players[3].name }}</span>
+                <span class="player-chips">₹{{ players[3].chips.toLocaleString() }}</span>
+                <span class="action-tag" [class.action-fold]="players[3].isFolded">{{ players[3].lastAction }}</span>
+              </div>
+            </div>
+            <div class="cards-fan">
+              <div *ngFor="let c of players[3].cards" class="card-back" [class.show-card]="roundFinished()">
+                <ng-container *ngIf="roundFinished()">
+                  <span class="card-val" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">{{ c.label }}{{ c.suit }}</span>
+                </ng-container>
+                <span *ngIf="!roundFinished()">🎴</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- YOU (Bottom Center: Player 0) -->
+          <div class="player-seat seat-bottom" [class.folded]="players[0].isFolded" [class.current-turn]="activeTurn() === 0 && !roundFinished()">
+            <div class="my-cards-wrapper">
+              <div *ngFor="let c of players[0].cards" class="play-card" [class.card-revealed]="players[0].isSeen">
+                <ng-container *ngIf="players[0].isSeen">
+                  <div class="card-corner top-corner" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">
+                    <span>{{ c.label }}</span>
+                    <span>{{ c.suit }}</span>
+                  </div>
+                  <div class="card-center-suit" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">
+                    {{ c.suit }}
+                  </div>
+                  <div class="card-corner bottom-corner" [class.red-suit]="c.suit === '♥' || c.suit === '♦'">
+                    <span>{{ c.label }}</span>
+                    <span>{{ c.suit }}</span>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="!players[0].isSeen">
+                  <div class="card-pattern">🎴</div>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="my-info-bar">
+              <div class="my-meta">
+                <span class="my-name">👤 You ({{ players[0].isSeen ? 'Seen' : 'Blind' }})</span>
+                <span class="my-chips">₹{{ players[0].chips.toLocaleString() }}</span>
+                <span *ngIf="players[0].isSeen && players[0].handRankName" class="hand-type-badge">
+                  {{ players[0].handRankName }}
+                </span>
+              </div>
+
+              <!-- Action Controls on Player Turn -->
+              <div class="action-buttons-row" *ngIf="activeTurn() === 0 && !roundFinished() && !players[0].isFolded">
+                <button *ngIf="!players[0].isSeen" (click)="seeCards()" class="btn-action btn-see">
+                  👁️ See Cards
+                </button>
+
+                <button (click)="fold()" class="btn-action btn-pack">
+                  ❌ Pack / Fold
+                </button>
+
+                <button (click)="playChaal(false)" class="btn-action btn-chaal">
+                  🪙 {{ players[0].isSeen ? 'Chaal' : 'Blind' }} (₹{{ getBetCost(false) }})
+                </button>
+
+                <button (click)="playChaal(true)" class="btn-action btn-double">
+                  ⚡ 2x Double (₹{{ getBetCost(true) }})
+                </button>
+
+                <button *ngIf="canShow()" (click)="requestShow()" class="btn-action btn-show">
+                  👀 Show Cards (₹{{ getBetCost(false) }})
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TEEN PATTI RULES & HAND RANKINGS GUIDE -->
+      <section class="guide-section glass">
+        <h3>🎴 Hand Rankings Guide (Highest to Lowest)</h3>
+        <div class="rankings-grid">
+          <div class="rank-item">
+            <span class="rank-badge gold">1</span>
+            <div>
+              <strong>Trail / Trio / Set</strong>
+              <span>Three cards of the same rank (e.g., A-A-A, K-K-K)</span>
+            </div>
+          </div>
+          <div class="rank-item">
+            <span class="rank-badge purple">2</span>
+            <div>
+              <strong>Pure Sequence (Straight Flush)</strong>
+              <span>Three consecutive cards of the same suit (e.g., A-2-3 or K-Q-J of ♠)</span>
+            </div>
+          </div>
+          <div class="rank-item">
+            <span class="rank-badge blue">3</span>
+            <div>
+              <strong>Sequence (Normal Run)</strong>
+              <span>Three consecutive cards not of the same suit (e.g., 9-8-7)</span>
+            </div>
+          </div>
+          <div class="rank-item">
+            <span class="rank-badge cyan">4</span>
+            <div>
+              <strong>Color (Flush)</strong>
+              <span>Any three cards of the same suit in non-consecutive order</span>
+            </div>
+          </div>
+          <div class="rank-item">
+            <span class="rank-badge emerald">5</span>
+            <div>
+              <strong>Pair</strong>
+              <span>Two cards of the same rank (e.g., K-K-5)</span>
+            </div>
+          </div>
+          <div class="rank-item">
+            <span class="rank-badge gray">6</span>
+            <div>
+              <strong>High Card</strong>
+              <span>Highest card decides the winner when no combinations are formed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>

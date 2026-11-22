@@ -1,0 +1,188 @@
+<div class="chapter-content">
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Data Integrity</span>
+          <span class="badge-slides">PPT Slides 12 - 17</span>
+        </div>
+        <h1 class="chapter-title">4. Constraints in SQL</h1>
+        <p class="chapter-subtitle">
+          Master the rules of data integrity: NOT NULL, UNIQUE, PRIMARY KEY, FOREIGN KEY, CHECK, and DEFAULT constraints at column and table levels.
+        </p>
+      </div>
+
+      <!-- Overview -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">4.1</span> What are SQL Constraints?
+        </h2>
+        <p class="section-text">
+          <strong>Constraints</strong> are predefined conditions, business rules, and restrictions applied to columns or whole tables in a database. They prevent invalid or unauthorized data from ever being saved.
+        </p>
+        <div class="scope-grid">
+          <div class="scope-card">
+            <h4>Column-Level Constraints</h4>
+            <p>Applied to a single, specific column during its definition (e.g. <code>age INT NOT NULL</code>).</p>
+          </div>
+          <div class="scope-card">
+            <h4>Table-Level Constraints</h4>
+            <p>Applied at the end of the table declaration, spanning one or multiple columns together (e.g. composite primary keys).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1. NOT NULL & UNIQUE -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">4.2</span> 1. NOT NULL &amp; 2. UNIQUE Constraints
+        </h2>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge">1. NOT NULL</span>
+            <h3>Value Cannot Be Empty</h3>
+          </div>
+          <p class="rule-desc">
+            <code>NULL</code> indicates missing or undefined data. When a column is marked <code>NOT NULL</code>, the database guarantees that every record must supply a valid value.
+          </p>
+          <app-sql-code-box
+            title="NOT NULL Constraint Syntax & Example (Slide 12)"
+            code="CREATE TABLE student (
+  StudentID INT NOT NULL,
+  Student_FirstName VARCHAR(20),
+  Student_LastName VARCHAR(20)
+);"
+          ></app-sql-code-box>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge">2. UNIQUE</span>
+            <h3>No Duplicate Values Permitted</h3>
+          </div>
+          <p class="rule-desc">
+            Ensures all values in the column are distinct across rows. Unlike Primary Keys, a table can possess multiple <code>UNIQUE</code> constraints, and unique columns may permit NULLs (depending on SQL dialect).
+          </p>
+          <app-sql-code-box
+            title="UNIQUE Constraint Syntax & Example (Slide 13)"
+            code="CREATE TABLE student (
+  StudentID INT UNIQUE,
+  Student_FirstName VARCHAR(20),
+  Student_LastName VARCHAR(20)
+);"
+          ></app-sql-code-box>
+        </div>
+      </section>
+
+      <!-- 3. PRIMARY KEY & 4. FOREIGN KEY -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">4.3</span> 3. PRIMARY KEY &amp; 4. FOREIGN KEY
+        </h2>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge pk-badge">3. PRIMARY KEY</span>
+            <h3>The Unique Entity Identifier</h3>
+          </div>
+          <p class="rule-desc">
+            A <strong>PRIMARY KEY</strong> is mathematically equivalent to <code>NOT NULL + UNIQUE</code>. It unambiguously identifies each row in a table.
+          </p>
+          <ul class="styled-list">
+            <li>Primary keys can <strong>never</strong> be NULL.</li>
+            <li>A table can have <strong>only one</strong> PRIMARY KEY constraint (which may consist of single or composite columns).</li>
+            <li>Primary keys are referenced by <strong>Foreign Keys</strong> in other tables to establish relational links.</li>
+          </ul>
+          <app-sql-code-box
+            title="PRIMARY KEY Syntax & Example (Slide 14)"
+            code="CREATE TABLE student (
+  StudentID INT PRIMARY KEY,
+  Student_FirstName VARCHAR(20),
+  Student_LastName VARCHAR(20)
+);"
+          ></app-sql-code-box>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge fk-badge">4. FOREIGN KEY</span>
+            <h3>Referential Integrity Link</h3>
+          </div>
+          <p class="rule-desc">
+            A <strong>FOREIGN KEY</strong> in a child table points to a <strong>PRIMARY KEY</strong> in a parent table. It prevents actions that would destroy links between related tables.
+          </p>
+          <app-sql-code-box
+            title="FOREIGN KEY Syntax & Example (Slide 15)"
+            code="CREATE TABLE employee (
+  Emp_ID INT NOT NULL PRIMARY KEY,
+  Emp_Name VARCHAR(40),
+  Emp_Salary VARCHAR(40)
+);
+
+CREATE TABLE department_assignments (
+  Assign_ID INT PRIMARY KEY,
+  Emp_ID INT,
+  Dept_Name VARCHAR(50),
+  FOREIGN KEY (Emp_ID) REFERENCES employee(Emp_ID)
+);"
+          ></app-sql-code-box>
+        </div>
+      </section>
+
+      <!-- 5. CHECK & 6. DEFAULT -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">4.4</span> 5. CHECK &amp; 6. DEFAULT Constraints
+        </h2>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge">5. CHECK</span>
+            <h3>Value Validation Predicate</h3>
+          </div>
+          <p class="rule-desc">
+            Whenever an <code>INSERT</code> or <code>UPDATE</code> occurs, the database evaluates the condition in the <code>CHECK</code> clause. If it evaluates to FALSE, the operation is blocked.
+          </p>
+          <app-sql-code-box
+            title="CHECK Constraint Example (Age <= 15) (Slide 16)"
+            code="CREATE TABLE student (
+  StudentID INT,
+  Student_FirstName VARCHAR(20),
+  Student_LastName VARCHAR(20),
+  Student_PhoneNumber VARCHAR(20),
+  Student_Email_ID VARCHAR(40),
+  Age INT CHECK (Age <= 15)
+);"
+          ></app-sql-code-box>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-header">
+            <span class="rule-badge">6. DEFAULT</span>
+            <h3>Automatic Fallback Value</h3>
+          </div>
+          <p class="rule-desc">
+            If an insert statement does not specify a value for this column, the default literal is automatically supplied.
+          </p>
+          <app-sql-code-box
+            title="DEFAULT Constraint Example (Slide 17)"
+            code="CREATE TABLE student (
+  StudentID INT,
+  Student_FirstName VARCHAR(20),
+  Student_LastName VARCHAR(20),
+  Student_PhoneNumber VARCHAR(20),
+  Student_Email_ID VARCHAR(40) DEFAULT 'xyz8@gmail.com'
+);"
+          ></app-sql-code-box>
+        </div>
+      </section>
+
+      <!-- Footer Navigation -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/data-types" class="nav-btn prev-btn">
+          ← 3. Data Types in SQL
+        </a>
+        <a routerLink="/developer-tools/sql/ddl" class="nav-btn next-btn">
+          Next: 5. DDL (Data Definition Language) →
+        </a>
+      </div>
+    </div>

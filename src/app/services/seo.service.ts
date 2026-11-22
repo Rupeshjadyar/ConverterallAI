@@ -1,3 +1,5 @@
+import { TTS_LANGUAGES } from '../data/tts-languages.data';
+import { BMI_ALTERNATES, BMI_EN, BMI_HI, BMI_HINDI } from '../data/tool-locales.data';
 import { Injectable, inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
@@ -48,13 +50,6 @@ const STATIC_ROUTE_SEO: Record<string, SeoConfig> = {
     description: 'Read ConverterAllAI\'s strict privacy policy. Learn how our browser-based client-side tools protect your sensitive documents, photos, and personal information.',
     keywords: 'privacy policy, client side privacy, in-browser security, no upload policy',
     canonical: `${SITE_DOMAIN}/privacy-policy`,
-    robots: 'index, follow'
-  },
-  '/ai-chat': {
-    title: 'Free AI Chat - Groq & Gemini Auto-Failover | ConverterAllAI',
-    description: 'Chat with top free-tier AI models: Groq (14.4k RPD), Google Gemini (1.5k RPD), OpenRouter, and Hugging Face. Includes automated 429 rate-limit failover and clean code syntax highlighting.',
-    keywords: 'free ai chat, groq playground, gemini flash free, openrouter deepseek r1, ai failover, ai code generator',
-    canonical: `${SITE_DOMAIN}/ai-chat`,
     robots: 'index, follow'
   },
   '/terms-of-service': {
@@ -231,6 +226,8 @@ export class SeoService {
     this.metaService.updateTag({ name: 'description', content: config.description });
     if (config.keywords) {
       this.metaService.updateTag({ name: 'keywords', content: config.keywords });
+    } else {
+      this.metaService.removeTag('name="keywords"');
     }
     const robots = config.robots || 'index, follow';
     this.metaService.updateTag({ name: 'robots', content: robots });
@@ -238,12 +235,26 @@ export class SeoService {
     // 3. Canonical URL (Absolute, no trailing slash, no query params)
     const cleanCanonical = this.cleanUrl(config.canonical || SITE_DOMAIN);
     this.setCanonicalUrl(cleanCanonical);
+    const hindi = cleanCanonical === SITE_DOMAIN + BMI_HI;
+    const localized = hindi || cleanCanonical === SITE_DOMAIN + BMI_EN;
+    this.document.documentElement.lang = hindi ? 'hi-IN' : localized ? 'en-IN' : 'en';
+    this.document.head.querySelectorAll('link[data-tool-hreflang]').forEach(link => link.remove());
+    if (localized) {
+      for (const [language, path] of Object.entries(BMI_ALTERNATES)) {
+        const link = this.document.createElement('link');
+        link.setAttribute('data-tool-hreflang', '');
+        link.setAttribute('rel', 'alternate');
+        link.setAttribute('hreflang', language);
+        link.setAttribute('href', SITE_DOMAIN + path);
+        this.document.head.appendChild(link);
+      }
+    }
 
     // 4. Open Graph Tags
     const ogType = config.ogType || 'website';
     const ogImg = config.ogImage || DEFAULT_OG_IMAGE;
     const ogUrl = config.ogUrl ? this.cleanUrl(config.ogUrl) : cleanCanonical;
-    const locale = config.locale || 'en_US';
+    const locale = config.locale || (hindi ? 'hi_IN' : localized ? 'en_IN' : 'en_US');
 
     this.metaService.updateTag({ property: 'og:site_name', content: SITE_BRAND });
     this.metaService.updateTag({ property: 'og:type', content: ogType });
@@ -298,8 +309,6 @@ export class SeoService {
       { name: categoryName, url: `${SITE_DOMAIN}${categorySlug}` },
       { name: tool.name, url: toolUrl }
     ]);
-    const faqSchema = this.buildFaqPageSchema(tool.faqs);
-    const howToSchema = this.buildHowToSchema(tool);
 
     this.update({
       title: tool.seoTitle,
@@ -308,7 +317,11 @@ export class SeoService {
       canonical: toolUrl,
       robots: 'index, follow',
       ogType: 'website',
-      jsonLd: [appSchema, breadcrumbSchema, faqSchema, howToSchema]
+      jsonLd: [
+        appSchema, breadcrumbSchema,
+        ...(tool.faqs.length ? [this.buildFaqPageSchema(tool.faqs)] : []),
+        ...(tool.howToSteps.length ? [this.buildHowToSchema(tool)] : [])
+      ]
     });
   }
 
@@ -340,6 +353,29 @@ export class SeoService {
   private handleRouteSeo(rawUrl: string): void {
     if (!rawUrl) rawUrl = '/';
     const cleanPath = rawUrl.split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
+
+    if (cleanPath === BMI_HI) {
+      this.update({
+        title: BMI_HINDI.title,
+        description: BMI_HINDI.description,
+        canonical: SITE_DOMAIN + BMI_HI,
+        jsonLd: [{
+          '@context': 'https://schema.org',
+          '@type': ['SoftwareApplication', 'WebApplication'],
+          name: BMI_HINDI.name,
+          url: SITE_DOMAIN + BMI_HI,
+          description: BMI_HINDI.description,
+          inLanguage: 'hi-IN',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+        }, {
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          name: 'बीएमआई की गणना',
+          step: BMI_HINDI.steps.map(text => ({ '@type': 'HowToStep', text })),
+        }],
+      });
+      return;
+    }
 
     // 1. Check Homepage
     if (cleanPath === '/' || cleanPath === '/home') {
@@ -385,52 +421,59 @@ export class SeoService {
     const ttsPrefix = cleanPath.startsWith('/audio-processing/tts/') ? '/audio-processing/tts/' : cleanPath.startsWith('/tts/') ? '/tts/' : null;
     if (ttsPrefix) {
       const slug = cleanPath.slice(ttsPrefix.length);
-      import('../data/tts-languages.data').then(({ TTS_LANGUAGES }) => {
-        const lang = TTS_LANGUAGES.find(l => l.slug === slug);
-        if (lang) {
-          const base = `${lang.lang} (${lang.country})`;
-          let pageTitle = `${base} Voice TTS Free - MP3 | ConverterAllAI`;
-          if (pageTitle.length > 60) {
-            pageTitle = `${base} TTS Free - MP3 | ConverterAllAI`;
-          }
-          if (pageTitle.length > 60) {
-            pageTitle = `${base} Free TTS | ConverterAllAI`;
-          }
-          if (pageTitle.length > 60) {
-            pageTitle = `${lang.lang} (${lang.code}) Free TTS | ConverterAllAI`;
-          }
-
-          let pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI.`;
-          if (pageDesc.length > 165) {
-            pageDesc = `Convert ${lang.lang} text to speech with ${lang.country} accent online. Generate realistic voice audio MP3 files free with zero signup on ConverterAllAI.`;
-          }
-          if (pageDesc.length > 165) {
-            pageDesc = `Convert ${lang.lang} text to voice with ${lang.country} accent online. Free speech MP3 generator with zero signup on ConverterAllAI tool.`;
-          }
-          if (pageDesc.length < 140) {
-            pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI web.`;
-          }
-
-          const canonicalUrl = `${SITE_DOMAIN}${cleanPath}`;
-
-          const breadcrumbs = this.buildBreadcrumbListSchema([
-            { name: 'Home', url: SITE_DOMAIN },
-            { name: 'Audio Tools', url: `${SITE_DOMAIN}/audio-processing` },
-            { name: 'TTS Voice Studio', url: `${SITE_DOMAIN}/audio-processing/tts` },
-            { name: `${lang.lang} (${lang.country}) TTS`, url: canonicalUrl }
-          ]);
-
-          this.update({
-            title: pageTitle,
-            description: pageDesc,
-            keywords: `${lang.lang} text to speech, ${lang.country} voice generator, ${lang.code} tts, online text to mp3`,
-            canonical: canonicalUrl,
-            robots: 'index, follow',
-            jsonLd: [breadcrumbs]
-          });
+      const lang = TTS_LANGUAGES.find(l => l.slug === slug);
+      if (lang) {
+        const base = `${lang.lang} (${lang.country})`;
+        let pageTitle = `${base} Voice TTS Free - MP3 | ConverterAllAI`;
+        if (pageTitle.length > 60) {
+          pageTitle = `${base} TTS Free - MP3 | ConverterAllAI`;
         }
-      });
-      return;
+        if (pageTitle.length > 60) {
+          pageTitle = `${base} Free TTS | ConverterAllAI`;
+        }
+        if (pageTitle.length > 60) {
+          pageTitle = `${lang.lang} (${lang.code}) Free TTS | ConverterAllAI`;
+        }
+
+        let pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI.`;
+        if (pageDesc.length > 165) {
+          pageDesc = `Convert ${lang.lang} text to speech with ${lang.country} accent online. Generate realistic voice audio MP3 files free with zero signup on ConverterAllAI.`;
+        }
+        if (pageDesc.length > 165) {
+          pageDesc = `Convert ${lang.lang} text to voice with ${lang.country} accent online. Free speech MP3 generator with zero signup on ConverterAllAI tool.`;
+        }
+        if (pageDesc.length < 140) {
+          pageDesc = `Convert ${lang.lang} text to natural spoken audio with ${lang.country} accent online. Generate realistic speech MP3 files free with zero signup on ConverterAllAI web.`;
+        }
+
+        const canonicalUrl = `${SITE_DOMAIN}${cleanPath}`;
+
+        const breadcrumbs = this.buildBreadcrumbListSchema([
+          { name: 'Home', url: SITE_DOMAIN },
+          { name: 'Audio Tools', url: `${SITE_DOMAIN}/audio-processing` },
+          { name: 'TTS Voice Studio', url: `${SITE_DOMAIN}/audio-processing/tts` },
+          { name: `${lang.lang} (${lang.country}) TTS`, url: canonicalUrl }
+        ]);
+
+        this.update({
+          title: pageTitle,
+          description: pageDesc,
+          keywords: `${lang.lang} text to speech, ${lang.country} voice generator, ${lang.code} tts, online text to mp3`,
+          canonical: canonicalUrl,
+          robots: 'index, follow',
+          jsonLd: [{
+            '@context': 'https://schema.org',
+            '@type': ['SoftwareApplication', 'WebApplication'],
+            name: `${base} Text to Speech`,
+            description: pageDesc,
+            url: canonicalUrl,
+            applicationCategory: 'MultimediaApplication',
+            operatingSystem: 'All',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          }, breadcrumbs]
+        });
+        return;
+      }
     }
 
     // 6. Fallback / 404
@@ -471,11 +514,11 @@ export class SeoService {
   buildSoftwareApplicationSchema(tool: ToolItem): object {
     return {
       '@context': 'https://schema.org',
-      '@type': 'WebApplication',
+      '@type': ['SoftwareApplication', 'WebApplication'],
       name: tool.name,
       url: `${SITE_DOMAIN}${tool.slug}`,
       description: tool.shortDesc,
-      applicationCategory: 'UtilityApplication',
+      applicationCategory: 'UtilitiesApplication',
       operatingSystem: 'All',
       browserRequirements: 'Requires JavaScript. Requires HTML5.',
       offers: {
@@ -550,6 +593,7 @@ export class SeoService {
   private cleanUrl(url: string): string {
     if (!url) return SITE_DOMAIN;
     const withoutQuery = url.split('?')[0].split('#')[0];
+    if (withoutQuery === SITE_DOMAIN || withoutQuery === SITE_DOMAIN + '/') return SITE_DOMAIN + '/';
     const trimmed = withoutQuery.replace(/\/+$/, '');
     return trimmed || SITE_DOMAIN;
   }
@@ -572,7 +616,7 @@ export class SeoService {
     const script = this.document.createElement('script');
     script.setAttribute('type', 'application/ld+json');
     script.setAttribute('id', 'app-json-ld');
-    script.textContent = JSON.stringify(data);
+    script.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
     this.document.head?.appendChild(script);
   }
 

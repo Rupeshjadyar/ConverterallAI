@@ -1,0 +1,119 @@
+<div class="bb-page-container">
+      
+      <!-- Top Navigation -->
+      <div class="bb-header-bar">
+        <div class="header-left">
+          <a routerLink="/games" class="back-button">
+            <span class="back-arrow">←</span> All Games
+          </a>
+          <h1 class="game-heading">Neon Brick Breaker 🧱</h1>
+        </div>
+
+        <div class="header-right">
+          <div class="stat-badge highscore-badge">
+            <span>High Score: {{ highScore() }}</span>
+          </div>
+
+          <button (click)="toggleMute()" class="btn-mute" [title]="isMuted ? 'Unmute' : 'Mute'">
+            <span>{{ isMuted ? '🔇' : '🔊' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Container -->
+      <div class="bb-card">
+        <!-- Top Stats Grid -->
+        <div class="stats-top-grid">
+          <div class="stat-item">
+            <span class="stat-lbl">SCORE</span>
+            <span class="stat-num score-color">{{ score() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-lbl">STAGE</span>
+            <span class="stat-num stage-color">{{ level() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-lbl">LIVES</span>
+            <div class="lives-row">
+              <span *ngFor="let i of [].constructor(lives())">❤️</span>
+              <span *ngIf="lives() === 0" class="no-lives">0</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-lbl">COMBO</span>
+            <span class="stat-num combo-color">{{ combo() > 1 ? 'x' + combo() : '1x' }}</span>
+          </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-wrapper">
+          <canvas #gameCanvas width="640" height="480" class="game-canvas"></canvas>
+
+          <!-- Start Ready Overlay -->
+          <div *ngIf="gameState() === 'ready'" class="overlay-modal">
+            <div class="modal-card">
+              <div class="modal-icon-box">🚀</div>
+              <h2 class="modal-title">Ready to Break?</h2>
+              <p class="modal-subtitle">Use mouse, touch drag, or Left/Right Arrow keys to bounce the ball and smash glowing bricks.</p>
+              <button (click)="startGame()" class="btn-play-primary">
+                ⚡ PLAY NOW
+              </button>
+            </div>
+          </div>
+
+          <!-- Paused Overlay -->
+          <div *ngIf="gameState() === 'paused'" class="overlay-modal">
+            <div class="modal-card">
+              <h2 class="modal-title pause-title">GAME PAUSED</h2>
+              <button (click)="togglePause()" class="btn-play-primary">
+                Resume (Space)
+              </button>
+            </div>
+          </div>
+
+          <!-- Game Over Overlay -->
+          <div *ngIf="gameState() === 'gameover'" class="overlay-modal">
+            <div class="modal-card">
+              <div class="modal-icon-large">💥</div>
+              <h2 class="defeat-title">GAME OVER</h2>
+              <p class="modal-subtitle">Final Score: <b class="score-highlight">{{ score() }}</b></p>
+              <button (click)="restartGame()" class="btn-play-primary defeat-btn">
+                TRY AGAIN
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage Win Overlay -->
+          <div *ngIf="gameState() === 'win'" class="overlay-modal">
+            <div class="modal-card">
+              <div class="modal-icon-large">🏆</div>
+              <h2 class="victory-title">STAGE CLEARED!</h2>
+              <p class="modal-subtitle">Bonus +{{ level() * 500 }} Points!</p>
+              <button (click)="nextLevel()" class="btn-play-primary victory-btn">
+                NEXT LEVEL (Stage {{ level() + 1 }})
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Touch Bar -->
+        <div class="mobile-touch-panel">
+          <button (touchstart)="startMoveLeft()" (touchend)="stopMove()" class="touch-btn">◀ Left</button>
+          <button (touchstart)="startMoveRight()" (touchend)="stopMove()" class="touch-btn">Right ▶</button>
+        </div>
+
+        <!-- Footer Legend -->
+        <div class="card-footer">
+          <div class="keys-legend">
+            <span>🖱️ Mouse / Touch</span>
+            <span>⌨️ ◀ / ▶ Arrows</span>
+            <span>⏸️ Space to Pause</span>
+          </div>
+          <div class="footer-actions">
+            <button *ngIf="gameState() === 'playing'" (click)="togglePause()" class="btn-footer">Pause</button>
+            <button (click)="restartGame()" class="btn-footer">Restart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>

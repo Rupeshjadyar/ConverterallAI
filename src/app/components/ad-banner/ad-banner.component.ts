@@ -11,59 +11,8 @@ declare global {
   selector: 'app-ad-banner',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="ad-container" [ngClass]="adClass">
-      <!-- Google AdSense Unit -->
-      <ins class="adsbygoogle"
-           [style.display]="'block'"
-           [attr.data-ad-client]="adClient"
-           [attr.data-ad-slot]="adSlot"
-           [attr.data-ad-format]="adFormat"
-           [attr.data-full-width-responsive]="responsive ? 'true' : 'false'">
-      </ins>
-      
-      <!-- Fallback / Preview Badge when AdSense script is pending -->
-      <div class="ad-fallback-badge">
-        <span>ADVERTISEMENT</span>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .ad-container {
-      position: relative;
-      width: 100%;
-      margin: 1.5rem 0;
-      min-height: 90px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px dashed rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .ad-fallback-badge {
-      position: absolute;
-      top: 4px;
-      right: 8px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.3);
-      letter-spacing: 0.05em;
-      pointer-events: none;
-    }
-
-    :host-context([data-theme="light"]) .ad-container {
-      background: rgba(0, 0, 0, 0.02);
-      border-color: rgba(0, 0, 0, 0.08);
-    }
-
-    :host-context([data-theme="light"]) .ad-fallback-badge {
-      color: rgba(0, 0, 0, 0.3);
-    }
-  `]
+  templateUrl: './ad-banner.component.html',
+  styleUrls: ['./ad-banner.component.css']
 })
 export class AdBannerComponent implements AfterViewInit {
   @Input() adClient: string = 'ca-pub-9707682105347147';

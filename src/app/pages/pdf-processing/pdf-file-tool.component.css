@@ -1,0 +1,12 @@
+:host { display: block; }
+.tool-container { max-width: 58rem; margin: auto; padding: clamp(1rem, 4vw, 2rem); }
+.back-link { display: inline-block; margin-bottom: 1rem; }
+.file-panel { padding: clamp(1rem, 4vw, 1.75rem); background: var(--card-color); border: 1px solid var(--border-color); border-radius: 1rem; }
+label { display: block; margin: .75rem 0 .35rem; }
+input { max-width: 100%; }
+input[type=password] { background: transparent; color: inherit; border: 1px solid var(--border-color); padding: .4rem .6rem; border-radius: .4rem; }
+.tool-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+button { border: 1px solid var(--border-color); border-radius: .5rem; padding: .5rem .85rem; background: var(--bg-secondary, #283247); color: inherit; }
+button:disabled { opacity: .5; }
+[role=status], .error { margin-top: .75rem; }
+.error { color: #ef4444; }

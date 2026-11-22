@@ -151,7 +151,8 @@ export class SpeedChangerComponent implements OnInit, OnDestroy {
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `speed-${this.speed}x-${this.fileName || 'audio'}.wav`;
+      const baseName = this.fileName.replace(/\.[^.]+$/, '') || 'audio';
+      a.download = `speed-${this.speed}x-${baseName}.wav`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

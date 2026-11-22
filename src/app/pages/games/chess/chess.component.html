@@ -1,0 +1,120 @@
+<div class="chess-container">
+  <div class="game-header">
+    <div class="header-left">
+      <a routerLink="/games" class="back-link">← All Games</a>
+      <h1 class="game-title">Chess Master ♟</h1>
+    </div>
+    <div class="game-controls-bar">
+      <div class="mode-select">
+        <label>Mode:</label>
+        <select [ngModel]="gameMode()" (ngModelChange)="setMode($event)">
+          <option value="ai">🤖 vs Computer AI</option>
+          <option value="2p">👥 2 Players (Pass & Play)</option>
+        </select>
+      </div>
+      <div class="mode-select" *ngIf="gameMode() === 'ai'">
+        <label>AI Level:</label>
+        <select [ngModel]="aiDifficulty()" (ngModelChange)="aiDifficulty.set($event)">
+          <option value="easy">Casual (Easy)</option>
+          <option value="medium">Tactical (Medium)</option>
+          <option value="hard">Master (Hard)</option>
+          <option value="expert">Expert (Minimax)</option>
+        </select>
+      </div>
+      <button (click)="undo()" [disabled]="!canUndo()" class="btn-control btn-flip">↩ Undo</button>
+      <button (click)="resetGame()" class="btn-control btn-new">🔄 New Game</button>
+      <button (click)="flipBoard()" class="btn-control btn-flip">🔄 Flip Board</button>
+    </div>
+  </div>
+
+  <div class="chess-arena">
+    <div class="board-column">
+      <div class="player-bar black-bar" [class.turn-active]="turn() === 'b' && !isGameOver()">
+        <div class="player-info">
+          <span class="player-avatar">🤖</span>
+          <div>
+            <span class="player-name">{{ gameMode() === 'ai' ? 'Computer AI (Black)' : 'Black Player' }}</span>
+            <span class="player-sub">{{ turn() === 'b' ? 'Thinking / Turn...' : 'Waiting' }} • {{ evalText() }}</span>
+          </div>
+        </div>
+        <div class="captured-tray">
+          <span *ngFor="let p of capturedByWhite()" class="captured-piece">{{ getPieceSymbol(p) }}</span>
+        </div>
+      </div>
+
+      <div class="board-wrapper">
+        <div class="chess-board" [class.board-flipped]="isFlipped()">
+          <div *ngFor="let row of displayRows(); let rIdx = index" class="board-row">
+            <div *ngFor="let col of displayCols(); let cIdx = index"
+                 class="board-square"
+                 [ngClass]="getSquareClass(row, col)"
+                 (click)="onSquareClick(row, col)">
+              <span *ngIf="cIdx === 0" class="coord rank-coord">{{ 8 - row }}</span>
+              <span *ngIf="rIdx === 7" class="coord file-coord">{{ getFileLabel(col) }}</span>
+              <div *ngIf="isLegalMove(row, col)" class="legal-dot" [class.has-capture]="board[row][col]"></div>
+              <div *ngIf="board[row][col] as piece"
+                   class="piece"
+                   [ngClass]="[piece.color === 'w' ? 'white-piece' : 'black-piece', piece.type]">
+                {{ getPieceSymbol(piece) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-bar white-bar" [class.turn-active]="turn() === 'w' && !isGameOver()">
+        <div class="player-info">
+          <span class="player-avatar">👤</span>
+          <div>
+            <span class="player-name">White Player (You)</span>
+            <span class="player-sub">{{ turn() === 'w' ? 'Your Turn to Move' : 'Waiting' }}</span>
+          </div>
+        </div>
+        <div class="captured-tray">
+          <span *ngFor="let p of capturedByBlack()" class="captured-piece">{{ getPieceSymbol(p) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-column glass">
+      <div class="status-box" [ngClass]="statusBoxClass()">
+        <div class="status-headline">{{ gameStatusText() }}</div>
+        <div class="status-subtext" *ngIf="inCheck() && !isGameOver()">⚠ King is in Check!</div>
+      </div>
+      <div class="move-history-card">
+        <h3 class="history-title">📜 Move History ({{ moveHistory().length }})</h3>
+        <div class="moves-scroll">
+          <div *ngFor="let turnNum of getTurnNumbers()" class="move-row">
+            <span class="turn-num">{{ turnNum }}.</span>
+            <span class="move-cell white-move">{{ getMoveNotation(turnNum, 'w') }}</span>
+            <span class="move-cell black-move">{{ getMoveNotation(turnNum, 'b') }}</span>
+          </div>
+          <div *ngIf="moveHistory().length === 0" class="no-moves">Game has just started. Make your first move!</div>
+        </div>
+      </div>
+      <div class="actions-row">
+        <button (click)="copyPGN()" class="btn-control btn-flip">📋 Copy PGN</button>
+        <button (click)="resign()" class="btn-control btn-flip">🏳 Resign</button>
+      </div>
+      <div class="quick-tips-card">
+        <h4>💡 Quick Controls</h4>
+        <ul>
+          <li>Click any of your pieces to see legal target squares.</li>
+          <li>Click green glowing dot to make a move.</li>
+          <li>Toggle between <strong>AI Computer</strong> and <strong>2-Player Local</strong> anytime.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Promotion Modal -->
+<div class="promo-modal" *ngIf="pendingPromo()">
+  <div class="promo-box">
+    <h3>Promote Pawn to:</h3>
+    <div class="promo-row">
+      <button type="button" *ngFor="let t of promoOptions" (click)="confirmPromo(t)">{{ promoSymbol(t) }}</button>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,78 @@
+<div class="chapter-content">
+      <!-- Chapter Header -->
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Security &amp; Permissions</span>
+          <span class="badge-slides">SQL Commands • DCL</span>
+        </div>
+        <h1 class="chapter-title">6. DCL (Data Control Language)</h1>
+        <p class="chapter-subtitle">
+          Manage database permissions, user access rights, and security policies using GRANT and REVOKE commands.
+        </p>
+      </div>
+
+      <!-- Section 1: What is DCL? -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">6.1</span> Understanding DCL Commands
+        </h2>
+        <p class="section-p">
+          <strong>Data Control Language (DCL)</strong> consists of commands used to grant and revoke access permissions to database users. DCL commands prevent unauthorized access and maintain strict security compliance in enterprise database management systems.
+        </p>
+
+        <div class="comparison-grid">
+          <div class="comp-box">
+            <div class="comp-icon">🔑</div>
+            <h3>1. GRANT</h3>
+            <p>Provides specific privileges (such as SELECT, INSERT, UPDATE, DELETE) to database users or roles.</p>
+          </div>
+          <div class="comp-box">
+            <div class="comp-icon">🚫</div>
+            <h3>2. REVOKE</h3>
+            <p>Withdraws previously granted privileges from users or roles, immediately restricting access.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: GRANT Command -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">6.2</span> The GRANT Statement
+        </h2>
+        <p class="section-p">
+          Use <code>GRANT</code> to provide read, write, or administrative access to a user on specific databases or tables:
+        </p>
+
+        <app-sql-code-box
+          title="GRANT Syntax &amp; Examples"
+          [code]="grantCode"
+          tableHint="Grants SELECT &amp; INSERT permissions on students table"
+        ></app-sql-code-box>
+      </section>
+
+      <!-- Section 3: REVOKE Command -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">6.3</span> The REVOKE Statement
+        </h2>
+        <p class="section-p">
+          Use <code>REVOKE</code> to remove privileges when a user's role changes or access needs to be revoked:
+        </p>
+
+        <app-sql-code-box
+          title="REVOKE Syntax &amp; Examples"
+          [code]="revokeCode"
+          tableHint="Removes INSERT access from developer_user"
+        ></app-sql-code-box>
+      </section>
+
+      <!-- Navigation Footer -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/dql" class="nav-btn prev">
+          <span>← 5. DQL (Query Language)</span>
+        </a>
+        <a routerLink="/developer-tools/sql/tcl" class="nav-btn next">
+          <span>7. TCL (Transactions) →</span>
+        </a>
+      </div>
+    </div>

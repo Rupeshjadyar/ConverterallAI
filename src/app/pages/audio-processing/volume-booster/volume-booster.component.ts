@@ -153,7 +153,8 @@ export class VolumeBoosterComponent implements OnInit, OnDestroy {
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `boosted-${this.volumeLevel}pct-${this.fileName || 'audio'}.wav`;
+      const baseName = this.fileName.replace(/\.[^.]+$/, '') || 'audio';
+      a.download = `boosted-${this.volumeLevel}pct-${baseName}.wav`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

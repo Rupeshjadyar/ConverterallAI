@@ -9,7 +9,7 @@
   --border:   #12283f;
   --hl:       #1a4070;
   --text:     #f0f6ff;
-  --muted:    #5a7a9a;
+  --muted:    #809fbe;
   --dim:      #2a4060;
   --accent:   #38bdf8;
   --blue:     #2563eb;
@@ -394,4 +394,11 @@
   .dropzone { padding: 44px 22px; }
   .card { padding: 20px 16px; }
   .progress-card { padding: 40px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress-card *,
+  .dropzone {
+    animation: none;
+    transition: none;
+  }
 }

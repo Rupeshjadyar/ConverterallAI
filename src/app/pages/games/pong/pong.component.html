@@ -1,0 +1,133 @@
+<div class="pong-page-container">
+      
+      <!-- Top Navigation -->
+      <div class="pong-header-bar">
+        <div class="header-left">
+          <a routerLink="/games" class="back-button">
+            <span class="back-arrow">←</span> All Games
+          </a>
+          <h1 class="game-heading">Neon Cyber Pong 🏓</h1>
+        </div>
+
+        <div class="header-right">
+          <div class="stat-badge rally-badge">
+            <span>Rally: {{ rallyCount() }} | Max: {{ maxRally() }}</span>
+          </div>
+
+          <button (click)="toggleMute()" class="btn-mute" [title]="isMuted ? 'Unmute' : 'Mute'">
+            <span>{{ isMuted ? '🔇' : '🔊' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings & Controls Bar -->
+      <div class="pong-card">
+        <div class="settings-toolbar">
+          <div class="setting-group">
+            <span class="setting-label">Mode:</span>
+            <div class="btn-pill-group">
+              <button (click)="setMode('ai')" [class.active]="gameMode() === 'ai'" class="btn-pill">
+                🤖 1P vs AI
+              </button>
+              <button (click)="setMode('2p')" [class.active]="gameMode() === '2p'" class="btn-pill">
+                👥 2-Player Local
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="gameMode() === 'ai'" class="setting-group">
+            <span class="setting-label">Difficulty:</span>
+            <div class="btn-pill-group">
+              <button *ngFor="let diff of ['easy', 'medium', 'hard']" (click)="setDifficulty(diff)" [class.active]="difficulty() === diff" class="btn-pill capitalize">
+                {{ diff }}
+              </button>
+            </div>
+          </div>
+
+          <div class="setting-group">
+            <span class="setting-label">Play to:</span>
+            <div class="btn-pill-group">
+              <button *ngFor="let pts of [5, 10, 15]" (click)="setTargetScore(pts)" [class.active]="targetScore() === pts" class="btn-pill">
+                {{ pts }} pts
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scoreboard -->
+        <div class="scoreboard-banner">
+          <div class="score-player p1-score">
+            <span class="player-title">{{ gameMode() === 'ai' ? 'Player 1 (You)' : 'Player 1 (Left)' }}</span>
+            <span class="score-digits">{{ p1Score() }}</span>
+          </div>
+
+          <div class="vs-badge">VS</div>
+
+          <div class="score-player p2-score">
+            <span class="player-title">{{ gameMode() === 'ai' ? 'AI Bot' : 'Player 2 (Right)' }}</span>
+            <span class="score-digits">{{ p2Score() }}</span>
+          </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="canvas-wrapper">
+          <canvas #pongCanvas width="720" height="405" class="game-canvas"></canvas>
+
+          <!-- Start / Ready Overlay -->
+          <div *ngIf="gameState() === 'ready'" class="overlay-modal">
+            <div class="modal-card">
+              <div class="modal-icon-box">🏓</div>
+              <h2 class="modal-title">Ready to Serve?</h2>
+              <p class="modal-subtitle">
+                {{ gameMode() === 'ai' ? 'Move paddle with W/S, Up/Down keys or Mouse/Touch to deflect the cyber ball.' : 'Player 1: W/S keys | Player 2: Up/Down Arrow keys' }}
+              </p>
+              <button (click)="startGame()" class="btn-serve-primary">
+                ⚡ SERVE BALL
+              </button>
+            </div>
+          </div>
+
+          <!-- Winner Overlay -->
+          <div *ngIf="gameState() === 'gameover'" class="overlay-modal">
+            <div class="modal-card">
+              <div class="modal-icon-large">🏆</div>
+              <h2 class="victory-title">{{ winner() }} WINS!</h2>
+              <p class="modal-subtitle">Final Score: {{ p1Score() }} - {{ p2Score() }} (Longest Rally: {{ maxRally() }})</p>
+              <button (click)="restartMatch()" class="btn-serve-primary">
+                PLAY AGAIN
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-touch-panel">
+          <div class="touch-player-box">
+            <span class="touch-label p1-label">Player 1</span>
+            <div class="touch-btn-row">
+              <button (touchstart)="p1Up = true" (touchend)="p1Up = false" class="touch-ctrl-btn">▲</button>
+              <button (touchstart)="p1Down = true" (touchend)="p1Down = false" class="touch-ctrl-btn">▼</button>
+            </div>
+          </div>
+
+          <div *ngIf="gameMode() === '2p'" class="touch-player-box">
+            <span class="touch-label p2-label">Player 2</span>
+            <div class="touch-btn-row">
+              <button (touchstart)="p2Up = true" (touchend)="p2Up = false" class="touch-ctrl-btn">▲</button>
+              <button (touchstart)="p2Down = true" (touchend)="p2Down = false" class="touch-ctrl-btn">▼</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Key Legend -->
+        <div class="card-footer">
+          <div class="keys-legend">
+            <span>🎮 P1: <b>W / S</b> or <b>Mouse</b></span>
+            <span *ngIf="gameMode() === '2p'">🎮 P2: <b>▲ / ▼ Arrows</b></span>
+            <span>⏸️ <b>Space</b> to pause</span>
+          </div>
+          <button (click)="restartMatch()" class="btn-reset">Reset</button>
+        </div>
+      </div>
+
+    </div>

@@ -1,0 +1,134 @@
+<div class="games-hub-container">
+      
+      <!-- HERO BANNER -->
+      <section class="games-hero">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>100% Free • Zero Latency • Client-Side Angular Games</span>
+        </div>
+        
+        <h1 class="hero-title">
+          The Ultimate <span class="gradient-text">Browser Games Arcade</span>
+        </h1>
+        <p class="hero-desc">
+          Play classic strategy board games, Indian 3-Patti card tables with AI bots, arcade retro classics, and speed benchmarks. Play solo vs smart AI or 2-player pass & play!
+        </p>
+
+        <!-- Search and Quick Category Filter -->
+        <div class="hub-controls">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              placeholder="Search games (e.g. Chess, 3 Patti, 2048, Sudoku, Snake...)" 
+              class="search-input"
+            />
+            <button *ngIf="searchQuery" (click)="searchQuery = ''" class="clear-btn">✕</button>
+          </div>
+
+          <div class="genre-pills">
+            <button 
+              *ngFor="let g of genres" 
+              class="genre-pill" 
+              [class.active]="selectedGenre() === g.id"
+              (click)="selectedGenre.set(g.id)">
+              <span>{{ g.icon }}</span>
+              <span>{{ g.name }}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURED SPOTLIGHT -->
+      <section class="featured-spotlight" *ngIf="!searchQuery && selectedGenre() === 'all'">
+        <div class="spotlight-card chess-spotlight">
+          <div class="spotlight-content">
+            <span class="spotlight-badge">🏆 TRENDING STRATEGY</span>
+            <h2>Chess Master ♟️</h2>
+            <p>Challenge high-accuracy Minimax AI engines or battle a friend with legal move highlights, check indicators, and move history notation.</p>
+            <div class="spotlight-actions">
+              <a routerLink="/games/chess" class="btn-play-primary">Play Chess Now →</a>
+              <span class="player-tag">👥 1P vs AI / 2-Player</span>
+            </div>
+          </div>
+          <div class="spotlight-art">♟️</div>
+        </div>
+
+        <div class="spotlight-card patti-spotlight">
+          <div class="spotlight-content">
+            <span class="spotlight-badge gold-badge">🎴 POPULAR CARD GAME</span>
+            <h2>Teen Patti Royale 3-Patti</h2>
+            <p>Experience authentic Indian 3-card poker. Place Blind and Chaal bets, build your chip empire, and challenge smart computer bots!</p>
+            <div class="spotlight-actions">
+              <a routerLink="/games/teen-patti" class="btn-play-gold">Enter Table →</a>
+              <span class="player-tag">💰 Virtual Chips & Bots</span>
+            </div>
+          </div>
+          <div class="spotlight-art">🎴</div>
+        </div>
+      </section>
+
+      <!-- GAMES GRID -->
+      <section class="games-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span>{{ getSectionTitle() }}</span>
+            <span class="game-count">({{ filteredGames().length }} Games)</span>
+          </h2>
+        </div>
+
+        <div class="games-grid">
+          <div *ngFor="let game of filteredGames()" class="game-card glass">
+            <div class="card-header">
+              <div class="game-icon-box">{{ game.icon }}</div>
+              <div class="badge-row">
+                <span *ngIf="game.badge" class="game-badge" [ngClass]="game.badge.toLowerCase()">{{ game.badge }}</span>
+                <span *ngIf="game.isAI" class="ai-badge">🤖 AI Bot</span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <h3 class="game-name">{{ game.name }}</h3>
+              <p class="game-desc">{{ game.shortDesc }}</p>
+            </div>
+
+            <div class="card-footer">
+              <a [routerLink]="game.slug" class="btn-launch-game">
+                <span>Play Free</span>
+                <span class="arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="filteredGames().length === 0" class="empty-state glass">
+          <div class="empty-icon">🎮</div>
+          <h3>No games found matching "{{ searchQuery }}"</h3>
+          <p>Try clearing your search query or selecting "All Games".</p>
+          <button (click)="searchQuery = ''; selectedGenre.set('all')" class="btn-reset">View All Games</button>
+        </div>
+      </section>
+
+      <!-- WHY PLAY ON CONVERTERALL GAMES -->
+      <section class="perks-section">
+        <div class="perks-grid">
+          <div class="perk-card glass">
+            <div class="perk-icon">⚡</div>
+            <h3>Zero Latency</h3>
+            <p>100% Client-side Angular standalone engines. No ads interruptions, instant 60fps frame rates.</p>
+          </div>
+          <div class="perk-card glass">
+            <div class="perk-icon">🔒</div>
+            <h3>100% Private & Free</h3>
+            <p>No registration, no downloads, no credit card required. High scores are securely stored in your browser.</p>
+          </div>
+          <div class="perk-card glass">
+            <div class="perk-icon">📱</div>
+            <h3>Cross-Platform Ready</h3>
+            <p>Engineered with touch D-pads, swipe gestures, and keyboard hotkeys for Mobile, Tablet, and PC.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>

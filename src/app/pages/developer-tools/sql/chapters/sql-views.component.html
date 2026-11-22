@@ -1,0 +1,149 @@
+<div class="chapter-content">
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Database Virtualization</span>
+          <span class="badge-slides">PPT Slides 97 - 102</span>
+        </div>
+        <h1 class="chapter-title">13. Views in SQL</h1>
+        <p class="chapter-subtitle">
+          Understand virtual tables: CREATE VIEW from single and multiple tables, updating underlying data through views, deleting from views, and dropping views.
+        </p>
+      </div>
+
+      <!-- Section 1: What is a View -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">13.1</span> What is an SQL View? (Slide 97)
+        </h2>
+        <p class="section-text">
+          A <strong>VIEW</strong> in SQL is a <strong>virtual table</strong> based on the result-set of an SQL query.
+        </p>
+
+        <div class="benefits-grid">
+          <div class="benefit-item">
+            <span class="b-icon">🪟</span>
+            <h4>Rows &amp; Columns</h4>
+            <p>A view contains rows and columns just like a real database table, but does not store data on disk itself.</p>
+          </div>
+          <div class="benefit-item">
+            <span class="b-icon">🛡️</span>
+            <h4>Security &amp; Privacy</h4>
+            <p>Hides sensitive columns (e.g. passwords, SSN, bank accounts) by exposing only non-confidential fields to users.</p>
+          </div>
+          <div class="benefit-item">
+            <span class="b-icon">⚡</span>
+            <h4>Query Simplification</h4>
+            <p>Abstracts monstrous, complex multi-table joins into a simple <code>SELECT * FROM view_name</code> query.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Creating Views -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">13.2</span> Creating Views (Slides 98 - 100)
+        </h2>
+
+        <div class="views-creation-grid">
+          <!-- Single table view -->
+          <div class="view-create-box">
+            <h4>1. Creating View from a Single Table (Slide 99)</h4>
+            <p>Exposes only <code>name</code> and <code>manager_id</code> for employees whose <code>emp_id &lt; 4</code>:</p>
+            <app-sql-code-box
+              title="CREATE VIEW (Single Table)"
+              code="CREATE VIEW emp_view AS
+SELECT name, manager_id
+FROM employee
+WHERE emp_id < 4;"
+              output="Query OK, 0 rows affected (0.01 sec)"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- Multiple table view -->
+          <div class="view-create-box">
+            <h4>2. Creating View from Multiple Tables (Slide 100)</h4>
+            <p>Pre-joins <code>employee</code> and <code>emp_details</code> into a unified virtual entity:</p>
+            <app-sql-code-box
+              title="CREATE VIEW (Multiple Tables)"
+              code="CREATE VIEW empview AS
+SELECT employee.manager_id, employee.name, emp_details.city, emp_details.age
+FROM employee, emp_details
+WHERE employee.name = emp_details.name;"
+              output="Query OK, 0 rows affected (0.01 sec)"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Updating, Deleting & Dropping Views -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">13.3</span> Updating, Deleting &amp; Dropping Views (Slides 101 - 102)
+        </h2>
+
+        <div class="ops-stack">
+          <!-- Update -->
+          <div class="op-box">
+            <h4>1. Updating Data Through a View (Slide 101)</h4>
+            <p>
+              When a view is updatable (derived from a single table without aggregations), modifying rows through the view updates the underlying physical table!
+            </p>
+            <app-sql-code-box
+              title="UPDATE View"
+              code="UPDATE emp_view
+SET name = 'prachi'
+WHERE manager_id = 4;"
+              output="Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- Delete -->
+          <div class="op-box">
+            <h4>2. Deleting Data from a View (Slide 102)</h4>
+            <p>Removes matching records from the base table via the view interface:</p>
+            <app-sql-code-box
+              title="DELETE from View"
+              code="DELETE FROM view1
+WHERE name = 'nisha';"
+              output="Query OK, 1 row affected (0.01 sec)"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- Drop -->
+          <div class="op-box">
+            <h4>3. Dropping a View (Slide 102)</h4>
+            <p>Deletes the virtual view definition without harming any data in the original base tables:</p>
+            <app-sql-code-box
+              title="DROP VIEW Syntax"
+              code="DROP VIEW IF EXISTS emp_view;"
+              output="Query OK, 0 rows affected (0.01 sec)"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Playground CTA -->
+      <section class="playground-cta glass">
+        <div class="cta-content">
+          <span class="cta-badge">🎉 Course Complete!</span>
+          <h2>Ready to test your MySQL knowledge live?</h2>
+          <p>
+            Launch the interactive SQL Sandbox loaded with all tables and datasets from the 102 course slides.
+          </p>
+          <a routerLink="/developer-tools/sql/playground" class="cta-launch-btn">
+            💻 Launch Live SQL Playground →
+          </a>
+        </div>
+      </section>
+
+      <!-- Footer Navigation -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/joins" class="nav-btn prev-btn">
+          ← 12. SQL Joins
+        </a>
+        <a routerLink="/developer-tools/sql/playground" class="nav-btn next-btn">
+          Next: 14. Interactive SQL Playground →
+        </a>
+      </div>
+    </div>

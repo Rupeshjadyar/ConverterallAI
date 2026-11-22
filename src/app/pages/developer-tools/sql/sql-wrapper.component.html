@@ -1,0 +1,96 @@
+<div class="sql-master-wrapper">
+      <!-- Background Ambient Glow -->
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+
+      <div class="sql-container">
+        <!-- Top Breadcrumb Bar -->
+        <div class="sql-breadcrumbs">
+          <a routerLink="/" class="crumb-link">🏠 Home</a>
+          <span class="crumb-separator">/</span>
+          <a routerLink="/developer-tools" class="crumb-link">Developer Tools</a>
+          <span class="crumb-separator">/</span>
+          <span class="crumb-current">SQL</span>
+        </div>
+
+        <!-- SQL Internal Navbar (Introduction / Syntax / DDL / DML / DQL / DCL / TCL / Joins) -->
+        <app-sql-navbar></app-sql-navbar>
+
+        <!-- Master Two-Column Layout -->
+        <div class="sql-layout">
+          <!-- Sidebar Navigation -->
+          <aside class="sql-sidebar glass" [class.mobile-expanded]="sidebarOpen()">
+            <div class="sidebar-header">
+              <div class="brand-row">
+                <span class="sql-badge-icon">🗄️</span>
+                <div>
+                  <h3 class="sidebar-title">MySQL Masterclass</h3>
+                  <span class="sidebar-subtitle">102 Slides • Complete Reference</span>
+                </div>
+              </div>
+              <button class="mobile-toggle" (click)="toggleSidebar()">
+                {{ sidebarOpen() ? '✕' : '☰ Menu' }}
+              </button>
+            </div>
+
+            <!-- Search Topics Filter -->
+            <div class="search-box">
+              <input 
+                type="text" 
+                [(ngModel)]="searchQuery" 
+                placeholder="Search topics (e.g. JOIN, GROUP, CASCADE)..." 
+                class="search-input"
+              />
+              <button *ngIf="searchQuery" (click)="searchQuery = ''" class="clear-search">✕</button>
+            </div>
+
+            <!-- Playground Quick Link -->
+            <a 
+              routerLink="/developer-tools/sql/playground" 
+              routerLinkActive="active-playground" 
+              class="playground-shortcut"
+              (click)="closeSidebarOnMobile()"
+            >
+              <span class="shortcut-icon">💻</span>
+              <div class="shortcut-text">
+                <strong>Live SQL Playground</strong>
+                <small>Run queries in browser</small>
+              </div>
+              <span class="shortcut-pill">RUN</span>
+            </a>
+
+            <!-- Chapter Navigation List -->
+            <div class="chapters-nav">
+              <div *ngFor="let cat of topicCategories" class="cat-group">
+                <div class="cat-title">{{ cat }}</div>
+                <div class="cat-items">
+                  <a 
+                    *ngFor="let topic of getTopicsByCat(cat)" 
+                    [routerLink]="['/developer-tools/sql', topic.slug]" 
+                    routerLinkActive="active-chapter" 
+                    class="chapter-link"
+                    (click)="closeSidebarOnMobile()"
+                  >
+                    <span class="topic-icon">{{ topic.icon }}</span>
+                    <div class="topic-info">
+                      <div class="topic-title">{{ topic.title }}</div>
+                      <div class="topic-meta">
+                        <span>{{ topic.slideRange }}</span>
+                      </div>
+                    </div>
+                    <span *ngIf="topic.badge" class="topic-mini-badge" [ngClass]="topic.badge.toLowerCase()">
+                      {{ topic.badge }}
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Content Stage -->
+          <main class="sql-main-stage">
+            <router-outlet></router-outlet>
+          </main>
+        </div>
+      </div>
+    </div>

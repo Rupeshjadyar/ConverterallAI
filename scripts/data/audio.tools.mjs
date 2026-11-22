@@ -232,34 +232,32 @@ export const audioTools = [
     name: 'Video to Audio Extractor',
     slug: '/audio-processing/video-to-audio',
     categoryId: 'audio-tools',
-    shortDesc: 'Extract audio tracks, music, and dialogue from MP4, WebM, and MKV videos.',
-    fullDesc: 'Fast in-browser video soundtrack demuxer extracting high-fidelity MP3 and WAV files with zero server uploads.',
+    shortDesc: 'Save the audio track from a browser-supported video as WAV.',
+    fullDesc: 'Extract a video soundtrack in your browser and export it as 16-bit PCM WAV.',
     icon: '🎬',
     badge: 'POPULAR',
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Extract Audio From Video Free - MP4 to MP3 | ConverterAllAI',
-    seoDescription: 'Extract audio tracks from MP4, WebM, and MKV videos online for free. Convert video clips to high-quality MP3 or WAV directly in your browser with zero uploads.',
-    keywords: 'video to audio, extract audio from video, mp4 to mp3 online, convert video to sound, rip audio from video',
-    h1: 'Online Video to Audio Extractor & MP3 Demuxer',
-    intro: 'Strip audio tracks from video clips, smartphone recordings, and tutorials with zero quality compromise. Extract the soundtrack as an MP3 or lossless WAV file directly inside your browser without uploading heavy video files.',
+    seoTitle: 'Extract WAV Audio From Video Free | ConverterAllAI',
+    seoDescription: 'Extract the audio track from a video your browser can decode, preview the video, and save its soundtrack as WAV without uploading the original file.',
+    keywords: 'video to audio, extract audio from video, video to wav, convert video to sound',
+    h1: 'Online Video to WAV Extractor',
+    intro: 'Save the soundtrack from a compatible video as a WAV file. Supported video containers and audio codecs vary by browser.',
     howToSteps: [
-      'Drag and drop your video file (MP4, WebM, MOV, MKV) into the dropzone.',
-      'Choose your preferred audio target format (MP3, WAV, or AAC).',
-      'Select audio bitrate and stereo/mono channels.',
-      'Click Extract Audio to instantly save the isolated soundtrack.'
+      'Choose or drag in a video with an audio track.',
+      'Wait for your browser to decode the audio track.',
+      'Click Download WAV to save the soundtrack.'
     ],
     features: [
-      'Extracts audio from MP4, WebM, MOV, AVI, and MKV video containers',
-      'Fast client-side demuxing without uploading large video gigabytes to servers',
-      'High-bitrate MP3 encoding up to 320kbps and uncompressed WAV options',
-      'Preserves original multichannel audio tracks and metadata'
+      'Local extraction for video files your browser can decode',
+      '16-bit PCM WAV export',
+      'Video preview before downloading the audio'
     ],
     faqs: [
-      { q: 'Do I have to upload large gigabyte video files to your website?', a: 'No! The audio stream is demuxed and extracted locally in your web browser, saving you time, bandwidth, and ensuring complete privacy.' },
-      { q: 'Can I extract audio from 4K smartphone videos?', a: 'Yes, high-resolution 4K and 1080p videos from iPhones and Android devices are supported smoothly.' },
-      { q: 'What format should I pick for the extracted audio?', a: 'Choose MP3 for music and podcasts for universal compatibility, or WAV if you plan further editing in audio production software.' },
+      { q: 'Where is the video processed?', a: 'Your browser reads the file directly on your device.' },
+      { q: 'Why did a video fail to open?', a: 'The video needs an audio track with a codec and container your browser can decode.' },
+      { q: 'What format does the extractor produce?', a: 'The download is a 16-bit PCM WAV file.' },
       { q: 'Does extracting audio damage my original video file?', a: 'No, your original video on your hard drive remains untouched.' }
     ],
     relatedToolPaths: ['/audio-processing/audio-cutter', '/audio-processing/format-converter', '/audio-processing/volume-booster'],
@@ -270,34 +268,32 @@ export const audioTools = [
     name: 'Audio Format Converter',
     slug: '/audio-processing/format-converter',
     categoryId: 'audio-tools',
-    shortDesc: 'Convert audio between MP3, WAV, AAC, OGG, FLAC, and M4A formats.',
-    fullDesc: 'Universal client-side audio format converter with selectable bitrates and sample rates.',
+    shortDesc: 'Convert browser-supported audio files to WAV or MP3 in batches.',
+    fullDesc: 'Decode audio files locally and export 16-bit PCM WAV or 128 kbps MP3.',
     icon: '🔄',
     badge: 'HOT',
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Convert Audio Online Free - MP3 WAV AAC | ConverterAllAI',
-    seoDescription: 'Convert audio files between MP3, WAV, AAC, FLAC, and OGG online for free. Fast in-browser conversion with lossless fidelity, custom bitrates, and zero signup.',
-    keywords: 'audio format converter, convert mp3 to wav, wav to mp3 online, flac to mp3, convert audio online free',
-    h1: 'Universal Online Audio Format Converter',
-    intro: 'Convert music and sound recordings across all major digital audio formats. Whether you need uncompressed WAV files converted to lightweight MP3s or FLAC tracks transcoded for mobile players, execute conversions in seconds.',
+    seoTitle: 'Batch Audio to WAV or MP3 | ConverterAllAI',
+    seoDescription: 'Convert compatible audio files to 16-bit PCM WAV or 128 kbps MP3 in batches. Process audio jobs in your browser and download each result separately.',
+    keywords: 'audio format converter, convert mp3 to wav, flac to wav, batch wav converter',
+    h1: 'Batch WAV and MP3 Converter',
+    intro: 'Convert one or more audio files to WAV or MP3. Input support depends on the audio codecs your browser can decode.',
     howToSteps: [
-      'Upload the source audio file you want to transcode.',
-      'Select your desired output audio format (MP3, WAV, AAC, FLAC, OGG).',
-      'Choose your audio bitrate quality (128kbps, 192kbps, 320kbps).',
-      'Click Convert & Download to receive your converted file.'
+      'Choose or drop the source audio files.',
+      'Select WAV or MP3 and run the conversion.',
+      'Download each output file after it is ready.'
     ],
     features: [
-      'Converts between MP3, WAV, AAC, M4A, FLAC, and OGG formats',
-      'Customizable audio bitrates from 64kbps to 320kbps',
-      'Sample rate selection (44.1kHz CD quality, 48kHz studio standard)',
-      '100% private in-browser conversion with zero cloud uploads'
+      'Batch conversion for compatible audio files',
+      '16-bit PCM WAV and 128 kbps MP3 output',
+      'File processing on your device'
     ],
     faqs: [
-      { q: 'Is converting WAV to MP3 lossless?', a: 'WAV is uncompressed audio, while MP3 is a lossy compressed format. Encoding at 320kbps MP3 produces indistinguishable audio quality for most human ears.' },
-      { q: 'Can I convert lossless FLAC files to standard MP3?', a: 'Yes, this converter easily transforms audiophile FLAC albums into universally playable MP3s.' },
-      { q: 'How fast is browser-based audio transcoding?', a: 'Because modern browsers use optimized WebAssembly libraries, conversions usually finish within a few seconds.' },
+      { q: 'Which input formats can I use?', a: 'Try MP3, WAV, OGG, M4A, AAC, or FLAC files your browser can decode.' },
+      { q: 'Can I convert several files at once?', a: 'Yes. Add files to the batch, choose WAV or MP3, then download the ready files individually.' },
+      { q: 'What kind of WAV does this create?', a: 'The WAV setting produces uncompressed 16-bit PCM audio.' },
       { q: 'Are my personal music files uploaded to any server?', a: 'No, every conversion happens locally on your computer or mobile phone.' }
     ],
     relatedToolPaths: ['/audio-processing/audio-cutter', '/audio-processing/video-to-audio', '/audio-processing/volume-booster'],
@@ -400,7 +396,7 @@ export const audioTools = [
       'Load your audio track into the editing canvas.',
       'Select sections to trim, cut, or duplicate along the waveform timeline.',
       'Apply processing filters like normalization, fade curves, or gain boost.',
-      'Export your finished master in your choice of audio format.'
+      'Export your finished clip as WAV.'
     ],
     features: [
       'Complete audio editing toolset: Cut, Trim, Boost, Reverse, and Equalize',

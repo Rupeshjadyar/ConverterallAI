@@ -1,0 +1,79 @@
+<div class="tutorials-site-wrapper" [class.dark-mode]="isDarkMode()">
+      
+      <!-- Top Brand Strip -->
+      <div class="tutorials-brand-bar">
+        <div class="brand-container">
+          <div class="brand-info">
+            <span class="brand-badge">Tutorials Hub</span>
+            <p class="brand-title">Learn through <span class="highlight-brand">ConverterAllAI</span></p>
+            <p class="brand-tagline">Comprehensive interactive tutorials for HTML, CSS, JavaScript, Java, Python &amp; SQL with live in-browser code execution.</p>
+          </div>
+          <div class="brand-actions">
+            <button class="btn-theme-toggle" (click)="toggleTheme()" [title]="isDarkMode() ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+              <span>{{ isDarkMode() ? '☀️ Light' : '🌙 Dark' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Horizontal Language Bar -->
+      <nav class="subnav-bar" aria-label="Languages Bar">
+        <div class="subnav-scroll">
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'HTML'"
+            (click)="selectLanguage('HTML')"
+          >HTML</button>
+          
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'CSS'"
+            (click)="selectLanguage('CSS')"
+          >CSS</button>
+          
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'JAVASCRIPT'"
+            (click)="selectLanguage('JAVASCRIPT')"
+          >JAVASCRIPT</button>
+
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'JAVA'"
+            (click)="selectLanguage('JAVA')"
+          >JAVA</button>
+
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'PYTHON'"
+            (click)="selectLanguage('PYTHON')"
+          >PYTHON</button>
+
+          <button
+            class="subnav-link"
+            [class.active]="selectedLanguage() === 'SQL'"
+            (click)="selectLanguage('SQL')"
+          >SQL</button>
+        </div>
+      </nav>
+
+      <!-- Main Tutorial Sub-Component View -->
+      <div class="main-component-container">
+        @if (selectedLanguage() === 'HTML') {
+          <app-html-tutorial />
+        } @else if (selectedLanguage() === 'CSS') {
+          <app-css-tutorial />
+        } @else if (selectedLanguage() === 'JAVASCRIPT') {
+          <app-javascript-tutorial />
+        } @else if (selectedLanguage() === 'JAVA') {
+          <app-java-tutorial />
+        } @else if (selectedLanguage() === 'PYTHON') {
+          <app-python-tutorial />
+        } @else if (selectedLanguage() === 'SQL') {
+          <app-sql-tutorial />
+        } @else {
+          <app-html-tutorial />
+        }
+      </div>
+
+    </div>

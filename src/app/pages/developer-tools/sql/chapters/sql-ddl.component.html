@@ -1,0 +1,247 @@
+<div class="chapter-content">
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Commands (DDL &amp; DML)</span>
+          <span class="badge-slides">PPT Slides 18 - 25</span>
+        </div>
+        <h1 class="chapter-title">5. Data Definition Language (DDL)</h1>
+        <p class="chapter-subtitle">
+          Learn how to manage schema structures: CREATE, SHOW, USE, DROP databases; CREATE &amp; ALTER tables (ADD, MODIFY, CHANGE, DROP columns); RENAME TABLE; and TRUNCATE vs. DROP.
+        </p>
+      </div>
+
+      <!-- DDL Overview -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">5.1</span> DDL Command Summary (Slide 18)
+        </h2>
+        <p class="section-text">
+          <strong>DDL (Data Definition Language)</strong> consists of SQL statements that define and manage the database schema. DDL commands build, restructure, or remove database objects (databases, tables, views, indexes) without altering the row contents directly.
+        </p>
+
+        <div class="table-responsive">
+          <table class="styled-matrix-table">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>DDL Command</th>
+                <th>Description</th>
+                <th>Sample Query</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1.</td>
+                <td><code>CREATE</code></td>
+                <td>Used to create tables, databases, or views.</td>
+                <td><code>CREATE TABLE student (id INT);</code></td>
+              </tr>
+              <tr>
+                <td>2.</td>
+                <td><code>ALTER</code></td>
+                <td>Modifies column definitions or constraints in existing tables.</td>
+                <td><code>ALTER TABLE student ADD roll_no INT;</code></td>
+              </tr>
+              <tr>
+                <td>3.</td>
+                <td><code>RENAME</code></td>
+                <td>Renames an existing table or database schema object.</td>
+                <td><code>RENAME TABLE student TO student_details;</code></td>
+              </tr>
+              <tr>
+                <td>4.</td>
+                <td><code>DROP</code></td>
+                <td>Permanently deletes table structure and its data.</td>
+                <td><code>DROP TABLE student_details;</code></td>
+              </tr>
+              <tr>
+                <td>5.</td>
+                <td><code>TRUNCATE</code></td>
+                <td>Empties all rows from a table while preserving schema structure.</td>
+                <td><code>TRUNCATE TABLE student_details;</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Database Management -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">5.2</span> Database Level Operations (Slide 19)
+        </h2>
+
+        <div class="ddl-subgrid">
+          <div class="sub-item">
+            <h4>Creating a Database</h4>
+            <div class="syntax-line">Syntax: <code>CREATE DATABASE Database_Name;</code></div>
+            <app-sql-code-box
+              code="CREATE DATABASE Student;"
+              title="Create Database"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="sub-item">
+            <h4>Listing All Databases</h4>
+            <div class="syntax-line">Syntax: <code>SHOW DATABASES;</code></div>
+            <app-sql-code-box
+              code="SHOW DATABASES;"
+              title="Show Databases"
+              output="+--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| Student            |
++--------------------+
+4 rows in set (0.001 sec)"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="sub-item">
+            <h4>Selecting Active Database</h4>
+            <div class="syntax-line">Syntax: <code>USE database_name;</code></div>
+            <app-sql-code-box
+              code="USE Student;"
+              title="Switch Database"
+              output="Database changed"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="sub-item">
+            <h4>Removing / Deleting Database</h4>
+            <div class="syntax-line">Syntax: <code>DROP DATABASE database_name;</code></div>
+            <app-sql-code-box
+              code="DROP DATABASE Student;"
+              title="Drop Database"
+              output="Query OK, 0 rows affected (0.02 sec)"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Table Definition -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">5.3</span> Creating Tables (Slides 20 - 21)
+        </h2>
+        <p class="section-text">
+          A table is a structured collection of data organized in rows and columns. In formal relational terminology, a table is called a <strong>relation</strong>, columns are <strong>fields / attributes</strong>, and rows are <strong>records / tuples</strong>.
+        </p>
+
+        <app-sql-code-box
+          title="CREATE TABLE Statement (Slide 21)"
+          code="CREATE TABLE STUDENTS (
+  ID INT NOT NULL,
+  NAME VARCHAR(20) NOT NULL,
+  AGE INT NOT NULL,
+  ADDRESS CHAR(25),
+  PRIMARY KEY (ID)
+);"
+          output="Query OK, 0 rows affected (0.04 sec)"
+        ></app-sql-code-box>
+      </section>
+
+      <!-- ALTER TABLE -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">5.4</span> The ALTER TABLE Command (Slides 22 - 23)
+        </h2>
+        <p class="section-text">
+          <code>ALTER TABLE</code> allows adding, modifying, renaming, and deleting columns on existing tables, as well as applying or removing constraints without recreating the table.
+        </p>
+
+        <div class="alter-cases">
+          <div class="alter-case">
+            <h4>1. ALTER TABLE ADD Column</h4>
+            <div class="syntax-line">Syntax: <code>ALTER TABLE table_name ADD column_name column-definition;</code></div>
+            <app-sql-code-box
+              title="ADD Single & Multiple Columns (Slide 22)"
+              code="-- Adding a single column
+ALTER TABLE student ADD marks INT;
+
+-- Adding multiple columns
+ALTER TABLE student ADD email VARCHAR(50), ADD phone_number VARCHAR(15);"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="alter-case">
+            <h4>2. ALTER TABLE MODIFY Column</h4>
+            <div class="syntax-line">Syntax: <code>ALTER TABLE table_name MODIFY column_name column-definition;</code></div>
+            <app-sql-code-box
+              title="MODIFY Column Data Type / Size (Slide 22)"
+              code="ALTER TABLE student MODIFY NAME VARCHAR(40);"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="alter-case">
+            <h4>3. ALTER TABLE RENAME / CHANGE Column</h4>
+            <div class="syntax-line">Syntax: <code>ALTER TABLE table_name CHANGE COLUMN old_name new_name datatype;</code></div>
+            <app-sql-code-box
+              title="CHANGE Column Name & Type (Slide 23)"
+              code="ALTER TABLE STUDENTS CHANGE COLUMN First_NAME Stud_Name VARCHAR(20);"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="alter-case">
+            <h4>4. ALTER TABLE DROP Column</h4>
+            <div class="syntax-line">Syntax: <code>ALTER TABLE table_name DROP column_name;</code></div>
+            <app-sql-code-box
+              title="DROP Column(s) (Slide 23)"
+              code="-- Dropping single column
+ALTER TABLE students DROP ADDRESS;
+
+-- Dropping multiple columns
+ALTER TABLE students DROP marks, DROP phone_number;"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- RENAME, TRUNCATE & DROP -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">5.5</span> RENAME, TRUNCATE &amp; DROP Table (Slides 24 - 25)
+        </h2>
+
+        <div class="destruct-grid">
+          <div class="destruct-box">
+            <h4>Rename Table Command (Slide 24)</h4>
+            <p>Changes the official name of the table schema in the database.</p>
+            <app-sql-code-box
+              code="ALTER TABLE STUDENTS RENAME TO STUDENT_DETAILS;"
+              title="Rename Table"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="destruct-box">
+            <h4>TRUNCATE TABLE Command (Slide 25)</h4>
+            <p>Removes all rows (clears complete data) while keeping the structure intact. Faster than <code>DELETE</code> with less resource overhead.</p>
+            <app-sql-code-box
+              code="TRUNCATE TABLE STUDENTS;"
+              title="Truncate Table"
+            ></app-sql-code-box>
+          </div>
+
+          <div class="destruct-box">
+            <h4>DROP TABLE Command (Slide 25)</h4>
+            <p>Permanently deletes the entire table definition, constraints, and all data.</p>
+            <app-sql-code-box
+              code="DROP TABLE STUDENTS;"
+              title="Drop Table"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Navigation -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/constraints" class="nav-btn prev-btn">
+          ← 4. Constraints in SQL
+        </a>
+        <a routerLink="/developer-tools/sql/dml" class="nav-btn next-btn">
+          Next: 6. DML (Data Manipulation Language) →
+        </a>
+      </div>
+    </div>

@@ -24,16 +24,18 @@
 
     <div class="controls-section">
       <div class="control-group">
-        <label>Select Target Format</label>
-        <select [(ngModel)]="targetFormat" class="format-select">
+        <label for="target-image-format">Select Target Format</label>
+        <select id="target-image-format" [(ngModel)]="targetFormat" (ngModelChange)="convertedUrl = null" [disabled]="isConverting" class="format-select">
           <option *ngFor="let fmt of formats" [value]="fmt.value">{{ fmt.label }}</option>
         </select>
       </div>
 
-      <button class="action-btn" (click)="convertImage()">Convert Now</button>
+      <button class="action-btn" (click)="convertImage()" [disabled]="isConverting">Convert Now</button>
       <button class="secondary-btn" (click)="resetImage()">Change Image</button>
     </div>
   </div>
+
+  <p *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
 
   <div class="result-section" *ngIf="convertedUrl">
     <h3>Conversion Successful! 🎉</h3>

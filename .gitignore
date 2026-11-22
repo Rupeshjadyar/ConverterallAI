@@ -2,6 +2,10 @@
 
 # Compiled output
 /dist
+/.generated
+.env
+.env.*
+!.env.example
 /tmp
 /out-tsc
 /bazel-out
@@ -41,3 +45,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+# Local runtime configuration
+.env
+.env.*
+!.env.example

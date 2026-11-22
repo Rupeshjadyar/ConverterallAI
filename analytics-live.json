@@ -1,6 +1,6 @@
 {
   "totalVisitors": 11,
-  "totalPageViews": 1512,
+  "totalPageViews": 1530,
   "totalToolExecutions": 0,
   "totalDataSavedMB": 0,
   "visitorSet": {
@@ -21,7 +21,7 @@
       "code": "IN",
       "name": "India",
       "flag": "🇮🇳",
-      "count": 1512
+      "count": 1530
     }
   },
   "topTools": {},
@@ -201,25 +201,193 @@
       "date": "Oct 27"
     },
     "2026-10-28": {
-      "visitors": 39,
+      "visitors": 40,
       "toolRuns": 0,
       "day": "Wed",
       "date": "Oct 28"
+    },
+    "2026-11-15": {
+      "visitors": 17,
+      "toolRuns": 0,
+      "day": "Sun",
+      "date": "Nov 15"
     }
   },
   "devices": {
-    "desktop": 1500,
+    "desktop": 1518,
     "mobile": 0,
     "tablet": 12
   },
   "browsers": {
-    "chrome": 1192,
+    "chrome": 1204,
     "safari": 0,
-    "edge": 320,
+    "edge": 326,
     "firefox": 0,
     "other": 0
   },
   "recentActivities": [
+    {
+      "id": "1794752370046",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T14:19:30.046Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794732543530",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:49:03.531Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794732454333",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:47:34.333Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794732259416",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:44:19.416Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794732251861",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:44:11.861Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794732015432",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:40:15.432Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794730769776",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T08:19:29.777Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794729151362",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:52:31.362Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794728246809",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:37:26.809Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794727879965",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:31:19.965Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794727368318",
+      "title": "Visited /#/jodetx/login",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:22:48.318Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726986461",
+      "title": "Visited /#/jodetx/login",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:16:26.461Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726415180",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:06:55.180Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726405434",
+      "title": "Visited /developer-tools/json-formatter",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:06:45.434Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726302484",
+      "title": "Visited /#/jodetx/login",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:05:02.484Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726091604",
+      "title": "Visited /developer-tools/json-formatter",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:01:31.604Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1794726082010",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-15T07:01:22.010Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1793213621491",
+      "title": "Visited /developer-tools/web-tutorials?lang=sql",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-10-28T18:53:41.491Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
     {
       "id": "1793209707675",
       "title": "Visited /typing-master",
@@ -325,168 +493,6 @@
       "country": "India",
       "flag": "🇮🇳",
       "timestamp": "2026-10-28T17:15:26.363Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207723050",
-      "title": "Visited /ai-chat",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:15:23.050Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207657260",
-      "title": "Visited /developer-tools/sql",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:14:17.260Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207648566",
-      "title": "Visited /developer-tools/web-tutorials",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:14:08.566Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207500282",
-      "title": "Visited /typing-master",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:11:40.282Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207304934",
-      "title": "Visited /",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:08:24.934Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207278153",
-      "title": "Visited /",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:07:58.153Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207069246",
-      "title": "Visited /developer-tools/web-tutorials?lang=sql",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:04:29.246Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207057729",
-      "title": "Visited /developer-tools/web-tutorials?lang=css",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:04:17.729Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793207050864",
-      "title": "Visited /developer-tools/web-tutorials?lang=javascript",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:04:10.864Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206959056",
-      "title": "Visited /developer-tools/web-tutorials?lang=sql",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:02:39.057Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206895580",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:01:35.580Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206887995",
-      "title": "Visited /developer-tools/web-tutorials?lang=javascript",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:01:27.996Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206884849",
-      "title": "Visited /developer-tools/web-tutorials?lang=java",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:01:24.849Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206849020",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T17:00:49.020Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206586910",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T16:56:26.910Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793206405751",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T16:53:25.751Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793205380594",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T16:36:20.594Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1793204817362",
-      "title": "Visited /developer-tools/web-tutorials?lang=python",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-10-28T16:26:57.362Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     }

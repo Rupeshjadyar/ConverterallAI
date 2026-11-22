@@ -105,8 +105,8 @@ export class TextToMp3Component implements OnInit, OnDestroy {
   // SEO & RICH SCHEMA INJECTION (Layer 5)
   // ═══════════════════════════════════════════════════════════════
   private initSeoAndSchema(): void {
-    const pageTitle = 'Free Text to Speech MP3 Converter - 140+ AI Voices Online | ConverterAllAI';
-    const pageDesc = 'Convert text to natural speech and download high-quality MP3 audio for free. 140+ realistic AI neural voices across Hindi, Marathi, Indian English, Tamil, Telugu, and global languages with zero registration.';
+    const pageTitle = 'Free Text to Speech MP3 Converter | ConverterAllAI';
+    const pageDesc = 'Turn text into speech using Hindi, Marathi, Tamil, Telugu, Indian English, and more. Preview voices and download generated MP3 audio.';
     const canonicalUrl = 'https://converterallai.com/text-to-mp3';
     const ogImage = 'https://converterallai.com/assets/images/home.png';
     const keywords = 'text to speech, tts mp3 converter, free ai voice generator, edge tts online, hindi text to speech, marathi tts, convert text to mp3, natural ai voices, text to voice online, voiceover generator free';

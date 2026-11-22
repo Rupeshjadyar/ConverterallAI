@@ -20,6 +20,25 @@
     <!-- MAIN APP ROUTER CONTENT -->
     <main class="app-main-content">
       <router-outlet></router-outlet>
+      @if (isEnglishBmi) {
+        <a [routerLink]="hindiBmi" lang="hi-IN" hreflang="hi-IN">बीएमआई कैलकुलेटर हिंदी में</a>
+      }
+      @if (hubTools; as tools) {
+        @if (tools.length) {
+          <nav aria-label="Tools in this category">
+            <h2>Tools in this category</h2>
+            <ul>
+              @for (tool of tools; track tool.slug) {
+                <li>
+                  <a [routerLink]="tool.slug" (pointerenter)="prefetchTool(tool.slug)" (focus)="prefetchTool(tool.slug)">
+                    {{ tool.name }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </nav>
+        }
+      }
       <app-tool-seo-content></app-tool-seo-content>
     </main>
 
@@ -27,7 +46,9 @@
     <app-footer></app-footer>
   </div>
 
-  <app-right-sidebar></app-right-sidebar>
+  @defer (on idle) {
+    <app-right-sidebar></app-right-sidebar>
+  }
 </div>
 
 <!-- GLOBAL COOKIE CONSENT BANNER (ADSENSE & GDPR COMPLIANT) -->

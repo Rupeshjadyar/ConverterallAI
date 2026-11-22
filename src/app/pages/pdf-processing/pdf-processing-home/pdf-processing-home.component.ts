@@ -73,46 +73,46 @@ export class PdfProcessingHomeComponent implements OnInit {
     {
       id: 'compress-pdf',
       name: 'Compress PDF',
-      description: 'Reduce PDF file size while maintaining the original layout quality.',
+      description: 'Optimize a PDF losslessly or flatten pages for stronger compression.',
       icon: '🗜️',
       color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       route: '/pdf-processing/compress-pdf',
       popular: true,
       category: 'optimize',
-      local: false
+      local: true
     },
     {
       id: 'pdf-to-word',
       name: 'PDF to Word',
-      description: 'Convert PDF files to editable Microsoft Word documents with high accuracy.',
+      description: 'Extract selectable PDF text into an editable Word document.',
       icon: '📄',
       color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       route: '/pdf-processing/pdf-to-word',
       popular: true,
       category: 'convert-from',
-      local: false
+      local: true
     },
     {
       id: 'pdf-to-ppt',
       name: 'PDF to PPT',
-      description: 'Convert PDF presentation slides back into editable PowerPoint files.',
+      description: 'Turn each PDF page into an image slide in a PowerPoint presentation.',
       icon: '📉',
       color: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
       route: '/pdf-processing/pdf-to-ppt',
       popular: false,
       category: 'convert-from',
-      local: false
+      local: true
     },
     {
       id: 'pdf-to-excel',
       name: 'PDF to Excel',
-      description: 'Extract tables from PDF documents to Excel spreadsheets instantly.',
+      description: 'Group selectable PDF text into Excel worksheet rows and cells.',
       icon: '📊',
       color: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
       route: '/pdf-processing/pdf-to-excel',
       popular: false,
       category: 'convert-from',
-      local: false
+      local: true
     },
     {
       id: 'word-to-pdf',
@@ -227,7 +227,7 @@ export class PdfProcessingHomeComponent implements OnInit {
     {
       id: 'remove-password',
       name: 'Remove Password',
-      description: 'Unlock password-protected PDFs and disable security constraints.',
+      description: 'Use the current password to download an unlocked PDF copy.',
       icon: '🔓',
       color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
       route: '/pdf-processing/remove-password',
@@ -238,7 +238,7 @@ export class PdfProcessingHomeComponent implements OnInit {
     {
       id: 'add-password',
       name: 'Add Password',
-      description: 'Secure your PDF files with high-strength user access passwords.',
+      description: 'Encrypt a PDF with an AES-256 open password.',
       icon: '🔒',
       color: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)',
       route: '/pdf-processing/add-password',
@@ -256,17 +256,6 @@ export class PdfProcessingHomeComponent implements OnInit {
       popular: false,
       category: 'edit',
       local: true
-    },
-    {
-      id: 'pdf-to-pdfa',
-      name: 'PDF to PDF/A',
-      description: 'Convert PDFs to PDF/A for long-term archiving and compliance.',
-      icon: '📜',
-      color: 'linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%)',
-      route: '/pdf-processing/pdf-to-pdfa',
-      popular: false,
-      category: 'optimize',
-      local: false
     },
     {
       id: 'repair-pdf',
@@ -304,13 +293,13 @@ export class PdfProcessingHomeComponent implements OnInit {
     {
       id: 'ocr-pdf',
       name: 'OCR PDF',
-      description: 'Extract searchable text from scanned PDF documents using AI OCR.',
+      description: 'Add a searchable English text layer to a scanned PDF.',
       icon: '🔍',
       color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       route: '/pdf-processing/ocr-pdf',
       popular: true,
       category: 'ai',
-      local: false
+      local: true
     },
     {
       id: 'compare-pdf',
@@ -326,7 +315,7 @@ export class PdfProcessingHomeComponent implements OnInit {
     {
       id: 'redact-pdf',
       name: 'Redact PDF',
-      description: 'Permanently black out sensitive information and text from PDFs.',
+      description: 'Cover selected areas and export a flattened redacted PDF.',
       icon: '⬛',
       color: 'linear-gradient(135deg, #232526 0%, #414345 100%)',
       route: '/pdf-processing/redact-pdf',

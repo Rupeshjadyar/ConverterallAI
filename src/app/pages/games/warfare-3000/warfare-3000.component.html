@@ -1,0 +1,124 @@
+<div class="game-wrapper">
+      
+      <!-- START SCREEN / LOBBY OVERLAY -->
+      <div *ngIf="gameState === 'LOBBY'" class="lobby-overlay glass-panel">
+        <div class="lobby-card">
+          <div class="military-header">
+            <span class="crosshair-icon">🎯</span>
+            <h1 class="title-text">WARFARE 3000</h1>
+            <p class="subtitle-text">REAL-TIME MULTIPLAYER TANK ARENA SHOOTER</p>
+          </div>
+
+          <form (ngSubmit)="joinGame()" class="join-form">
+            <div class="input-group">
+              <label for="playerNameInput">OPERATOR CALLSIGN</label>
+              <input 
+                id="playerNameInput"
+                type="text" 
+                [(ngModel)]="playerName" 
+                name="playerName"
+                maxlength="12" 
+                placeholder="Enter Call-Sign"
+                class="callsign-input"
+                autocomplete="off"
+                required
+              />
+              <span class="char-counter">{{ playerName.length }}/12</span>
+            </div>
+
+            <div class="server-status-pill">
+              <span class="status-dot" [class.connected]="isConnected" [class.connecting]="isConnecting"></span>
+              <span>Server: {{ serverUrlDisplay }}</span>
+            </div>
+
+            <button type="submit" [disabled]="!playerName.trim() || isConnecting" class="btn-join-arena">
+              <span *ngIf="!isConnecting">ENTER ARENA ⚔️</span>
+              <span *ngIf="isConnecting">CONNECTING TO ARENA...</span>
+            </button>
+          </form>
+
+          <div class="controls-guide">
+            <h3>🎮 FIELD CONTROLS</h3>
+            <div class="guide-grid">
+              <div class="guide-card">
+                <h4>💻 LAPTOP / PC</h4>
+                <ul>
+                  <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>▲</kbd><kbd>◄</kbd><kbd>▼</kbd><kbd>►</kbd> Move Tank</li>
+                  <li><span class="icon">🖱️</span> Mouse to Aim Barrel</li>
+                  <li><span class="icon">💥</span> Left Click to Fire</li>
+                </ul>
+              </div>
+              <div class="guide-card">
+                <h4>📱 MOBILE / TABLET</h4>
+                <ul>
+                  <li><span class="icon">🕹️</span> Left Screen: Move Joystick</li>
+                  <li><span class="icon">🎯</span> Right Screen: Aim Joystick</li>
+                  <li><span class="icon">⚡</span> Auto-fire while aiming!</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="back-link">
+            <a routerLink="/games" class="btn-back">← Back to Game Hub</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCONNECTED / RECONNECTING BANNER -->
+      <div *ngIf="gameState === 'PLAYING' && !isConnected" class="disconnection-banner">
+        ⚠️ Connection Lost! Reconnecting to Warfare 3000 Server...
+      </div>
+
+      <!-- TOP-RIGHT LEADERBOARD HUD -->
+      <div *ngIf="gameState === 'PLAYING'" class="leaderboard-hud glass-panel">
+        <div class="hud-header">
+          <span class="hud-icon">🏆</span>
+          <span class="hud-title">TOP TANKERS</span>
+        </div>
+        <div class="leaderboard-list">
+          <div 
+            *ngFor="let p of leaderboard; let i = index" 
+            class="leaderboard-item"
+            [class.is-self]="p.id === myPlayerId">
+            <span class="rank-badge" [ngClass]="'rank-' + (i + 1)">#{{ i + 1 }}</span>
+            <span class="player-color-dot" [style.background-color]="p.color"></span>
+            <span class="player-name">{{ p.name }}</span>
+            <span class="player-score">{{ p.score }} Kills</span>
+          </div>
+          <div *ngIf="leaderboard.length === 0" class="empty-board">
+            Waiting for combatants...
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP-LEFT SELF STATUS HUD -->
+      <div *ngIf="gameState === 'PLAYING' && localPlayer" class="player-hud glass-panel">
+        <div class="hud-self-header">
+          <span class="self-color-indicator" [style.background-color]="localPlayer.color"></span>
+          <span class="self-name">{{ localPlayer.name }}</span>
+          <span class="self-kills">⚔️ {{ localPlayer.score }} Kills</span>
+        </div>
+        <div class="hp-bar-outer">
+          <div 
+            class="hp-bar-inner" 
+            [style.width.%]="localPlayer.hp"
+            [class.hp-high]="localPlayer.hp > 50"
+            [class.hp-mid]="localPlayer.hp <= 50 && localPlayer.hp > 25"
+            [class.hp-low]="localPlayer.hp <= 25">
+          </div>
+          <span class="hp-text">{{ localPlayer.hp }} / 100 HP</span>
+        </div>
+      </div>
+
+      <!-- KILL FEED OVERLAY -->
+      <div *ngIf="gameState === 'PLAYING'" class="kill-feed">
+        <div *ngFor="let kill of killFeed" class="kill-feed-item">
+          {{ kill.text }}
+        </div>
+      </div>
+
+      <!-- CANVAS DISPLAY FOR 2D ARENA -->
+      <canvas #gameCanvas class="game-canvas"></canvas>
+
+    </div>

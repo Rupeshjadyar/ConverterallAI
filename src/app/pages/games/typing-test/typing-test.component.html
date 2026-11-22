@@ -1,0 +1,101 @@
+<div class="typing-container">
+      
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Speed Typing Test Pro ⌨️</h1>
+        </div>
+
+        <div class="header-controls">
+          <div class="duration-pills">
+            <button *ngFor="let d of [15, 30, 60]" 
+                    class="btn-pill" 
+                    [class.active-pill]="duration() === d"
+                    (click)="setDuration(d)">
+              {{ d }}s
+            </button>
+          </div>
+          <button (click)="restartTest()" class="btn-top">🔄 New Test</button>
+        </div>
+      </div>
+
+      <div class="typing-arena">
+        
+        <!-- Live Benchmark Stats -->
+        <div class="stats-ribbon glass">
+          <div class="stat-box">
+            <span class="stat-num text-purple">{{ liveWPM() }}</span>
+            <span class="stat-lbl">WPM (Words/Min)</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-cyan">{{ accuracy() }}%</span>
+            <span class="stat-lbl">Accuracy</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-amber">{{ timeLeft() }}s</span>
+            <span class="stat-lbl">Time Left</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num text-red">{{ errorCount() }}</span>
+            <span class="stat-lbl">Errors</span>
+          </div>
+        </div>
+
+        <!-- Typing Test Card -->
+        <div class="typing-card glass" (click)="focusInput()">
+          <div class="text-display" #textContainer>
+            <span *ngFor="let ch of targetChars; let i = index" 
+                  class="char-span" 
+                  [ngClass]="getCharClass(i)">
+              {{ ch }}
+            </span>
+          </div>
+
+          <!-- Hidden active input capturing strokes -->
+          <input 
+            #hiddenInput
+            type="text" 
+            class="hidden-input"
+            [(ngModel)]="userInput"
+            (input)="onInput()"
+            [disabled]="isFinished()"
+            autofocus
+          />
+        </div>
+
+        <div class="typing-tip">
+          <span>💡 Click the box above or start typing. Timer begins automatically on your first keystroke!</span>
+        </div>
+
+        <!-- Results Summary Modal -->
+        <div *ngIf="isFinished()" class="results-modal glass">
+          <div class="results-box">
+            <div class="result-badge">{{ getPerformanceBadge() }}</div>
+            <h2>🎉 Typing Test Completed!</h2>
+            
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <span class="metric-val text-purple">{{ finalWPM() }}</span>
+                <span class="metric-name">Net WPM</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-val text-cyan">{{ accuracy() }}%</span>
+                <span class="metric-name">Accuracy</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-val text-green">{{ rawCPM() }}</span>
+                <span class="metric-name">Chars/Min (CPM)</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-val text-red">{{ errorCount() }}</span>
+                <span class="metric-name">Mistakes</span>
+              </div>
+            </div>
+
+            <button (click)="restartTest()" class="btn-play-again">Take Test Again ➔</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>

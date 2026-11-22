@@ -239,7 +239,8 @@ export class AudioCutterComponent implements OnInit, OnDestroy {
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `trimmed-${this.fileName || 'audio'}.wav`;
+      const baseName = this.fileName.replace(/\.[^.]+$/, '') || 'audio';
+      a.download = `trimmed-${baseName}.wav`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

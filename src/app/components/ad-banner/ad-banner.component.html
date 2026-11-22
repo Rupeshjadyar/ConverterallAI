@@ -1,0 +1,15 @@
+<div class="ad-container" [ngClass]="adClass">
+      <!-- Google AdSense Unit -->
+      <ins class="adsbygoogle"
+           [style.display]="'block'"
+           [attr.data-ad-client]="adClient"
+           [attr.data-ad-slot]="adSlot"
+           [attr.data-ad-format]="adFormat"
+           [attr.data-full-width-responsive]="responsive ? 'true' : 'false'">
+      </ins>
+      
+      <!-- Fallback / Preview Badge when AdSense script is pending -->
+      <div class="ad-fallback-badge">
+        <span>ADVERTISEMENT</span>
+      </div>
+    </div>

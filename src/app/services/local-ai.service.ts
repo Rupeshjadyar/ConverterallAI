@@ -8,6 +8,7 @@ export class LocalAIService {
   private engine: any = null; // MLCEngine type
   public isModelLoaded = signal(false);
   public progressMessage = signal('');
+  public isLoading = signal(false);
   public progressPercent = signal(0);
   
   private modelId = 'Llama-3-8B-Instruct-q4f32_1-MLC-1k'; 
@@ -19,7 +20,12 @@ export class LocalAIService {
 
   async loadModel() {
     if (!this.isBrowser) return; // Do not run on SSR!
-    if (this.engine) return; 
+    if (this.engine || this.isLoading()) return;
+    if (!('gpu' in navigator) || !window.isSecureContext) {
+      this.progressMessage.set('Local AI needs WebGPU. Open this page over HTTPS in a current browser with WebGPU enabled.');
+      return;
+    }
+    this.isLoading.set(true);
     
     this.progressMessage.set('Initializing AI Engine...');
     this.progressPercent.set(0);
@@ -38,7 +44,10 @@ export class LocalAIService {
       this.progressMessage.set('AI Engine Loaded Successfully!');
     } catch (err) {
       console.error('Error loading AI model:', err);
-      this.progressMessage.set('Failed to load AI model. Please ensure WebGPU is enabled.');
+      this.progressPercent.set(0);
+      this.progressMessage.set('The model could not load. Check your connection and available device memory, then try again.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 

@@ -1,0 +1,97 @@
+<div class="sudoku-container">
+      
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Sudoku Master 🔢</h1>
+        </div>
+
+        <div class="header-controls">
+          <div class="mode-select">
+            <label>Difficulty:</label>
+            <select [ngModel]="difficulty()" (ngModelChange)="setDifficulty($event)">
+              <option value="easy">🟢 Easy</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="hard">🔴 Hard</option>
+            </select>
+          </div>
+          <button (click)="newGame()" class="btn-top">🔄 New Game</button>
+        </div>
+      </div>
+
+      <div class="sudoku-arena">
+        
+        <!-- Status Bar -->
+        <div class="status-bar glass">
+          <div class="status-item">
+            <span class="status-label">Difficulty</span>
+            <span class="status-val diff-tag">{{ difficulty().toUpperCase() }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Mistakes</span>
+            <span class="status-val text-red">{{ mistakes() }}/3</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Time</span>
+            <span class="status-val">{{ formatTime(secondsElapsed()) }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Pencil Notes</span>
+            <button (click)="pencilMode.set(!pencilMode())" class="btn-pencil" [class.active-pencil]="pencilMode()">
+              ✏️ {{ pencilMode() ? 'ON' : 'OFF' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 9x9 Sudoku Board -->
+        <div class="board-frame glass">
+          <div class="sudoku-grid">
+            <div *ngFor="let row of board; let r = index" class="grid-row">
+              <div *ngFor="let cell of row; let c = index" 
+                   class="grid-cell"
+                   [ngClass]="getCellClass(cell)"
+                   (click)="selectCell(cell)">
+                
+                <span *ngIf="cell.val" class="cell-num">{{ cell.val }}</span>
+
+                <!-- Pencil Notes Mini Grid -->
+                <div *ngIf="!cell.val && cell.notes.length > 0" class="notes-grid">
+                  <span *ngFor="let n of [1,2,3,4,5,6,7,8,9]" class="note-num">
+                    {{ cell.notes.includes(n) ? n : '' }}
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Keypad & Action Controls -->
+        <div class="controls-card glass">
+          <div class="keypad-grid">
+            <button *ngFor="let n of [1,2,3,4,5,6,7,8,9]" class="key-btn" (click)="inputNumber(n)">
+              {{ n }}
+            </button>
+          </div>
+
+          <div class="action-keys-row">
+            <button (click)="eraseCell()" class="btn-action-key">🧹 Erase</button>
+            <button (click)="pencilMode.set(!pencilMode())" class="btn-action-key" [class.btn-active]="pencilMode()">
+              ✏️ Notes ({{ pencilMode() ? 'ON' : 'OFF' }})
+            </button>
+            <button (click)="getHint()" class="btn-action-key btn-hint">💡 Hint</button>
+          </div>
+        </div>
+
+        <!-- Victory Modal -->
+        <div *ngIf="isCompleted()" class="win-modal glass">
+          <div class="win-box">
+            <h2>🎉 Sudoku Solved!</h2>
+            <p>You completed the {{ difficulty() }} puzzle in {{ formatTime(secondsElapsed()) }} with {{ mistakes() }} mistakes!</p>
+            <button (click)="newGame()" class="btn-new-puzzle">Play Next Puzzle ➔</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>

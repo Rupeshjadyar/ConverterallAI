@@ -83,11 +83,11 @@
         </div>
         <div class="top-action-buttons">
           <label class="btn-secondary upload-btn">
-            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input"/>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input" [disabled]="isProcessing"/>
             <span>↑ Upload Files</span>
           </label>
-          <button class="btn-secondary" (click)="removeBackground()">⚡ Bulk Remove</button>
-          <button class="btn-primary export-hd-btn" (click)="downloadImage()">↓ Export 4K HD</button>
+          <button class="btn-secondary" (click)="removeBackground()" [disabled]="!originalUrl || isProcessing">⚡ Remove Background</button>
+          <button class="btn-primary export-hd-btn" (click)="downloadImage()" [disabled]="!resultUrl || isProcessing">↓ Export 4K HD</button>
         </div>
       </div>
 
@@ -112,6 +112,9 @@
         </div>
 
         <!-- MAIN VIEWPORT COMPARISON -->
+        @if (processingError) {
+          <p role="alert">{{ processingError }}</p>
+        }
         <div class="viewport-stage" [class.slider-mode]="isSliderView" [class.side-mode]="!isSliderView">
           
           <!-- Processing Overlay if busy -->
@@ -124,11 +127,13 @@
           </div>
 
           <!-- SLIDER VIEW COMPARISON MODE -->
-          <div class="slider-comparison-container" *ngIf="isSliderView">
+          <p *ngIf="!originalUrl">Upload an image to preview background removal.</p>
+
+          <div class="slider-comparison-container" *ngIf="originalUrl && isSliderView">
             <!-- AFTER (Underneath / Background layer with custom BG) -->
             <div class="layer-after" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
               <span class="corner-badge after-badge">AFTER</span>
-              <img [src]="resultUrl || originalUrl" class="compared-img" alt="Background removed result image" />
+              <img *ngIf="resultUrl" [src]="resultUrl" class="compared-img" alt="Background removed result image" />
             </div>
 
             <!-- BEFORE (Top clipped layer) -->
@@ -147,14 +152,14 @@
           </div>
 
           <!-- SIDE BY SIDE COMPARISON MODE -->
-          <div class="side-by-side-grid" *ngIf="!isSliderView">
+          <div class="side-by-side-grid" *ngIf="originalUrl && !isSliderView">
             <div class="side-box before-side">
               <span class="corner-badge before-badge">BEFORE</span>
               <img [src]="originalUrl" class="side-img" alt="Original source preview" />
             </div>
             <div class="side-box after-side" [ngClass]="bgType" [style.background]="getBackgroundStyle()">
               <span class="corner-badge after-badge">AFTER</span>
-              <img [src]="resultUrl || originalUrl" class="side-img" alt="Background removed transparent preview" />
+              <img *ngIf="resultUrl" [src]="resultUrl" class="side-img" alt="Background removed transparent preview" />
             </div>
           </div>
 
@@ -163,7 +168,7 @@
 
       <!-- DRAG & DROP MULTI FILES ZONE -->
       <label class="bg-drop-zone">
-        <input type="file" (change)="onFileSelected($event)" accept="image/*" multiple class="hidden-input"/>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-input" [disabled]="isProcessing"/>
         <div class="drop-inner">
           <div class="drop-cloud-icon">☁️</div>
           <div class="drop-texts">

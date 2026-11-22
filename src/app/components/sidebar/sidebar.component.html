@@ -1,0 +1,59 @@
+<!-- Full-Height Fixed Navigation Bar (Stretches all the way to bottom of screen: bottom: 0) -->
+    <aside 
+      class="app-sidebar glass" 
+      [class.expanded]="isPinned() || isHovered"
+      [class.pinned]="isPinned()"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()">
+      
+      <!-- Top Header -->
+      <div class="sidebar-header">
+        <div class="header-icon-box" title="All Categories">
+          <span>🧰</span>
+        </div>
+        <div class="header-info">
+          <h2 class="sidebar-title">All Categories</h2>
+          <span class="sidebar-sub">{{ categories.length }} Tool Suites</span>
+        </div>
+        <button 
+          class="btn-pin-toggle" 
+          (click)="togglePin()" 
+          [title]="isPinned() ? 'Unpin Sidebar (Auto-collapse on mouse leave)' : 'Pin Sidebar (Keep permanently open)'"
+          [class.active-pinned]="isPinned()">
+          <span>{{ isPinned() ? '📌' : '📍' }}</span>
+        </button>
+      </div>
+
+      <!-- Scrollable Navigation (Full height, scrolls cleanly with visible thumb) -->
+      <nav class="sidebar-nav">
+        <div *ngFor="let cat of categories" class="sidebar-category">
+          <div 
+            class="cat-header" 
+            (click)="toggleCat(cat.id)" 
+            [class.active-cat]="openCatId === cat.id" 
+            [title]="cat.name + ' (' + cat.toolCount + ' tools)'">
+            <span class="cat-icon">{{ cat.icon }}</span>
+            <div class="cat-info-wrap">
+              <span class="cat-name">{{ cat.name }}</span>
+              <span class="cat-badge">{{ cat.toolCount }}</span>
+            </div>
+            <span class="cat-chevron" [class.open]="openCatId === cat.id">▼</span>
+          </div>
+
+          <!-- Accordion Tools -->
+          <div class="cat-tools" *ngIf="openCatId === cat.id">
+            <a 
+              *ngFor="let tool of getTools(cat.id)" 
+              [routerLink]="tool.slug" 
+              routerLinkActive="active"
+              class="tool-item"
+              [title]="tool.name">
+              <span class="tool-icon">{{ tool.icon }}</span>
+              <span class="tool-name">{{ tool.name }}</span>
+              <span *ngIf="tool.badge" class="tool-mini-badge">{{ tool.badge }}</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+    </aside>

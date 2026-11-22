@@ -12,65 +12,8 @@ export interface BreadcrumbItem {
   selector: 'app-breadcrumbs',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `
-    <nav aria-label="Breadcrumb" class="breadcrumbs-container">
-      <ol class="breadcrumbs-list">
-        @for (crumb of resolvedCrumbs; track crumb.url; let idx = $index; let last = $last) {
-          <li class="breadcrumb-item">
-            @if (!last) {
-              <a [routerLink]="crumb.url" class="breadcrumb-link">
-                @if (idx === 0) { <span class="crumb-icon">🏠</span> }
-                <span>{{ crumb.name }}</span>
-              </a>
-              <span class="breadcrumb-sep" aria-hidden="true">/</span>
-            } @else {
-              <span class="breadcrumb-current" aria-current="page">{{ crumb.name }}</span>
-            }
-          </li>
-        }
-      </ol>
-    </nav>
-  `,
-  styles: [`
-    .breadcrumbs-container {
-      margin-bottom: 1.25rem;
-    }
-    .breadcrumbs-list {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 0.88rem;
-    }
-    .breadcrumb-item {
-      display: inline-flex;
-      align-items: center;
-    }
-    .breadcrumb-link {
-      color: #94a3b8;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: color 0.15s ease;
-    }
-    .breadcrumb-link:hover {
-      color: #c084fc;
-    }
-    .crumb-icon {
-      font-size: 0.95rem;
-    }
-    .breadcrumb-sep {
-      margin: 0 0.5rem;
-      color: #64748b;
-    }
-    .breadcrumb-current {
-      color: #f1f5f9;
-      font-weight: 600;
-    }
-  `]
+  templateUrl: './breadcrumbs.component.html',
+  styleUrls: ['./breadcrumbs.component.css']
 })
 export class BreadcrumbsComponent implements OnInit {
   @Input() items?: BreadcrumbItem[];

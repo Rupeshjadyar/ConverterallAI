@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -9,12 +9,16 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './format-converter.html',
   styleUrls: ['./format-converter.css']
 })
-export class FormatConverterComponent {
+export class FormatConverterComponent implements OnDestroy {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   targetFormat: string = 'image/jpeg';
   convertedUrl: string | null = null;
   isDragging: boolean = false;
+  isConverting = false;
+  errorMessage = '';
 
   formats = [
     { value: 'image/jpeg', label: 'JPG' },
@@ -46,17 +50,18 @@ export class FormatConverterComponent {
     event.stopPropagation();
     this.isDragging = false;
     if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-      const file = event.dataTransfer.files[0];
-      if (file.type.startsWith('image/')) {
-        this.processFile(file);
-      }
+      this.processFile(event.dataTransfer.files[0]);
     }
   }
 
   processFile(file: File) {
+    this.resetImage();
+    if (file.type && !file.type.startsWith('image/')) {
+      this.errorMessage = 'Choose a valid image file.';
+      return;
+    }
     this.selectedFile = file;
-    this.previewUrl = URL.createObjectURL(this.selectedFile);
-    this.convertedUrl = null;
+    this.previewUrl = URL.createObjectURL(file);
   }
 
   resetImage() {
@@ -66,28 +71,56 @@ export class FormatConverterComponent {
     }
     this.previewUrl = null;
     this.convertedUrl = null;
+    this.isConverting = false;
+    this.errorMessage = '';
   }
 
-  convertImage() {
-    if (!this.selectedFile) return;
+  ngOnDestroy() {
+    this.resetImage();
+  }
 
-    const img = new Image();
-    img.src = this.previewUrl!;
-    img.onload = () => {
+  async convertImage() {
+    const previewUrl = this.previewUrl;
+    if (!previewUrl || this.isConverting) return;
+
+    const targetFormat = this.targetFormat;
+    this.convertedUrl = null;
+    this.errorMessage = '';
+    this.isConverting = true;
+
+    try {
+      const img = new Image();
+      img.src = previewUrl;
+      await img.decode();
+      if (this.previewUrl !== previewUrl) return;
+
       const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // Fill white background in case converting transparent PNG to JPG
-        if (this.targetFormat === 'image/jpeg') {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        ctx.drawImage(img, 0, 0);
-        this.convertedUrl = canvas.toDataURL(this.targetFormat, 0.9);
+      if (!ctx) throw new Error('Canvas unavailable');
+
+      if (targetFormat === 'image/jpeg') {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
-    };
+      ctx.drawImage(img, 0, 0);
+      const result = canvas.toDataURL(targetFormat, 0.9);
+      if (!result.startsWith(`data:${targetFormat};`)) {
+        this.errorMessage = 'This browser could not export the image in the selected format.';
+        return;
+      }
+      this.convertedUrl = result;
+    } catch {
+      if (this.previewUrl === previewUrl) {
+        this.errorMessage = 'Could not convert this image. Try a valid PNG, JPG, or WebP file.';
+      }
+    } finally {
+      if (this.previewUrl === previewUrl) {
+        this.isConverting = false;
+        this.cdr.markForCheck();
+      }
+    }
   }
 
   downloadImage() {
@@ -99,7 +132,9 @@ export class FormatConverterComponent {
         'image/png': 'png',
         'image/webp': 'webp'
       };
-      const extension = extMap[this.targetFormat] || 'jpg';
+      const outputType = this.convertedUrl.slice(5, this.convertedUrl.indexOf(';'));
+      const extension = extMap[outputType];
+      if (!extension) return;
       const originalName = this.selectedFile.name.replace(/\.[^/.]+$/, '');
       link.download = `${originalName}-converted.${extension}`;
       link.click();

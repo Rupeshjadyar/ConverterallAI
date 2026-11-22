@@ -1,0 +1,39 @@
+<div class="ai-popup-overlay" (click)="onClose.emit()">
+      <div class="ai-popup" (click)="$event.stopPropagation()">
+        <div class="header">
+          <h3>✨ AI Suggestions</h3>
+          <button class="close-btn" (click)="onClose.emit()">×</button>
+        </div>
+        
+        <div class="content">
+          <p class="instruction">Optimize this description?</p>
+          
+          <div class="suggestion-btn" (click)="generate('action_verbs')">
+            <span class="icon">🚀</span>
+            <div class="text">
+              <strong>Consider stronger action verbs</strong>
+              <small>Rephrase to sound more impactful</small>
+            </div>
+          </div>
+
+          <div class="suggestion-btn" (click)="generate('quantify')">
+            <span class="icon">📊</span>
+            <div class="text">
+              <strong>Quantify results where possible</strong>
+              <small>Add numbers to show measurable impact</small>
+            </div>
+          </div>
+
+          <div class="result-area" *ngIf="loading || suggestedText">
+            <div *ngIf="loading" class="loader">Generating...</div>
+            <div *ngIf="suggestedText && !loading" class="generated-text">
+              {{ suggestedText }}
+            </div>
+          </div>
+        </div>
+
+        <div class="actions" *ngIf="suggestedText && !loading">
+          <button class="apply-btn" (click)="apply()">Refine (सुधारें)</button>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,150 @@
+<div class="playground-container">
+      <div class="playground-header">
+        <div class="header-text">
+          <div class="badge-pill">
+            <span class="live-dot"></span> In-Browser SQL Engine
+          </div>
+          <h1 class="playground-title">SQL Interactive <span class="gradient-text">Playground & Sandbox</span></h1>
+          <p class="playground-desc">
+            Execute queries directly in your browser against pre-seeded relational tables from the PPT course slides.
+          </p>
+        </div>
+        <div class="preset-wrapper">
+          <label class="preset-label">Load Query Preset:</label>
+          <select [(ngModel)]="selectedPreset" (change)="loadPreset()" class="preset-select">
+            <option value="">-- Choose Example Query from PPT --</option>
+            <option *ngFor="let p of presets" [value]="p.query">{{ p.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="playground-layout">
+        <!-- Main Editor & Results -->
+        <div class="main-column">
+          <!-- Editor card -->
+          <div class="editor-card glass">
+            <div class="editor-bar">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+                <span class="bar-title">MySQL Query Terminal</span>
+              </div>
+              <div class="editor-actions">
+                <button class="tool-btn reset-btn" (click)="resetDb()" title="Reset tables to default">
+                  🔄 Reset DB
+                </button>
+                <button class="tool-btn clear-btn" (click)="queryText = ''" title="Clear input">
+                  ✕ Clear
+                </button>
+                <button class="run-btn" (click)="runQuery()">
+                  ▶ Execute Query (Ctrl+Enter)
+                </button>
+              </div>
+            </div>
+
+            <div class="editor-textarea-wrapper">
+              <textarea 
+                [(ngModel)]="queryText" 
+                (keydown.control.enter)="runQuery()"
+                (keydown.meta.enter)="runQuery()"
+                placeholder="-- Type your SQL query here e.g.&#10;SELECT * FROM students WHERE age >= 19;&#10;SELECT city, COUNT(name) FROM employees GROUP BY city;"
+                class="sql-input"
+                rows="6"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Result Area -->
+          <div class="results-card glass">
+            <div class="results-header">
+              <div class="results-title-row">
+                <span class="res-title">Query Results</span>
+                <span *ngIf="lastResult?.executionTimeMs !== undefined" class="res-badge">
+                  ⏱️ {{ lastResult?.executionTimeMs }} ms • {{ lastResult?.rowCount }} rows
+                </span>
+              </div>
+              <div *ngIf="lastResult?.message" class="status-msg">
+                {{ lastResult?.message }}
+              </div>
+            </div>
+
+            <!-- Error banner -->
+            <div *ngIf="lastResult?.error" class="error-banner">
+              <span class="error-icon">⚠️</span>
+              <div class="error-text">
+                <div class="error-head">SQL Execution Error</div>
+                <div class="error-body">{{ lastResult?.error }}</div>
+              </div>
+            </div>
+
+            <!-- Table View -->
+            <div *ngIf="lastResult && !lastResult.error" class="table-scroll-container">
+              <table *ngIf="lastResult.columns.length > 0" class="sql-table">
+                <thead>
+                  <tr>
+                    <th *ngFor="let col of lastResult.columns">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lastResult.rows; let rIdx = index" [class.even-row]="rIdx % 2 === 0">
+                    <td *ngFor="let cell of row">
+                      <span *ngIf="cell === null" class="null-tag">NULL</span>
+                      <span *ngIf="cell !== null">{{ cell }}</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="lastResult.rows.length === 0">
+                    <td [attr.colspan]="lastResult.columns.length" class="empty-set">
+                      Empty set (0 rows returned)
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div *ngIf="!lastResult" class="placeholder-state">
+              <div class="placeholder-icon">💻</div>
+              <p>Type an SQL query above or choose a preset to view live execution results.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar: Table Schema Explorer -->
+        <div class="schema-sidebar glass">
+          <div class="schema-header">
+            <h3>🗄️ Available Database Tables</h3>
+            <span class="schema-hint">Click a table to inspect or query</span>
+          </div>
+
+          <div class="tables-list">
+            <div *ngFor="let table of tables" class="table-card">
+              <div class="table-head-row" (click)="selectTable(table.name)">
+                <span class="table-icon">📄</span>
+                <span class="table-name">{{ table.name }}</span>
+                <span class="table-rows-tag">{{ table.rowCount }} rows</span>
+              </div>
+              <div class="columns-chips">
+                <span *ngFor="let col of table.columns" class="col-chip" [class.pri-col]="col.key === 'PRI'">
+                  {{ col.name }} <small *ngIf="col.key === 'PRI'">🔑</small>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="help-box">
+            <div class="help-title">💡 Supported SQL Syntax:</div>
+            <ul class="help-list">
+              <li><code>SELECT ... FROM ... [WHERE ...]</code></li>
+              <li><code>[INNER | LEFT | RIGHT] JOIN ... ON ...</code></li>
+              <li><code>GROUP BY ... [HAVING ...]</code></li>
+              <li><code>ORDER BY ... [ASC | DESC]</code></li>
+              <li><code>LIMIT [offset,] count</code></li>
+              <li><code>INSERT INTO ... VALUES (...)</code></li>
+              <li><code>UPDATE ... SET ... WHERE ...</code></li>
+              <li><code>DELETE FROM ... WHERE ...</code></li>
+              <li><code>SHOW TABLES / DESCRIBE table</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>

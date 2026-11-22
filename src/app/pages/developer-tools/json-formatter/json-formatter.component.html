@@ -1,0 +1,323 @@
+<div class="jf-page-container" [class.is-fullscreen]="isFullscreen">
+  <!-- TOP BREADCRUMB & HEADER -->
+  <header class="jf-header" *ngIf="!isFullscreen">
+    <div class="jf-header-content">
+      <nav class="jf-breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/" class="crumb-link">Home</a>
+        <span class="crumb-sep">/</span>
+        <a routerLink="/developer-tools" class="crumb-link">Developer Tools</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-active">JSON Formatter &amp; Validator</span>
+      </nav>
+
+      <div class="jf-title-row">
+        <div class="jf-title-wrap">
+          <div class="jf-badge-row">
+            <span class="jf-badge hot">⚡ INSTANT PARSER</span>
+            <span class="jf-badge safe">🔒 100% PRIVATE • CLIENT-SIDE</span>
+            <span class="jf-badge tree">🌳 CODE &amp; TREE VIEW</span>
+          </div>
+          <h1 class="jf-main-heading">JSON Formatter &amp; Validator</h1>
+          <p class="jf-sub-heading">
+            Beautify, parse, validate, minify, and inspect JSON in real-time. Features interactive collapsible tree view, line-by-line syntax diagnostics, sort keys, and single-click copy &amp; download.
+          </p>
+        </div>
+
+        <div class="jf-quick-actions">
+          <button type="button" class="jf-quick-btn" (click)="loadSampleJson()" title="Load Sample JSON Data">
+            <span>📄</span> Load Sample
+          </button>
+          <button type="button" class="jf-quick-btn" (click)="clearAll()" title="Reset workspace">
+            <span>🗑️</span> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION / STATUS DIAGNOSTICS BANNER -->
+  <div *ngIf="statusMessage" class="jf-alert" [ngClass]="isError ? 'jf-alert-error' : 'jf-alert-success'">
+    <div class="jf-alert-content">
+      <span class="jf-alert-icon">{{ isError ? '❌' : '✅' }}</span>
+      <span class="jf-alert-msg">{{ statusMessage }}</span>
+    </div>
+    <button type="button" class="jf-alert-close" (click)="statusMessage = ''" aria-label="Dismiss alert">✕</button>
+  </div>
+
+  <!-- WORKSPACE EDITOR -->
+  <div class="jf-workspace">
+    <div class="jf-stage-grid">
+      
+      <!-- LEFT COLUMN: INPUT EDITOR -->
+      <div class="jf-panel jf-input-panel">
+        <!-- Input Toolbar -->
+        <div class="jf-toolbar">
+          <div class="jf-toolbar-left">
+            <span class="panel-tag">INPUT JSON</span>
+            <button type="button" class="tool-btn" title="Undo change" (click)="undo()" [disabled]="historyIndex <= 0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+            </button>
+            <button type="button" class="tool-btn" title="Redo change" (click)="redo()" [disabled]="historyIndex >= history.length - 1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>
+            </button>
+            <button type="button" class="tool-btn" title="Auto-fix Quotes &amp; Trailing Commas" (click)="repairJson()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </button>
+            <button type="button" class="tool-btn" title="Sort Keys Alphabetically" (click)="sortJsonKeys()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h18M3 8h12M3 12h8M15 12l4 4m0 0l4-4m-4 4V8"/></svg>
+            </button>
+          </div>
+
+          <div class="jf-toolbar-right">
+            <button type="button" class="tool-btn" title="Load JSON from URL" (click)="openUrlPrompt()">🔗 URL</button>
+            <button type="button" class="tool-btn" title="Upload Local JSON file" (click)="fileInput.click()">📁 Upload</button>
+            <input #fileInput type="file" accept=".json,.txt" (change)="onFileUpload($event)" style="display: none;" />
+            <button type="button" class="tool-btn" title="Paste from Clipboard" (click)="pasteFromClipboard()">📋 Paste</button>
+            <button type="button" class="tool-btn text-danger" title="Clear input" (click)="clearInput()">✕</button>
+          </div>
+        </div>
+
+        <!-- Editor textarea with line gutter -->
+        <div class="jf-editor-container">
+          <div class="jf-line-gutter" #inputGutter>
+            <div *ngFor="let num of inputLines; let i = index" class="gutter-num" [class.active-line]="cursorLine === num">
+              {{ num }}
+            </div>
+          </div>
+          <textarea
+            #inputTextarea
+            class="jf-textarea"
+            [(ngModel)]="rawJson"
+            (input)="onRawJsonChange()"
+            (scroll)="syncInputScroll()"
+            (click)="updateCursorPos($event)"
+            (keyup)="updateCursorPos($event)"
+            placeholder="Paste or write raw JSON here (e.g. {&#34;name&#34;: &#34;value&#34;})..."
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <!-- Input Footer Status -->
+        <div class="jf-statusbar">
+          <div class="status-left">
+            <span>Ln: {{ cursorLine }}</span>
+            <span class="status-sep">•</span>
+            <span>Col: {{ currentCol }}</span>
+          </div>
+          <div class="status-right">
+            <span>{{ inputLength }} chars</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CENTER COLUMN: ACTIONS STRIP -->
+      <div class="jf-actions-strip">
+        <button type="button" class="jf-action-btn jf-btn-primary" (click)="beautifyJson()" title="Format and beautify JSON">
+          <span class="btn-icon">✨</span>
+          <span class="btn-label">Format / Beautify</span>
+        </button>
+
+        <div class="indent-picker">
+          <label for="indent-select" class="indent-label">INDENTATION</label>
+          <select id="indent-select" class="jf-select-indent" [(ngModel)]="indentation" (change)="beautifyJson()">
+            <option value="2">2 Spaces</option>
+            <option value="3">3 Spaces</option>
+            <option value="4">4 Spaces</option>
+            <option value="tab">1 Tab Character</option>
+            <option value="compact">Compact (0 Space)</option>
+          </select>
+        </div>
+
+        <button type="button" class="jf-action-btn" (click)="validateJson()" title="Validate JSON syntax">
+          <span class="btn-icon">✔</span>
+          <span class="btn-label">Validate JSON</span>
+        </button>
+
+        <button type="button" class="jf-action-btn" (click)="minifyJson()" title="Minify JSON into one single line">
+          <span class="btn-icon">📦</span>
+          <span class="btn-label">Minify / Compact</span>
+        </button>
+
+        <button type="button" class="jf-action-btn" (click)="sortJsonKeys()" title="Alphabetically sort keys">
+          <span class="btn-icon">🔤</span>
+          <span class="btn-label">Sort Keys (A-Z)</span>
+        </button>
+
+        <button type="button" class="jf-action-btn" (click)="repairJson()" title="Fix single quotes and trailing commas">
+          <span class="btn-icon">🛠️</span>
+          <span class="btn-label">Repair Quotes</span>
+        </button>
+
+        <button type="button" class="jf-action-btn jf-btn-danger" (click)="clearAll()" title="Clear all data">
+          <span class="btn-icon">🗑️</span>
+          <span class="btn-label">Clear All</span>
+        </button>
+      </div>
+
+      <!-- RIGHT COLUMN: OUTPUT EDITOR & TREE VIEW -->
+      <div class="jf-panel jf-output-panel">
+        <!-- Output Toolbar -->
+        <div class="jf-toolbar">
+          <div class="jf-toolbar-left">
+            <span class="panel-tag">FORMATTED OUTPUT</span>
+            <div class="view-toggle-group">
+              <button
+                type="button"
+                class="view-toggle-btn"
+                [class.active]="viewMode === 'code'"
+                (click)="viewMode = 'code'"
+                title="Code View"
+              >
+                Code
+              </button>
+              <button
+                type="button"
+                class="view-toggle-btn"
+                [class.active]="viewMode === 'tree'"
+                (click)="toggleViewMode()"
+                title="Tree View"
+              >
+                Tree View
+              </button>
+            </div>
+          </div>
+
+          <div class="jf-toolbar-right">
+            <button
+              type="button"
+              class="tool-btn tool-btn-highlight"
+              title="Copy formatted JSON to clipboard"
+              (click)="copyFormattedJson()"
+              [disabled]="!formattedJson"
+            >
+              📋 Copy
+            </button>
+            <button
+              type="button"
+              class="tool-btn"
+              title="Download JSON as .json file"
+              (click)="downloadJsonFile()"
+              [disabled]="!formattedJson"
+            >
+              ⬇ Download
+            </button>
+            <button
+              type="button"
+              class="tool-btn"
+              title="Print formatted JSON"
+              (click)="printJson()"
+              [disabled]="!formattedJson"
+            >
+              🖨️ Print
+            </button>
+            <button
+              type="button"
+              class="tool-btn"
+              [title]="isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'"
+              (click)="toggleFullscreen()"
+            >
+              {{ isFullscreen ? '🗗' : '⛶' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Output Code View Mode -->
+        <div class="jf-editor-container" *ngIf="viewMode === 'code'">
+          <div class="jf-line-gutter" #outputGutter>
+            <div *ngFor="let num of outputLines; let i = index" class="gutter-num">
+              {{ num }}
+            </div>
+          </div>
+          <textarea
+            #outputTextarea
+            class="jf-textarea output-code"
+            [value]="formattedJson"
+            readonly
+            (scroll)="syncOutputScroll()"
+            placeholder="Formatted, validated JSON output will appear here..."
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <!-- Output Tree View Mode -->
+        <div class="jf-tree-container" *ngIf="viewMode === 'tree'">
+          <div *ngIf="!parsedObject" class="tree-empty-msg">
+            <p>No valid JSON parsed yet.</p>
+            <p class="sub">Enter valid JSON on the left and click <strong>Format / Beautify</strong> to inspect the tree.</p>
+          </div>
+          <div *ngIf="parsedObject" class="tree-tree-root">
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: parsedObject, key: 'root', isRoot: true }"></ng-container>
+          </div>
+        </div>
+
+        <!-- Output Footer Status -->
+        <div class="jf-statusbar">
+          <div class="status-left">
+            <span>{{ lineCount }} lines</span>
+            <span class="status-sep">•</span>
+            <span>{{ outputLength }} characters</span>
+          </div>
+          <div class="status-right" *ngIf="formattedJson">
+            <span class="size-badge">{{ byteSize }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECURSIVE TREE NODE TEMPLATE -->
+  <ng-template #nodeTemplate let-data let-key="key" let-isRoot="isRoot">
+    <div class="tree-node">
+      <!-- Object or Array Node -->
+      <div *ngIf="isObject(data)" class="tree-branch">
+        <span class="tree-toggle" (click)="toggleNodeCollapse(key)">
+          {{ isCollapsed(key) ? '▶' : '▼' }}
+        </span>
+        <span *ngIf="!isRoot" class="tree-key">"{{ key }}": </span>
+        <span class="tree-type-badge">{{ isArray(data) ? '[' + data.length + ']' : '{' + getKeysCount(data) + '}' }}</span>
+
+        <div class="tree-children" *ngIf="!isCollapsed(key)">
+          <div *ngFor="let childKey of getObjectKeys(data)" class="tree-child-row">
+            <ng-container *ngTemplateOutlet="nodeTemplate; context: { $implicit: data[childKey], key: childKey, isRoot: false }"></ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primitive Values (String, Number, Boolean, Null) -->
+      <div *ngIf="!isObject(data)" class="tree-leaf">
+        <span class="tree-key">"{{ key }}": </span>
+        <span [ngClass]="getValClass(data)">{{ formatPrimitive(data) }}</span>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- EDUCATIONAL SEO & FEATURE GUIDE SECTION -->
+  <section class="jf-features-guide" *ngIf="!isFullscreen">
+    <div class="guide-container">
+      <h2 class="guide-title">Key Features of JSON Formatter &amp; Validator</h2>
+      <div class="guide-grid">
+        <div class="feature-card">
+          <div class="card-icon">⚡</div>
+          <h3>Client-Side &amp; 100% Private</h3>
+          <p>Your JSON data is parsed and formatted directly in your web browser. No data is sent to external servers or stored in any database.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">🌳</div>
+          <h3>Interactive Tree Visualizer</h3>
+          <p>Inspect deep nested JSON objects and arrays with collapsible tree nodes, object key counts, and distinct value highlighting.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">🛠️</div>
+          <h3>Auto-Repair JSON Syntax</h3>
+          <p>Quickly converts single quotes to valid double quotes and strips illegal trailing commas from JSON objects and arrays.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">📦</div>
+          <h3>Minify &amp; Compress</h3>
+          <p>Remove extraneous whitespace and newlines with one click to optimize payload sizes for API calls and production deployments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

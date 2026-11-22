@@ -1,0 +1,457 @@
+<div class="dev-layout-wrapper">
+      <!-- Ambient Glow Orbs -->
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+
+      <div class="dev-layout-container">
+        <!-- Top Breadcrumbs Navigation -->
+        <div class="dev-breadcrumbs">
+          <a routerLink="/" class="crumb-link">🏠 Home</a>
+          <span class="crumb-sep">/</span>
+          <a routerLink="/developer-tools" class="crumb-link">Developer Tools</a>
+          <ng-container *ngIf="isSqlRoute()">
+            <span class="crumb-sep">/</span>
+            <a routerLink="/developer-tools/sql" class="crumb-link">SQL Learn</a>
+            <ng-container *ngIf="currentSqlTopic()">
+              <span class="crumb-sep">/</span>
+              <span class="crumb-current">{{ currentSqlTopic()?.title }}</span>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- Master Dashboard Shell (Dual Sidebar + Content Stage) -->
+        <div class="dev-dashboard-shell">
+          <!-- 1. SLIM ICON RAIL (Far-Left Dock like User Screenshot) -->
+          <aside class="dev-icon-rail glass">
+            <!-- Hub Home Icon -->
+            <button
+              class="rail-btn"
+              [class.active]="isHubRoute()"
+              (click)="navigateToHub()"
+              title="Developer Tools Hub"
+            >
+              <span class="rail-icon">🏠</span>
+              <span class="rail-tooltip">Overview Hub</span>
+            </button>
+
+            <!-- Web Tutorials Icon (HTML/CSS/JS) -->
+            <a
+              routerLink="/developer-tools/web-tutorials"
+              class="rail-btn"
+              title="Web Tutorials (HTML, CSS, JS)"
+            >
+              <span class="rail-icon">🌐</span>
+              <span class="rail-tooltip">Web Tutorials</span>
+            </a>
+
+            <!-- SQL Learn Icon -->
+            <button
+              class="rail-btn"
+              [class.active]="isSqlRoute()"
+              (click)="openSqlFromRail()"
+              title="SQL Learn (102 Slides)"
+            >
+              <span class="rail-icon">🗄️</span>
+              <span class="rail-tooltip">SQL Learn (14 Topics)</span>
+            </button>
+
+            <!-- Typing Speed Test Icon -->
+            <a
+              routerLink="/typing-speed-test"
+              class="rail-btn"
+              title="Typing Speed Test (WPM)"
+            >
+              <span class="rail-icon">⚡</span>
+              <span class="rail-tooltip">Typing Speed Test</span>
+            </a>
+
+            <!-- Type Master Icon -->
+            <a
+              routerLink="/typing-master"
+              class="rail-btn"
+              title="Type Master Pro"
+            >
+              <span class="rail-icon">⌨️</span>
+              <span class="rail-tooltip">Type Master Pro</span>
+            </a>
+
+            <!-- JSON Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('json-tool')"
+              title="JSON Formatter & Validator"
+            >
+              <span class="rail-icon">&#123;&#125;</span>
+              <span class="rail-tooltip">JSON Formatter</span>
+            </button>
+
+            <!-- JWT Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('jwt-tool')"
+              title="JWT Token Decoder"
+            >
+              <span class="rail-icon">🎫</span>
+              <span class="rail-tooltip">JWT Decoder</span>
+            </button>
+
+            <!-- Hash Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('hash-tool')"
+              title="Cryptographic Hash Generator"
+            >
+              <span class="rail-icon">🔒</span>
+              <span class="rail-tooltip">Hash Generator</span>
+            </button>
+
+            <!-- UUID Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('uuid-tool')"
+              title="UUID / GUID v4 Generator"
+            >
+              <span class="rail-icon">🆔</span>
+              <span class="rail-tooltip">UUID Generator</span>
+            </button>
+
+            <!-- Base64 Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('base64-tool')"
+              title="Base64 Encoder & Decoder"
+            >
+              <span class="rail-icon">🔤</span>
+              <span class="rail-tooltip">Base64 Encoder</span>
+            </button>
+
+            <!-- URL Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('url-tool')"
+              title="URL Encoder & Decoder"
+            >
+              <span class="rail-icon">🔗</span>
+              <span class="rail-tooltip">URL Encoder</span>
+            </button>
+
+            <!-- Regex Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('regex-tool')"
+              title="Regex Tester & Evaluator"
+            >
+              <span class="rail-icon">🎯</span>
+              <span class="rail-tooltip">Regex Tester</span>
+            </button>
+
+            <!-- HTML Entity Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('html-tool')"
+              title="HTML Entity Tool"
+            >
+              <span class="rail-icon">🌐</span>
+              <span class="rail-tooltip">HTML Entities</span>
+            </button>
+
+            <!-- Markdown Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('markdown-tool')"
+              title="Markdown Live Editor"
+            >
+              <span class="rail-icon">📝</span>
+              <span class="rail-tooltip">Markdown Editor</span>
+            </button>
+
+            <!-- Color Tool Icon -->
+            <button
+              class="rail-btn"
+              (click)="scrollToTool('color-tool')"
+              title="Color Converter"
+            >
+              <span class="rail-icon">🎨</span>
+              <span class="rail-tooltip">Color Converter</span>
+            </button>
+
+            <!-- Live SQL Sandbox Icon -->
+            <a
+              routerLink="/developer-tools/sql/playground"
+              routerLinkActive="active"
+              class="rail-btn rail-sandbox"
+              title="Live SQL Playground"
+            >
+              <span class="rail-icon">⚡</span>
+              <span class="rail-tooltip">Live SQL Sandbox</span>
+            </a>
+
+            <div class="rail-spacer"></div>
+
+            <!-- Toggle Expand Rail Button -->
+            <button
+              class="rail-btn rail-bottom-btn"
+              (click)="toggleMenuCollapse()"
+              [title]="panelVisible() ? 'Hide Submenu Panel' : 'Show Submenu Panel'"
+            >
+              <span class="rail-icon">{{ panelVisible() ? '◀' : '▶' }}</span>
+              <span class="rail-tooltip">{{ panelVisible() ? 'Collapse Menu' : 'Expand Menu' }}</span>
+            </button>
+          </aside>
+
+          <!-- 2. SECONDARY SUBMENU PANEL (Tree Menu like User Screenshot) -->
+          <aside
+            class="dev-menu-panel glass"
+            [class.collapsed]="!panelVisible()"
+            [class.mobile-open]="mobileMenuOpen()"
+          >
+            <!-- Panel Header -->
+            <div class="panel-header">
+              <div class="panel-brand">
+                <span class="panel-badge-pill">DEVELOPER TOOLS</span>
+                <span class="panel-title-text">12 Free Tools</span>
+              </div>
+              <button class="mobile-close-btn" (click)="toggleMobileMenu()">✕</button>
+            </div>
+
+            <!-- Instant Search Input -->
+            <div class="panel-search">
+              <span class="search-lens">🔍</span>
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                (input)="onSearchChange()"
+                placeholder="Search tools..."
+                class="search-field"
+              />
+              <button *ngIf="searchQuery" (click)="searchQuery = ''" class="clear-search-btn">✕</button>
+            </div>
+
+            <!-- NAVIGATION TREE MENU -->
+            <div class="nav-tree-scroll">
+              <!-- TOP ACTIVE PILL: HOME -->
+              <a
+                routerLink="/developer-tools"
+                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="active-home-block"
+                class="nav-home-pill"
+                (click)="closeMobileMenu()"
+              >
+                <span class="pill-icon">🏠</span>
+                <span class="pill-label">Home</span>
+              </a>
+
+              <!-- SECTION: DEVELOPER TOOLS -->
+              <div class="tree-section-header">
+                <span class="tree-section-label">Developer Tools</span>
+              </div>
+
+              <!-- 0. Web Tutorials (HTML, CSS, JavaScript, Java, Python, SQL) -->
+              <a
+                routerLink="/developer-tools/web-tutorials"
+                routerLinkActive="node-active"
+                class="tree-node tree-single"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🌐</span>
+                <span class="tree-node-text">Learn through ConverterAllAI</span>
+                <span class="badge-accent hot">HOT</span>
+              </a>
+
+              <!-- 1. SQL Learn (Expandable Parent with 14 Child Lessons) -->
+              <div class="tree-group" [class.is-expanded]="sqlExpanded()">
+                <div
+                  class="tree-node tree-parent"
+                  [class.node-active]="isSqlRoute()"
+                  (click)="toggleSqlMenu()"
+                >
+                  <span class="tree-chevron" [class.rotated]="sqlExpanded()">›</span>
+                  <span class="tree-node-icon">🗄️</span>
+                  <span class="tree-node-text">SQL Learn</span>
+                  <span class="tree-count-badge">14 Topics</span>
+                </div>
+
+                <!-- 14 SQL Child Lessons Underneath -->
+                <div class="tree-nested-list" *ngIf="sqlExpanded()">
+                  <a
+                    *ngFor="let topic of filteredSqlTopics"
+                    [routerLink]="['/developer-tools/sql', topic.slug]"
+                    routerLinkActive="active-nested-topic"
+                    class="tree-child-row"
+                    (click)="closeMobileMenu()"
+                  >
+                    <span class="child-dash">›</span>
+                    <span class="child-icon">{{ topic.icon }}</span>
+                    <span class="child-text" [title]="topic.title">{{ topic.title }}</span>
+                    <span *ngIf="topic.badge" class="child-mini-tag" [ngClass]="topic.badge.toLowerCase()">
+                      {{ topic.badge }}
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- 2. Typing Speed Test (WPM) -->
+              <a
+                routerLink="/typing-speed-test"
+                routerLinkActive="node-active"
+                class="tree-node tree-single"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">⚡</span>
+                <span class="tree-node-text">Typing Speed Test</span>
+                <span class="badge-accent hot">NEW</span>
+              </a>
+
+              <!-- 3. Type Master Pro (Single Node) -->
+              <a
+                routerLink="/typing-master"
+                class="tree-node tree-single"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">⌨️</span>
+                <span class="tree-node-text">Type Master</span>
+                <span class="badge-accent hot">POPULAR</span>
+              </a>
+
+              <!-- 3. JSON Formatter & Validator -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('json-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">&#123;&#125;</span>
+                <span class="tree-node-text">JSON Formatter</span>
+                <span class="badge-accent hot">HOT</span>
+              </a>
+
+              <!-- 4. JWT Token Decoder -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('jwt-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🎫</span>
+                <span class="tree-node-text">JWT Decoder</span>
+                <span class="badge-accent pro">PRO</span>
+              </a>
+
+              <!-- 5. Hash Generator (SHA-256 / MD5) -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('hash-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🔒</span>
+                <span class="tree-node-text">Hash Generator</span>
+              </a>
+
+              <!-- 6. UUID / GUID Generator -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('uuid-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🆔</span>
+                <span class="tree-node-text">UUID Generator</span>
+              </a>
+
+              <!-- 7. Base64 Text Encoder & Decoder -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('base64-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🔤</span>
+                <span class="tree-node-text">Base64 Encoder</span>
+              </a>
+
+              <!-- 8. URL Encoder & Decoder -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('url-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🔗</span>
+                <span class="tree-node-text">URL Encoder</span>
+              </a>
+
+              <!-- 9. Regex Tester & Evaluator -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('regex-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🎯</span>
+                <span class="tree-node-text">Regex Tester</span>
+              </a>
+
+              <!-- 10. HTML Entity Tool -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('html-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🌐</span>
+                <span class="tree-node-text">HTML Entity Tool</span>
+              </a>
+
+              <!-- 11. Markdown Live Previewer -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('markdown-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">📝</span>
+                <span class="tree-node-text">Markdown Editor</span>
+              </a>
+
+              <!-- 12. Color Code Converter -->
+              <a
+                class="tree-node tree-single"
+                (click)="scrollToTool('color-tool')"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">🎨</span>
+                <span class="tree-node-text">Color Converter</span>
+              </a>
+
+              <!-- 13. Live SQL Playground Sandbox (Single Node) -->
+              <a
+                routerLink="/developer-tools/sql/playground"
+                routerLinkActive="node-active"
+                class="tree-node tree-single playground-highlight"
+                (click)="closeMobileMenu()"
+              >
+                <span class="chevron-placeholder"></span>
+                <span class="tree-node-icon">⚡</span>
+                <span class="tree-node-text">Live SQL Sandbox</span>
+                <span class="badge-accent live">LIVE</span>
+              </a>
+            </div>
+
+            <!-- Panel Footer (Like "Configure >" in User Screenshot) -->
+            <div class="panel-bottom-footer">
+              <a routerLink="/developer-tools" class="configure-link" (click)="scrollToTool('json-tool')">
+                <span class="configure-icon">⚙️</span>
+                <span class="configure-text">Configure Studio</span>
+                <span class="configure-arrow">›</span>
+              </a>
+            </div>
+          </aside>
+
+          <!-- Mobile Floating Menu Trigger -->
+          <button class="mobile-floating-bar" (click)="toggleMobileMenu()">
+            <span>☰ Developer Tools Menu</span>
+            <span class="badge-pill">14 SQL Lessons</span>
+          </button>
+
+          <!-- 3. MAIN CONTENT STAGE (Right Side) -->
+          <main class="dev-main-stage">
+            <router-outlet></router-outlet>
+          </main>
+        </div>
+      </div>
+    </div>

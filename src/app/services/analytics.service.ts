@@ -1,7 +1,8 @@
-import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
+import { Injectable, Injector, effect, inject, signal, untracked, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { PrivacyPreferencesService } from './privacy-preferences.service';
 
 export interface CountryStat {
   code: string;
@@ -58,35 +59,32 @@ const VISITOR_KEY = 'c_all_visitor_id';
 export class AnalyticsService {
   private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
+  private injector = inject(Injector);
+  private preferences = inject(PrivacyPreferencesService);
+  private lastTrackedPath: string | null = null;
+  private inMemoryVisitorId?: string;
+  private initialized = false;
 
   public isBrowser = isPlatformBrowser(this.platformId);
-  public currentCountry = signal<{ name: string; code: string; flag: string }>({
-    name: 'India',
-    code: 'IN',
-    flag: '🇮🇳'
-  });
-
   public analyticsData = signal<AnalyticsState>(this.getEmptyState());
   private pollingTimer: any = null;
   private consecutiveErrors = 0;
 
   init(): void {
-    if (!this.isBrowser) return;
-
-    this.detectCountry();
-    this.ensureVisitorId();
-    this.fetchLiveStats();
-
-    // Listen to route changes for page views
+    if (!this.isBrowser || this.initialized) return;
+    this.initialized = true;
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(event => {
-        const navEvent = event as NavigationEnd;
-        this.trackPageView(navEvent.urlAfterRedirects || navEvent.url);
-      });
+      .subscribe(event => this.trackPageView(event.urlAfterRedirects));
 
-    // Start auto polling for live dashboard updates
-    this.startLivePolling();
+    effect(() => {
+      if (this.preferences.allowsOptional()) {
+        untracked(() => this.trackPageView(this.router.url));
+      } else {
+        this.lastTrackedPath = null;
+        this.inMemoryVisitorId = undefined;
+      }
+    }, { injector: this.injector });
   }
 
   public getEmptyState(): AnalyticsState {
@@ -108,13 +106,11 @@ export class AnalyticsService {
       totalPageViews: 0,
       totalToolExecutions: 0,
       totalDataSavedMB: 0,
-      topCountries: [
-        { code: 'IN', name: 'India', flag: '🇮🇳', count: 0, percentage: 0 }
-      ],
+      topCountries: [],
       topTools: [],
       weeklyTraffic,
-      deviceBreakdown: { desktop: 100, mobile: 0, tablet: 0 },
-      browserBreakdown: { chrome: 100, safari: 0, edge: 0, firefox: 0, other: 0 },
+      deviceBreakdown: { desktop: 0, mobile: 0, tablet: 0 },
+      browserBreakdown: { chrome: 0, safari: 0, edge: 0, firefox: 0, other: 0 },
       recentActivities: []
     };
   }
@@ -144,6 +140,7 @@ export class AnalyticsService {
   }
 
   public startLivePolling(): void {
+    if (!this.isBrowser) return;
     if (this.pollingTimer) clearInterval(this.pollingTimer);
     this.consecutiveErrors = 0;
     this.pollingTimer = setInterval(() => {
@@ -151,13 +148,20 @@ export class AnalyticsService {
     }, 10000); // Poll every 10 seconds smoothly
   }
 
+  public stopLivePolling(): void {
+    if (this.pollingTimer) clearInterval(this.pollingTimer);
+    this.pollingTimer = null;
+  }
+
   private ensureVisitorId(): string {
-    let vid = localStorage.getItem(VISITOR_KEY);
-    if (!vid) {
-      vid = 'v_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
-      localStorage.setItem(VISITOR_KEY, vid);
-    }
-    return vid;
+    const id = this.inMemoryVisitorId ??= crypto.randomUUID?.() ??
+      (Math.random().toString(36).slice(2) + Date.now().toString(36));
+    try {
+      const saved = localStorage.getItem(VISITOR_KEY);
+      if (saved) return saved;
+      localStorage.setItem(VISITOR_KEY, id);
+    } catch {}
+    return id;
   }
 
   private getDeviceType(): 'desktop' | 'mobile' | 'tablet' {
@@ -178,124 +182,50 @@ export class AnalyticsService {
     return 'other';
   }
 
-  public trackPageView(path: string): void {
-    if (!this.isBrowser) return;
-    const country = this.currentCountry();
+  private trackPageView(url: string): void {
+    if (!this.isBrowser || !this.preferences.allowsOptional()) return;
+    const path = url.split(/[?#]/, 1)[0];
+    if (path === this.lastTrackedPath) return;
+    this.lastTrackedPath = path;
     const visitorId = this.ensureVisitorId();
 
     const payload = {
       type: 'visit',
       visitorId,
       path,
-      countryCode: country.code,
-      countryName: country.name,
-      flag: country.flag,
       device: this.getDeviceType(),
       browser: this.getBrowserName()
     };
 
-    fetch('/api/telemetry/event', {
+    void fetch('/api/telemetry/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    .then(() => this.fetchLiveStats())
     .catch(() => {});
   }
 
   public trackToolUsage(toolName: string, category: 'pdf' | 'image' | 'audio' | 'calculator', details?: string): void {
-    if (!this.isBrowser) return;
-    const country = this.currentCountry();
+    if (!this.isBrowser || !this.preferences.allowsOptional()) return;
     const visitorId = this.ensureVisitorId();
 
     const payload = {
       type: 'tool',
       visitorId,
-      path: this.router.url,
+      path: this.router.url.split(/[?#]/, 1)[0],
       toolName,
       category,
       details,
-      countryCode: country.code,
-      countryName: country.name,
-      flag: country.flag,
       device: this.getDeviceType(),
       browser: this.getBrowserName()
     };
 
-    fetch('/api/telemetry/event', {
+    void fetch('/api/telemetry/event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    .then(() => this.fetchLiveStats())
     .catch(() => {});
-  }
-
-  private detectCountry(): void {
-    try {
-      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-      const lang = navigator.language || 'en';
-
-      if (timeZone.includes('Kolkata') || timeZone.includes('Calcutta') || lang.includes('hi') || lang.includes('mr') || lang.includes('ta')) {
-        this.currentCountry.set({ name: 'India', code: 'IN', flag: '🇮🇳' });
-      } else if (timeZone.includes('New_York') || timeZone.includes('Chicago') || timeZone.includes('Los_Angeles') || timeZone.includes('America')) {
-        this.currentCountry.set({ name: 'United States', code: 'US', flag: '🇺🇸' });
-      } else if (timeZone.includes('London') || timeZone.includes('Europe/London')) {
-        this.currentCountry.set({ name: 'United Kingdom', code: 'GB', flag: '🇬🇧' });
-      } else if (timeZone.includes('Dubai')) {
-        this.currentCountry.set({ name: 'United Arab Emirates', code: 'AE', flag: '🇦🇪' });
-      } else if (timeZone.includes('Berlin') || timeZone.includes('Frankfurt')) {
-        this.currentCountry.set({ name: 'Germany', code: 'DE', flag: '🇩🇪' });
-      } else if (timeZone.includes('Toronto') || timeZone.includes('Vancouver')) {
-        this.currentCountry.set({ name: 'Canada', code: 'CA', flag: '🇨🇦' });
-      } else if (timeZone.includes('Sydney') || timeZone.includes('Melbourne')) {
-        this.currentCountry.set({ name: 'Australia', code: 'AU', flag: '🇦🇺' });
-      } else {
-        this.currentCountry.set({ name: 'India', code: 'IN', flag: '🇮🇳' });
-      }
-
-      // High precision background IP Geo lookup (cached per session)
-      const cachedGeo = sessionStorage.getItem('c_all_geo');
-      if (cachedGeo) {
-        try {
-          const parsed = JSON.parse(cachedGeo);
-          if (parsed?.name && parsed?.code) {
-            this.currentCountry.set(parsed);
-            return;
-          }
-        } catch {}
-      }
-
-      setTimeout(() => {
-        fetch('https://ipapi.co/json/')
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.country_name && data.country_code) {
-              const flag = this.getFlagEmoji(data.country_code);
-              const geoObj = {
-                name: data.country_name,
-                code: data.country_code,
-                flag: flag
-              };
-              this.currentCountry.set(geoObj);
-              try {
-                sessionStorage.setItem('c_all_geo', JSON.stringify(geoObj));
-              } catch {}
-            }
-          })
-          .catch(() => {});
-      }, 1500);
-    } catch {
-      // Fallback
-    }
-  }
-
-  private getFlagEmoji(countryCode: string): string {
-    const codePoints = countryCode
-      .toUpperCase()
-      .split('')
-      .map(char => 127397 + char.charCodeAt(0));
-    return String.fromCodePoint(...codePoints);
   }
 
   public exportData(): void {
@@ -309,12 +239,4 @@ export class AnalyticsService {
     downloadAnchor.remove();
   }
 
-  public resetData(): void {
-    if (!this.isBrowser) return;
-    fetch('/api/telemetry/reset', { method: 'POST' })
-      .then(() => this.fetchLiveStats())
-      .catch(() => {
-        this.analyticsData.set(this.getEmptyState());
-      });
-  }
 }

@@ -80,8 +80,8 @@ export const pdfTools = [
     name: 'Compress PDF',
     slug: '/pdf-processing/compress-pdf',
     categoryId: 'pdf-tools',
-    shortDesc: 'Reduce PDF file size while retaining crystal-clear document quality.',
-    fullDesc: 'Optimize PDF file size for email attachments and web publishing with selectable compression levels.',
+    shortDesc: 'Optimize PDFs with lossless compression or image-based presets.',
+    fullDesc: 'Use lossless compression to preserve selectable text and forms, or flatten pages into images for more compression.',
     icon: '🗜️',
     badge: 'POPULAR',
     isPopular: true,
@@ -91,65 +91,80 @@ export const pdfTools = [
     seoDescription: 'Compress PDF files online for free while preserving sharp text and images. Reduce PDF megabytes for email attachments and portals with zero server uploads.',
     keywords: 'compress pdf, reduce pdf file size, shrink pdf online free, pdf size reducer, compress pdf for email',
     h1: 'Online PDF Compressor - Reduce File Size Efficiently',
-    intro: 'Shrink bulky PDF files to fit email attachment limits, portal upload quotas, and job application gateways. Optimize embedded images and strip redundant metadata while preserving crisp text readability.',
+    intro: 'Lossless mode recompresses PDF streams while keeping selectable text and forms. Image-based presets can reduce scan sizes further. When the result would be larger, the original remains available.',
     howToSteps: [
       'Select or drag the PDF file you want to optimize.',
-      'Choose your target compression strength (Extreme, Recommended, or Low).',
-      'Review the estimated file size reduction percentage.',
-      'Click Compress PDF to download your streamlined document.'
+      'Choose lossless optimization or an image-based preset.',
+      'Compare the original and resulting file sizes.',
+      'Download the smaller result or keep the original.'
     ],
     features: [
-      'Multiple compression presets balancing file reduction against visual clarity',
-      'Dramatically shrinks PDF megabytes for email and government form uploads',
-      'Optimizes embedded raster photos and eliminates duplicate font tables',
-      'Fast processing with transparent file savings metrics'
+      'Lossless mode preserves selectable text, images, and form fields',
+      'Optional presets flatten pages into images',
+      'Keeps the original when the result would be larger',
+      'Shows measured file-size savings'
     ],
     faqs: [
-      { q: 'How much can I typically compress a PDF document?', a: 'Documents containing high-resolution scans or photos often compress by 40% to 75% without noticeable loss in text readability.' },
-      { q: 'Will compressing my PDF make the text look fuzzy or blurry?', a: 'No, vector text and fonts remain sharp; compression primarily optimizes oversized embedded images and eliminates redundant stream data.' },
-      { q: 'Is there a file size limit for compressing PDFs?', a: 'You can compress documents up to 100MB smoothly on modern desktop and mobile browsers.' },
-      { q: 'Are my confidential documents uploaded to any remote server?', a: 'Document compression is handled securely with strict automatic deletion protocols.' }
+      { q: 'How much can I typically compress a PDF document?', a: 'The savings depend on the input. A PDF that is already optimized may stay the same size.' },
+      { q: 'Will compressing my PDF make the text look fuzzy or blurry?', a: 'Lossless mode preserves the original text. Image-based presets rasterize pages and can reduce image detail.' },
+      { q: 'Is there a file size limit for compressing PDFs?', a: 'Choose a PDF no larger than 100 MB. Available memory affects processing time.' },
+      { q: 'Are my confidential documents uploaded to any remote server?', a: 'The browser reads the file and writes the result locally.' }
     ],
     relatedToolPaths: ['/pdf-processing/merge-pdf', '/pdf-processing/pdf-to-word', '/pdf-processing/organize-pdf', '/pdf-processing/edit-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
+    privacyNote: 'Files are processed in your browser.'
   },
   {
-    id: 'pdf-to-word',
-    name: 'PDF to Word Converter',
-    slug: '/pdf-processing/pdf-to-word',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Convert PDF documents into editable Microsoft Word (DOCX) files.',
-    fullDesc: 'Transform read-only PDFs into editable DOCX Word files with preserved paragraphs, tables, and styles.',
-    icon: '📝',
-    badge: 'POPULAR',
+    id: "pdf-to-word",
+    name: "PDF to Word Converter",
+    slug: "/pdf-processing/pdf-to-word",
+    categoryId: "pdf-tools",
+    shortDesc: "Extract selectable PDF text into a Word document.",
+    fullDesc: "Create an editable DOCX from selectable PDF text, organized by source page.",
+    icon: "📝",
+    badge: "POPULAR",
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Convert PDF to Word Online Free - DOCX | ConverterAllAI',
-    seoDescription: 'Convert PDF files to editable Microsoft Word DOCX documents online for free. Preserves original formatting, fonts, and tables with fast private conversion.',
-    keywords: 'pdf to word, convert pdf to docx, pdf to word converter online free, edit pdf in word, pdf to doc',
-    h1: 'Convert PDF to Editable Microsoft Word (DOCX) Documents',
-    intro: 'Turn non-editable PDF paperwork into fully formatted Microsoft Word documents. Modify text, update tables, and adjust layouts in DOCX format while keeping fonts, headings, and alignments intact.',
+    seoTitle: "PDF to Word Text Extractor | ConverterAllAI",
+    seoDescription: "Export selectable text from PDF files into an editable DOCX in your browser. Download a Word document with section breaks for the source PDF pages.",
+    keywords: "pdf to word, convert pdf to docx, pdf to word converter online free, edit pdf in word, pdf to doc",
+    h1: "PDF to Word Converter",
+    intro: "Make a Word document from selectable PDF text. The output uses paragraphs and page sections. Images and the original page layout are omitted.",
     howToSteps: [
-      'Upload your PDF file into the converter box.',
-      'Our engine parses text flows, tables, and images into Word paragraphs.',
-      'Preview the conversion status in real time.',
-      'Download your editable DOCX file and open it in Microsoft Word or Google Docs.'
+      "Select a readable PDF with selectable text.",
+      "Run the PDF to Word converter.",
+      "Download the DOCX and review the text order in your editor."
     ],
     features: [
-      'Accurate paragraph, table, bullet list, and heading hierarchy reconstruction',
-      'Outputs modern standard Microsoft Word (.docx) format files',
-      'Preserves font styling, color palettes, and margin geometry',
-      'Enables full editing in Microsoft Office, LibreOffice, and Google Docs'
+      "Editable DOCX output",
+      "Text extracted by source page",
+      "On-device conversion"
     ],
     faqs: [
-      { q: 'Can I edit the converted Word document in Google Docs or Pages?', a: 'Yes, the generated DOCX file is 100% compliant with Microsoft Word, Google Docs, Apple Pages, and LibreOffice.' },
-      { q: 'Does this converter preserve tables and spreadsheets from the PDF?', a: 'Yes, tabular columns and borders are mapped into editable native Word table structures.' },
-      { q: 'Can scanned PDFs without selectable text be converted to Word?', a: 'For image-only scans, run our OCR PDF tool first to recognize characters before converting to Word.' },
-      { q: 'Is my document privacy protected during conversion?', a: 'Yes, files are processed over encrypted channels and erased immediately following processing.' }
+      {
+        q: "Does the DOCX preserve the page layout?",
+        a: "It contains extracted text and page sections. Original fonts, illustrations, and layout are omitted."
+      },
+      {
+        q: "Can I convert scanned pages?",
+        a: "Start with OCR to add a text layer, then convert the searchable PDF."
+      },
+      {
+        q: "Can I edit the output?",
+        a: "Yes. The DOCX contains ordinary editable paragraphs."
+      },
+      {
+        q: "Where is conversion performed?",
+        a: "Your browser reads the PDF and builds the DOCX locally."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/word-to-pdf', '/pdf-processing/pdf-to-excel', '/pdf-processing/pdf-to-text', '/pdf-processing/compress-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
+    relatedToolPaths: [
+      "/pdf-processing/word-to-pdf",
+      "/pdf-processing/pdf-to-excel",
+      "/pdf-processing/pdf-to-text",
+      "/pdf-processing/compress-pdf"
+    ],
+    privacyNote: "Documents are processed securely and deleted automatically right after processing."
   },
   {
     id: 'word-to-pdf',
@@ -190,42 +205,56 @@ export const pdfTools = [
     privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
   },
   {
-    id: 'pdf-to-excel',
-    name: 'PDF to Excel Converter',
-    slug: '/pdf-processing/pdf-to-excel',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Extract data tables from PDF statements and reports into Excel sheets.',
-    fullDesc: 'Pull structured financial tables, invoices, and data from PDFs into editable XLSX spreadsheets.',
-    icon: '📊',
-    badge: 'HOT',
+    id: "pdf-to-excel",
+    name: "PDF to Excel Converter",
+    slug: "/pdf-processing/pdf-to-excel",
+    categoryId: "pdf-tools",
+    shortDesc: "Group selectable PDF text into XLSX worksheet rows and cells.",
+    fullDesc: "Create an XLSX worksheet per PDF page from the positions of selectable text.",
+    icon: "📊",
+    badge: "HOT",
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Convert PDF to Excel Online Free - XLSX | ConverterAllAI',
-    seoDescription: 'Convert PDF tables to editable Microsoft Excel (XLSX) spreadsheets online for free. Extract bank statements and financial data into clean rows and columns.',
-    keywords: 'pdf to excel, convert pdf to xlsx, pdf to spreadsheet, extract tables from pdf, pdf to excel converter free',
-    h1: 'Convert PDF Tables to Editable Excel Spreadsheets (XLSX)',
-    intro: 'Extract financial reports, bank statements, and tabular invoices from PDF documents into live Microsoft Excel spreadsheets. Automatically separate tabular rows and columns into formula-ready cells.',
+    seoTitle: "PDF Text to Excel XLSX | ConverterAllAI",
+    seoDescription: "Create an Excel XLSX workbook from selectable PDF text. Text positions guide row and cell grouping, and each PDF page gets a separate worksheet.",
+    keywords: "pdf to excel, convert pdf to xlsx, pdf to spreadsheet, extract tables from pdf, pdf to excel converter free",
+    h1: "PDF to Excel Converter",
+    intro: "Extract selectable text into Excel worksheets. Rows and cells are inferred from text positions. Check closely spaced, irregular, or multi-column layouts against the PDF.",
     howToSteps: [
-      'Upload your PDF document containing tabular data or statements.',
-      'Our table detection engine scans boundaries, columns, and data rows.',
-      'Select whether to extract specific sheets or all pages.',
-      'Download the generated Excel (.xlsx) file and open in Excel or Sheets.'
+      "Select a PDF with selectable text.",
+      "Convert the PDF to an Excel workbook.",
+      "Open the XLSX and review the grouping of rows and cells."
     ],
     features: [
-      'Intelligent tabular column and row structure recognition',
-      'Outputs clean Microsoft Excel (.xlsx) formatted spreadsheets',
-      'Eliminates tedious manual copy-pasting of financial numbers',
-      'Compatible with Microsoft Excel, Google Sheets, and Apple Numbers'
+      "Real XLSX workbook",
+      "One worksheet per PDF page",
+      "Extracted values stored as text"
     ],
     faqs: [
-      { q: 'Can I extract multi-page financial statements into a single Excel sheet?', a: 'Yes, consecutive tables across multi-page PDF statements can be consolidated into continuous Excel worksheets.' },
-      { q: 'Will numbers and monetary figures retain numeric formatting?', a: 'Yes, numbers are recognized as digits rather than static strings so formulas like SUM calculate automatically.' },
-      { q: 'Can I open the downloaded spreadsheet in Google Sheets?', a: 'Yes, standard XLSX files import seamlessly into Google Sheets without formatting loss.' },
-      { q: 'Is financial statement data handled securely?', a: 'Yes, files are processed under strict privacy guidelines and purged right after processing.' }
+      {
+        q: "Are table borders and formulas preserved?",
+        a: "Rows and cells are inferred from text positions. The output uses plain text values."
+      },
+      {
+        q: "What if the PDF contains scans?",
+        a: "Run OCR first so the document has selectable text."
+      },
+      {
+        q: "Does the converter preserve leading zeros?",
+        a: "Yes. Values are stored as text so identifiers keep their leading zeros."
+      },
+      {
+        q: "Where is conversion performed?",
+        a: "The PDF is processed in your browser."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/excel-to-pdf', '/pdf-processing/pdf-to-word', '/pdf-processing/compress-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
+    relatedToolPaths: [
+      "/pdf-processing/excel-to-pdf",
+      "/pdf-processing/pdf-to-word",
+      "/pdf-processing/compress-pdf"
+    ],
+    privacyNote: "Documents are processed securely and deleted automatically right after processing."
   },
   {
     id: 'excel-to-pdf',
@@ -266,42 +295,56 @@ export const pdfTools = [
     privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
   },
   {
-    id: 'pdf-to-ppt',
-    name: 'PDF to PPT Converter',
-    slug: '/pdf-processing/pdf-to-ppt',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Convert PDF presentation decks into editable PowerPoint (PPTX) slides.',
-    fullDesc: 'Transform static slide decks into editable PowerPoint PPTX presentations with individual slide cards.',
-    icon: '📊',
-    badge: 'PRO',
+    id: "pdf-to-ppt",
+    name: "PDF to PPT Converter",
+    slug: "/pdf-processing/pdf-to-ppt",
+    categoryId: "pdf-tools",
+    shortDesc: "Turn each PDF page into an image slide in a PPTX.",
+    fullDesc: "Create a PowerPoint presentation that preserves each PDF page's visible appearance as an image.",
+    icon: "📊",
+    badge: "PRO",
     isPopular: false,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Convert PDF to PPT Online Free - PPTX | ConverterAllAI',
-    seoDescription: 'Convert PDF slide presentations into editable Microsoft PowerPoint (PPTX) decks online for free. Edit text and graphics on slides with zero file uploads.',
-    keywords: 'pdf to ppt, convert pdf to powerpoint, pdf to pptx online free, slide deck converter, edit pdf presentation',
-    h1: 'Convert PDF Slides to Editable PowerPoint (PPTX)',
-    intro: 'Turn locked PDF presentation handouts back into editable Microsoft PowerPoint slide decks. Update bullet points, revise titles, and reposition diagrams in PPTX format with ease.',
+    seoTitle: "PDF to PowerPoint Image Slides | ConverterAllAI",
+    seoDescription: "Convert PDF pages into a PowerPoint PPTX with an image slide for each page. Keep the visible layout and download the presentation from your browser.",
+    keywords: "pdf to ppt, convert pdf to powerpoint, pdf to pptx online free, slide deck converter, edit pdf presentation",
+    h1: "PDF to PPT Converter",
+    intro: "Build a PowerPoint presentation with one image slide per PDF page. You can move or resize the page image in PowerPoint.",
     howToSteps: [
-      'Upload the PDF presentation file you wish to convert.',
-      'Allow the converter to map each PDF page to an individual PowerPoint slide.',
-      'Verify the slide conversion completion.',
-      'Download your editable PPTX file and open in PowerPoint or Keynote.'
+      "Select your PDF.",
+      "Run the PowerPoint conversion.",
+      "Open the PPTX and arrange the page images as needed."
     ],
     features: [
-      'Converts each PDF page into a discrete PowerPoint presentation slide',
-      'Outputs modern Microsoft PowerPoint (.pptx) file format',
-      'Compatible with Microsoft PowerPoint, Google Slides, and Apple Keynote',
-      'Preserves slide dimensions, 16:9 widescreen, and 4:3 layouts'
+      "Valid PPTX presentation",
+      "One page image per slide",
+      "Original page aspect ratio preserved"
     ],
     faqs: [
-      { q: 'Can I present the converted slides directly in Google Slides?', a: 'Yes, uploading the generated PPTX file into Google Slides provides full presentation capabilities.' },
-      { q: 'Are slide images and graphics preserved?', a: 'Yes, logos, diagrams, and photos are placed onto their respective PowerPoint slide canvases.' },
-      { q: 'Can I edit the slide text after conversion?', a: 'Text blocks are mapped into editable text frames so you can revise copy and update numbers.' },
-      { q: 'Are presentation files kept secure during conversion?', a: 'Yes, all transmissions are encrypted and files are removed after processing.' }
+      {
+        q: "Can I edit text inside the slide image?",
+        a: "The page is rendered as a single image. Add new text boxes or edit the source PDF if you need to change its text."
+      },
+      {
+        q: "Can the PDF be scanned?",
+        a: "Yes. The converter renders visible page content, including scans."
+      },
+      {
+        q: "What happens to portrait pages?",
+        a: "They are centered in the widescreen slide with their aspect ratios preserved."
+      },
+      {
+        q: "Where is conversion performed?",
+        a: "Pages are rendered and packaged in your browser."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/ppt-to-pdf', '/pdf-processing/pdf-to-word', '/pdf-processing/compress-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
+    relatedToolPaths: [
+      "/pdf-processing/ppt-to-pdf",
+      "/pdf-processing/pdf-to-word",
+      "/pdf-processing/compress-pdf"
+    ],
+    privacyNote: "Documents are processed securely and deleted automatically right after processing."
   },
   {
     id: 'ppt-to-pdf',
@@ -608,80 +651,108 @@ export const pdfTools = [
     privacyNote: 'Files are processed securely and deleted automatically right after processing.'
   },
   {
-    id: 'remove-password',
-    name: 'Unlock PDF (Remove Password)',
-    slug: '/pdf-processing/remove-password',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Remove password security and encryption from PDF files you own.',
-    fullDesc: 'Decrypt protected PDF documents by providing the authorized password, creating an unencumbered file.',
-    icon: '🔓',
-    badge: 'POPULAR',
+    id: "remove-password",
+    name: "Unlock PDF (Remove Password)",
+    slug: "/pdf-processing/remove-password",
+    categoryId: "pdf-tools",
+    shortDesc: "Create an unlocked PDF using its current password.",
+    fullDesc: "Enter the current password of a PDF you can access and download an unencrypted copy.",
+    icon: "🔓",
+    badge: "POPULAR",
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Unlock PDF Online Free - Remove Password | ConverterAllAI',
-    seoDescription: 'Remove passwords and permissions security from PDF files online for free. Decrypt your documents directly in your browser with zero server uploads.',
-    keywords: 'unlock pdf, remove password from pdf, decrypt pdf online, remove pdf security, pdf password remover',
-    h1: 'Unlock Password Protected PDF Documents Online',
-    intro: 'Eliminate tedious password prompts on bank statements, tax forms, and financial documents you own. Enter your password once to decrypt the document and download a permanently unlocked PDF file.',
+    seoTitle: "Unlock PDF with Its Current Password | ConverterAllAI",
+    seoDescription: "Enter the current password for a PDF you have access to, remove its open-password encryption, and save an unlocked copy using the browser-based PDF tool.",
+    keywords: "unlock pdf, remove password from pdf, decrypt pdf online, remove pdf security, pdf password remover",
+    h1: "Unlock PDF (Remove Password)",
+    intro: "Use the current PDF password to create an unencrypted copy for easier access.",
     howToSteps: [
-      'Upload the password-encrypted PDF file.',
-      'Enter the correct authorized document password.',
-      'Click Unlock PDF to strip encryption layers from the document.',
-      'Download your unrestricted PDF that opens without prompts.'
+      "Select the protected PDF.",
+      "Enter the current password and run the unlock tool.",
+      "Download the unlocked copy and check it in your PDF reader."
     ],
     features: [
-      'Removes user password security permanently from authorized files',
-      'Unlocks printing, copying, and editing restrictions on protected files',
-      '100% private in-browser decryption using pdf-lib',
-      'Instant processing with zero server uploads or credential tracking'
+      "Uses the current password to decrypt the PDF",
+      "Downloads a separate unencrypted copy",
+      "PDF processed locally in a WebAssembly worker"
     ],
     faqs: [
-      { q: 'Do I need to know the password to unlock the PDF?', a: 'Yes, you must enter the legitimate authorized password; this tool strips the encryption so you do not have to retype the password repeatedly.' },
-      { q: 'Can this tool remove restrictions on printing or copying text?', a: 'Yes, decrypting the file removes all owner restrictions including printing, text copying, and form annotations.' },
-      { q: 'Is my password or document stored on your servers?', a: 'Never. Decryption is performed entirely inside your browser memory; your password is never transmitted.' },
-      { q: 'Will the unlocked file work on any PDF reader?', a: 'Yes, the output is a standard, unencrypted PDF that opens in any reader without passwords.' }
+      {
+        q: "Do I need the current password?",
+        a: "Yes. The tool uses it to decrypt the PDF."
+      },
+      {
+        q: "What happens if I enter the wrong password?",
+        a: "The tool reports a failure and does not offer a download."
+      },
+      {
+        q: "Can I encrypt the document again?",
+        a: "Yes. Use Password Protect PDF with the unlocked copy."
+      },
+      {
+        q: "Does the original file change?",
+        a: "The tool creates a new copy. Your original remains on your device."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/add-password', '/pdf-processing/merge-pdf', '/pdf-processing/split-pdf'],
-    privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
+    relatedToolPaths: [
+      "/pdf-processing/add-password",
+      "/pdf-processing/merge-pdf",
+      "/pdf-processing/split-pdf"
+    ],
+    privacyNote: "Files are processed 100% locally in your browser and never uploaded to any server."
   },
   {
-    id: 'add-password',
-    name: 'Protect PDF (Add Password)',
-    slug: '/pdf-processing/add-password',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Encrypt confidential PDF files with strong AES password protection.',
-    fullDesc: 'Secure sensitive documents with strong password encryption to prevent unauthorized reading or printing.',
-    icon: '🔒',
-    badge: 'FREE',
+    id: "add-password",
+    name: "Protect PDF (Add Password)",
+    slug: "/pdf-processing/add-password",
+    categoryId: "pdf-tools",
+    shortDesc: "Encrypt a PDF with an AES-256 open password.",
+    fullDesc: "Create a password-protected PDF copy using AES-256 encryption in your browser.",
+    icon: "🔒",
+    badge: "FREE",
     isPopular: false,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Protect PDF Online Free - Add Password | ConverterAllAI',
-    seoDescription: 'Encrypt PDF documents with strong passwords online for free. Secure sensitive files against unauthorized access directly in your browser with zero uploads.',
-    keywords: 'protect pdf, add password to pdf, encrypt pdf online free, secure pdf document, password protect pdf file',
-    h1: 'Password Protect & Encrypt PDF Documents Online',
-    intro: 'Shield confidential financial audits, medical records, and legal contracts from prying eyes. Apply robust password protection directly within your web browser so only authorized recipients with the secret key can open your file.',
+    seoTitle: "Password Protect PDF with AES-256 | ConverterAllAI",
+    seoDescription: "Add an open password to a PDF with browser-based AES-256 encryption. Choose and confirm a password, then download a protected copy of your document.",
+    keywords: "protect pdf, add password to pdf, encrypt pdf online free, secure pdf document, password protect pdf file",
+    h1: "Protect PDF (Add Password)",
+    intro: "Encrypt an unlocked PDF with an open password. Keep the password available so you can open the encrypted copy later.",
     howToSteps: [
-      'Upload the PDF document you wish to protect.',
-      'Enter a strong secret password and confirm it in the verification field.',
-      'Optionally set permission restrictions against printing or text extraction.',
-      'Click Encrypt PDF to download your secured document.'
+      "Select a readable, unlocked PDF.",
+      "Enter and confirm your new open password.",
+      "Download the output and verify the password prompt in your PDF reader."
     ],
     features: [
-      'Military-grade standard encryption securing document contents',
-      'Restrict unauthorized opening, copying, or modifying of files',
-      '100% client-side encryption with zero password transmissions to servers',
-      'Compatible with Adobe Acrobat and all standard mobile PDF viewers'
+      "AES-256 open-password encryption",
+      "Password confirmation before export",
+      "PDF processed locally in a WebAssembly worker"
     ],
     faqs: [
-      { q: 'How strong is the encryption applied to my PDF?', a: 'The document is encrypted using standard PDF cryptographic specifications requiring the exact password to decrypt streams.' },
-      { q: 'Can anyone open the document without the password?', a: 'No, without the password the file remains unreadable across all PDF viewers.' },
-      { q: 'What happens if I forget the password I set?', a: 'Because the encryption is robust and we do not store passwords, make sure to keep a backup record of your chosen key.' },
-      { q: 'Are my confidential documents uploaded to an external server?', a: 'No, encryption takes place locally on your computer using client-side JavaScript.' }
+      {
+        q: "Will the PDF ask for a password?",
+        a: "Yes. A compatible PDF reader prompts for the open password."
+      },
+      {
+        q: "Does this change the original PDF?",
+        a: "The encrypted file is saved as a separate copy."
+      },
+      {
+        q: "Can I change an existing password?",
+        a: "Unlock an existing document with its current password, then protect the unlocked copy."
+      },
+      {
+        q: "Where is the password used?",
+        a: "The in-browser PDF worker uses it to encrypt the document."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/remove-password', '/pdf-processing/add-watermark', '/pdf-processing/redact-pdf'],
-    privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
+    relatedToolPaths: [
+      "/pdf-processing/remove-password",
+      "/pdf-processing/add-watermark",
+      "/pdf-processing/redact-pdf"
+    ],
+    privacyNote: "Files are processed 100% locally in your browser and never uploaded to any server."
   },
   {
     id: 'organize-pdf',
@@ -720,44 +791,6 @@ export const pdfTools = [
     ],
     relatedToolPaths: ['/pdf-processing/merge-pdf', '/pdf-processing/split-pdf', '/pdf-processing/rotate-pdf', '/pdf-processing/crop-pdf'],
     privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
-  },
-  {
-    id: 'pdf-to-pdfa',
-    name: 'PDF to PDF/A Converter',
-    slug: '/pdf-processing/pdf-to-pdfa',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Convert standard PDF documents into ISO-compliant PDF/A archive format.',
-    fullDesc: 'Standardize documents for long-term legal archiving by embedding fonts and color profiles per ISO 19005.',
-    icon: '🏛️',
-    badge: 'PRO',
-    isPopular: false,
-    isLatest: false,
-    isAI: false,
-    seoTitle: 'Convert PDF to PDFA Online Free - Archival | ConverterAllAI',
-    seoDescription: 'Convert PDF documents to ISO-standard PDF/A for long-term archiving online for free. Embed fonts and color profiles for legal compliance with zero signup.',
-    keywords: 'pdf to pdfa, convert to pdfa online, archival pdf, iso 19005 pdf, legal document archiving',
-    h1: 'Convert PDF to ISO-Standard PDF/A for Long-Term Archiving',
-    intro: 'Ensure your critical contracts, court filings, and historical records remain readable for decades. Convert standard PDFs into ISO-compliant PDF/A format with all fonts and color spaces permanently embedded.',
-    howToSteps: [
-      'Upload the PDF document you need to standardize for archiving.',
-      'Select your desired PDF/A conformance level (PDF/A-1b or PDF/A-2b).',
-      'The engine verifies font embeddability and eliminates prohibited tags.',
-      'Download your certified PDF/A compliant document.'
-    ],
-    features: [
-      'Compliant with ISO 19005 standards for long-term electronic document preservation',
-      'Embeds all fonts and color profiles to prevent future font substitution',
-      'Removes non-compliant dynamic scripts, audio, and video streams',
-      'Meets strict regulatory standards for legal, medical, and government archives'
-    ],
-    faqs: [
-      { q: 'What is the main difference between standard PDF and PDF/A?', a: 'PDF/A is a standardized subset of PDF designed for long-term preservation; it mandates that all fonts and color profiles be embedded and forbids dynamic scripts.' },
-      { q: 'Why do government and legal agencies require PDF/A format?', a: 'PDF/A guarantees that a document opened 50 years from now will look exactly identical to how it was created today.' },
-      { q: 'Can a PDF/A document still be opened in standard PDF viewers?', a: 'Yes, PDF/A files open normally in any standard PDF reader like Adobe Acrobat or mobile browsers.' },
-      { q: 'Are my legal documents kept private during conversion?', a: 'Yes, processing follows strict encrypted security standards and files are purged immediately.' }
-    ],
-    relatedToolPaths: ['/pdf-processing/compress-pdf', '/pdf-processing/organize-pdf', '/pdf-processing/repair-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
   },
   {
     id: 'repair-pdf',
@@ -874,42 +907,56 @@ export const pdfTools = [
     privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
   },
   {
-    id: 'ocr-pdf',
-    name: 'OCR PDF (Text Recognition)',
-    slug: '/pdf-processing/ocr-pdf',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Convert scanned PDF documents into selectable and searchable text.',
-    fullDesc: 'Optical Character Recognition recognizing printed characters across scanned PDFs in multiple languages.',
-    icon: '🔍',
-    badge: 'AI',
+    id: "ocr-pdf",
+    name: "OCR PDF (Text Recognition)",
+    slug: "/pdf-processing/ocr-pdf",
+    categoryId: "pdf-tools",
+    shortDesc: "Add a searchable English text layer to a scanned PDF.",
+    fullDesc: "Recognize English text from rendered PDF pages and export a searchable copy.",
+    icon: "🔍",
+    badge: "AI",
     isPopular: true,
     isLatest: false,
     isAI: true,
-    seoTitle: 'OCR PDF Online Free - Make PDF Searchable | ConverterAllAI',
-    seoDescription: 'Convert scanned PDF documents into searchable and selectable text online for free with AI OCR. Copy text from scanned sheets with zero mandatory signup.',
-    keywords: 'ocr pdf, make pdf searchable, optical character recognition online, scanned pdf to text, extract text from scan',
-    h1: 'OCR PDF - Optical Character Recognition for Scanned Files',
-    intro: 'Transform flat, non-selectable scanned PDFs into fully searchable documents. Our OCR engine identifies printed characters across multiple languages and embeds an invisible text layer so you can search, highlight, and copy text freely.',
+    seoTitle: "English OCR for Scanned PDFs | ConverterAllAI",
+    seoDescription: "Make a scanned PDF searchable with on-device English text recognition. Upload a clear scan and download a PDF with a searchable layer beneath each page image.",
+    keywords: "ocr pdf, make pdf searchable, optical character recognition online, scanned pdf to text, extract text from scan",
+    h1: "OCR PDF (Text Recognition)",
+    intro: "Use English OCR on scanned PDF pages. The new PDF includes page images and a searchable layer with the recognized text.",
     howToSteps: [
-      'Upload your scanned PDF document or image paperwork.',
-      'Select the primary document language (English, Spanish, Hindi, German, etc.).',
-      'Allow the OCR recognition engine to scan words and character shapes.',
-      'Download your searchable PDF with selectable text layer included.'
+      "Select a scanned PDF of up to 25 pages.",
+      "Run English text recognition in the browser.",
+      "Download the PDF and check a few search terms against the scan."
     ],
     features: [
-      'Embeds an invisible selectable text layer directly above scanned image pixels',
-      'Supports high-accuracy character recognition across over 20 global languages',
-      'Enables Ctrl+F text searching inside Acrobat, browser viewers, and mobile devices',
-      'Preserves original scanned image aesthetics with zero visual alteration'
+      "Searchable English text layer",
+      "Page images preserved in the searchable copy",
+      "Language model and OCR engine served with the app"
     ],
     faqs: [
-      { q: 'What does OCR actually do to a scanned PDF?', a: 'OCR analyzes pixel patterns in scanned images to recognize words, then overlays an invisible text layer matching the exact coordinates of the words.' },
-      { q: 'Can I copy text from the PDF after OCR is applied?', a: 'Yes, you can highlight, copy, and paste text just like a native digital document.' },
-      { q: 'Does OCR work on handwritten notes?', a: 'OCR delivers highest accuracy on typed and printed documents; clear block handwriting is partially recognized.' },
-      { q: 'Are my scanned documents stored securely?', a: 'Yes, files are processed under strict automated privacy protocols and erased immediately.' }
+      {
+        q: "Which language is supported?",
+        a: "The current model is trained for English."
+      },
+      {
+        q: "Do pages need to be clear?",
+        a: "Consistent orientation, sharp text, and good contrast improve recognition."
+      },
+      {
+        q: "What if the scan is large?",
+        a: "Split it into PDFs of up to 25 pages and process each part."
+      },
+      {
+        q: "Where are the scanned pages processed?",
+        a: "The OCR engine runs in your browser."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/pdf-to-text', '/pdf-processing/pdf-to-word', '/pdf-processing/scan-to-pdf'],
-    privacyNote: 'Documents are processed securely and deleted automatically right after processing.'
+    relatedToolPaths: [
+      "/pdf-processing/pdf-to-text",
+      "/pdf-processing/pdf-to-word",
+      "/pdf-processing/scan-to-pdf"
+    ],
+    privacyNote: "Documents are processed securely and deleted automatically right after processing."
   },
   {
     id: 'compare-pdf',
@@ -950,42 +997,56 @@ export const pdfTools = [
     privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
   },
   {
-    id: 'redact-pdf',
-    name: 'Redact PDF Online',
-    slug: '/pdf-processing/redact-pdf',
-    categoryId: 'pdf-tools',
-    shortDesc: 'Permanently black out and remove sensitive text, SSNs, and data from PDFs.',
-    fullDesc: 'True data redaction tool that permanently removes underlying text bytes and images from PDF files.',
-    icon: '⬛',
-    badge: 'PRO',
+    id: "redact-pdf",
+    name: "Redact PDF Online",
+    slug: "/pdf-processing/redact-pdf",
+    categoryId: "pdf-tools",
+    shortDesc: "Cover selected PDF areas and export a flattened redacted copy.",
+    fullDesc: "Draw areas on a PDF preview and rebuild the document from pixels after masking those areas.",
+    icon: "⬛",
+    badge: "PRO",
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Redact PDF Online Free - Black Out Data | ConverterAllAI',
-    seoDescription: 'Permanently redact sensitive text, SSNs, and private information from PDF files online for free. True byte removal protects privacy with zero server uploads.',
-    keywords: 'redact pdf, black out text in pdf, pdf redaction tool free, remove sensitive info from pdf, sanitize pdf data',
-    h1: 'Permanently Redact & Black Out Sensitive PDF Data',
-    intro: 'Sanitize legal disclosures, medical histories, and tax records before public release. Unlike cosmetic markup, our true redaction engine permanently erases the underlying vector text bytes and pixels beneath black bars.',
+    seoTitle: "Redact PDF with Area Selection | ConverterAllAI",
+    seoDescription: "Draw boxes over sensitive areas in a PDF preview, review the selected pages, and export a flattened redacted PDF with masked areas applied to the page pixels.",
+    keywords: "redact pdf, black out text in pdf, pdf redaction tool free, remove sensitive info from pdf, sanitize pdf data",
+    h1: "Redact PDF Online",
+    intro: "Mark sensitive areas on the page preview, then export a fresh image-based PDF. The export contains the rendered pages with the selected pixels covered.",
     howToSteps: [
-      'Upload the PDF document requiring data sanitization.',
-      'Drag black redaction boxes over sensitive names, SSNs, or financial figures.',
-      'Review all marked areas across every page.',
-      'Click Apply Redaction & Download to permanently purge selected data.'
+      "Select a PDF and open a page with sensitive content.",
+      "Draw a box over each area to cover, then review all affected pages.",
+      "Create and review the redacted export before sharing it."
     ],
     features: [
-      'True cryptographic redaction permanently deleting underlying text bytes',
-      'Prevents recipients from copying, revealing, or searching redacted data',
-      'Classic black bar, whiteout, or custom color redaction styling',
-      '100% client-side sanitization keeping sensitive records strictly on your device'
+      "Page-by-page marking with a visible preview",
+      "Black masks applied before the page images are embedded",
+      "New PDF built from rendered pixels"
     ],
     faqs: [
-      { q: 'What is the difference between drawing a black rectangle and true redaction?', a: 'Drawing a black rectangle leaves the text bytes underneath, allowing anyone to copy/paste the hidden words; true redaction permanently destroys the underlying data bytes.' },
-      { q: 'Can redacted text ever be recovered by someone inspecting the file?', a: 'No. True redaction deletes the text strings and vector paths entirely from the PDF stream.' },
-      { q: 'Can I redact images and logos as well as text?', a: 'Yes, placing a redaction box over photos or graphics slices and purges those pixels.' },
-      { q: 'Are my sensitive records uploaded to any server?', a: 'No, all redaction processing is executed locally inside your web browser.' }
+      {
+        q: "Can I search or select text after export?",
+        a: "The exported pages are images. Selectable text is omitted."
+      },
+      {
+        q: "What happens to form fields and links?",
+        a: "The redacted copy is flattened, so fields and links become static."
+      },
+      {
+        q: "Can I mark more than one page?",
+        a: "Yes. Each page keeps its own marked areas while you navigate."
+      },
+      {
+        q: "Will the tool find every sensitive area for me?",
+        a: "Use the preview to mark each area and check the export before sharing it."
+      }
     ],
-    relatedToolPaths: ['/pdf-processing/edit-pdf', '/pdf-processing/add-password', '/pdf-processing/crop-pdf'],
-    privacyNote: 'Files are processed 100% locally in your browser and never uploaded to any server.'
+    relatedToolPaths: [
+      "/pdf-processing/edit-pdf",
+      "/pdf-processing/add-password",
+      "/pdf-processing/crop-pdf"
+    ],
+    privacyNote: "Files are processed 100% locally in your browser and never uploaded to any server."
   },
   {
     id: 'crop-pdf',

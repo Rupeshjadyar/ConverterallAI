@@ -1,0 +1,75 @@
+<div class="memory-container">
+      
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Memory Card Match 🧠</h1>
+        </div>
+
+        <div class="header-controls">
+          <div class="mode-select">
+            <label>Difficulty:</label>
+            <select [ngModel]="difficulty()" (ngModelChange)="setDifficulty($event)">
+              <option value="easy">Easy (3x4 Grid)</option>
+              <option value="medium">Medium (4x4 Grid)</option>
+              <option value="hard">Hard (6x6 Grid)</option>
+            </select>
+          </div>
+          <button (click)="resetGame()" class="btn-top">🔄 Restart</button>
+        </div>
+      </div>
+
+      <div class="memory-arena">
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar glass">
+          <div class="stat-item">
+            <span class="stat-label">MOVES</span>
+            <span class="stat-val">{{ moves() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">MATCHED</span>
+            <span class="stat-val text-green">{{ matchedPairs() }} / {{ totalPairs() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">TIME</span>
+            <span class="stat-val">{{ formatTime(secondsElapsed()) }}</span>
+          </div>
+        </div>
+
+        <!-- Cards Grid Frame -->
+        <div class="cards-frame glass">
+          <div class="cards-grid" [ngClass]="'grid-' + difficulty()">
+            <div *ngFor="let card of cards" 
+                 class="memory-card-wrap"
+                 (click)="flipCard(card)">
+              
+              <div class="card-inner" [class.is-flipped]="card.isFlipped || card.isMatched">
+                <!-- Card Back -->
+                <div class="card-face card-back">
+                  <span>🎮</span>
+                </div>
+
+                <!-- Card Front -->
+                <div class="card-face card-front" [class.matched]="card.isMatched">
+                  <span>{{ card.icon }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Victory Modal -->
+        <div *ngIf="isGameWon()" class="win-modal glass">
+          <div class="win-content">
+            <h2>🎉 Fantastic Memory!</h2>
+            <div class="stars-row">⭐⭐⭐</div>
+            <p>You matched all {{ totalPairs() }} pairs in <strong>{{ moves() }} moves</strong> and <strong>{{ formatTime(secondsElapsed()) }}</strong>!</p>
+            <button (click)="resetGame()" class="btn-play-again">Play Again ➔</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>

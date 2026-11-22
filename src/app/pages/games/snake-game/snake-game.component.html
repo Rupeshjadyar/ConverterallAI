@@ -1,0 +1,76 @@
+<div class="snake-container">
+      
+      <div class="game-header">
+        <div class="header-left">
+          <a routerLink="/games" class="back-link">← All Games</a>
+          <h1 class="game-title">Retro Snake Arcade 🐍</h1>
+        </div>
+
+        <div class="header-scores">
+          <div class="score-badge glass">
+            <span class="badge-label">SCORE</span>
+            <span class="badge-num">{{ score() }}</span>
+          </div>
+          <div class="score-badge glass best-badge">
+            <span class="badge-label">BEST</span>
+            <span class="badge-num">{{ bestScore() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Speed -->
+      <div class="settings-bar">
+        <div class="speed-select">
+          <label>Speed:</label>
+          <select [ngModel]="speedSetting()" (ngModelChange)="setSpeed($event)">
+            <option value="normal">Normal</option>
+            <option value="fast">Fast</option>
+            <option value="insane">Insane 🔥</option>
+          </select>
+        </div>
+
+        <div class="btn-group">
+          <button (click)="togglePause()" class="btn-top" [disabled]="isGameOver()">
+            {{ isPaused() ? '▶ Resume' : '⏸ Pause' }}
+          </button>
+          <button (click)="resetGame()" class="btn-top btn-restart">
+            🔄 Restart
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Arcade Screen -->
+      <div class="canvas-wrapper glass">
+        <canvas #gameCanvas width="400" height="400" class="snake-canvas"></canvas>
+
+        <!-- Game Over Modal -->
+        <div *ngIf="isGameOver()" class="game-over-overlay">
+          <div class="game-over-box">
+            <h2>💥 GAME OVER</h2>
+            <p>Score: <strong>{{ score() }}</strong> | Best: <strong>{{ bestScore() }}</strong></p>
+            <button (click)="resetGame()" class="btn-play-again">Play Again ➔</button>
+          </div>
+        </div>
+
+        <!-- Pause Screen -->
+        <div *ngIf="isPaused() && !isGameOver()" class="game-over-overlay">
+          <div class="game-over-box">
+            <h2>⏸ PAUSED</h2>
+            <button (click)="togglePause()" class="btn-play-again">Resume Game</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile On-Screen D-Pad -->
+      <div class="dpad-container">
+        <div class="dpad-row">
+          <button (click)="setDirection(0, -1)" class="dpad-key">▲</button>
+        </div>
+        <div class="dpad-row">
+          <button (click)="setDirection(-1, 0)" class="dpad-key">◀</button>
+          <button (click)="setDirection(0, 1)" class="dpad-key">▼</button>
+          <button (click)="setDirection(1, 0)" class="dpad-key">▶</button>
+        </div>
+      </div>
+
+    </div>

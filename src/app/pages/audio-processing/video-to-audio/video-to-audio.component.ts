@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-video-to-audio',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './video-to-audio.component.html',
   styleUrls: ['./video-to-audio.component.css']
 })
@@ -21,12 +20,9 @@ export class VideoToAudioComponent implements OnInit, OnDestroy {
 
   fileName: string = '';
   fileSizeMb: string = '';
-  exportFormat: 'wav' | 'mp3' = 'mp3';
-  bitrate: string = '320';
-
   isExtracting: boolean = false;
-  isExtracted: boolean = false;
   statusMessage: string = '';
+  errorMessage = '';
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -40,11 +36,22 @@ export class VideoToAudioComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.resetVideo();
+    void this.audioCtx?.close();
+    this.audioCtx = null;
+  }
+
+  resetVideo(): void {
     if (this.videoSrcUrl) URL.revokeObjectURL(this.videoSrcUrl);
+    this.videoSrcUrl = null;
+    this.audioBuffer = null;
+    this.errorMessage = '';
   }
 
   onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
     if (file) this.processVideoFile(file);
   }
 
@@ -57,38 +64,37 @@ export class VideoToAudioComponent implements OnInit, OnDestroy {
   onDragOver(e: DragEvent): void { e.preventDefault(); }
 
   async processVideoFile(file: File): Promise<void> {
-    if (!this.isBrowser || !this.audioCtx) return;
+    const audioCtx = this.audioCtx;
+    if (!this.isBrowser || !audioCtx || this.isExtracting) return;
+    this.resetVideo();
     this.isExtracting = true;
     this.statusMessage = 'Reading Video Container & Extracting Audio Track...';
     this.fileName = file.name;
     this.fileSizeMb = (file.size / (1024 * 1024)).toFixed(1);
 
-    if (this.videoSrcUrl) URL.revokeObjectURL(this.videoSrcUrl);
     this.videoSrcUrl = URL.createObjectURL(file);
     this.cdr.detectChanges();
 
     try {
       const arrayBuf = await file.arrayBuffer();
-      const decoded = await this.audioCtx.decodeAudioData(arrayBuf);
+      const decoded = await audioCtx.decodeAudioData(arrayBuf);
+      if (this.audioCtx !== audioCtx) return;
       this.ngZone.run(() => {
         this.audioBuffer = decoded;
-        this.isExtracted = true;
-        this.statusMessage = 'Audio Track Extracted Successfully!';
-        this.isExtracting = false;
-        this.cdr.detectChanges();
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
+      if (this.audioCtx !== audioCtx) return;
       this.ngZone.run(() => {
-        this.isExtracting = false;
-        this.cdr.detectChanges();
-        alert('Could not decode audio stream from this video file. Please ensure it has an audio track.');
+        this.resetVideo();
+        this.errorMessage = 'Could not read an audio track. Try a video with audio in a format your browser supports.';
       });
     } finally {
-      this.ngZone.run(() => {
-        this.isExtracting = false;
-        this.cdr.detectChanges();
-      });
+      if (this.audioCtx === audioCtx) {
+        this.ngZone.run(() => {
+          this.isExtracting = false;
+          this.cdr.detectChanges();
+        });
+      }
     }
   }
 
@@ -99,7 +105,7 @@ export class VideoToAudioComponent implements OnInit, OnDestroy {
     const a = document.createElement('a');
     a.href = url;
     const baseName = this.fileName.replace(/\.[^/.]+$/, '');
-    a.download = `${baseName}-audio.${this.exportFormat}`;
+    a.download = `${baseName}-audio.wav`;
     a.click();
     URL.revokeObjectURL(url);
   }

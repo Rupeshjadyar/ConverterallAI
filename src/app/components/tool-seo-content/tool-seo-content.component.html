@@ -1,0 +1,104 @@
+@if (currentTool) {
+      <div class="tool-seo-container">
+        <!-- Breadcrumb Navigation -->
+        <app-breadcrumbs />
+
+        <article class="tool-seo-card glass">
+          <!-- Main Heading -->
+          <header class="tool-seo-header">
+            @if (showH1) {
+              <h1 class="tool-seo-h1">{{ currentTool.h1 }}</h1>
+            } @else {
+              <h2 class="tool-seo-h2">{{ currentTool.h1 }}</h2>
+            }
+            <p class="tool-seo-intro">{{ currentTool.intro }}</p>
+
+            @if (currentTool.privacyNote) {
+              <div class="tool-privacy-pill">
+                <span class="privacy-icon">🛡️</span>
+                <span>{{ currentTool.privacyNote }}</span>
+              </div>
+            }
+          </header>
+
+          <div class="tool-seo-grid">
+            <!-- How To Use Section -->
+            <section class="tool-seo-section">
+              <h3 class="section-title">
+                <span class="section-icon">📋</span>
+                <span>How to Use {{ currentTool.name }}</span>
+              </h3>
+              <ol class="steps-list">
+                @for (step of currentTool.howToSteps; track step; let idx = $index) {
+                  <li class="step-item">
+                    <span class="step-num">{{ idx + 1 }}</span>
+                    <span class="step-text">{{ step }}</span>
+                  </li>
+                }
+              </ol>
+            </section>
+
+            <!-- Key Features Section -->
+            <section class="tool-seo-section">
+              <h3 class="section-title">
+                <span class="section-icon">✨</span>
+                <span>Key Features &amp; Capabilities</span>
+              </h3>
+              <ul class="features-list">
+                @for (feat of currentTool.features; track feat) {
+                  <li class="feature-item">
+                    <span class="feat-check">✓</span>
+                    <span class="feat-text">{{ feat }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+          </div>
+
+          <!-- FAQ Section (Semantic details/summary for crawler indexability) -->
+          @if (currentTool.faqs && currentTool.faqs.length > 0) {
+            <section class="tool-seo-faqs">
+              <h3 class="section-title">
+                <span class="section-icon">❓</span>
+                <span>Frequently Asked Questions</span>
+              </h3>
+              <div class="faqs-accordion">
+                @for (faq of currentTool.faqs; track faq.q) {
+                  <details class="faq-item">
+                    <summary class="faq-summary">
+                      <span class="faq-q-text">{{ faq.q }}</span>
+                      <span class="faq-chevron" aria-hidden="true">▾</span>
+                    </summary>
+                    <div class="faq-body">
+                      <p>{{ faq.a }}</p>
+                    </div>
+                  </details>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- Related Tools Grid with Real Crawlable Links -->
+          @if (relatedTools.length > 0) {
+            <section class="tool-seo-related">
+              <h3 class="section-title">
+                <span class="section-icon">🔗</span>
+                <span>Related Tools &amp; Converters</span>
+              </h3>
+              <div class="related-cards-grid">
+                @for (rel of relatedTools; track rel.slug) {
+                  <a [routerLink]="rel.slug" class="related-tool-card">
+                    <span class="rel-icon">{{ rel.icon }}</span>
+                    <div class="rel-info">
+                      <strong class="rel-name">{{ rel.name }}</strong>
+                      <span class="rel-desc">{{ rel.shortDesc }}</span>
+                    </div>
+                    <span class="rel-arrow" aria-hidden="true">→</span>
+                  </a>
+                }
+              </div>
+            </section>
+          }
+        </article>
+      </div>
+    }

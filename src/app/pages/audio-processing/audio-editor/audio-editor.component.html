@@ -42,7 +42,7 @@
       <input type="file" #fileInput (change)="onFileSelected($event)" accept="audio/*" class="hidden-input">
       <button class="btn-add-audio" (click)="fileInput.click()">+ Add Audio</button>
       <button class="btn-export-primary" (click)="exportAudioFile()" [disabled]="!totalDuration">
-        <span class="icon">↓</span> Export
+        <span class="icon">↓</span> Export WAV
       </button>
     </div>
   </header>

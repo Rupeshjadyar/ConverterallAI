@@ -5,6 +5,9 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express, { Request, Response, NextFunction } from 'express';
+import { timingSafeEqual } from 'node:crypto';
+import { TOOL_ALIASES } from './app/data/tool-locales.data';
+import { TTS_LANGUAGES } from './app/data/tts-languages.data';
 import { join } from 'node:path';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
@@ -13,56 +16,45 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-app.use(express.json());
-
-/* Serve static files from /browser */
-app.use(
-  express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  })
-);
-
-/* Serve assets folder (src/assets) */
-const assetsPath = join(process.cwd(), 'src', 'assets');
-app.use('/assets', express.static(assetsPath));
-
-/* Expose home image directly for convenience */
-const homeImagePath = join(process.cwd(), 'src', 'assets', 'images', 'home.png');
-app.get('/home.png', (req: Request, res: Response) => {
-  res.sendFile(homeImagePath);
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
 });
 
-/* Google Search Console Verification Endpoint */
-app.get('/googleabc606346e17bc34.html', (req: Request, res: Response) => {
-  res.type('text/html').send('google-site-verification: googleabc606346e17bc34.html');
+app.get('/healthz', (_req, res) => res.set('Cache-Control', 'no-store').send('ok'));
+app.use('/api', (_req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+}, express.json());
+
+for (const [alias, canonical] of Object.entries(TOOL_ALIASES)) {
+  app.get(alias, (_req, res) => res.redirect(308, canonical));
+}
+
+const languageSlugs = new Set(TTS_LANGUAGES.map(language => language.slug));
+app.get('/tts/:slug', (req, res, next) => {
+  if (!languageSlugs.has(req.params.slug)) return next();
+  res.redirect(308, `/audio-processing/tts/${req.params.slug}`);
 });
 
-/* Google AdSense ads.txt Endpoint */
-app.get('/ads.txt', (req: Request, res: Response) => {
-  res.type('text/plain').send('google.com, pub-9707682105347147, DIRECT, f08c47fec0942fa0\n');
+app.get('/audio-processing/tts/:slug', (req, res, next) => {
+  if (languageSlugs.has(req.params.slug)) return next();
+  res.set('Cache-Control', 'no-store').status(404).type('text').send('Voice language not found.');
 });
 
-/* Robots.txt Endpoint */
-app.get('/robots.txt', (req: Request, res: Response) => {
-  const robotsPath = join(process.cwd(), 'src', 'robots.txt');
-  if (existsSync(robotsPath)) {
-    res.type('text/plain').sendFile(robotsPath);
-  } else {
-    res.type('text/plain').send("User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /api/\n\nSitemap: https://converterallai.com/sitemap.xml\n");
+app.use(express.static(browserDistFolder, {
+  index: false,
+  redirect: false,
+  setHeaders(res, file) {
+    const fingerprinted = /[\\/][\w-]+-[A-Z0-9]{8}\.(?:js|css)$/.test(file);
+    res.setHeader('Cache-Control', fingerprinted
+      ? 'public, max-age=31536000, immutable'
+      : 'public, max-age=0, s-maxage=300, must-revalidate');
   }
-});
-
-/* Sitemap.xml Endpoint */
-app.get('/sitemap.xml', (req: Request, res: Response) => {
-  const sitemapPath = join(process.cwd(), 'src', 'sitemap.xml');
-  if (existsSync(sitemapPath)) {
-    res.type('application/xml').sendFile(sitemapPath);
-  } else {
-    res.status(404).end();
-  }
-});
+}));
 
 /* ═══════════════════════════════════════════════════════════════
    MICROSOFT EDGE TTS ZERO-COST PROXY ENDPOINT (/api/tts)
@@ -77,6 +69,11 @@ app.options('/api/tts', (req: Request, res: Response) => {
 app.post('/api/tts', async (req: Request, res: Response): Promise<void> => {
   res.header('Access-Control-Allow-Origin', '*');
   try {
+    if (process.env['ENABLE_TTS_PROXY'] !== 'true') {
+      res.status(503).json({ error: 'Hosted speech is unavailable. Use browser speech synthesis.' });
+      return;
+    }
+
     const { text, voice, rate, pitch } = req.body || {};
     if (!text || !text.trim()) {
       res.status(400).json({ error: 'Text parameter is required.' });
@@ -135,7 +132,7 @@ app.post('/api/tts', async (req: Request, res: Response): Promise<void> => {
 /* ═══════════════════════════════════════════════════════════════
    REAL-TIME GLOBAL TELEMETRY & ANALYTICS BACKEND
    ═══════════════════════════════════════════════════════════════ */
-const TELEMETRY_FILE = join(process.cwd(), 'analytics-live.json');
+const TELEMETRY_FILE = process.env['ANALYTICS_FILE'] || join(process.cwd(), 'analytics-live.json');
 
 interface LiveAnalyticsStore {
   totalVisitors: number;
@@ -386,18 +383,40 @@ app.post('/api/telemetry/event', (req: Request, res: Response) => {
 
 // POST Reset Stats
 app.post('/api/telemetry/reset', (req: Request, res: Response) => {
+  const token = process.env['TELEMETRY_RESET_TOKEN'];
+  const supplied = Buffer.from(req.get('Authorization') || '');
+  const expected = Buffer.from(`Bearer ${token}`);
+  if (!token || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
+    res.sendStatus(403);
+    return;
+  }
+
   liveStore = getInitialStore();
   saveStore();
   res.json({ success: true, message: 'Analytics reset successfully' });
 });
 
+app.use('/api', (_req, res) => res.sendStatus(404));
+
 /* Handle all other requests by rendering the Angular application. */
 app.use((req: Request, res: Response, next: NextFunction) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next()
-    )
+    .then((response) => {
+      if (!response) return next();
+      const publiclyCacheable = response.status === 200 &&
+        response.headers.get('Content-Type')?.includes('text/html') &&
+        !response.headers.has('Set-Cookie') &&
+        !req.get('Authorization') &&
+        !/^\/(?:admin|analytics|dashboard)(?:\/|$)/i.test(req.path);
+      const headers = new Headers(response.headers);
+      headers.set('Cache-Control', publiclyCacheable
+        ? 'public, max-age=0, s-maxage=300, must-revalidate'
+        : 'no-store');
+      return writeResponseToNodeResponse(new globalThis.Response(response.body, {
+        status: response.status, statusText: response.statusText, headers,
+      }), res);
+    })
     .catch(next);
 });
 

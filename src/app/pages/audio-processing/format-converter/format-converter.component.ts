@@ -1,7 +1,8 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { encodeMp3 } from '../../../services/encode-mp3';
 
 export interface ConvertItem {
   id: string;
@@ -21,7 +22,7 @@ export interface ConvertItem {
   templateUrl: './format-converter.component.html',
   styleUrls: ['./format-converter.component.css']
 })
-export class FormatConverterComponent implements OnInit {
+export class FormatConverterComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
@@ -29,9 +30,10 @@ export class FormatConverterComponent implements OnInit {
   audioCtx: AudioContext | null = null;
 
   items: ConvertItem[] = [];
-  targetFormat: 'mp3' | 'wav' | 'ogg' = 'mp3';
-  bitrate: string = '320';
   isProcessingBatch: boolean = false;
+  uploadError = '';
+  outputFormat: 'wav' | 'mp3' = 'wav';
+  private batchAbort?: AbortController;
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -44,9 +46,16 @@ export class FormatConverterComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.batchAbort?.abort();
+    void this.audioCtx?.close();
+    this.audioCtx = null;
+  }
+
   onFilesSelected(event: Event): void {
-    const files = (event.target as HTMLInputElement).files;
-    if (files) this.addFiles(Array.from(files));
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) this.addFiles(Array.from(input.files));
+    input.value = '';
   }
 
   onDrop(e: DragEvent): void {
@@ -59,6 +68,8 @@ export class FormatConverterComponent implements OnInit {
   onDragOver(e: DragEvent): void { e.preventDefault(); }
 
   addFiles(files: File[]): void {
+    if (this.isProcessingBatch) return;
+    this.uploadError = '';
     files.forEach(f => {
       if (f.type.startsWith('audio/') || f.name.match(/\.(mp3|wav|ogg|m4a|aac|flac)$/i)) {
         this.items.push({
@@ -69,6 +80,8 @@ export class FormatConverterComponent implements OnInit {
           status: 'pending',
           progress: 0
         });
+      } else {
+        this.uploadError = 'Choose audio files supported by your browser.';
       }
     });
     this.cdr.detectChanges();
@@ -84,8 +97,23 @@ export class FormatConverterComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  changeOutput(format: 'wav' | 'mp3'): void {
+    if (this.isProcessingBatch || this.outputFormat === format) return;
+    this.outputFormat = format;
+    for (const item of this.items) {
+      item.status = 'pending';
+      item.progress = 0;
+      item.convertedBlob = undefined;
+      item.convertedName = undefined;
+    }
+  }
+
   async convertAll(): Promise<void> {
-    if (!this.isBrowser || !this.audioCtx || this.items.length === 0) return;
+    const audioCtx = this.audioCtx;
+    if (!this.isBrowser || !audioCtx || !this.items.length || this.isProcessingBatch) return;
+    const format = this.outputFormat;
+    const batch = new AbortController();
+    this.batchAbort = batch;
     this.isProcessingBatch = true;
     this.cdr.detectChanges();
 
@@ -99,23 +127,30 @@ export class FormatConverterComponent implements OnInit {
 
       try {
         const arrayBuf = await item.file.arrayBuffer();
+        if (this.audioCtx !== audioCtx) return;
         this.ngZone.run(() => {
           item.progress = 50;
           this.cdr.detectChanges();
         });
 
-        const decodedBuffer = await this.audioCtx.decodeAudioData(arrayBuf);
+        const decodedBuffer = await audioCtx.decodeAudioData(arrayBuf);
+        if (this.audioCtx !== audioCtx) return;
+        item.progress = 80;
+        this.cdr.detectChanges();
+        const output = format === 'mp3'
+          ? await encodeMp3(decodedBuffer, batch.signal)
+          : this.bufferToWav(decodedBuffer);
+        if (this.audioCtx !== audioCtx) return;
         this.ngZone.run(() => {
-          item.progress = 80;
-          const wavBlob = this.bufferToWav(decodedBuffer);
-          item.convertedBlob = wavBlob;
+          item.convertedBlob = output;
           const baseName = item.name.replace(/\.[^/.]+$/, '');
-          item.convertedName = `${baseName}.${this.targetFormat}`;
+          item.convertedName = `${baseName}.${format}`;
           item.status = 'done';
           item.progress = 100;
           this.cdr.detectChanges();
         });
       } catch (e) {
+        if (this.audioCtx !== audioCtx) return;
         this.ngZone.run(() => {
           item.status = 'error';
           this.cdr.detectChanges();
@@ -124,6 +159,7 @@ export class FormatConverterComponent implements OnInit {
     }
 
     this.ngZone.run(() => {
+      this.batchAbort = undefined;
       this.isProcessingBatch = false;
       this.cdr.detectChanges();
     });
@@ -160,7 +196,7 @@ export class FormatConverterComponent implements OnInit {
     while (pos < length) {
       for (let i = 0; i < numOfChan; i++) {
         let sample = Math.max(-1, Math.min(1, channels[i][offset]));
-        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+        sample = (sample < 0 ? sample * 32768 : sample * 32767) | 0;
         out.setInt16(pos, sample, true);
         pos += 2;
       }

@@ -1,0 +1,188 @@
+<div class="legal-page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-bar">
+        <a routerLink="/" class="breadcrumb-link">🏠 Home</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Contact Us</span>
+      </div>
+
+      <!-- Hero Header -->
+      <div class="legal-hero">
+        <div class="badge-pill">
+          <span class="badge-dot"></span>
+          <span>We're here to help 24/7</span>
+        </div>
+        <h1 class="hero-title">Get in Touch with <span class="gradient-text">ConverterAll AI</span></h1>
+        <p class="hero-subtitle">
+          Have a suggestion, bug report, partnership inquiry, or need help with any converter tool? Send us a message and our team will get back to you within 24 hours.
+        </p>
+      </div>
+
+      <!-- Contact Info Cards -->
+      <div class="contact-cards-grid">
+        <div class="info-card glass">
+          <div class="info-icon">✉️</div>
+          <h3>Official Support Email</h3>
+          <p class="email-text">rupeshjadyar21&#64;gmail.com</p>
+          <button class="copy-btn" (click)="copyEmail()">
+            {{ copied() ? '✓ Copied to Clipboard!' : '📋 Copy Email Address' }}
+          </button>
+        </div>
+
+        <div class="info-card glass">
+          <div class="info-icon">⏱️</div>
+          <h3>Response Time (SLA)</h3>
+          <p>Our dedicated engineering and support team reviews inquiries within <strong>24 business hours</strong>.</p>
+          <div class="live-status">
+            <span class="pulse-dot"></span>
+            <span>Support Desk Active</span>
+          </div>
+        </div>
+
+        <div class="info-card glass">
+          <div class="info-icon">💡</div>
+          <h3>Feature &amp; Tool Requests</h3>
+          <p>Want a specific file converter or financial calculator added? Submit your tool idea directly via the form below!</p>
+          <span class="tag-badge">500+ Tools Roadmap</span>
+        </div>
+      </div>
+
+      <!-- Main Layout: Form + FAQ -->
+      <div class="contact-main-grid">
+        <!-- Contact Form Card -->
+        <div class="form-card glass">
+          <h2 class="form-title">✉️ Send Us a Message</h2>
+          <p class="form-desc">Fill in your message, then open it as a draft in your email app.</p>
+
+          <div *ngIf="draftRequested()" class="success-alert" role="status">
+            <div class="success-icon">✉️</div>
+            <div>
+              <h4>Finish sending in your email app</h4>
+              <p>If a draft did not open, email <a [href]="'mailto:' + supportEmail">{{ supportEmail }}</a> directly.</p>
+            </div>
+          </div>
+
+          <form (ngSubmit)="openEmailDraft(contactForm.valid === true)" #contactForm="ngForm" class="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fullName">Your Full Name <span class="req">*</span></label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  [(ngModel)]="formModel.name"
+                  #name="ngModel"
+                  required
+                  placeholder="e.g. John Doe"
+                  class="form-input"
+                />
+                <span *ngIf="name.invalid && (name.dirty || name.touched)" class="err-msg">
+                  Name is required
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label for="emailAddr">Email Address <span class="req">*</span></label>
+                <input
+                  type="email"
+                  id="emailAddr"
+                  name="emailAddr"
+                  [(ngModel)]="formModel.email"
+                  #email="ngModel"
+                  required
+                  email
+                  placeholder="e.g. john@example.com"
+                  class="form-input"
+                />
+                <span *ngIf="email.invalid && (email.dirty || email.touched)" class="err-msg">
+                  Please enter a valid email
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subjectCategory">Inquiry Type / Category <span class="req">*</span></label>
+              <select
+                id="subjectCategory"
+                name="subjectCategory"
+                [(ngModel)]="formModel.category"
+                class="form-input form-select"
+              >
+                <option value="general">General Inquiry / Question</option>
+                <option value="bug">Bug Report or Tool Issue</option>
+                <option value="feature">New Tool Request / Feature Suggestion</option>
+                <option value="adsense">Google AdSense / Advertising Inquiry</option>
+                <option value="partnership">Business &amp; API Partnership</option>
+                <option value="legal">Privacy / Legal Question</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="subjectText">Subject <span class="req">*</span></label>
+              <input
+                type="text"
+                id="subjectText"
+                name="subjectText"
+                [(ngModel)]="formModel.subject"
+                #subj="ngModel"
+                required
+                placeholder="Brief summary of your message"
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="messageBody">Your Message <span class="req">*</span></label>
+              <textarea
+                id="messageBody"
+                name="messageBody"
+                [(ngModel)]="formModel.message"
+                #msg="ngModel"
+                required
+                rows="5"
+                placeholder="Please describe your query or feedback in detail..."
+                class="form-input form-textarea"
+              ></textarea>
+              <span *ngIf="msg.invalid && (msg.dirty || msg.touched)" class="err-msg">
+                Message body cannot be empty
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              [disabled]="contactForm.invalid"
+              class="submit-btn"
+            >
+              Open Email Draft
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact FAQs Sidebar -->
+        <div class="faq-sidebar">
+          <div class="faq-card glass">
+            <h3 class="faq-title">❓ Frequently Asked Questions</h3>
+
+            <div class="faq-item" *ngFor="let item of faqList; let i = index">
+              <button class="faq-q-btn" (click)="toggleFaq(i)">
+                <span>{{ item.q }}</span>
+                <span class="faq-chevron" [class.rotated]="item.open">▼</span>
+              </button>
+              <div class="faq-a-body" *ngIf="item.open">
+                <p>{{ item.a }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="legal-direct-box glass">
+            <h4>🏢 Direct Inquiries</h4>
+            <p>For urgent policy or webmaster communications:</p>
+            <ul class="direct-list">
+              <li><strong>Webmaster:</strong> rupeshjadyar21&#64;gmail.com</li>
+              <li><strong>Privacy Officer:</strong> rupeshjadyar21&#64;gmail.com</li>
+              <li><strong>Platform:</strong> ConverterAll AI Engine v2.0</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>

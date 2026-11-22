@@ -176,7 +176,8 @@ export class AudioCompressorComponent implements OnInit, OnDestroy {
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `compressed-${this.selectedPreset}-${this.fileName || 'audio'}.wav`;
+      const baseName = this.fileName.replace(/\.[^.]+$/, '') || 'audio';
+      a.download = `compressed-${this.selectedPreset}-${baseName}.wav`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

@@ -30,13 +30,14 @@ export class BgRemoverComponent {
   
   // Current Active File / Preview
   selectedFile: File | null = null;
-  originalUrl: string = 'assets/demo-portrait.jpg'; // We can use demo fallback or base64 if empty
+  originalUrl = '';
   resultUrl: string | null = null;
   
   // Processing State
   isProcessing: boolean = false;
   progressMessage: string = '';
   processingProgress: number = 0;
+  processingError = '';
 
   // Preview View Modes
   isSliderView: boolean = true;
@@ -91,10 +92,6 @@ export class BgRemoverComponent {
       this.handleFiles([task.file] as any);
       this.toolExec.clearTask();
       
-      if (task.autoStart) {
-        // Wait for UI to update before processing
-        setTimeout(() => this.removeBackground(), 500);
-      }
     }
   }
 
@@ -130,6 +127,7 @@ export class BgRemoverComponent {
 
   handleFiles(files: FileList) {
     const file = files[0];
+    if (!file || this.isProcessing) return;
     this.selectedFile = file;
     this.originalUrl = URL.createObjectURL(file);
     this.resultUrl = null;
@@ -154,10 +152,12 @@ export class BgRemoverComponent {
   private lastProgressUpdate: number = 0;
 
   async removeBackground(batchItem?: BatchFileItem) {
-    if (!this.selectedFile && !this.originalUrl) return;
+    const sourceUrl = batchItem?.originalUrl ?? this.originalUrl;
+    if (!sourceUrl || this.isProcessing) return;
 
     this.isProcessing = true;
-    this.progressMessage = 'Initializing AI Neural Engine v3.1...';
+    this.processingError = '';
+    this.progressMessage = 'Preparing the image…';
     this.processingProgress = 5;
     this.lastProgressUpdate = Date.now();
     this.cdr.detectChanges();
@@ -166,21 +166,16 @@ export class BgRemoverComponent {
     await new Promise(resolve => setTimeout(resolve, 60));
 
     try {
-      let source: Blob | File;
-      if (this.selectedFile) {
-        source = this.selectedFile;
-      } else {
-        const res = await fetch(this.originalUrl);
-        source = await res.blob();
-      }
+      const sourceResponse = await fetch(sourceUrl);
+      if (!sourceResponse.ok) throw new Error('Could not read image');
+      const source = await sourceResponse.blob();
 
-      this.progressMessage = 'Loading AI Model (v3.1-turbo Engine)...';
+      this.progressMessage = 'Loading the background removal model…';
       this.processingProgress = 15;
       this.cdr.detectChanges();
 
       const imageBlob = await imglyRemoveBackground(source, {
         model: 'isnet_quint8', // 'isnet_quint8' is the fast 8-bit quantized AI model (4x faster & super lightweight)
-        publicPath: 'https://static.imgly.com/@imgly/background-removal-data/1.7.0/dist/', // Exactly matches @imgly/background-removal v1.7.0
         output: {
           format: 'image/png',
           quality: 0.95
@@ -224,7 +219,7 @@ export class BgRemoverComponent {
       const resultUrl = URL.createObjectURL(imageBlob);
       this.resultUrl = resultUrl;
       this.processingProgress = 100;
-      this.progressMessage = 'Background Removed Successfully in 4K HD!';
+      this.progressMessage = 'Background removed';
 
       if (batchItem) {
         batchItem.resultUrl = resultUrl;
@@ -238,46 +233,10 @@ export class BgRemoverComponent {
           activeItem.progress = 100;
         }
       }
-    } catch (error) {
-      console.error('Background removal failed with fast model, trying fallback:', error);
-      try {
-        // Fallback to standard model without custom publicPath if fast model CDN encountered any CORS or network delay
-        const fallbackSource = this.selectedFile || await fetch(this.originalUrl).then(r => r.blob());
-        const imageBlob = await imglyRemoveBackground(fallbackSource, {
-          progress: (key: string, current: number, total: number) => {
-            const now = Date.now();
-            if (now - this.lastProgressUpdate < 150 && current < total) return;
-            this.lastProgressUpdate = now;
-            const pct = total > 0 ? Math.round((current / total) * 100) : 50;
-            this.processingProgress = pct;
-            this.progressMessage = `Neural Processing: ${key} (${pct}%)`;
-            if (batchItem) batchItem.progress = pct;
-            this.cdr.detectChanges();
-          }
-        });
-        const resultUrl = URL.createObjectURL(imageBlob);
-        this.resultUrl = resultUrl;
-        this.processingProgress = 100;
-        this.progressMessage = 'Background Removed Successfully in 4K HD!';
-        if (batchItem) {
-          batchItem.resultUrl = resultUrl;
-          batchItem.status = 'done';
-          batchItem.progress = 100;
-        } else {
-          const activeItem = this.batchFiles.find(f => f.id === this.activeBatchId);
-          if (activeItem) {
-            activeItem.resultUrl = resultUrl;
-            activeItem.status = 'done';
-            activeItem.progress = 100;
-          }
-        }
-      } catch (fallbackError) {
-        console.error('All AI background removal attempts failed:', fallbackError);
-        this.progressMessage = 'AI engine encountered an issue. Please try reloading or check your internet connection.';
-        if (batchItem) {
-          batchItem.status = 'error';
-        }
-      }
+    } catch {
+      this.processingError = 'Background removal could not finish. Check your connection and try Remove Background again.';
+      const item = batchItem ?? this.batchFiles.find(file => file.id === this.activeBatchId);
+      if (item) item.status = 'error';
     } finally {
       this.isProcessing = false;
       this.cdr.detectChanges();

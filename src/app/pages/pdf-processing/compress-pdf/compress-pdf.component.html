@@ -16,7 +16,7 @@
   <!-- ERROR -->
   <div class="error-bar" *ngIf="error" role="alert">
     ⚠️ {{ error }}
-    <button (click)="error=''">✕</button>
+    <button type="button" aria-label="Dismiss error" (click)="error=''">✕</button>
   </div>
 
   <!-- ═══════════════════ STEP 1 — Upload ═══════════════════ -->
@@ -28,7 +28,7 @@
 
     <div class="dropzone" [class.over]="isDragging"
          (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)"
-         (click)="inp.click()" role="button" tabindex="0" (keydown.enter)="inp.click()">
+         (click)="inp.click()">
       <input #inp type="file" accept=".pdf,application/pdf" hidden (change)="onFileInput($event)"/>
       <div class="dz-icon">
         <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
@@ -80,8 +80,8 @@
         </div>
 
         <!-- Output name -->
-        <label class="lbl">Output filename</label>
-        <input class="inp-text" type="text" [(ngModel)]="outName" placeholder="compressed.pdf"/>
+        <label class="lbl" for="compressed-pdf-name">Output filename</label>
+        <input id="compressed-pdf-name" class="inp-text" type="text" [(ngModel)]="outName" placeholder="compressed.pdf"/>
 
         <!-- Compress btn -->
         <button class="btn-compress" (click)="compress()">
@@ -148,7 +148,7 @@
       <p class="prog-msg">{{ progMsg }}</p>
 
       <div class="pbar-row">
-        <div class="pbar">
+        <div class="pbar" role="progressbar" aria-label="PDF compression" [attr.aria-valuenow]="progress">
           <div class="pbar-fill" [style.width.%]="progress">
             <span class="pbar-shine"></span>
           </div>
@@ -172,8 +172,8 @@
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div>
-            <h2>Compression Complete!</h2>
-            <p class="result-sub">{{ lvl.icon }} {{ lvl.label }} level applied</p>
+            <h2>{{ bigger ? 'Original kept' : 'Compression complete' }}</h2>
+            <p class="result-sub">{{ bigger ? 'A smaller file was unavailable' : 'Your compressed file is ready' }}</p>
           </div>
         </div>
 
@@ -185,7 +185,7 @@
           </div>
           <div class="sz-arr">→</div>
           <div class="sz-box" [class.sz-win]="!bigger">
-            <div class="sz-lbl">Compressed</div>
+            <div class="sz-lbl">{{ bigger ? 'Download size' : 'Compressed' }}</div>
             <div class="sz-val" [class.green]="!bigger">{{ fmt(newSize) }}</div>
           </div>
           <div class="sz-box sz-saved" *ngIf="!bigger">
@@ -206,15 +206,15 @@
         </div>
 
         <p class="already-note" *ngIf="bigger">
-          ℹ️ This PDF is already highly optimized — try a higher compression level on the right.
+          This setting did not produce a smaller file. Download the original or try a different setting.
         </p>
 
         <!-- Download -->
         <button class="btn-download" (click)="download()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Compressed PDF
+          {{ bigger ? 'Download original PDF' : 'Download compressed PDF' }}
         </button>
-        <p class="dl-name">{{ outName }}</p>
+        <p class="dl-name">{{ downloadName }}</p>
 
         <div class="result-links">
           <button class="btn-ghost-sm" (click)="reset()">Compress another file</button>

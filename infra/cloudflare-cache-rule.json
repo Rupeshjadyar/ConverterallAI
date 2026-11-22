@@ -1,0 +1,11 @@
+{
+  "description": "Cache public ConverterAll AI pages and assets with origin TTLs",
+  "expression": "(http.host eq \"converterallai.com\" and http.request.method in {\"GET\" \"HEAD\"} and not starts_with(http.request.uri.path, \"/api/\") and http.request.uri.path ne \"/api\" and http.request.uri.path ne \"/healthz\" and not any(http.request.headers[\"authorization\"][*] ne \"\"))",
+  "action": "set_cache_settings",
+  "action_parameters": {
+    "cache": true,
+    "edge_ttl": { "mode": "bypass_by_default" },
+    "browser_ttl": { "mode": "respect_origin" }
+  },
+  "enabled": true
+}

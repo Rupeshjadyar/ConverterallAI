@@ -166,7 +166,8 @@ export class AudioReverserComponent implements OnInit, OnDestroy {
     const url = URL.createObjectURL(wavBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `reversed-${this.fileName || 'audio'}.wav`;
+    const baseName = this.fileName.replace(/\.[^.]+$/, '') || 'audio';
+    a.download = `reversed-${baseName}.wav`;
     a.click();
     URL.revokeObjectURL(url);
   }

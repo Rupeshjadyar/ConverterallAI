@@ -1,0 +1,111 @@
+<!-- Trigger Button -->
+    <button class="spotlight-trigger glass" (click)="openSpotlight()" title="Search all tools (Ctrl+K)">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <span class="trigger-label">Search AI tools...</span>
+      <kbd class="shortcut-kbd">Ctrl K</kbd>
+    </button>
+
+    <!-- Modal Backdrop -->
+    <div class="spotlight-backdrop" *ngIf="isOpen()" (click)="closeSpotlight()">
+      <!-- Modal Box -->
+      <div class="spotlight-modal glass" (click)="$event.stopPropagation()">
+        
+        <!-- Header / Search input -->
+        <div class="spotlight-header">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            #searchInput
+            type="text"
+            class="spotlight-input"
+            [(ngModel)]="searchQuery"
+            (input)="onSearchChange()"
+            (keydown)="onKeydown($event)"
+            placeholder="Type to search 40+ Calculators, Image & PDF Tools..."
+            autofocus
+          />
+          <button class="clear-btn" *ngIf="searchQuery" (click)="clearSearch()">✕</button>
+          <button class="close-btn" (click)="closeSpotlight()">ESC</button>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'ALL'"
+            (click)="selectCategory('ALL')">
+            ✨ All Tools ({{ allTools.length }})
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'Calculators'"
+            (click)="selectCategory('Calculators')">
+            🧮 Calculators
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'Image Tools'"
+            (click)="selectCategory('Image Tools')">
+            🖼️ Image Tools
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'PDF Tools'"
+            (click)="selectCategory('PDF Tools')">
+            📄 PDF Tools
+          </button>
+          <button
+            class="tab-btn"
+            [class.active]="selectedCategory === 'Games'"
+            (click)="selectCategory('Games')">
+            🎮 Games
+          </button>
+        </div>
+
+        <!-- Tool List -->
+        <div class="spotlight-results">
+          <div
+            *ngFor="let tool of filteredTools(); let i = index"
+            class="tool-item"
+            [class.selected]="i === selectedIndex"
+            (mouseenter)="selectedIndex = i"
+            (click)="navigate(tool)">
+            <div class="item-icon">
+              <span>{{ tool.icon }}</span>
+            </div>
+            <div class="item-content">
+              <div class="item-header">
+                <span class="item-title">{{ tool.name }}</span>
+                <span class="item-tag" *ngIf="tool.tag">{{ tool.tag }}</span>
+              </div>
+              <p class="item-desc">{{ tool.description }}</p>
+            </div>
+            <div class="item-category-badge">
+              <span>{{ tool.category }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="no-results" *ngIf="filteredTools().length === 0">
+            <span class="no-results-icon">💫</span>
+            <p>No tools matched "<strong>{{ searchQuery }}</strong>"</p>
+            <span>Try searching keywords like "EMI", "Compress", "PDF", "Background" or "BMI"</span>
+          </div>
+        </div>
+
+        <!-- Footer shortcut legend -->
+        <div class="spotlight-footer">
+          <div class="legend-item"><kbd>↑</kbd><kbd>↓</kbd> to navigate</div>
+          <div class="legend-item"><kbd>Enter</kbd> to open</div>
+          <div class="legend-item"><kbd>Esc</kbd> to close</div>
+        </div>
+
+      </div>
+    </div>

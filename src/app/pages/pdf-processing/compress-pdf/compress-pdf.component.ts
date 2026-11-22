@@ -7,6 +7,8 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { canvasImage, downloadPdfToolOutput, openPdf, renderPdfPage } from '../pdf-browser';
+import { processPdfInWorker } from '../pdf-engine';
 
 type State = 'idle' | 'compressing' | 'done';
 
@@ -39,13 +41,15 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
   resultUrl:  string | null = null;
   newSize   = 0;
 
-  selectedLevel = 'medium';
+  selectedLevel = 'lossless';
+  private job = 0;
 
   levels: Level[] = [
-    { id:'low',     label:'Low',     icon:'🟢', desc:'Best quality, gentle compression',   quality:0.90, scale:1.5,  dpi:'144', savings:'~20–40%' },
-    { id:'medium',  label:'Medium',  icon:'🟡', desc:'Balanced — best for most files',     quality:0.75, scale:1.2,  dpi:'115', savings:'~40–60%', badge:'Recommended' },
-    { id:'high',    label:'High',    icon:'🟠', desc:'Smaller file, slight quality loss',  quality:0.55, scale:1.0,  dpi:'96',  savings:'~60–75%' },
-    { id:'maximum', label:'Maximum', icon:'🔴', desc:'Smallest possible, aggressive',      quality:0.32, scale:0.75, dpi:'72',  savings:'~75–90%' },
+    { id: 'lossless', label: 'Lossless', icon: '✓', desc: 'Preserve selectable text and form fields', quality: 1, scale: 1, dpi: 'Original', savings: 'Varies', badge: 'Recommended' },
+    { id: 'low', label: 'Low', icon: '🟢', desc: 'Flatten pages into high-quality images', quality: 0.90, scale: 1.5, dpi: '108', savings: 'Varies' },
+    { id: 'medium', label: 'Medium', icon: '🟡', desc: 'Flatten pages into medium-quality images', quality: 0.75, scale: 1.2, dpi: '86', savings: 'Varies' },
+    { id: 'high', label: 'High', icon: '🟠', desc: 'Flatten pages into lower-quality images', quality: 0.55, scale: 1.0, dpi: '72', savings: 'Varies' },
+    { id: 'maximum', label: 'Maximum', icon: '🔴', desc: 'Flatten pages into low-resolution images', quality: 0.32, scale: 0.75, dpi: '54', savings: 'Varies' },
   ];
 
   private readonly isBrowser: boolean;
@@ -76,12 +80,13 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() { this._revoke(); }
+  ngOnDestroy() { this.job++; this._revoke(); }
 
   get lvl():        Level   { return this.levels.find(l => l.id === this.selectedLevel)!; }
   get savedPct():   number  { return this.origSize && this.newSize ? Math.max(0, Math.round((1 - this.newSize / this.origSize) * 100)) : 0; }
   get savedBytes(): number  { return Math.max(0, this.origSize - this.newSize); }
   get bigger():     boolean { return this.newSize > 0 && this.newSize >= this.origSize; }
+  get downloadName(): string { return this.bigger && this.file ? this.file.name : this.outName; }
 
   // ── Drag & Drop ─────────────────────────────────────────────────────────
   onDragOver(e: DragEvent)  { e.preventDefault(); this.isDragging = true; }
@@ -98,8 +103,12 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     this._pick(files);
   }
   private _pick(files: File[]) {
-    const pdf = files.find(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')) ?? files[0];
-    if (!pdf) return;
+    const pdf = files.find(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+    if (!pdf || !pdf.size || pdf.size > 100 * 1024 * 1024) {
+      this.error = 'Choose a nonempty PDF no larger than 100 MB.';
+      return;
+    }
+    this.job++;
     this.error = ''; this.state = 'idle'; this.file = pdf;
     this.origSize = pdf.size;
     this.outName  = pdf.name.replace(/\.pdf$/i, '') + '_compressed.pdf';
@@ -108,8 +117,16 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
 
   // ── Compress ─────────────────────────────────────────────────────────────
   compress() {
-    if (!this.file || !this.isBrowser) return;
+    if (!this.file || !this.isBrowser || this.state === 'compressing') return;
 
+    if (typeof WebAssembly === 'undefined') {
+      this.error = 'PDF compression needs WebAssembly. Open this page in a current browser with WebAssembly enabled.';
+      return;
+    }
+
+    const file = this.file;
+    const job = ++this.job;
+    const level = this.lvl;
     this.state    = 'compressing';
     this.progress = 0;
     this.progMsg  = 'Starting…';
@@ -121,7 +138,7 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
     // ourselves, only when we actually have a UI update to push.
     this.zone.runOutsideAngular(() => {
       // Let the 'compressing' template render one frame before starting.
-      setTimeout(() => this._doCompress(), 0);
+      setTimeout(() => this._doCompress(file, level, job), 0);
     });
   }
 
@@ -130,106 +147,79 @@ export class CompressPdfComponent implements OnInit, OnDestroy {
    * then yields control back to the browser for one full frame so the
    * repaint actually happens before we resume heavy synchronous work.
    */
-  private _setProgress(progress: number, msg: string): Promise<void> {
+  private _setProgress(job: number, progress: number, msg: string): Promise<void> {
+    if (job !== this.job) return Promise.reject(new Error('PDF selection changed'));
     this.zone.run(() => {
       this.progress = progress;
       this.progMsg  = msg;
       this.cdr.detectChanges();
     });
-    return new Promise<void>(resolve =>
-      requestAnimationFrame(() => setTimeout(resolve, 0))
-    );
+    return new Promise<void>(resolve => setTimeout(resolve, 0));
   }
 
-  private async _doCompress() {
-    const lvl = this.lvl;
+private async _doCompress(file: File, level: Level, job: number) {
     try {
+      await this._setProgress(job, 10, 'Opening PDF…');
+      const candidate = level.id === 'lossless'
+        ? await processPdfInWorker(file, 'optimize')
+        : await this._compressImages(file, level, job);
+      if (job !== this.job) return;
 
-      // 1. Read bytes
-      await this._setProgress(5, 'Reading file…');
-      const bytes = await this.file!.arrayBuffer();
-
-      // 2. Load PDF.js
-      await this._setProgress(10, 'Loading PDF engine…');
-      const pdfjsLib = await import('pdfjs-dist');
-      (pdfjsLib as any).GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs';
-
-      // 3. Load pdf-lib
-      await this._setProgress(15, 'Preparing tools…');
-      const { PDFDocument } = await import('pdf-lib');
-
-      // 4. Parse document
-      await this._setProgress(20, 'Parsing document…');
-      const pdfDoc      = await (pdfjsLib as any).getDocument({ data: new Uint8Array(bytes) }).promise;
-      const totalPages: number = pdfDoc.numPages;
-      const outDoc      = await PDFDocument.create();
-
-      // 5. Render each page → JPEG → embed
-      const canvas = document.createElement('canvas');
-      const ctx    = canvas.getContext('2d')!;
-
-      for (let i = 1; i <= totalPages; i++) {
-        const pct = 20 + Math.round(((i - 1) / totalPages) * 68);
-        await this._setProgress(pct, `Compressing page ${i} of ${totalPages}…`);
-
-        const page     = await pdfDoc.getPage(i);
-        const viewport = page.getViewport({ scale: lvl.scale });
-
-        canvas.width  = Math.round(viewport.width);
-        canvas.height = Math.round(viewport.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        await page.render({ canvasContext: ctx, viewport, canvas }).promise;
-
-        const jpegBlob: Blob = await new Promise(res =>
-          canvas.toBlob(b => res(b!), 'image/jpeg', lvl.quality)
-        );
-        const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
-
-        const img = await outDoc.embedJpg(jpegBytes);
-        const pg  = outDoc.addPage([viewport.width, viewport.height]);
-        pg.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
-      }
-
-      // 6. Save
-      await this._setProgress(92, 'Saving PDF…');
-      const out = await outDoc.save({ useObjectStreams: true });
-
-      // 7. Done
       this._revoke();
-      this.resultBlob = new Blob([out as any], { type: 'application/pdf' });
-      this.newSize    = this.resultBlob.size;
-      this.resultUrl  = URL.createObjectURL(this.resultBlob);
-
+      this.resultBlob = candidate.size < file.size ? candidate : file;
+      this.newSize = this.resultBlob.size;
+      this.resultUrl = URL.createObjectURL(this.resultBlob);
       this.zone.run(() => {
         this.progress = 100;
-        this.progMsg  = 'Done!';
-        this.state    = 'done';
+        this.progMsg = 'Done!';
+        this.state = 'done';
         this.cdr.detectChanges();
       });
-
-    } catch (err: any) {
-      console.error('[CompressPDF]', err);
+    } catch {
+      if (job !== this.job) return;
       this.zone.run(() => {
-        this.error = 'Compression failed: ' + (err?.message ?? String(err));
+        this.error = 'This PDF could not be compressed. Try a smaller, unlocked PDF.';
         this.state = 'idle';
         this.cdr.detectChanges();
       });
     }
   }
 
+  private async _compressImages(file: File, level: Level, job: number): Promise<Blob> {
+    const { pdf, close } = await openPdf(file);
+    const canvas = document.createElement('canvas');
+    try {
+      const { PDFDocument } = await import('pdf-lib');
+      const output = await PDFDocument.create();
+      for (let number = 1; number <= pdf.numPages; number++) {
+        await this._setProgress(job, 20 + Math.round((number - 1) / pdf.numPages * 70),
+          'Compressing page ' + number + ' of ' + pdf.numPages + '…');
+        const page = await pdf.getPage(number);
+        try {
+          const { width, height } = await renderPdfPage(page, canvas, level.scale);
+          const jpeg = await canvasImage(canvas, 'image/jpeg', level.quality);
+          const image = await output.embedJpg(await jpeg.arrayBuffer());
+          output.addPage([width, height]).drawImage(image, { x: 0, y: 0, width, height });
+        } finally {
+          page.cleanup();
+        }
+      }
+      return new Blob([Uint8Array.from(await output.save())], { type: 'application/pdf' });
+    } finally {
+      canvas.width = canvas.height = 0;
+      await close();
+    }
+  }
+
   // ── Download ─────────────────────────────────────────────────────────────
   download() {
     if (!this.resultBlob) return;
-    const url = URL.createObjectURL(this.resultBlob);
-    const a = Object.assign(document.createElement('a'), { href: url, download: this.outName });
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a); URL.revokeObjectURL(url);
+    downloadPdfToolOutput(this.resultBlob, this.downloadName);
   }
 
   // ── Reset ─────────────────────────────────────────────────────────────────
   reset() {
+    this.job++;
     this._revoke();
     this.state = 'idle'; this.file = null; this.origSize = 0;
     this.resultBlob = null; this.newSize = 0; this.error = '';

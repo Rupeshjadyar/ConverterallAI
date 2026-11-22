@@ -1,0 +1,295 @@
+<div class="cyber-dashboard-wrap">
+      <!-- Ambient Glow Orbs -->
+      <div class="ambient-glow cyan-orb"></div>
+      <div class="ambient-glow purple-orb"></div>
+
+      <div class="dashboard-container">
+        
+        <!-- HEADER HUD -->
+        <header class="hud-header glass-card">
+          <div class="hud-left">
+            <div class="cyber-badge-live">
+              <span class="live-dot"></span>
+              <span class="live-text">100% LIVE GLOBAL TELEMETRY</span>
+            </div>
+            <h1 class="hud-title">
+              <span class="glitch-text">ConverterAll</span><span class="neon-ai">AI</span>
+              <span class="hud-sub">Live Analytics Matrix</span>
+            </h1>
+            <p class="hud-caption">
+              Live real-time visitors, actual country-wise users, most executed AI tools, and in-browser WASM metrics.
+            </p>
+          </div>
+
+          <div class="hud-actions">
+            <button (click)="refreshFeed()" class="cyber-btn" title="Refresh Live Feed">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+              </svg>
+              <span>Refresh</span>
+            </button>
+
+            <button (click)="exportReport()" class="cyber-btn primary" title="Export Analytics Report">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+              <span>Export JSON</span>
+            </button>
+
+          </div>
+        </header>
+
+        <!-- KPI METRICS GRID -->
+        <section class="kpi-grid">
+          <!-- KPI 1 -->
+          <div class="kpi-card glass-card cyan-border">
+            <div class="kpi-icon-box cyan-glow">👥</div>
+            <div class="kpi-content">
+              <span class="kpi-label">TOTAL UNIQUE VISITORS</span>
+              <div class="kpi-value">{{ analytics().totalVisitors | number }}</div>
+              <div class="kpi-trend up">
+                <span>🟢 Live count</span>
+                <span class="trend-sub">{{ analytics().totalPageViews }} Page Views</span>
+              </div>
+            </div>
+            <div class="kpi-bar-indicator"><div class="bar-fill cyan" style="width: 100%;"></div></div>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="kpi-card glass-card purple-border">
+            <div class="kpi-icon-box purple-glow">⚡</div>
+            <div class="kpi-content">
+              <span class="kpi-label">TOTAL TOOLS EXECUTED</span>
+              <div class="kpi-value">{{ analytics().totalToolExecutions | number }}</div>
+              <div class="kpi-trend up">
+                <span>⚡ Real actions</span>
+                <span class="trend-sub">all tools combined</span>
+              </div>
+            </div>
+            <div class="kpi-bar-indicator"><div class="bar-fill purple" style="width: 100%;"></div></div>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="kpi-card glass-card emerald-border">
+            <div class="kpi-icon-box emerald-glow">🌍</div>
+            <div class="kpi-content">
+              <span class="kpi-label">TOP VISITING COUNTRY</span>
+              <div class="kpi-value" *ngIf="analytics().topCountries.length > 0">
+                {{ analytics().topCountries[0].flag }} {{ analytics().topCountries[0].name }}
+              </div>
+              <div class="kpi-value" *ngIf="analytics().topCountries.length === 0">
+                🌐 No visitors yet
+              </div>
+              <div class="kpi-trend">
+                <span>{{ analytics().topCountries[0]?.percentage || 0 }}% of traffic</span>
+                <span class="trend-sub">Global reach</span>
+              </div>
+            </div>
+            <div class="kpi-bar-indicator"><div class="bar-fill emerald" [style.width.%]="analytics().topCountries[0]?.percentage || 100"></div></div>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="kpi-card glass-card amber-border">
+            <div class="kpi-icon-box amber-glow">💾</div>
+            <div class="kpi-content">
+              <span class="kpi-label">BANDWIDTH / DATA SAVED</span>
+              <div class="kpi-value">{{ analytics().totalDataSavedMB | number }} MB</div>
+              <div class="kpi-trend emerald-text">
+                <span>100% In-Browser WASM</span>
+              </div>
+            </div>
+            <div class="kpi-bar-indicator"><div class="bar-fill amber" style="width: 100%;"></div></div>
+          </div>
+        </section>
+
+        <!-- MAIN 2-COLUMN SECTION: TRAFFIC GRAPH & TOP COUNTRIES -->
+        <div class="grid-2col">
+          
+          <!-- LEFT: 7-DAY TRAFFIC ACTIVITY CHART -->
+          <div class="panel-card glass-card">
+            <div class="panel-head">
+              <div class="head-left">
+                <span class="panel-icon">📈</span>
+                <div>
+                  <h3 class="panel-title">7-Day Real Traffic &amp; Velocity</h3>
+                  <span class="panel-desc">Actual daily visitors and tool executions</span>
+                </div>
+              </div>
+              <div class="legend-pills">
+                <span class="legend-item"><span class="dot cyan"></span> Visitors</span>
+                <span class="legend-item"><span class="dot purple"></span> Tool Runs</span>
+              </div>
+            </div>
+
+            <!-- Custom Cyber Bar Chart -->
+            <div class="cyber-chart-wrap">
+              <div class="chart-bars">
+                <div *ngFor="let item of analytics().weeklyTraffic" class="chart-col">
+                  <div class="bars-container">
+                    <div class="bar-track">
+                      <div class="bar-value-pill">{{ item.toolRuns }} runs</div>
+                      <div class="bar-fill-dynamic purple-grad" [style.height.%]="getBarHeight(item.toolRuns, maxWeeklyRuns())"></div>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-value-pill">{{ item.visitors }} visits</div>
+                      <div class="bar-fill-dynamic cyan-grad" [style.height.%]="getBarHeight(item.visitors, maxWeeklyVisitors())"></div>
+                    </div>
+                  </div>
+                  <div class="col-label">
+                    <span class="day-name">{{ item.day }}</span>
+                    <span class="day-date">{{ item.date }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: GEO-ANALYTICS (COUNTRIES BREAKDOWN) -->
+          <div class="panel-card glass-card">
+            <div class="panel-head">
+              <div class="head-left">
+                <span class="panel-icon">🌐</span>
+                <div>
+                  <h3 class="panel-title">Live Global Visitor Countries</h3>
+                  <span class="panel-desc">Ranked by real visitor location and traffic</span>
+                </div>
+              </div>
+              <div class="search-input-wrap">
+                <input type="text" [ngModel]="countrySearch()" (ngModelChange)="countrySearch.set($event)" aria-label="Search countries" placeholder="Search country..." class="hud-search" />
+              </div>
+            </div>
+
+            <div class="country-list-scroll">
+              <div *ngIf="filteredCountries().length === 0" class="empty-state-box">
+                <span>🌐 Waiting for live visitor requests...</span>
+              </div>
+
+              <div *ngFor="let c of filteredCountries(); let i = index" class="country-row">
+                <div class="c-rank">#{{ i + 1 }}</div>
+                <div class="c-flag">{{ c.flag }}</div>
+                <div class="c-info">
+                  <div class="c-top-line">
+                    <span class="c-name">{{ c.name }}</span>
+                    <span class="c-count">{{ c.count | number }} hits ({{ c.percentage }}%)</span>
+                  </div>
+                  <div class="c-bar-bg">
+                    <div class="c-bar-fill" [style.width.%]="c.percentage"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LOWER 2-COLUMN SECTION: TOOLS LEADERBOARD & LIVE EVENT STREAM -->
+        <div class="grid-2col lower-grid">
+          
+          <!-- LEFT: TOOL PERFORMANCE LEADERBOARD -->
+          <div class="panel-card glass-card">
+            <div class="panel-head">
+              <div class="head-left">
+                <span class="panel-icon">🏆</span>
+                <div>
+                  <h3 class="panel-title">Live Tool Popularity Leaderboard</h3>
+                  <span class="panel-desc">Real conversions ranked by actual usage</span>
+                </div>
+              </div>
+              <!-- Filter tabs -->
+              <div class="filter-tab-pills">
+                <button [class.active]="selectedCategory() === 'all'" (click)="selectedCategory.set('all')">All</button>
+                <button [class.active]="selectedCategory() === 'image'" (click)="selectedCategory.set('image')">Image</button>
+                <button [class.active]="selectedCategory() === 'pdf'" (click)="selectedCategory.set('pdf')">PDF</button>
+                <button [class.active]="selectedCategory() === 'audio'" (click)="selectedCategory.set('audio')">TTS/Audio</button>
+                <button [class.active]="selectedCategory() === 'calculator'" (click)="selectedCategory.set('calculator')">Calc</button>
+              </div>
+            </div>
+
+            <div class="tools-leaderboard-list">
+              <div *ngIf="filteredTools().length === 0" class="empty-state-box">
+                <span>⚡ No tool executions recorded yet. Open and use any tool to see it appear live here!</span>
+              </div>
+
+              <div *ngFor="let tool of filteredTools(); let idx = index" class="tool-rank-row">
+                <div class="tool-rank-badge" [class.gold]="idx === 0" [class.silver]="idx === 1" [class.bronze]="idx === 2">
+                  {{ idx + 1 }}
+                </div>
+                <div class="tool-icon-circle">{{ tool.icon }}</div>
+                <div class="tool-meta">
+                  <div class="tool-title-row">
+                    <span class="tool-name">{{ tool.name }}</span>
+                    <span class="tool-badge-cat" [attr.data-cat]="tool.category">{{ tool.category | uppercase }}</span>
+                  </div>
+                  <div class="tool-meter-row">
+                    <div class="tool-meter-track">
+                      <div class="tool-meter-fill" [style.width.%]="tool.percentage"></div>
+                    </div>
+                    <span class="tool-meter-stat">{{ tool.count | number }} runs ({{ tool.percentage }}%)</span>
+                  </div>
+                </div>
+                <a [routerLink]="tool.route" class="tool-open-btn" title="Open Tool">
+                  <span>Launch →</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: LIVE ACTIVITY STREAM & DEVICE MATRIX -->
+          <div class="panel-card glass-card">
+            <div class="panel-head">
+              <div class="head-left">
+                <span class="panel-icon">⚡</span>
+                <div>
+                  <h3 class="panel-title">Real-Time User Execution Stream</h3>
+                  <span class="panel-desc">Live streaming events from actual visitors</span>
+                </div>
+              </div>
+              <span class="stream-pulse">● LIVE STREAM</span>
+            </div>
+
+            <!-- Device/Browser Matrix mini-strip -->
+            <div class="device-matrix-strip">
+              <div class="matrix-box">
+                <span class="m-label">🖥️ Desktop</span>
+                <span class="m-val">{{ analytics().deviceBreakdown.desktop }}%</span>
+              </div>
+              <div class="matrix-box">
+                <span class="m-label">📱 Mobile</span>
+                <span class="m-val">{{ analytics().deviceBreakdown.mobile }}%</span>
+              </div>
+              <div class="matrix-box">
+                <span class="m-label">🌐 Chrome</span>
+                <span class="m-val">{{ analytics().browserBreakdown.chrome }}%</span>
+              </div>
+              <div class="matrix-box">
+                <span class="m-label">🧭 Safari / Other</span>
+                <span class="m-val">{{ (analytics().browserBreakdown.safari + analytics().browserBreakdown.other) | number:'1.0-1' }}%</span>
+              </div>
+            </div>
+
+            <!-- Activity Items List -->
+            <div class="activity-feed-scroll">
+              <div *ngIf="analytics().recentActivities.length === 0" class="empty-state-box">
+                <span>⏳ Waiting for incoming real-time activity...</span>
+              </div>
+
+              <div *ngFor="let act of analytics().recentActivities" class="activity-item">
+                <div class="act-flag">{{ act.flag }}</div>
+                <div class="act-body">
+                  <div class="act-main">
+                    <span class="act-title">{{ act.title }}</span>
+                    <span class="act-tag">{{ act.country }}</span>
+                  </div>
+                  <div class="act-foot">
+                    <span class="act-detail">{{ act.details || 'Real-time telemetry hit' }}</span>
+                    <span class="act-time">{{ formatTimeAgo(act.timestamp) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>

@@ -1,0 +1,471 @@
+<div class="dev-hub-container">
+      <!-- HERO BANNER -->
+      <section class="dev-hero">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>100% Free • All-in-One In-Browser Developer Studio • Zero Setup</span>
+        </div>
+
+        <h1 class="hero-title">
+          Developer Tools &amp; <span class="gradient-text">SQL Studio</span>
+        </h1>
+        <p class="hero-desc">
+          High-performance developer utilities: interactive MySQL masterclass (102 slides), touch-typing tutor, JSON formatter, JWT decoder, cryptographic hasher, UUID generator, and live regex tester.
+        </p>
+
+        <!-- Quick Action CTA Buttons -->
+        <div class="hero-actions">
+          <a routerLink="/typing-speed-test" class="btn-primary-glow" style="background: linear-gradient(135deg, #0284c7, #06b6d4); border: 1px solid rgba(6, 182, 212, 0.4);">
+            ⚡ Typing Speed Test
+          </a>
+          <a routerLink="/ai-chat" class="btn-primary-glow" style="background: linear-gradient(135deg, #2563eb, #7c3aed); border: 1px solid rgba(124, 58, 237, 0.4);">
+            ✨ AI Chat Playground
+          </a>
+          <a routerLink="/developer-tools/sql" class="btn-primary-glow">
+            📚 Start SQL Learn (102 Slides) →
+          </a>
+          <a routerLink="/typing-master" class="btn-secondary-glass">
+            ⌨️ Type Master Pro
+          </a>
+          <a routerLink="/developer-tools/json-formatter" class="btn-secondary-glass">
+            &#123;&#125; JSON Formatter
+          </a>
+          <a routerLink="/developer-tools/sql/playground" class="btn-secondary-glass">
+            ⚡ SQL Playground
+          </a>
+        </div>
+      </section>
+
+      <!-- FEATURED SPOTLIGHT CARDS -->
+      <section class="spotlight-section">
+        <div class="spotlight-card sql-spotlight glass">
+          <div class="spotlight-content">
+            <span class="spotlight-tag">🌟 FEATURED MASTERCLASS</span>
+            <h2>Complete MySQL Tutorial (102 Slides)</h2>
+            <p>
+              From basic RDBMS concepts, DDL and DML commands, to complex Nested Subqueries, Multi-table Joins with Venn diagrams, and SQL Views. Every topic, syntax rule, and query example included.
+            </p>
+            <div class="spotlight-stats">
+              <span class="stat-badge">📖 13 Core Modules</span>
+              <span class="stat-badge">🔀 Venn Joins Visualizer</span>
+              <span class="stat-badge">⚡ Live In-Browser Engine</span>
+            </div>
+            <div class="spotlight-btn-row">
+              <a routerLink="/developer-tools/sql" class="btn-cta">
+                Explore All SQL Chapters →
+              </a>
+            </div>
+          </div>
+          <div class="spotlight-icon-art">🗄️</div>
+        </div>
+
+        <div class="spotlight-card sandbox-spotlight glass">
+          <div class="spotlight-content">
+            <span class="spotlight-tag gold-tag">⚡ LIVE QUERY ENGINE</span>
+            <h2>Interactive SQL Sandbox</h2>
+            <p>
+              Execute real <code>SELECT</code>, <code>WHERE</code>, <code>JOIN</code>, <code>GROUP BY</code>, and <code>HAVING</code> queries directly in your browser against pre-seeded tables from the course.
+            </p>
+            <div class="spotlight-stats">
+              <span class="stat-badge">📊 Pre-seeded Datasets</span>
+              <span class="stat-badge">⚡ Sub-millisecond Execution</span>
+              <span class="stat-badge">📋 18+ Query Presets</span>
+            </div>
+            <div class="spotlight-btn-row">
+              <a routerLink="/developer-tools/sql/playground" class="btn-cta gold-cta">
+                Launch SQL Playground →
+              </a>
+            </div>
+          </div>
+          <div class="spotlight-icon-art">💻</div>
+        </div>
+      </section>
+
+      <!-- DEVELOPER QUICK UTILITIES TOOLBOX -->
+      <section class="tools-toolbox-section">
+        <div class="section-head-row">
+          <div>
+            <span class="section-tag">INSTANT UTILITIES</span>
+            <h2 class="section-title">Developer Utilities Suite</h2>
+          </div>
+          <span class="tools-count-pill">12 Free Developer Tools</span>
+        </div>
+
+        <div class="utility-boxes-grid">
+          <!-- 1. JSON Formatter & Minifier -->
+          <div id="json-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">&#123;&#125;</span>
+              <div>
+                <h3>JSON Formatter &amp; Validator</h3>
+                <small class="tool-sub">Prettify, validate syntax &amp; minify JSON</small>
+              </div>
+            </div>
+            <textarea 
+              [(ngModel)]="jsonInput" 
+              [placeholder]="jsonPlaceholder"
+              class="util-textarea"
+              rows="4"
+            ></textarea>
+            <div class="util-actions">
+              <button (click)="formatJson(2)" class="util-btn primary-btn">Prettify (2 sp)</button>
+              <button (click)="formatJson(4)" class="util-btn">Prettify (4 sp)</button>
+              <button (click)="formatJson(0)" class="util-btn">Minify</button>
+              <button (click)="copyText(jsonInput)" class="util-btn">Copy</button>
+              <button (click)="jsonInput = ''" class="util-btn clear-btn">Clear</button>
+              <span class="util-feedback" *ngIf="jsonStatus">{{ jsonStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 2. Typing Master Pro -->
+          <div id="typing-tool" class="utility-tool-card glass highlight-tool">
+            <div class="util-head">
+              <span class="util-icon">⌨️</span>
+              <div>
+                <h3>Type Master Pro</h3>
+                <small class="tool-sub">Touch-typing speed &amp; accuracy trainer</small>
+              </div>
+            </div>
+            <p class="tool-summary-text">
+              Test your typing speed, learn touch-typing on keyboard home rows, and measure Words Per Minute (WPM) with real-time accuracy scoring.
+            </p>
+            <div class="util-actions mt-auto">
+              <a routerLink="/typing-master" class="util-btn launch-btn">
+                Launch Type Master →
+              </a>
+            </div>
+          </div>
+
+          <!-- 3. JWT Token Decoder -->
+          <div id="jwt-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🎫</span>
+              <div>
+                <h3>JWT Token Decoder</h3>
+                <small class="tool-sub">Inspect Header, Claims &amp; Expiry locally</small>
+              </div>
+            </div>
+            <textarea 
+              [(ngModel)]="jwtInput" 
+              (input)="decodeJwt()"
+              placeholder="Paste JSON Web Token (eyJhbGciOi...)"
+              class="util-textarea"
+              rows="2"
+            ></textarea>
+            <div class="jwt-results" *ngIf="jwtPayload">
+              <div class="jwt-part">
+                <span class="jwt-part-label">Payload Claims:</span>
+                <pre class="code-pre">{{ jwtPayload }}</pre>
+              </div>
+              <div class="jwt-meta-row" *ngIf="jwtExpiry">
+                <span class="jwt-meta-text">{{ jwtExpiry }}</span>
+              </div>
+            </div>
+            <div class="util-actions">
+              <button (click)="decodeJwt()" class="util-btn primary-btn">Decode Token</button>
+              <button (click)="copyText(jwtPayload)" *ngIf="jwtPayload" class="util-btn">Copy Payload</button>
+              <span class="util-feedback" *ngIf="jwtStatus">{{ jwtStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 4. Hash Generator (SHA-256, MD5, SHA-512) -->
+          <div id="hash-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🔒</span>
+              <div>
+                <h3>Cryptographic Hash Generator</h3>
+                <small class="tool-sub">Generate SHA-256, SHA-512 &amp; MD5</small>
+              </div>
+            </div>
+            <input 
+              type="text"
+              [(ngModel)]="hashInput" 
+              (input)="generateHashes()"
+              placeholder="Enter text to hash..."
+              class="util-input"
+            />
+            <div class="hash-list" *ngIf="hashSha256">
+              <div class="hash-row">
+                <span class="hash-label">SHA-256:</span>
+                <span class="hash-val" (click)="copyText(hashSha256)">{{ hashSha256 }}</span>
+              </div>
+              <div class="hash-row">
+                <span class="hash-label">MD5:</span>
+                <span class="hash-val" (click)="copyText(hashMd5)">{{ hashMd5 }}</span>
+              </div>
+              <div class="hash-row">
+                <span class="hash-label">SHA-1:</span>
+                <span class="hash-val" (click)="copyText(hashSha1)">{{ hashSha1 }}</span>
+              </div>
+            </div>
+            <div class="util-actions">
+              <button (click)="generateHashes()" class="util-btn primary-btn">Generate Hashes</button>
+              <span class="util-feedback" *ngIf="hashStatus">{{ hashStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 5. UUID / GUID Generator -->
+          <div id="uuid-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🆔</span>
+              <div>
+                <h3>UUID / GUID v4 Generator</h3>
+                <small class="tool-sub">Bulk cryptographically random UUIDs</small>
+              </div>
+            </div>
+            <div class="uuid-controls">
+              <label class="ctrl-label">Quantity:
+                <select [(ngModel)]="uuidQuantity" class="ctrl-select">
+                  <option [value]="1">1</option>
+                  <option [value]="5">5</option>
+                  <option [value]="10">10</option>
+                </select>
+              </label>
+              <label class="ctrl-check">
+                <input type="checkbox" [(ngModel)]="uuidUppercase" (change)="generateUuids()" />
+                Uppercase
+              </label>
+              <label class="ctrl-check">
+                <input type="checkbox" [(ngModel)]="uuidNoHyphens" (change)="generateUuids()" />
+                No Hyphens
+              </label>
+            </div>
+            <textarea 
+              [value]="generatedUuidsText" 
+              readonly 
+              class="util-textarea uuid-display" 
+              rows="3"
+            ></textarea>
+            <div class="util-actions">
+              <button (click)="generateUuids()" class="util-btn primary-btn">Generate New</button>
+              <button (click)="copyText(generatedUuidsText)" class="util-btn">Copy UUIDs</button>
+              <span class="util-feedback" *ngIf="uuidStatus">{{ uuidStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 6. Base64 Tool -->
+          <div id="base64-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🔤</span>
+              <div>
+                <h3>Base64 Text Encoder &amp; Decoder</h3>
+                <small class="tool-sub">Convert UTF-8 text to &amp; from Base64</small>
+              </div>
+            </div>
+            <textarea 
+              [(ngModel)]="base64Input" 
+              placeholder="Enter plain text or Base64 string..."
+              class="util-textarea"
+              rows="3"
+            ></textarea>
+            <div class="util-actions">
+              <button (click)="encodeBase64()" class="util-btn primary-btn">Encode</button>
+              <button (click)="decodeBase64()" class="util-btn">Decode</button>
+              <button (click)="copyText(base64Input)" class="util-btn">Copy</button>
+              <button (click)="base64Input = ''" class="util-btn clear-btn">Clear</button>
+              <span class="util-feedback" *ngIf="base64Status">{{ base64Status }}</span>
+            </div>
+          </div>
+
+          <!-- 7. URL Encoder / Decoder -->
+          <div id="url-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🔗</span>
+              <div>
+                <h3>URL Encoder &amp; Decoder</h3>
+                <small class="tool-sub">Safely escape query parameters &amp; URIs</small>
+              </div>
+            </div>
+            <textarea 
+              [(ngModel)]="urlInput" 
+              placeholder="Paste URL or query string..."
+              class="util-textarea"
+              rows="3"
+            ></textarea>
+            <div class="util-actions">
+              <button (click)="encodeUrl()" class="util-btn primary-btn">URL Encode</button>
+              <button (click)="decodeUrl()" class="util-btn">URL Decode</button>
+              <button (click)="copyText(urlInput)" class="util-btn">Copy</button>
+              <button (click)="urlInput = ''" class="util-btn clear-btn">Clear</button>
+              <span class="util-feedback" *ngIf="urlStatus">{{ urlStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 8. Regex Tester & Debugger -->
+          <div id="regex-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🎯</span>
+              <div>
+                <h3>Regex Tester &amp; Evaluator</h3>
+                <small class="tool-sub">Test regular expressions with flags</small>
+              </div>
+            </div>
+            <div class="regex-input-row">
+              <span class="regex-slash">/</span>
+              <input 
+                type="text" 
+                [(ngModel)]="regexPattern" 
+                (input)="testRegex()"
+                placeholder="pattern e.g. [a-z0-9]+" 
+                class="regex-field"
+              />
+              <span class="regex-slash">/</span>
+              <input 
+                type="text" 
+                [(ngModel)]="regexFlags" 
+                (input)="testRegex()"
+                placeholder="gim" 
+                class="regex-flags-field"
+              />
+            </div>
+            <textarea 
+              [(ngModel)]="regexText" 
+              (input)="testRegex()"
+              placeholder="Test string to match against..."
+              class="util-textarea"
+              rows="2"
+            ></textarea>
+            <div class="regex-status-row">
+              <span class="regex-matches-badge">{{ regexMatchCount }} matches</span>
+              <span class="util-feedback error-feedback" *ngIf="regexError">{{ regexError }}</span>
+            </div>
+            <div class="util-actions">
+              <button (click)="testRegex()" class="util-btn primary-btn">Test Regex</button>
+            </div>
+          </div>
+
+          <!-- 9. HTML Entity Encoder & Decoder -->
+          <div id="html-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🌐</span>
+              <div>
+                <h3>HTML Entity Tool</h3>
+                <small class="tool-sub">Escape &amp; unescape HTML special chars</small>
+              </div>
+            </div>
+            <textarea 
+              [(ngModel)]="htmlInput" 
+              placeholder="Paste HTML or text with entities..."
+              class="util-textarea"
+              rows="3"
+            ></textarea>
+            <div class="util-actions">
+              <button (click)="encodeHtml()" class="util-btn primary-btn">Escape HTML</button>
+              <button (click)="decodeHtml()" class="util-btn">Unescape HTML</button>
+              <button (click)="copyText(htmlInput)" class="util-btn">Copy</button>
+              <span class="util-feedback" *ngIf="htmlStatus">{{ htmlStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 10. Markdown Live Previewer -->
+          <div id="markdown-tool" class="utility-tool-card glass span-two">
+            <div class="util-head">
+              <span class="util-icon">📝</span>
+              <div>
+                <h3>Markdown Live Editor &amp; Preview</h3>
+                <small class="tool-sub">Real-time GitHub-flavored Markdown rendering</small>
+              </div>
+            </div>
+            <div class="markdown-split">
+              <textarea 
+                [(ngModel)]="markdownInput" 
+                (input)="updateMarkdown()"
+                placeholder="Type Markdown here...&#10;# Heading 1&#10;**Bold text**&#10;- List item&#10;&#96;code&#96;"
+                class="util-textarea md-editor"
+                rows="6"
+              ></textarea>
+              <div class="md-preview-box" [innerHTML]="safeMarkdownHtml"></div>
+            </div>
+            <div class="util-actions">
+              <button (click)="copyText(markdownInput)" class="util-btn">Copy Markdown</button>
+              <button (click)="copyText(markdownHtml)" class="util-btn">Copy Rendered HTML</button>
+              <span class="util-feedback" *ngIf="mdStatus">{{ mdStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 11. Color Code Converter -->
+          <div id="color-tool" class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">🎨</span>
+              <div>
+                <h3>HEX / RGB / HSL Color Converter</h3>
+                <small class="tool-sub">Live color picker &amp; CSS formats</small>
+              </div>
+            </div>
+            <div class="color-picker-row">
+              <input type="color" [(ngModel)]="hexColor" (input)="updateColor()" class="color-swatch-input" />
+              <div class="color-values-col">
+                <div class="color-field-wrap">
+                  <span class="color-label">HEX:</span>
+                  <input type="text" [(ngModel)]="hexColor" (input)="updateColorFromHex()" class="color-text-input" />
+                </div>
+                <div class="color-field-wrap">
+                  <span class="color-label">RGB:</span>
+                  <input type="text" [value]="rgbColor" readonly class="color-text-input" />
+                </div>
+                <div class="color-field-wrap">
+                  <span class="color-label">HSL:</span>
+                  <input type="text" [value]="hslColor" readonly class="color-text-input" />
+                </div>
+              </div>
+            </div>
+            <div class="util-actions">
+              <button (click)="copyText(hexColor)" class="util-btn">Copy HEX</button>
+              <button (click)="copyText(rgbColor)" class="util-btn">Copy RGB</button>
+              <span class="util-feedback" *ngIf="colorStatus">{{ colorStatus }}</span>
+            </div>
+          </div>
+
+          <!-- 12. Interactive SQL Sandbox Card -->
+          <div class="utility-tool-card glass">
+            <div class="util-head">
+              <span class="util-icon">⚡</span>
+              <div>
+                <h3>Interactive SQL Sandbox</h3>
+                <small class="tool-sub">In-browser MariaDB engine with 18 presets</small>
+              </div>
+            </div>
+            <p class="tool-summary-text">
+              Execute client-side SQL queries, explore seeded relational tables (students, employees, courses), and test complex JOINs without local database setup.
+            </p>
+            <div class="util-actions mt-auto">
+              <a routerLink="/developer-tools/sql/playground" class="util-btn launch-btn">
+                Launch SQL Playground →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SQL CHAPTERS CURRICULUM GRID -->
+      <section class="curriculum-section">
+        <div class="section-head-row">
+          <div>
+            <span class="section-tag">CURRICULUM BREAKDOWN</span>
+            <h2 class="section-title">SQL Course Modules (102 Slides)</h2>
+          </div>
+          <a routerLink="/developer-tools/sql" class="view-all-link">View Full Syllabus →</a>
+        </div>
+
+        <div class="curriculum-grid">
+          <a 
+            *ngFor="let topic of sqlTopics" 
+            [routerLink]="['/developer-tools/sql', topic.slug]" 
+            class="topic-card glass"
+          >
+            <div class="topic-card-top">
+              <span class="t-icon">{{ topic.icon }}</span>
+              <span *ngIf="topic.badge" class="t-badge" [ngClass]="topic.badge.toLowerCase()">
+                {{ topic.badge }}
+              </span>
+            </div>
+            <h3 class="t-title">{{ topic.title }}</h3>
+            <p class="t-desc">{{ topic.shortDesc }}</p>
+            <div class="t-footer">
+              <span class="t-slides">{{ topic.slideRange }}</span>
+              <span class="t-arrow">Read Module →</span>
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>

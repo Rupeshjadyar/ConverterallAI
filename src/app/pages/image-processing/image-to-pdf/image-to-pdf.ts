@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ interface SelectedImage {
   templateUrl: './image-to-pdf.html',
   styleUrls: ['./image-to-pdf.css']
 })
-export class ImageToPdfComponent {
+export class ImageToPdfComponent implements OnDestroy {
   selectedImages: SelectedImage[] = [];
   isProcessing: boolean = false;
   progressVal: number = 100;
@@ -43,7 +43,15 @@ export class ImageToPdfComponent {
     { id: 'pdf-processing', name: 'PDF Toolkit', icon: '📚', route: '/pdf-processing' }
   ];
 
-  constructor(private router: Router, public themeService: ThemeService) {}
+  constructor(
+    private router: Router,
+    public themeService: ThemeService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnDestroy() {
+    for (const item of this.selectedImages) URL.revokeObjectURL(item.previewUrl);
+  }
 
   navigateTo(route: string, id: string) {
     this.activeNavTab = id;
@@ -65,36 +73,22 @@ export class ImageToPdfComponent {
 
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.isProcessing = true;
-      this.progressVal = 15;
-      
-      const filesArray = Array.from(input.files);
-      let loadedCount = 0;
-
-      for (let i = 0; i < filesArray.length; i++) {
-        const file = filesArray[i];
-        this.selectedImages.push({
-          file: file,
-          previewUrl: URL.createObjectURL(file)
-        });
-        loadedCount++;
-        this.progressVal = Math.round((loadedCount / filesArray.length) * 100);
+    if (!this.isProcessing && input.files) {
+      for (const file of input.files) {
+        if (!file.type || file.type.startsWith('image/')) {
+          this.selectedImages.push({ file, previewUrl: URL.createObjectURL(file) });
+        }
       }
-      
-      if (this.selectedImages.length > 0 && this.activePageIndex >= this.selectedImages.length) {
-        this.activePageIndex = 0;
-      }
-      setTimeout(() => {
-        this.isProcessing = false;
-        this.progressVal = 100;
-      }, 400);
     }
     input.value = '';
   }
 
   removeImage(index: number) {
-    this.selectedImages.splice(index, 1);
+    if (this.isProcessing) return;
+    const [removed] = this.selectedImages.splice(index, 1);
+    if (removed && !this.selectedImages.some(item => item.previewUrl === removed.previewUrl)) {
+      URL.revokeObjectURL(removed.previewUrl);
+    }
     if (this.activePageIndex >= this.selectedImages.length) {
       this.activePageIndex = Math.max(0, this.selectedImages.length - 1);
     }
@@ -154,16 +148,19 @@ export class ImageToPdfComponent {
   }
 
   async generatePdf() {
-    if (this.selectedImages.length === 0) return;
+    if (!this.selectedImages.length || this.isProcessing) return;
     this.isProcessing = true;
     this.progressVal = 20;
+    const images = [...this.selectedImages];
 
     try {
       let pdf: jsPDF | null = null;
       
-      for (let i = 0; i < this.selectedImages.length; i++) {
-        const imgData = this.selectedImages[i].previewUrl;
-        const imgDimensions = await this.getImageDimensions(imgData);
+      for (let i = 0; i < images.length; i++) {
+        const img = new Image();
+        img.src = images[i].previewUrl;
+        await img.decode();
+        const imgDimensions = { width: img.naturalWidth, height: img.naturalHeight };
         
         let currentFormat: string | number[] = this.pageSize === 'letter' ? 'letter' : 'a4';
         const orient = this.pageOrientation === 'portrait' ? 'p' : 'l';
@@ -176,7 +173,7 @@ export class ImageToPdfComponent {
         }
 
         if (i === 0) {
-          pdf = new jsPDF({ orientation: orient, unit: 'mm', format: currentFormat });
+          pdf = new jsPDF({ orientation: orient, unit: 'mm', format: currentFormat, compress: this.optimizeForWeb });
         } else {
           pdf!.addPage(currentFormat, orient);
         }
@@ -196,8 +193,18 @@ export class ImageToPdfComponent {
         const xOffset = this.marginMm + (availWidth - finalWidth) / 2;
         const yOffset = this.marginMm + (availHeight - finalHeight) / 2;
 
+        const canvas = document.createElement('canvas');
+        canvas.width = imgDimensions.width;
+        canvas.height = imgDimensions.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas unavailable');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        const imgData = canvas.toDataURL('image/jpeg', this.qualityPercent / 100);
         pdf!.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight, undefined, 'FAST');
-        this.progressVal = Math.round(((i + 1) / this.selectedImages.length) * 100);
+        this.progressVal = Math.round(((i + 1) / images.length) * 100);
+        this.cdr.markForCheck();
         
         // Yield execution to unblock UI thread
         await new Promise(r => setTimeout(r, 0));
@@ -208,20 +215,11 @@ export class ImageToPdfComponent {
       }
     } catch (error) {
       console.error('Error generating PDF', error);
-      alert('Error generating PDF.');
+      alert('Could not create the PDF. Check that each selected file is a valid image.');
     } finally {
       this.isProcessing = false;
       this.progressVal = 100;
+      this.cdr.markForCheck();
     }
-  }
-
-  private getImageDimensions(url: string): Promise<{width: number, height: number}> {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve({ width: img.width, height: img.height });
-      };
-      img.src = url;
-    });
   }
 }

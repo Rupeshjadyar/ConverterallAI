@@ -1,0 +1,139 @@
+:host {
+      display: block;
+      width: 100%;
+      position: sticky;
+      top: 60px;
+      z-index: 1020;
+      margin-bottom: 1.5rem;
+    }
+
+    .glass {
+      background: rgba(11, 15, 25, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.12);
+    }
+
+    .navbar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .navbar-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sql-home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sql-home-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+      color: #ffffff;
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .sql-home-btn.active-home {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #ffffff;
+      border-color: #8b5cf6;
+      box-shadow: 0 2px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .home-icon {
+      font-size: 1rem;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.15);
+      flex-shrink: 0;
+    }
+
+    .sql-tabs-track {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex: 1;
+    }
+
+    .sql-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .sql-tab:hover {
+      color: #f1f5f9;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .sql-tab.active-tab {
+      color: #ffffff;
+      background: rgba(139, 92, 246, 0.25);
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+    }
+
+    .sql-tab.active-tab .tab-text {
+      color: #a78bfa;
+      font-weight: 700;
+    }
+
+    .tab-icon {
+      font-size: 0.95rem;
+    }
+
+    .playground-tab {
+      margin-left: auto;
+      background: rgba(6, 182, 212, 0.12);
+      border-color: rgba(6, 182, 212, 0.25);
+      color: #67e8f9;
+    }
+
+    .playground-tab:hover {
+      background: rgba(6, 182, 212, 0.25);
+      color: #ffffff;
+    }
+
+    .playground-tab.active-tab {
+      background: linear-gradient(135deg, #0891b2, #06b6d4);
+      border-color: #22d3ee;
+      color: #ffffff;
+      box-shadow: 0 2px 14px rgba(6, 182, 212, 0.4);
+    }
+
+    .playground-tab.active-tab .tab-text {
+      color: #ffffff;
+    }

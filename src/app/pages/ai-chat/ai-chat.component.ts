@@ -131,10 +131,8 @@ export class AiChatComponent implements OnInit, OnDestroy {
   // =========================================================================
 
   private setupSeoMetaTags(): void {
-    const pageTitle = 'Free AI Chat Playground – Groq & Gemini with Auto-Failover | ConverterAllAI';
-    const pageDesc =
-      'Universal free AI chat interface with Groq (14.4k RPD), Google Gemini (1.5k RPD), OpenRouter, and Hugging Face. ' +
-      'Features automatic 429 rate-limit failover, pristine code formatting with one-click copy, and 100% private in-browser key storage.';
+    const pageTitle = 'Free AI Chat with Groq & Gemini | ConverterAllAI';
+    const pageDesc = 'Chat with Groq, Gemini, OpenRouter, and Hugging Face models. Switch providers when you hit a rate limit and copy formatted code.';
     const canonicalUrl = 'https://converterallai.com/ai-chat';
 
     this.titleService.setTitle(pageTitle);

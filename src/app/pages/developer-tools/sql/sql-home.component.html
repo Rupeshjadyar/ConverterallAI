@@ -1,0 +1,178 @@
+<div class="sql-home-container">
+      <!-- Hero Header -->
+      <header class="sql-hero glass">
+        <div class="hero-badge-pill">
+          <span class="badge-dot"></span>
+          <span>MySQL &amp; RDBMS Masterclass • 102 Slides</span>
+        </div>
+        
+        <h1 class="hero-title">Interactive SQL Learning Engine</h1>
+        <p class="hero-subtitle">
+          Master Relational Databases from ground up. Explore syntax rules, data definition, manipulations, security, transactions, and Venn diagram joins with real in-browser query execution.
+        </p>
+
+        <div class="hero-cta-row">
+          <a routerLink="/developer-tools/sql/intro" class="hero-btn primary">
+            <span>📚</span> Start Introduction
+          </a>
+          <a routerLink="/developer-tools/sql/playground" class="hero-btn secondary">
+            <span>💻</span> Open Query Sandbox
+          </a>
+        </div>
+      </header>
+
+      <!-- Section Title -->
+      <div class="section-header-row">
+        <div>
+          <h2 class="section-title">Core Learning Modules</h2>
+          <p class="section-sub">Select any topic below or use the top internal navbar to navigate the curriculum.</p>
+        </div>
+      </div>
+
+      <!-- Core Modules Grid (The 8 requested navbar sections + sandbox) -->
+      <div class="modules-grid">
+        <!-- 1. Introduction -->
+        <a routerLink="/developer-tools/sql/intro" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">📚</span>
+            <span class="card-tag tag-essential">Essential</span>
+          </div>
+          <h3 class="card-title">1. Introduction</h3>
+          <p class="card-desc">
+            Core fundamentals: Data, Database, DBMS vs RDBMS, tables, columns, rows, and relational architecture.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 1 - 4</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 2. SQL Syntax -->
+        <a routerLink="/developer-tools/sql/syntax" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">⚡</span>
+            <span class="card-tag tag-core">Core</span>
+          </div>
+          <h3 class="card-title">2. SQL Syntax &amp; Commands</h3>
+          <p class="card-desc">
+            5 command categories (DDL, DML, DQL, DCL, TCL), SQL syntax rules, expressions, and logical operators.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 5 - 8</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 3. DDL -->
+        <a routerLink="/developer-tools/sql/ddl" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">🏗️</span>
+            <span class="card-tag tag-core">Core</span>
+          </div>
+          <h3 class="card-title">3. DDL (Data Definition)</h3>
+          <p class="card-desc">
+            CREATE TABLE, ALTER (ADD, MODIFY, DROP, RENAME), TRUNCATE vs DROP TABLE, and schema modifications.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 18 - 25</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 4. DML -->
+        <a routerLink="/developer-tools/sql/dml" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">✏️</span>
+            <span class="card-tag tag-core">Core</span>
+          </div>
+          <h3 class="card-title">4. DML (Data Manipulation)</h3>
+          <p class="card-desc">
+            INSERT INTO multi-row syntax, UPDATE with conditions, DELETE statements, and data safety precautions.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 26 - 30</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 5. DQL -->
+        <a routerLink="/developer-tools/sql/dql" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">🔍</span>
+            <span class="card-tag tag-essential">Essential</span>
+          </div>
+          <h3 class="card-title">5. DQL (Data Query Language)</h3>
+          <p class="card-desc">
+            SELECT, WHERE filtering, LIKE wildcards, BETWEEN, IN, ORDER BY, GROUP BY, HAVING, and Subqueries.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 31 - 46</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 6. DCL -->
+        <a routerLink="/developer-tools/sql/dcl" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">🛡️</span>
+            <span class="card-tag tag-core">Security</span>
+          </div>
+          <h3 class="card-title">6. DCL (Data Control Language)</h3>
+          <p class="card-desc">
+            Database access control &amp; security: GRANT privileges, REVOKE permissions, and user role management.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Security Reference</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 7. TCL -->
+        <a routerLink="/developer-tools/sql/tcl" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">🔄</span>
+            <span class="card-tag tag-advanced">Transactions</span>
+          </div>
+          <h3 class="card-title">7. TCL (Transaction Control)</h3>
+          <p class="card-desc">
+            ACID properties, BEGIN TRANSACTION, COMMIT, ROLLBACK, and SAVEPOINT with practical rollback examples.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">ACID &amp; Recovery</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 8. Joins -->
+        <a routerLink="/developer-tools/sql/joins" class="module-card glass">
+          <div class="card-head">
+            <span class="card-icon">🔀</span>
+            <span class="card-tag tag-essential">Essential</span>
+          </div>
+          <h3 class="card-title">8. SQL Joins &amp; Venn Diagrams</h3>
+          <p class="card-desc">
+            INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN with interactive visual set-theory Venn diagrams.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">Slides 76 - 93</span>
+            <span class="card-arrow">Open →</span>
+          </div>
+        </a>
+
+        <!-- 9. Interactive SQL Playground -->
+        <a routerLink="/developer-tools/sql/playground" class="module-card glass playground-card">
+          <div class="card-head">
+            <span class="card-icon">💻</span>
+            <span class="card-tag tag-interactive">Live Runner</span>
+          </div>
+          <h3 class="card-title">Live SQL Playground</h3>
+          <p class="card-desc">
+            Execute real queries against pre-seeded tables in your browser with zero database installation.
+          </p>
+          <div class="card-footer">
+            <span class="card-range">18+ Query Templates</span>
+            <span class="card-arrow">Launch Sandbox →</span>
+          </div>
+        </a>
+      </div>
+    </div>

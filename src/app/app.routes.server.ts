@@ -1,11 +1,14 @@
-import { RenderMode, ServerRoute } from '@angular/ssr';
+import { PrerenderFallback, RenderMode, ServerRoute } from '@angular/ssr';
 import { TTS_LANGUAGES } from './data/tts-languages.data';
+
+import { BMI_HI, TOOL_ALIASES } from './data/tool-locales.data';
 
 export const STATIC_PRERENDER_ROUTES: string[] = [
   '',
   'calculators',
   'calculators/basic',
   'calculators/bmi',
+  BMI_HI.slice(1),
   'calculators/percentage',
   'calculators/emi',
   'calculators/age',
@@ -134,10 +137,17 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
 
+  ...Object.keys(TOOL_ALIASES).map(path => ({
+    path: path.slice(1),
+    renderMode: RenderMode.Server as const,
+    status: 308,
+  })),
+
   // Dynamic parameterized TTS routes
   {
     path: 'audio-processing/tts/:slug',
     renderMode: RenderMode.Prerender,
+    fallback: PrerenderFallback.None,
     async getPrerenderParams() {
       return TTS_LANGUAGES.map(lang => ({ slug: lang.slug }));
     }

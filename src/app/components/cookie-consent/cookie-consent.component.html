@@ -1,0 +1,18 @@
+<div *ngIf="preferences.showBanner()" class="cookie-banner-wrapper">
+      <div class="cookie-banner glass">
+        <div class="cookie-content">
+          <div class="cookie-icon">🍪</div>
+          <div class="cookie-text">
+            <h4>We value your privacy</h4>
+            <p>
+              Choose whether to allow optional ads and usage analytics. You can change this choice in the
+              <a routerLink="/cookie-policy">Cookie Policy</a>. See the <a routerLink="/privacy-policy">Privacy Policy</a> for details.
+            </p>
+          </div>
+        </div>
+        <div class="cookie-actions">
+          <button class="btn-decline" (click)="preferences.choose('declined')">{{ preferences.allowsOptional() ? 'Essential Only and Reload' : 'Essential Only' }}</button>
+          <button class="btn-accept" (click)="preferences.choose('accepted')">Accept All Cookies</button>
+        </div>
+      </div>
+    </div>

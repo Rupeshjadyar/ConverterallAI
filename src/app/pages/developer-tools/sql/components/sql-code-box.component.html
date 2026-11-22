@@ -1,0 +1,28 @@
+<div class="sql-code-container">
+      <div class="code-header">
+        <div class="window-controls">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+          <span class="window-title">{{ title || 'MySQL Terminal / Query' }}</span>
+        </div>
+        <div class="header-actions">
+          <button class="action-btn copy-btn" (click)="copyCode()" [class.copied]="copied()">
+            <span *ngIf="!copied()">📋 Copy</span>
+            <span *ngIf="copied()">✓ Copied!</span>
+          </button>
+          <button *ngIf="isRunnable" class="action-btn run-btn" (click)="runInPlayground()">
+            ▶ Run Query
+          </button>
+        </div>
+      </div>
+      <div class="code-body">
+        <pre><code>{{ code.trim() }}</code></pre>
+      </div>
+      <div *ngIf="output" class="terminal-output">
+        <div class="output-label">
+          <span class="terminal-prompt">&gt; Output (MariaDB / MySQL):</span>
+        </div>
+        <pre class="output-pre"><code>{{ output.trim() }}</code></pre>
+      </div>
+    </div>

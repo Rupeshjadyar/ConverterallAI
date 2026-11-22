@@ -1,0 +1,207 @@
+<div class="chapter-content">
+      <!-- Header -->
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Architecture</span>
+          <span class="badge-slides">PPT Slides 5 - 8</span>
+        </div>
+        <h1 class="chapter-title">2. SQL Commands, Operators &amp; Expressions</h1>
+        <p class="chapter-subtitle">
+          Understand the 5 primary SQL command classifications (DDL, DML, DQL, DCL, TCL), SQL operators (Arithmetic, Comparison, Logical), and SQL Expression types.
+        </p>
+      </div>
+
+      <!-- Section 1: Types of SQL Commands -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">2.1</span> The 5 Types of SQL Commands
+        </h2>
+        <p class="section-text">
+          SQL categorizes its commands based on the functional operations they perform on the database schema and storage:
+        </p>
+
+        <div class="table-responsive">
+          <table class="styled-matrix-table">
+            <thead>
+              <tr>
+                <th>Group Name</th>
+                <th>Core Statements</th>
+                <th>Primary Purpose &amp; Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="group-badge ddl-badge">DDL</span>
+                  <strong>Data Definition Language</strong>
+                </td>
+                <td><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code></td>
+                <td>Defines database schema structures. Creates, alters, or drops physical tables and indexes (no data rows).</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="group-badge dml-badge">DML</span>
+                  <strong>Data Manipulation Language</strong>
+                </td>
+                <td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td>
+                <td>Modifies the actual data stored inside tables. Can be committed or rolled back in transactions.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="group-badge dql-badge">DQL</span>
+                  <strong>Data Query Language</strong>
+                </td>
+                <td><code>SELECT</code>, <code>SHOW</code>, <code>HELP</code></td>
+                <td>Retrieves data and extracts insight from tables based on predicates, filters, and projections.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="group-badge dcl-badge">DCL</span>
+                  <strong>Data Control Language</strong>
+                </td>
+                <td><code>GRANT</code>, <code>REVOKE</code></td>
+                <td>Controls user access rights, privileges, and table authorization policies across databases.</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="group-badge tcl-badge">TCL</span>
+                  <strong>Transaction Control Language</strong>
+                </td>
+                <td><code>COMMIT</code>, <code>ROLLBACK</code>, <code>SAVEPOINT</code></td>
+                <td>Manages transaction safety and durability (ACID principles), committing or reversing DML updates.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 2: Operators in SQL -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">2.2</span> Operators in SQL (Slide 6)
+        </h2>
+        <p class="section-text">
+          An <strong>operator</strong> is a reserved character or keyword used in SQL statements to evaluate predicates. They are predominantly utilized inside the <code>WHERE</code> clause to formulate filtering criteria.
+        </p>
+
+        <div class="operators-grid">
+          <!-- Arithmetic -->
+          <div class="op-card">
+            <div class="op-card-header">
+              <span class="op-type-icon">➕</span>
+              <h3>1. Arithmetic Operators</h3>
+            </div>
+            <div class="op-symbols"><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></div>
+            <p>Performs mathematical operations on numerical columns or literal expressions.</p>
+            <app-sql-code-box
+              code="SELECT (salary * 0.10) AS bonus_amount, (salary + 500) AS incremented_salary FROM employees;"
+              title="Arithmetic Operators in SELECT"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- Comparison -->
+          <div class="op-card">
+            <div class="op-card-header">
+              <span class="op-type-icon">⚖️</span>
+              <h3>2. Comparison Operators</h3>
+            </div>
+            <div class="op-symbols"><code>&lt;</code>, <code>&gt;</code>, <code>=</code>, <code>!=</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&lt;&gt;</code></div>
+            <p>Compares two expressions. Returns boolean <code>TRUE</code>, <code>FALSE</code>, or <code>UNKNOWN</code> (NULL).</p>
+            <app-sql-code-box
+              code="SELECT name, salary FROM employees WHERE salary >= 30000;"
+              title="Comparison Operator Demo"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- Logical -->
+          <div class="op-card">
+            <div class="op-card-header">
+              <span class="op-type-icon">🔀</span>
+              <h3>3. Logical Operators</h3>
+            </div>
+            <div class="op-symbols">
+              <code>AND</code>, <code>OR</code>, <code>NOT</code>, <code>BETWEEN</code>, <code>IN</code>, <code>ANY</code>, <code>ALL</code>, <code>LIKE</code>
+            </div>
+            <p>Combines multiple conditions or tests for range, set membership, or pattern matching.</p>
+            <app-sql-code-box
+              code="SELECT name, city FROM employees WHERE city = 'Mumbai' AND salary > 20000;"
+              title="Logical AND Operator Demo"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Expressions in SQL -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">2.3</span> Expressions in SQL (Slides 7 - 8)
+        </h2>
+        <p class="section-text">
+          An <strong>expression</strong> is a combination of one or more values, operators, and SQL functions evaluated by the database engine. SQL expressions resemble mathematical formulas:
+        </p>
+
+        <div class="expression-types">
+          <!-- 1. Boolean Expression -->
+          <div class="expr-box">
+            <h3>1. Boolean Expression</h3>
+            <p>Fetches data based on matching a condition or comparing a single value.</p>
+            <div class="syntax-badge">Syntax: <code>SELECT columns FROM table_name WHERE SINGLE_VALUE_EXPRESSION;</code></div>
+            <app-sql-code-box
+              title="Boolean Expression Example (Slide 7)"
+              code="SELECT * FROM employees WHERE salary = 40000;"
+              output="+----+------+------+--------+---------+-------------+
+| id | name | city | salary | dept_no | designation |
++----+------+------+--------+---------+-------------+
+|  2 | John | Pune |  40000 |       5 | HR          |
++----+------+------+--------+---------+-------------+
+1 row in set (0.001 sec)"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- 2. Numeric Expression -->
+          <div class="expr-box">
+            <h3>2. Numeric Expression</h3>
+            <p>Performs mathematical operations on numbers or fields within any SQL query.</p>
+            <div class="syntax-badge">Syntax: <code>SELECT numerical_expression AS OPERATION_NAME [FROM table_name WHERE condition];</code></div>
+            <app-sql-code-box
+              title="Numeric Expression Example (Slide 7)"
+              code="SELECT (15 + 6) AS ADDITION;"
+              output="+----------+
+| ADDITION |
++----------+
+|       21 |
++----------+
+1 row in set (0.000 sec)"
+            ></app-sql-code-box>
+          </div>
+
+          <!-- 3. Date Expression -->
+          <div class="expr-box">
+            <h3>3. Date Expression</h3>
+            <p>Returns system date, time values, and timestamps dynamically.</p>
+            <div class="syntax-badge">Syntax: <code>SELECT CURRENT_TIMESTAMP;</code></div>
+            <app-sql-code-box
+              title="Date Expression Example (Slide 8)"
+              code="SELECT CURRENT_TIMESTAMP AS current_time_val;"
+              output="MariaDB [customer]> select current_timestamp;
++---------------------+
+| current_timestamp   |
++---------------------+
+| 2026-10-02 15:45:54 |
++---------------------+
+1 row in set (0.007 sec)"
+            ></app-sql-code-box>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Navigation -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/intro" class="nav-btn prev-btn">
+          ← 1. Introduction &amp; RDBMS Basics
+        </a>
+        <a routerLink="/developer-tools/sql/data-types" class="nav-btn next-btn">
+          Next: 3. Data Types in SQL →
+        </a>
+      </div>
+    </div>

@@ -1,0 +1,95 @@
+<div class="chapter-content">
+      <!-- Chapter Header -->
+      <div class="chapter-header">
+        <div class="chapter-meta">
+          <span class="badge-cat">Transactions &amp; ACID</span>
+          <span class="badge-slides">SQL Commands • TCL</span>
+        </div>
+        <h1 class="chapter-title">7. TCL (Transaction Control Language)</h1>
+        <p class="chapter-subtitle">
+          Ensure database consistency and transaction integrity with COMMIT, ROLLBACK, and SAVEPOINT commands.
+        </p>
+      </div>
+
+      <!-- Section 1: What is a Transaction & ACID? -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">7.1</span> What is a Transaction?
+        </h2>
+        <p class="section-p">
+          A <strong>Transaction</strong> is a sequence of one or more SQL operations treated as a single, indivisible logical unit of work. Either all operations succeed (COMMIT), or if any fails, all changes are undone (ROLLBACK).
+        </p>
+
+        <!-- ACID Properties -->
+        <div class="acid-grid">
+          <div class="acid-card">
+            <span class="acid-letter">A</span>
+            <h4>Atomicity</h4>
+            <p>All-or-nothing execution. Partial execution never commits.</p>
+          </div>
+          <div class="acid-card">
+            <span class="acid-letter">C</span>
+            <h4>Consistency</h4>
+            <p>Database transitions strictly from one valid state to another.</p>
+          </div>
+          <div class="acid-card">
+            <span class="acid-letter">I</span>
+            <h4>Isolation</h4>
+            <p>Concurrent transactions do not interfere with each other.</p>
+          </div>
+          <div class="acid-card">
+            <span class="acid-letter">D</span>
+            <h4>Durability</h4>
+            <p>Committed changes survive system crashes and power failures.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Core TCL Commands -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">7.2</span> Core TCL Commands
+        </h2>
+        
+        <div class="tcl-commands-list">
+          <div class="tcl-item">
+            <span class="tcl-badge">COMMIT</span>
+            <p>Permanently saves all changes made during the current transaction to the database disk.</p>
+          </div>
+          <div class="tcl-item">
+            <span class="tcl-badge">ROLLBACK</span>
+            <p>Undoes all uncommitted changes, returning the database to the state of the last COMMIT or SAVEPOINT.</p>
+          </div>
+          <div class="tcl-item">
+            <span class="tcl-badge">SAVEPOINT</span>
+            <p>Creates an intermediate checkpoint within a transaction that can be rolled back to selectively.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Practical Transaction Example -->
+      <section class="content-card glass">
+        <h2 class="section-heading">
+          <span class="heading-num">7.3</span> Practical Bank Transfer Transaction
+        </h2>
+        <p class="section-p">
+          Classic financial ledger transaction transferring $500 from Account 101 to Account 102 with safety checks:
+        </p>
+
+        <app-sql-code-box
+          title="Bank Transfer with COMMIT &amp; ROLLBACK"
+          [code]="tclCode"
+          tableHint="Simulates atomic bank transfer across two accounts"
+        ></app-sql-code-box>
+      </section>
+
+      <!-- Navigation Footer -->
+      <div class="chapter-nav-footer">
+        <a routerLink="/developer-tools/sql/dcl" class="nav-btn prev">
+          <span>← 6. DCL (Permissions)</span>
+        </a>
+        <a routerLink="/developer-tools/sql/joins" class="nav-btn next">
+          <span>8. SQL Joins &amp; Venn Diagrams →</span>
+        </a>
+      </div>
+    </div>

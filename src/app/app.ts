@@ -3,14 +3,18 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   Router,
   RouterOutlet,
+  RouterLink,
   NavigationStart,
   NavigationEnd,
   NavigationCancel,
   NavigationError,
   RouteConfigLoadStart,
-  RouteConfigLoadEnd
+  RouteConfigLoadEnd,
+  Route
 } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { BMI_EN, BMI_HI } from './data/tool-locales.data';
+import { ToolRegistryService } from './services/tool-registry.service';
 import { ThemeService } from './services/theme.service';
 import { SeoService } from './services/seo.service';
 import { AnalyticsService } from './services/analytics.service';
@@ -24,7 +28,7 @@ import { ToolSeoContentComponent } from './components/tool-seo-content/tool-seo-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, SidebarComponent, RightSidebarComponent, FooterComponent, CookieConsentComponent, ToolSeoContentComponent],
+  imports: [RouterOutlet, RouterLink, NavbarComponent, SidebarComponent, RightSidebarComponent, FooterComponent, CookieConsentComponent, ToolSeoContentComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -33,6 +37,39 @@ export class App implements OnInit {
   public readonly isNavigating = signal<boolean>(false);
   private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
+  private registry = inject(ToolRegistryService);
+  protected readonly hindiBmi = BMI_HI;
+  protected get isEnglishBmi(): boolean { return this.currentPath === BMI_EN; }
+
+  protected get hubTools() {
+    const category = this.registry.getCategoryBySlug(this.currentPath);
+    return category ? this.registry.getToolsByCategory(category.id).filter(tool => tool.slug !== category.slug) : [];
+  }
+
+  private readonly prefetchedPaths = new Set<string>();
+
+  protected prefetchTool(path: string): void {
+    if (this.prefetchedPaths.has(path) || (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
+    let routes: Route[] = this.router.config;
+    let remaining = path.slice(1);
+    while (remaining) {
+      const route = routes.find(({ path: prefix }) =>
+        prefix && (remaining === prefix || remaining.startsWith(prefix + '/')));
+      if (!route?.path) return;
+      if (remaining === route.path && route.loadComponent) {
+        this.prefetchedPaths.add(path);
+        Promise.resolve(route.loadComponent()).catch(() => this.prefetchedPaths.delete(path));
+        return;
+      }
+      remaining = remaining.slice(route.path.length + 1);
+      routes = route.children ?? [];
+    }
+  }
+
+  private get currentPath(): string {
+    return this.router.url.split(/[?#]/, 1)[0].replace(/\/+$/, '');
+  }
+
   private themeService = inject(ThemeService);
   private seoService = inject(SeoService);
   private analyticsService = inject(AnalyticsService);
