@@ -5,6 +5,10 @@ export const BMI_ALTERNATES = { 'en-IN': BMI_EN, 'hi-IN': BMI_HI, 'x-default': B
 export const TOOL_ALIASES = {
   '/tools/compress-pdf-online-free': '/pdf-processing/compress-pdf',
   '/tools/bmi-calculator-india': BMI_EN,
+  '/developer-tools/json': '/developer-tools/json-formatter',
+  '/games/typing-test': '/typing-speed-test',
+  '/typing-test': '/typing-speed-test',
+  '/typing-tutor': '/typing-master',
 };
 
 export const BMI_HINDI = {

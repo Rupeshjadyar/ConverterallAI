@@ -227,8 +227,12 @@ export function generateTestTokens(options: {
   } = options;
 
   if (difficulty === 'code') {
-    const snippet = CODE_SNIPPETS[Math.floor(Math.random() * CODE_SNIPPETS.length)];
-    return snippet.split(/\s+/).filter(Boolean);
+    const tokens: string[] = [];
+    while (tokens.length < count) {
+      const snippet = CODE_SNIPPETS[Math.floor(Math.random() * CODE_SNIPPETS.length)];
+      tokens.push(...snippet.trim().split(/\s+/));
+    }
+    return tokens.slice(0, count);
   }
 
   let source: string[] = EASY_ENGLISH_WORDS;

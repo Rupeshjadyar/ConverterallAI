@@ -1,17 +1,10 @@
-import { Component, OnInit, OnDestroy, signal, computed, ElementRef, ViewChild, inject, PLATFORM_ID, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, ElementRef, ViewChild, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { SeoService } from '../../services/seo.service';
-import { ToolRegistryService } from '../../services/tool-registry.service';
+import { insertedText, wordsPerMinute } from '../typing-input';
 import {
   EASY_ENGLISH_WORDS,
-  MEDIUM_ENGLISH_WORDS,
-  HARD_ENGLISH_WORDS,
-  HINGLISH_WORDS,
-  CODE_SNIPPETS,
   QUOTES,
-  QuoteItem,
   generateTestTokens
 } from './typing-speed-test.data';
 
@@ -39,18 +32,17 @@ export interface TimelinePoint {
 @Component({
   selector: 'app-typing-speed-test',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './typing-speed-test.component.html',
   styleUrls: ['./typing-speed-test.component.css']
 })
 export class TypingSpeedTestComponent implements OnInit, OnDestroy {
   @ViewChild('hiddenInput') hiddenInputRef!: ElementRef<HTMLInputElement>;
   @ViewChild('typingContainer') typingContainerRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('resultsHeading') private resultsHeading?: ElementRef<HTMLElement>;
   @ViewChild('chartCanvas') chartCanvasRef?: ElementRef<HTMLCanvasElement>;
 
   private platformId = inject(PLATFORM_ID);
-  private seoService = inject(SeoService);
-  private toolRegistry = inject(ToolRegistryService);
 
   isBrowser = isPlatformBrowser(this.platformId);
 
@@ -63,7 +55,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
   language = signal<'english' | 'hinglish'>('english');
   punctuation = signal<boolean>(false);
   numbers = signal<boolean>(false);
-  soundEnabled = signal<boolean>(true);
+  soundEnabled = signal<boolean>(false);
   soundType = signal<'mechanical' | 'typewriter' | 'softbeep'>('mechanical');
 
   // Active Test State
@@ -81,307 +73,216 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
   netWpm = signal<number>(0);
   rawWpm = signal<number>(0);
   accuracy = signal<number>(100);
-  consistency = signal<number>(100);
+  consistency = signal<number | null>(null);
+  consistencyLabel = computed(() => {
+    const value = this.consistency();
+    return value === null ? '—' : `${value}%`;
+  });
   totalKeystrokes = signal<number>(0);
   correctKeystrokes = signal<number>(0);
   incorrectKeystrokes = signal<number>(0);
   extraCharsCount = signal<number>(0);
-  missedCharsCount = signal<number>(0);
 
   // Results & History
   timeline: TimelinePoint[] = [];
   mistypedWords = signal<string[]>([]);
   mistypedKeys = signal<Record<string, number>>({});
+  frequentErrors = computed(() => Object.entries(this.mistypedKeys())
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 8));
   personalBest = signal<number>(0);
   isNewPersonalBest = signal<boolean>(false);
-  copiedNotification = signal<boolean>(false);
+  copyFeedback = signal('');
+  customError = signal('');
+  visibleWords = computed(() => {
+    const index = this.currentWordIndex();
+    return this.words().slice(Math.max(0, index - 12), index + 55);
+  });
+  activeWord = computed(() => this.words()[this.currentWordIndex()]?.original ?? '');
 
   // Audio Context (Synthesizer)
   private audioCtx: any = null;
-  private timerInterval: any = null;
-
-  // Active FAQ accordion state
-  activeFaqIndex = signal<number | null>(0);
-
-  // FAQ items for on-page display and SEO
-  faqs = [
-    {
-      q: 'How is Words Per Minute (WPM) calculated accurately?',
-      a: 'In standard typing metrics, one word equals exactly 5 keystrokes (including letters, punctuation, and spaces). Gross WPM is calculated as (Total Characters Typed / 5) divided by time in minutes. Net WPM subtracts uncorrected errors: Net WPM = ((Correct Characters / 5) / Elapsed Minutes). Net WPM is the true metric for typing competence.'
-    },
-    {
-      q: 'What is considered a good typing speed on a 1-minute test?',
-      a: 'The worldwide average typing speed is 38 to 41 WPM. A speed of 50-65 WPM is considered good for office productivity. Software engineers and writers commonly hit 70-85 WPM. Speeds above 90 WPM place you in the top 5% of typists globally.'
-    },
-    {
-      q: 'Should I prioritize typing accuracy or typing speed first?',
-      a: 'Always prioritize accuracy above 95% first! Typing fast with high errors forces frequent backspacing, which cripples overall velocity. Once finger muscle memory becomes instinctual and errors drop, speed naturally and effortlessly increases.'
-    },
-    {
-      q: 'Can I take typing speed tests in Hinglish or Code mode?',
-      a: 'Yes! ConverterAllAI features dedicated Roman Hindi (Hinglish) word banks (300+ conversational words) as well as a JavaScript/CSS Code snippet mode designed specifically for programmers.'
-    },
-    {
-      q: 'How do I generate and download a certified typing scorecard?',
-      a: 'After completing any typing test, click the "Download Certificate" button. The tool automatically draws a high-resolution, watermark-free PNG certificate with your Net WPM, accuracy, time duration, and verified skill tier.'
-    }
-  ];
+  private timerInterval?: ReturnType<typeof setInterval>;
+  private startedAt = 0;
+  private completedCorrect = 0;
+  private completedMistakes = 0;
+  private completedExtra = 0;
+  private testTokens: string[] = [];
+  private resultFrame?: number;
 
   ngOnInit(): void {
-    if (this.isBrowser) {
-      // Apply SEO
-      const tool = this.toolRegistry.getToolBySlug('/typing-speed-test');
-      if (tool) {
-        this.seoService.applyToolSeo(tool);
-      } else {
-        this.seoService.update({
-          title: 'Typing Speed Test Online Free - 1 Minute WPM Test | ConverterAllAI',
-          description: 'Free online typing speed test with real-time Words Per Minute (WPM), accuracy, and consistency tracking. Take 1-minute or 3-minute tests with certificate download.',
-          keywords: 'typing speed test, typing test online free, 1 minute typing test, wpm test, words per minute test, keyboard speed test',
-          canonical: 'https://converterallai.com/typing-speed-test'
-        });
-      }
-
-      this.loadPersonalBest();
-      this.initNewTest();
-    }
+    // Keep the initial passage identical in the prerender and the hydrated editor.
+    this.resetTest(EASY_ENGLISH_WORDS.slice(0, 120));
+    if (this.isBrowser) this.loadPersonalBest();
   }
 
   ngOnDestroy(): void {
     this.stopTimer();
+    if (this.resultFrame !== undefined) cancelAnimationFrame(this.resultFrame);
     if (this.audioCtx) {
       try {
-        this.audioCtx.close();
+        void this.audioCtx.close().catch(() => {});
       } catch (e) {}
     }
   }
 
   // ==================== TEST INITIALIZATION ====================
 
-  initNewTest(): void {
+  initNewTest(focus = false): void {
+    this.customError.set('');
+    let tokens: string[];
+    this.currentQuoteAuthor.set('');
+    if (this.mode() === 'custom') {
+      const source = this.customText().trim();
+      if (!source) {
+        this.customError.set('Enter a passage before starting custom practice.');
+        return;
+      }
+      tokens = source.split(/\s+/);
+    } else if (this.mode() === 'quote') {
+      const quotes = QUOTES.filter((quote) => quote.category === this.quoteLength());
+      const selected = quotes[Math.floor(Math.random() * quotes.length)] ?? QUOTES[0];
+      this.currentQuoteAuthor.set(selected.author);
+      tokens = selected.text.split(/\s+/);
+    } else {
+      tokens = this.generateWords(this.mode() === 'words' ? this.wordsOption() : 120);
+    }
+    this.resetTest(tokens);
+    if (focus) this.focusInput();
+  }
+
+  private generateWords(count: number): string[] {
+    return generateTestTokens({
+      count,
+      difficulty: this.difficulty(),
+      language: this.language(),
+      punctuation: this.punctuation(),
+      numbers: this.numbers(),
+    });
+  }
+
+  private toWord(original: string, isCurrent = false): WordData {
+    return {
+      original,
+      typed: '',
+      isCurrent,
+      isCompleted: false,
+      isCorrect: false,
+      chars: original.split('').map((char) => ({ char, state: 'untyped' })),
+    };
+  }
+
+  private resetTest(tokens: string[]): void {
     this.stopTimer();
+    if (this.resultFrame !== undefined) cancelAnimationFrame(this.resultFrame);
+    this.testTokens = tokens;
     this.testStatus.set('idle');
     this.elapsedSeconds.set(0);
+    this.timeLeft.set(this.mode() === 'time' ? this.timeOption() : 0);
     this.netWpm.set(0);
     this.rawWpm.set(0);
     this.accuracy.set(100);
-    this.consistency.set(100);
+    this.consistency.set(null);
     this.totalKeystrokes.set(0);
     this.correctKeystrokes.set(0);
     this.incorrectKeystrokes.set(0);
     this.extraCharsCount.set(0);
-    this.missedCharsCount.set(0);
     this.currentWordIndex.set(0);
-    this.currentInput.set('');
+    this.setInput('');
+    this.words.set(tokens.map((word, index) => this.toWord(word, index === 0)));
     this.timeline = [];
+    this.completedCorrect = 0;
+    this.completedMistakes = 0;
+    this.completedExtra = 0;
     this.mistypedWords.set([]);
     this.mistypedKeys.set({});
     this.isNewPersonalBest.set(false);
-
-    // Set time
-    if (this.mode() === 'time') {
-      this.timeLeft.set(this.timeOption());
-    } else {
-      this.timeLeft.set(0);
-    }
-
-    let rawTokens: string[] = [];
-
-    if (this.mode() === 'custom') {
-      const text = this.customText().trim() || 'Type what you want to practice and test your speed on your own text.';
-      rawTokens = text.split(/\s+/).filter(Boolean);
-    } else if (this.mode() === 'quote') {
-      const category = this.quoteLength();
-      const filtered = QUOTES.filter(q => q.category === category);
-      const chosen = filtered[Math.floor(Math.random() * filtered.length)] || QUOTES[0];
-      this.currentQuoteAuthor.set(chosen.author);
-      rawTokens = chosen.text.split(/\s+/).filter(Boolean);
-    } else if (this.mode() === 'words') {
-      rawTokens = generateTestTokens({
-        count: this.wordsOption(),
-        difficulty: this.difficulty(),
-        language: this.language(),
-        punctuation: this.punctuation(),
-        numbers: this.numbers()
-      });
-    } else {
-      // Time or Zen mode: generate healthy batch of 120 words
-      rawTokens = generateTestTokens({
-        count: 120,
-        difficulty: this.difficulty(),
-        language: this.language(),
-        punctuation: this.punctuation(),
-        numbers: this.numbers()
-      });
-    }
-
-    const wordDataList: WordData[] = rawTokens.map((w, idx) => ({
-      original: w,
-      typed: '',
-      isCurrent: idx === 0,
-      isCompleted: false,
-      isCorrect: false,
-      chars: w.split('').map(c => ({ char: c, state: 'untyped' }))
-    }));
-
-    this.words.set(wordDataList);
-
-    // Focus input
-    if (this.isBrowser) {
-      setTimeout(() => this.focusInput(), 100);
-    }
+    this.copyFeedback.set('');
+    if (this.typingContainerRef) this.typingContainerRef.nativeElement.scrollTop = 0;
   }
 
   repeatSameTest(): void {
-    const existingWords = this.words();
-    this.stopTimer();
-    this.testStatus.set('idle');
-    this.elapsedSeconds.set(0);
-    this.netWpm.set(0);
-    this.rawWpm.set(0);
-    this.accuracy.set(100);
-    this.consistency.set(100);
-    this.totalKeystrokes.set(0);
-    this.correctKeystrokes.set(0);
-    this.incorrectKeystrokes.set(0);
-    this.extraCharsCount.set(0);
-    this.missedCharsCount.set(0);
-    this.currentWordIndex.set(0);
-    this.currentInput.set('');
-    this.timeline = [];
-    this.mistypedWords.set([]);
-    this.mistypedKeys.set({});
-    this.isNewPersonalBest.set(false);
-
-    if (this.mode() === 'time') {
-      this.timeLeft.set(this.timeOption());
-    } else {
-      this.timeLeft.set(0);
-    }
-
-    const resetWords: WordData[] = existingWords.map((w, idx) => ({
-      original: w.original,
-      typed: '',
-      isCurrent: idx === 0,
-      isCompleted: false,
-      isCorrect: false,
-      chars: w.original.split('').map(c => ({ char: c, state: 'untyped' }))
-    }));
-
-    this.words.set(resetWords);
-    if (this.isBrowser) {
-      setTimeout(() => this.focusInput(), 100);
-    }
+    this.resetTest(this.testTokens);
+    this.focusInput();
   }
 
-  // ==================== KEYBOARD HANDLING ====================
+  finishZen(): void {
+    if (this.mode() === 'zen') this.finishTest();
+  }
 
   focusInput(): void {
-    if (this.hiddenInputRef && this.hiddenInputRef.nativeElement) {
-      this.hiddenInputRef.nativeElement.focus();
-      this.isInputFocused.set(true);
-    }
+    this.hiddenInputRef?.nativeElement.focus({ preventScroll: true });
   }
 
-  onInputBlur(): void {
-    this.isInputFocused.set(false);
-  }
-
-  onInputFocus(): void {
-    this.isInputFocused.set(true);
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  handleGlobalKeydown(e: KeyboardEvent): void {
-    // Tab + Enter or Esc to quickly restart
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      this.initNewTest();
-      return;
-    }
-    if (e.key === 'Tab') {
-      // prevent tab away during typing
-      if (this.testStatus() === 'running') {
-        e.preventDefault();
-      }
-    }
-
-    // Auto-focus input if user starts typing outside
-    if (this.testStatus() !== 'finished' && !this.isInputFocused()) {
-      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        this.focusInput();
-      }
-    }
-  }
-
-  onHiddenInputKeydown(e: KeyboardEvent): void {
-    if (this.testStatus() === 'finished') return;
-
-    // Start timer on first keystroke
-    if (this.testStatus() === 'idle') {
-      if (e.key !== 'Tab' && e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt') {
-        this.startTest();
-      }
-    }
-
-    // Space advances word
-    if (e.key === ' ') {
-      e.preventDefault();
-      if (this.currentInput().length > 0) {
-        this.commitCurrentWord();
-        this.playSound(false);
-      }
-      return;
-    }
-
-    // Backspace handling
-    if (e.key === 'Backspace') {
-      if (e.ctrlKey || e.altKey) {
-        // Delete entire word
-        e.preventDefault();
-        this.currentInput.set('');
-        this.updateCurrentWordVisuals('');
-        this.playSound(false);
-        return;
-      }
-      // If current input is empty, don't jump back (standard monkeytype default)
-      this.playSound(false);
+  onHiddenInputKeydown(event: KeyboardEvent): void {
+    if (event.isComposing) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.initNewTest(true);
+    } else if (event.key === 'Enter' && this.currentInput() && this.isLastFiniteWord()) {
+      event.preventDefault();
+      if (!this.syncClock()) this.commitCurrentWord(false);
     }
   }
 
   onHiddenInputChange(event: Event): void {
-    if (this.testStatus() === 'finished') return;
-
-    const val = (event.target as HTMLInputElement).value;
-    this.currentInput.set(val);
-
-    // Update keystrokes & sounds
-    this.totalKeystrokes.update(k => k + 1);
-
-    const wordList = this.words();
-    const currIdx = this.currentWordIndex();
-    if (currIdx < wordList.length) {
-      const targetWord = wordList[currIdx].original;
-      const lastTypedChar = val.slice(-1);
-      const expectedChar = targetWord[val.length - 1];
-
-      const isError = expectedChar !== undefined && lastTypedChar !== expectedChar;
-      if (isError) {
-        this.incorrectKeystrokes.update(k => k + 1);
-        if (expectedChar) {
-          const keyStats = { ...this.mistypedKeys() };
-          keyStats[expectedChar] = (keyStats[expectedChar] || 0) + 1;
-          this.mistypedKeys.set(keyStats);
-        }
-      } else {
-        this.correctKeystrokes.update(k => k + 1);
+    if ((event as InputEvent).isComposing || this.testStatus() === 'finished') return;
+    const field = event.target as HTMLInputElement;
+    const [value] = field.value.split(/\s+/);
+    const hasSpace = value.length < field.value.length;
+    const previous = this.currentInput();
+    if (this.testStatus() === 'idle') {
+      if (!value) {
+        this.setInput('');
+        return;
       }
-
-      this.playSound(isError);
-      this.updateCurrentWordVisuals(val);
+      this.startTest();
+    }
+    if (this.syncClock()) {
+      this.setInput(previous);
+      return;
     }
 
-    this.calculateLiveMetrics();
+    const word = this.words()[this.currentWordIndex()];
+    const { text, start } = insertedText(previous, value);
+    const keys = { ...this.mistypedKeys() };
+    let errors = 0;
+    for (let index = 0; index < text.length; index++) {
+      const expected = word.original[start + index];
+      if (text[index] !== expected) {
+        errors++;
+        if (expected) keys[expected] = (keys[expected] ?? 0) + 1;
+      }
+    }
+    this.totalKeystrokes.update((count) => count + text.length);
+    this.correctKeystrokes.update((count) => count + text.length - errors);
+    if (errors) this.mistypedKeys.set(keys);
+    if (text.length) this.playSound(errors > 0);
+    this.setInput(value);
+    this.updateCurrentWordVisuals(value);
+
+    if (hasSpace && value) {
+      if (!this.isLastFiniteWord()) {
+        this.totalKeystrokes.update((count) => count + 1);
+        this.correctKeystrokes.update((count) => count + 1);
+      }
+      this.commitCurrentWord(!this.isLastFiniteWord());
+    } else if (value === word.original && this.isLastFiniteWord()) {
+      this.commitCurrentWord(false);
+    } else {
+      this.calculateLiveMetrics();
+    }
+  }
+
+  private setInput(value: string): void {
+    this.currentInput.set(value);
+    const field = this.hiddenInputRef?.nativeElement;
+    if (field && field.value !== value) field.value = value;
+  }
+
+  private isLastFiniteWord(): boolean {
+    return this.mode() !== 'time' && this.mode() !== 'zen' &&
+      this.currentWordIndex() === this.words().length - 1;
   }
 
   private updateCurrentWordVisuals(val: string): void {
@@ -420,140 +321,117 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     };
 
     this.words.set(list);
-    this.scrollToActiveWord();
   }
 
-  private commitCurrentWord(): void {
-    const list = [...this.words()];
-    const currIdx = this.currentWordIndex();
-    if (currIdx >= list.length) return;
-
-    const currentWord = list[currIdx];
-    const isExactMatch = currentWord.typed === currentWord.original;
-
-    if (!isExactMatch) {
-      const mistyped = [...this.mistypedWords()];
-      if (!mistyped.includes(currentWord.original)) {
-        mistyped.push(currentWord.original);
-        this.mistypedWords.set(mistyped);
-      }
+  private commitCurrentWord(separator: boolean): void {
+    const list = this.words().slice();
+    const index = this.currentWordIndex();
+    const word = list[index];
+    const exact = word.typed === word.original;
+    const { correct, mistakes, extra } = this.countWord(word);
+    this.completedCorrect += correct + (separator && exact ? 1 : 0);
+    this.completedMistakes += mistakes + (separator && !exact ? 1 : 0);
+    this.completedExtra += extra;
+    if (!exact && !this.mistypedWords().includes(word.original)) {
+      this.mistypedWords.update((words) => [...words, word.original]);
     }
 
-    list[currIdx] = {
-      ...currentWord,
-      isCompleted: true,
-      isCurrent: false,
-      isCorrect: isExactMatch
-    };
-
-    const nextIdx = currIdx + 1;
-    this.currentWordIndex.set(nextIdx);
-    this.currentInput.set('');
-    if (this.hiddenInputRef && this.hiddenInputRef.nativeElement) {
-      this.hiddenInputRef.nativeElement.value = '';
+    list[index] = { ...word, isCompleted: true, isCurrent: false, isCorrect: exact };
+    let nextIndex = index + 1;
+    if (this.mode() === 'zen' && nextIndex >= 180) {
+      list.splice(0, nextIndex - 12);
+      nextIndex = 12;
+    }
+    this.currentWordIndex.set(nextIndex);
+    this.setInput('');
+    if ((this.mode() === 'time' || this.mode() === 'zen') && list.length - nextIndex < 20) {
+      list.push(...this.generateWords(60).map((token) => this.toWord(token)));
     }
 
-    if (nextIdx < list.length) {
-      list[nextIdx] = {
-        ...list[nextIdx],
-        isCurrent: true
-      };
+    if (nextIndex < list.length) {
+      list[nextIndex] = { ...list[nextIndex], isCurrent: true };
       this.words.set(list);
-      this.scrollToActiveWord();
+      this.calculateLiveMetrics();
+      requestAnimationFrame(() => this.scrollToActiveWord());
     } else {
-      // Completed all words
       this.words.set(list);
       this.finishTest();
     }
   }
 
   private scrollToActiveWord(): void {
-    if (!this.isBrowser || !this.typingContainerRef) return;
-    const container = this.typingContainerRef.nativeElement;
-    const activeEl = container.querySelector('.word-wrapper.active') as HTMLElement;
-    if (activeEl) {
-      const containerTop = container.offsetTop;
-      const elementTop = activeEl.offsetTop;
-      const relativeTop = elementTop - containerTop;
-      if (relativeTop > 65) {
-        container.scrollTop = relativeTop - 35;
-      } else if (relativeTop < 20) {
-        container.scrollTop = 0;
-      }
+    const stage = this.typingContainerRef?.nativeElement;
+    const active = stage?.querySelector<HTMLElement>('.word-wrapper.active');
+    if (!stage || !active) return;
+    const bounds = stage.getBoundingClientRect();
+    const word = active.getBoundingClientRect();
+    if (word.bottom > bounds.bottom || word.top < bounds.top) {
+      stage.scrollTop += word.top - bounds.top - 12;
     }
   }
 
-  // ==================== TIMER & METRICS ====================
-
-  startTest(): void {
+  private startTest(): void {
+    this.startedAt = performance.now();
     this.testStatus.set('running');
-    this.elapsedSeconds.set(0);
-    this.timeline = [];
-
     this.timerInterval = setInterval(() => {
-      this.elapsedSeconds.update(s => s + 1);
-
-      if (this.mode() === 'time') {
-        this.timeLeft.update(t => {
-          if (t <= 1) {
-            this.finishTest();
-            return 0;
-          }
-          return t - 1;
-        });
-      }
-
+      if (this.syncClock()) return;
       this.calculateLiveMetrics();
       this.recordTimelinePoint();
-    }, 1000);
+    }, 200);
   }
 
-  stopTimer(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-      this.timerInterval = null;
+  private elapsed(): number {
+    const elapsed = Math.max(0, (performance.now() - this.startedAt) / 1000);
+    return this.mode() === 'time' ? Math.min(elapsed, this.timeOption()) : elapsed;
+  }
+
+  private syncClock(): boolean {
+    const elapsed = this.elapsed();
+    this.elapsedSeconds.set(Math.floor(elapsed));
+    if (this.mode() === 'time') {
+      this.timeLeft.set(Math.ceil(this.timeOption() - elapsed));
+      if (elapsed >= this.timeOption()) {
+        this.finishTest();
+        return true;
+      }
     }
+    return false;
+  }
+
+  private stopTimer(): void {
+    clearInterval(this.timerInterval);
+    this.timerInterval = undefined;
+  }
+
+  private countWord(word: WordData | undefined): { correct: number; mistakes: number; extra: number } {
+    let correct = 0;
+    let mistakes = 0;
+    let extra = 0;
+    for (const char of word?.chars ?? []) {
+      if (char.state === 'correct') correct++;
+      else if (char.state === 'wrong') mistakes++;
+      else if (char.state === 'extra') extra++;
+    }
+    return { correct, mistakes, extra };
   }
 
   private calculateLiveMetrics(): void {
-    const elapsedSec = Math.max(1, this.elapsedSeconds());
-    const minutes = elapsedSec / 60;
-
-    let correctChars = 0;
-    let wrongChars = 0;
-    let extraChars = 0;
-
-    for (const w of this.words()) {
-      if (w.isCompleted || w.isCurrent) {
-        for (const c of w.chars) {
-          if (c.state === 'correct') correctChars++;
-          else if (c.state === 'wrong') wrongChars++;
-          else if (c.state === 'extra') extraChars++;
-        }
-        // Count trailing space as correct character for completed correct words
-        if (w.isCompleted && w.isCorrect) {
-          correctChars += 1;
-        }
-      }
-    }
-
-    const totalCharsTyped = correctChars + wrongChars + extraChars;
-    const grossWpmVal = Math.round((totalCharsTyped / 5) / minutes);
-    const netWpmVal = Math.max(0, Math.round((correctChars / 5) / minutes));
-
-    const totalKeys = this.totalKeystrokes();
-    const correctKeys = this.correctKeystrokes();
-    const accVal = totalKeys > 0 ? Math.round((correctKeys / totalKeys) * 100) : 100;
-
-    this.rawWpm.set(grossWpmVal);
-    this.netWpm.set(netWpmVal);
-    this.accuracy.set(Math.min(100, Math.max(0, accVal)));
-    this.extraCharsCount.set(extraChars);
-    this.incorrectKeystrokes.set(wrongChars);
+    const elapsed = this.elapsed();
+    const active = this.countWord(this.words()[this.currentWordIndex()]);
+    const correct = this.completedCorrect + active.correct;
+    const mistakes = this.completedMistakes + active.mistakes;
+    const extra = this.completedExtra + active.extra;
+    this.rawWpm.set(wordsPerMinute(correct + mistakes + extra, elapsed));
+    this.netWpm.set(wordsPerMinute(correct, elapsed));
+    this.accuracy.set(this.totalKeystrokes() ? Math.round(100 * this.correctKeystrokes() / this.totalKeystrokes()) : 100);
+    this.extraCharsCount.set(extra);
+    this.incorrectKeystrokes.set(mistakes + extra);
   }
 
   private recordTimelinePoint(): void {
     const sec = this.elapsedSeconds();
+    if (!sec || this.timeline.at(-1)?.second === sec) return;
+    if (this.timeline.length >= 600) this.timeline.shift();
     this.timeline.push({
       second: sec,
       wpm: this.netWpm(),
@@ -562,21 +440,24 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     });
   }
 
-  private computeConsistency(): number {
-    if (this.timeline.length < 3) return 96;
+  private computeConsistency(): number | null {
+    if (this.timeline.length < 3) return null;
     const wpms = this.timeline.map(t => t.wpm);
     const mean = wpms.reduce((a, b) => a + b, 0) / wpms.length;
-    if (mean === 0) return 100;
+    if (mean === 0) return null;
     const variance = wpms.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / wpms.length;
     const stdDev = Math.sqrt(variance);
     const cv = (stdDev / mean) * 100;
     return Math.max(10, Math.min(100, Math.round(100 - cv)));
   }
 
-  finishTest(): void {
+  private finishTest(): void {
+    if (this.testStatus() !== 'running') return;
     this.stopTimer();
-    this.testStatus.set('finished');
+    this.elapsedSeconds.set(Math.floor(this.elapsed()));
     this.calculateLiveMetrics();
+    this.recordTimelinePoint();
+    this.testStatus.set('finished');
     this.consistency.set(this.computeConsistency());
 
     // Check personal best
@@ -589,9 +470,11 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     }
 
     // Render Speed Chart on canvas
-    setTimeout(() => {
+    this.resultFrame = requestAnimationFrame(() => {
+      this.resultFrame = undefined;
       this.renderSpeedChart();
-    }, 150);
+      this.resultsHeading?.nativeElement.focus({ preventScroll: true });
+    });
   }
 
   // ==================== GRAPH & CERTIFICATE ====================
@@ -617,7 +500,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
       ctx.fillStyle = '#64748b';
       ctx.font = '14px system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('Typing run completed in under 2 seconds. No trajectory chart available.', width / 2, height / 2);
+      ctx.fillText('Too few samples to draw a speed chart.', width / 2, height / 2);
       return;
     }
 
@@ -627,9 +510,10 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
 
     const maxWpm = Math.max(...data.map(d => d.rawWpm || d.wpm), 30);
     const maxY = Math.ceil(maxWpm / 15) * 15;
-    const totalSecs = Math.max(data.length, 1);
+    const firstSecond = data[0].second;
+    const lastSecond = data[data.length - 1].second;
 
-    const getX = (sec: number) => pad.left + ((sec - 1) / Math.max(totalSecs - 1, 1)) * chartW;
+    const getX = (sec: number) => pad.left + ((sec - firstSecond) / Math.max(lastSecond - firstSecond, 1)) * chartW;
     const getY = (wpm: number) => pad.top + chartH - (wpm / maxY) * chartH;
 
     // Grid lines & labels
@@ -752,7 +636,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
 
     ctx.fillStyle = '#94a3b8';
     ctx.font = '14px system-ui, sans-serif';
-    ctx.fillText('Official Typing Speed Test Certificate', 50, 90);
+    ctx.fillText('Typing Speed Test Scorecard', 50, 90);
 
     // Date & Mode stamp
     ctx.fillStyle = '#64748b';
@@ -762,7 +646,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
       year: 'numeric', month: 'short', day: 'numeric'
     });
     ctx.fillText(`Date: ${dateStr} | Mode: ${this.mode().toUpperCase()}`, width - 50, 65);
-    ctx.fillText(`Verified In-Browser Session`, width - 50, 88);
+    ctx.fillText(`Browser practice result`, width - 50, 88);
 
     // Central Metric Cards
     // 1. WPM Box
@@ -791,7 +675,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     ctx.fillRect(610, 130, 240, 160);
     ctx.fillStyle = '#f472b6';
     ctx.font = 'bold 64px ui-monospace, Consolas, monospace';
-    ctx.fillText(`${this.consistency()}%`, 730, 220);
+    ctx.fillText(this.consistencyLabel(), 730, 220);
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'bold 15px system-ui, sans-serif';
     ctx.fillText('CONSISTENCY', 730, 260);
@@ -802,7 +686,7 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     ctx.fillStyle = '#f8fafc';
     ctx.font = 'bold 20px system-ui, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`Tier Rank: ${this.getSkillTier().title}`, 75, 362);
+    ctx.fillText(`Elapsed: ${this.elapsedSeconds()}s`, 75, 362);
 
     ctx.fillStyle = '#38bdf8';
     ctx.font = '14px ui-monospace, Consolas, monospace';
@@ -827,15 +711,18 @@ export class TypingSpeedTestComponent implements OnInit, OnDestroy {
     const text = `⌨️ ConverterAllAI Typing Speed Test
 🚀 Speed: ${this.netWpm()} Net WPM (Raw: ${this.rawWpm()} WPM)
 🎯 Accuracy: ${this.accuracy()}%
-📊 Consistency: ${this.consistency()}%
-🏆 Rank: ${this.getSkillTier().title}
+📊 Consistency: ${this.consistencyLabel()}
 ⏱️ Mode: ${this.mode().toUpperCase()}
 Test your speed free at: https://converterallai.com/typing-speed-test`;
 
-    navigator.clipboard.writeText(text).then(() => {
-      this.copiedNotification.set(true);
-      setTimeout(() => this.copiedNotification.set(false), 2500);
-    });
+    if (!navigator.clipboard) {
+      this.copyFeedback.set('Clipboard unavailable. You can download the scorecard instead.');
+      return;
+    }
+    void navigator.clipboard.writeText(text).then(
+      () => this.copyFeedback.set('Result copied.'),
+      () => this.copyFeedback.set('Clipboard unavailable. You can download the scorecard instead.'),
+    );
   }
 
   // ==================== AUDIO SYNTHESIZER ====================
@@ -848,7 +735,7 @@ Test your speed free at: https://converterallai.com/typing-speed-test`;
       }
     }
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+      void this.audioCtx.resume().catch(() => {});
     }
     return this.audioCtx;
   }
@@ -955,22 +842,12 @@ Test your speed free at: https://converterallai.com/typing-speed-test`;
     } catch (e) {}
   }
 
-  getSkillTier(): { title: string; badge: string; desc: string; icon: string } {
-    const wpm = this.netWpm();
-    if (wpm >= 100) return { title: 'Typing Legend', badge: 'LEGEND', desc: 'Top 1% elite keyboard wizard!', icon: '👑' };
-    if (wpm >= 80) return { title: 'Pro Typist', badge: 'PRO', desc: 'Superior speed and dexterity!', icon: '🚀' };
-    if (wpm >= 60) return { title: 'Speed Demon', badge: 'ADVANCED', desc: 'High-speed professional typist.', icon: '⚡' };
-    if (wpm >= 40) return { title: 'Fast Typist', badge: 'INTERMEDIATE', desc: 'Solid above-average proficiency.', icon: '🏃' };
-    if (wpm >= 25) return { title: 'Casual Typist', badge: 'CASUAL', desc: 'Steady conversational typing pace.', icon: '🚶' };
-    return { title: 'Beginner', badge: 'NOVICE', desc: 'Great start! Regular practice will elevate your speed.', icon: '🐢' };
-  }
-
-  toggleFaq(index: number): void {
-    this.activeFaqIndex.set(this.activeFaqIndex() === index ? null : index);
-  }
-
   setMode(m: 'time' | 'words' | 'quote' | 'custom' | 'zen'): void {
     this.mode.set(m);
+    if (m === 'custom' && !this.customText().trim()) {
+      this.resetTest([]);
+      return;
+    }
     this.initNewTest();
   }
 
@@ -991,6 +868,7 @@ Test your speed free at: https://converterallai.com/typing-speed-test`;
 
   setLanguage(l: 'english' | 'hinglish'): void {
     this.language.set(l);
+    if (this.difficulty() === 'code') this.difficulty.set('easy');
     this.initNewTest();
   }
 

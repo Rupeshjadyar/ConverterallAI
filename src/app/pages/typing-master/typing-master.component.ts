@@ -1,7 +1,7 @@
-import { Component, signal, computed, ElementRef, ViewChild, OnInit, OnDestroy, inject, PLATFORM_ID, HostListener } from '@angular/core';
+import { Component, signal, computed, ElementRef, ViewChild, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { insertedText, wordsPerMinute } from '../typing-input';
 
 interface SubLesson {
   id: string;
@@ -32,13 +32,16 @@ interface KeyInfo {
 @Component({
   selector: 'app-typing-master',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './typing-master.component.html',
   styleUrls: ['./typing-master.component.css']
 })
 export class TypingMasterComponent implements OnInit, OnDestroy {
   @ViewChild('typingInput') typingInputRef!: ElementRef<HTMLInputElement>;
-  @ViewChild('textDisplayArea') textDisplayAreaRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('drillInput') private drillInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('phaseTitle') private phaseTitle?: ElementRef<HTMLHeadingElement>;
+  @ViewChild('activeLesson') private activeLesson?: ElementRef<HTMLHeadingElement>;
+  @ViewChild('lessonResult') private lessonResult?: ElementRef<HTMLHeadingElement>;
 
   private platformId = inject(PLATFORM_ID);
   isBrowser = isPlatformBrowser(this.platformId);
@@ -49,10 +52,12 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
   currentSubLesson: SubLesson | null = null;
   
   // Drill state
-  drillIndex = 0;
+  drillIndex = signal(0);
+  drillFeedback = signal('');
+  completedLessons = signal<string[]>([]);
   drillTimeLeft = signal<number>(300);
-  progressBars: number[] = [20, 30, 40, 50, 60, 70, 80, 90, 100];
-  private drillTimer: any = null;
+  private drillTimer?: ReturnType<typeof setInterval>;
+  private focusFrame?: number;
 
   // Finger data
   leftFingers = [
@@ -272,30 +277,27 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
   ];
 
   // Live Metrics for typing phase
-  targetText = '';
   targetChars: string[] = [];
   userInput = '';
   
   liveWPM = signal<number>(0);
   finalWPM = signal<number>(0);
   accuracy = signal<number>(100);
-  rawCPM = signal<number>(0);
   errorCount = signal<number>(0);
   streak = signal<number>(0);
   bestStreak = signal<number>(0);
-  timeLeft = signal<number>(60);
   elapsedSeconds = signal<number>(0);
   
   // Status Flags for typing phase
   isStarted = false;
   isFinished = signal<boolean>(false);
   startTime = 0;
-  private timerInterval: any = null;
-  mistakeMap: { [key: string]: number } = {};
+  private timerInterval?: ReturnType<typeof setInterval>;
+  private typingAttempts = 0;
 
   // Audio Context for synthetic mechanical keyboard clicks
   private audioCtx: AudioContext | null = null;
-  soundMode = signal<'clicky' | 'thock' | 'typewriter' | 'mute'>('clicky');
+  soundMode = signal<'clicky' | 'thock' | 'typewriter' | 'mute'>('mute');
 
   // Virtual Keyboard Data Structure (QWERTY layout)
   keyboardRows: KeyInfo[][] = [
@@ -376,15 +378,25 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
 
   activePhysicalKey = signal<string>('');
 
-  ngOnInit() {
-    this.initAudioContext();
+  ngOnInit(): void {
+    if (!this.isBrowser) return;
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem('converterallai_typing_lessons') ?? '[]');
+      if (Array.isArray(saved)) {
+        const known = new Set(this.mainLessons.flatMap((lesson) => lesson.subLessons.map((sub) => sub.id)));
+        this.completedLessons.set([...new Set(saved.filter((id) => known.has(id)))]);
+      }
+    } catch {
+      // Course practice also works when browser storage is unavailable.
+    }
   }
 
   ngOnDestroy() {
     this.stopTimer();
     this.stopDrillTimer();
+    if (this.focusFrame !== undefined) cancelAnimationFrame(this.focusFrame);
     if (this.audioCtx) {
-      try { this.audioCtx.close(); } catch (_) {}
+      void this.audioCtx.close().catch(() => {});
     }
   }
 
@@ -399,9 +411,11 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
   }
 
   playKeySound(isError = false) {
-    if (!this.isBrowser || this.soundMode() === 'mute' || !this.audioCtx) return;
+    if (!this.isBrowser || this.soundMode() === 'mute') return;
+    if (!this.audioCtx) this.initAudioContext();
+    if (!this.audioCtx) return;
     if (this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+      void this.audioCtx.resume().catch(() => {});
     }
     const ctx = this.audioCtx;
     const now = ctx.currentTime;
@@ -444,23 +458,26 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     return this.mainLessons.find(l => l.id === this.currentMainLesson()) || this.mainLessons[0];
   }
 
-  getTotalDuration(): string {
-    return '4:24 h';
+  readonly totalLessons = this.mainLessons.reduce((count, lesson) => count + lesson.subLessons.length, 0);
+
+  private completeSubLesson(sub: SubLesson): void {
+    if (this.completedLessons().includes(sub.id)) return;
+    this.completedLessons.update((lessons) => [...lessons, sub.id]);
+    try {
+      localStorage.setItem('converterallai_typing_lessons', JSON.stringify(this.completedLessons()));
+    } catch {
+      // Keep progress in memory for this visit if saving is unavailable.
+    }
   }
 
-  getCourseProgress(): number {
-    return 10;
-  }
-
-  startSubLesson(sub: SubLesson) {
+  startSubLesson(sub: SubLesson): void {
     this.currentSubLesson = sub;
-    if (sub.type === 'intro-only') {
-      this.lessonPhase.set('intro');
-    } else if (sub.type === 'full-flow') {
-      this.lessonPhase.set('intro');
-    } else {
+    if (sub.type === 'typing-only') {
       this.initTypingFromSub(sub);
       this.lessonPhase.set('typing');
+    } else {
+      this.lessonPhase.set('intro');
+      this.queueFocus(() => this.phaseTitle?.nativeElement);
     }
   }
 
@@ -470,18 +487,23 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     const phase = this.lessonPhase();
     if (phase === 'intro') {
       if (sub.type === 'intro-only') {
-        this.goToOverview(); return;
+        this.completeSubLesson(sub);
+        this.goToOverview();
+        return;
       }
       if (sub.leftHandKeys && sub.leftHandKeys.length > 0) {
         this.lessonPhase.set('finger-left');
+        this.queueFocus(() => this.phaseTitle?.nativeElement);
       } else if (sub.rightHandKeys && sub.rightHandKeys.length > 0) {
         this.lessonPhase.set('finger-right');
+        this.queueFocus(() => this.phaseTitle?.nativeElement);
       } else {
         this.startDrill();
       }
     } else if (phase === 'finger-left') {
       if (sub.rightHandKeys && sub.rightHandKeys.length > 0) {
         this.lessonPhase.set('finger-right');
+        this.queueFocus(() => this.phaseTitle?.nativeElement);
       } else {
         this.startDrill();
       }
@@ -499,6 +521,7 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     this.currentSubLesson = null;
     this.stopDrillTimer();
     this.stopTimer();
+    this.queueFocus(() => this.activeLesson?.nativeElement);
   }
 
   // --- KEYBOARD & HAND VISUALS ---
@@ -542,7 +565,7 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     }
     
     if (phase === 'drill' && sub && sub.drillSequence) {
-      let expected = sub.drillSequence[this.drillIndex];
+      let expected = sub.drillSequence[this.drillIndex()];
       if (expected === ' ') expected = ' ';
       if (k.key.toLowerCase() === expected || k.key === expected) {
         classes += ' key-target-active';
@@ -581,7 +604,7 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     if (phase === 'finger-left') {
       return sub.leftHandKeys?.some(k => this.getFingerForKey(k) === fingerId) || false;
     } else if (phase === 'drill' || phase === 'typing') {
-      const nextKey = phase === 'drill' ? sub.drillSequence?.[this.drillIndex] : this.targetChars[this.userInput.length];
+      const nextKey = phase === 'drill' ? sub.drillSequence?.[this.drillIndex()] : this.targetChars[this.userInput.length];
       return this.getFingerForKey(nextKey || '') === fingerId;
     }
     return false;
@@ -595,7 +618,7 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
     if (phase === 'finger-right') {
       return sub.rightHandKeys?.some(k => this.getFingerForKey(k) === fingerId) || false;
     } else if (phase === 'drill' || phase === 'typing') {
-      const nextKey = phase === 'drill' ? sub.drillSequence?.[this.drillIndex] : this.targetChars[this.userInput.length];
+      const nextKey = phase === 'drill' ? sub.drillSequence?.[this.drillIndex()] : this.targetChars[this.userInput.length];
       return this.getFingerForKey(nextKey || '') === fingerId;
     }
     return false;
@@ -613,54 +636,52 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
   }
 
   // --- DRILL LOGIC ---
-  startDrill() {
-    this.drillIndex = 0;
+  startDrill(): void {
+    this.stopDrillTimer();
+    this.drillIndex.set(0);
+    this.drillFeedback.set('');
     this.drillTimeLeft.set(300);
     this.lessonPhase.set('drill');
+    this.queueFocus(() => this.drillInput?.nativeElement);
     if (this.isBrowser) {
-        this.drillTimer = setInterval(() => {
-            const current = this.drillTimeLeft();
-            if (current > 0) {
-                this.drillTimeLeft.set(current - 1);
-            } else {
-                this.nextPhase();
-            }
-        }, 1000);
+      const deadline = performance.now() + 300_000;
+      this.drillTimer = setInterval(() => {
+        const remaining = Math.max(0, Math.ceil((deadline - performance.now()) / 1000));
+        this.drillTimeLeft.set(remaining);
+        if (!remaining) this.nextPhase();
+      }, 200);
     }
   }
 
-  stopDrillTimer() {
-    if (this.drillTimer) clearInterval(this.drillTimer);
+  stopDrillTimer(): void {
+    clearInterval(this.drillTimer);
+    this.drillTimer = undefined;
   }
 
-  getDrillPairs() {
-    const sub = this.currentSubLesson;
-    if (!sub || !sub.drillSequence) return [];
-    
-    const pairs = [];
-    let tempPair = [];
-    for (let i = 0; i < sub.drillSequence.length; i++) {
-        const k = sub.drillSequence[i];
-        if (k === ' ') {
-            if (tempPair.length > 0) {
-                pairs.push({ keys: tempPair, display: tempPair.map(t => t.toUpperCase()) });
-                tempPair = [];
-            }
-        } else {
-            tempPair.push(k);
-        }
+  onDrillInput(event: Event): void {
+    if ((event as InputEvent).isComposing) return;
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    input.value = '';
+    const sequence = this.currentSubLesson?.drillSequence ?? [];
+    for (const key of value.toLowerCase()) {
+      if (this.drillIndex() >= sequence.length) break;
+      const expected = sequence[this.drillIndex()];
+      if (key !== expected) {
+        this.drillFeedback.set('Try the highlighted key again.');
+        this.playKeySound(true);
+        break;
+      }
+      this.drillFeedback.set('');
+      this.drillIndex.update((index) => index + 1);
+      this.playKeySound();
     }
-    if (tempPair.length > 0) pairs.push({ keys: tempPair, display: tempPair.map(t => t.toUpperCase()) });
-    return pairs.slice(0, 4);
+    if (sequence.length && this.drillIndex() >= sequence.length) this.nextPhase();
   }
 
-  isDrillKeyActive(key: string): boolean {
-    const sub = this.currentSubLesson;
-    if (!sub || !sub.drillSequence) return false;
-    
-    // Check if this box corresponds to the current drill index
-    let expected = sub.drillSequence[this.drillIndex];
-    return !!(expected && expected.toLowerCase() === key.toLowerCase());
+  expectedDrillKey(): string {
+    const key = this.currentSubLesson?.drillSequence?.[this.drillIndex()];
+    return key === ' ' ? 'Space' : key?.toUpperCase() ?? '';
   }
 
   formatTime(seconds: number): string {
@@ -670,143 +691,94 @@ export class TypingMasterComponent implements OnInit, OnDestroy {
   }
 
   // --- TYPING PHASE LOGIC ---
-  initTypingFromSub(sub: SubLesson) {
-    this.targetText = sub.text || '';
-    this.targetChars = this.targetText.split('');
+  initTypingFromSub(sub: SubLesson): void {
+    this.stopTimer();
+    this.targetChars = (sub.text ?? '').split('');
     this.userInput = '';
     this.isStarted = false;
     this.isFinished.set(false);
     this.liveWPM.set(0);
+    this.finalWPM.set(0);
     this.accuracy.set(100);
+    this.typingAttempts = 0;
     this.errorCount.set(0);
     this.streak.set(0);
     this.bestStreak.set(0);
     this.elapsedSeconds.set(0);
-    this.mistakeMap = {};
-    setTimeout(() => this.focusInput(), 100);
+    this.queueFocus(() => this.typingInputRef?.nativeElement);
   }
 
-  focusInput() {
-    if (this.typingInputRef && this.typingInputRef.nativeElement) {
-      this.typingInputRef.nativeElement.focus();
-    }
+  private queueFocus(target: () => HTMLElement | undefined): void {
+    if (!this.isBrowser) return;
+    if (this.focusFrame !== undefined) cancelAnimationFrame(this.focusFrame);
+    this.focusFrame = requestAnimationFrame(() => {
+      this.focusFrame = undefined;
+      target()?.focus();
+    });
   }
 
-  onInput() {
-    if (this.isFinished()) return;
-    if (!this.isStarted && this.userInput.length > 0) {
+  onInput(event: Event): void {
+    if ((event as InputEvent).isComposing || this.isFinished()) return;
+    const input = event.target as HTMLInputElement;
+    const value = input.value.slice(0, this.targetChars.length);
+    const { text, start } = insertedText(this.userInput, value);
+    this.userInput = value;
+    if (input.value !== value) input.value = value;
+    if (!this.isStarted && !text) return;
+    if (!this.isStarted) {
       this.isStarted = true;
-      this.startTime = Date.now();
-      this.startTimer();
+      this.startTime = performance.now();
+      this.timerInterval = setInterval(() => this.calculateLiveStats(), 200);
     }
 
-    const currentIndex = this.userInput.length - 1;
-    if (currentIndex >= 0 && currentIndex < this.targetChars.length) {
-      const expectedChar = this.targetChars[currentIndex];
-      const typedChar = this.userInput[currentIndex];
-      
-      if (typedChar === expectedChar) {
-        this.streak.set(this.streak() + 1);
-        if (this.streak() > this.bestStreak()) {
-          this.bestStreak.set(this.streak());
-        }
-        this.playKeySound(false);
+    for (let index = 0; index < text.length; index++) {
+      this.typingAttempts++;
+      if (text[index] === this.targetChars[start + index]) {
+        this.streak.update((count) => count + 1);
+        this.bestStreak.update((best) => Math.max(best, this.streak()));
+        this.playKeySound();
       } else {
         this.streak.set(0);
-        this.errorCount.set(this.errorCount() + 1);
-        this.mistakeMap[expectedChar] = (this.mistakeMap[expectedChar] || 0) + 1;
+        this.errorCount.update((count) => count + 1);
         this.playKeySound(true);
       }
     }
-
     this.calculateLiveStats();
-    
-    if (this.userInput.length >= this.targetChars.length) {
-      this.finishTyping();
-    }
+    if (value.length === this.targetChars.length) this.finishTyping();
   }
 
-  onKeyDown(e: KeyboardEvent) {
-    this.activePhysicalKey.set(e.key);
+  onKeyDown(event: KeyboardEvent): void {
+    this.activePhysicalKey.set(event.key);
     setTimeout(() => {
-      if (this.activePhysicalKey() === e.key) {
-        this.activePhysicalKey.set('');
-      }
+      if (this.activePhysicalKey() === event.key) this.activePhysicalKey.set('');
     }, 150);
   }
 
-  @HostListener('window:keydown', ['$event'])
-  onWindowKeyDown(e: KeyboardEvent) {
-    const phase = this.lessonPhase();
-    if (phase === 'intro' || phase === 'finger-left' || phase === 'finger-right') {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        this.nextPhase();
-      }
-    } else if (phase === 'drill') {
-      const seq = this.currentSubLesson?.drillSequence || [];
-      if (this.drillIndex < seq.length) {
-        let expected = seq[this.drillIndex];
-        if (expected === ' ') expected = ' ';
-        const key = e.key === ' ' ? ' ' : e.key.toLowerCase();
-        
-        if (key === expected || (expected !== ' ' && e.key.length === 1)) {
-            if (key === expected) {
-               this.playKeySound();
-            } else {
-               this.playKeySound(true);
-            }
-            this.drillIndex++;
-            this.activePhysicalKey.set(e.key);
-            setTimeout(() => this.activePhysicalKey.set(''), 100);
-            
-            if (this.drillIndex >= seq.length) {
-                this.nextPhase();
-            }
-        }
-      }
+  private stopTimer(): void {
+    clearInterval(this.timerInterval);
+    this.timerInterval = undefined;
+  }
+
+  private calculateLiveStats(): void {
+    if (!this.isStarted) return;
+    const elapsed = (performance.now() - this.startTime) / 1000;
+    this.elapsedSeconds.set(Math.floor(elapsed));
+    let correct = 0;
+    for (let index = 0; index < this.userInput.length; index++) {
+      if (this.userInput[index] === this.targetChars[index]) correct++;
+    }
+    this.liveWPM.set(wordsPerMinute(correct, elapsed));
+    if (this.typingAttempts) {
+      this.accuracy.set(Math.round(100 * (this.typingAttempts - this.errorCount()) / this.typingAttempts));
     }
   }
 
-  private startTimer() {
-    if (this.isBrowser) {
-      this.timerInterval = setInterval(() => {
-        this.elapsedSeconds.set(Math.floor((Date.now() - this.startTime) / 1000));
-        this.calculateLiveStats();
-      }, 1000);
-    }
-  }
-
-  private stopTimer() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
-  }
-
-  private calculateLiveStats() {
-    if (!this.isStarted || this.elapsedSeconds() === 0) return;
-    
-    const minutes = this.elapsedSeconds() / 60;
-    const typedLength = this.userInput.length;
-    let correctChars = 0;
-    
-    for (let i = 0; i < typedLength; i++) {
-      if (this.userInput[i] === this.targetChars[i]) correctChars++;
-    }
-    
-    const cpm = Math.round(correctChars / minutes);
-    this.rawCPM.set(cpm);
-    this.liveWPM.set(Math.round(cpm / 5));
-    
-    const totalTyped = typedLength;
-    if (totalTyped > 0) {
-      this.accuracy.set(Math.round((correctChars / totalTyped) * 100));
-    }
-  }
-
-  finishTyping() {
-    this.isFinished.set(true);
+  private finishTyping(): void {
     this.stopTimer();
-    this.calculateLiveStats();
     this.finalWPM.set(this.liveWPM());
+    this.isFinished.set(true);
+    if (this.currentSubLesson) this.completeSubLesson(this.currentSubLesson);
+    this.queueFocus(() => this.lessonResult?.nativeElement);
   }
 
   getCharClass(index: number): string {

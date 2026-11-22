@@ -4,38 +4,40 @@ export const devTools = [
     name: 'JSON Formatter & Validator',
     slug: '/developer-tools/json-formatter',
     categoryId: 'developer-tools',
-    shortDesc: 'Format, beautify, minify, and validate JSON data with syntax error detection.',
-    fullDesc: 'Client-side JSON beautifier and validator with collapsible tree view, syntax linting, and line indicators.',
+    shortDesc: 'Format, validate, minify, and repair JSON in your browser. Inspect nested data in a collapsible tree.',
+    fullDesc: 'Format API responses and files, find syntax errors by line and column, and preserve large numbers and duplicate keys when formatting JSON.',
     icon: '{ }',
     badge: 'POPULAR',
     isPopular: true,
     isLatest: false,
     isAI: false,
-    seoTitle: 'Format JSON Online Free - Beautify & Lint | ConverterAllAI',
-    seoDescription: 'Clean, beautify, minify, and validate JSON data online for free. Real-time syntax error line detection and collapsible tree view with zero server uploads.',
-    keywords: 'json formatter, beautify json, validate json online, json minifier, format json free, json tree viewer',
-    h1: 'JSON Formatter, Validator & Collapsible Tree Viewer',
-    intro: 'Debug and clean raw JSON payloads instantly in your browser. Beautify messy API responses with customizable tab indentation, minify production code, and locate syntax errors with exact line and column indicators.',
+    seoTitle: 'JSON Formatter & Validator Online | ConverterAllAI',
+    seoDescription: 'Beautify, minify, and validate JSON online. Find errors by line and column, repair common syntax issues, and explore a collapsible JSON tree in your browser.',
+    keywords: 'json formatter, json validator, beautify json, minify json, json repair, json tree viewer',
+    h1: 'How to Format and Validate JSON Online',
+    intro: 'Make an API response or JSON file easier to read by adding indentation. Use the tree viewer to inspect nested values, or minify valid JSON to remove extra whitespace before saving it.',
     howToSteps: [
-      'Paste your raw JSON string or API response into the editor window.',
-      'Click Beautify to apply clean indentation (2 spaces or 4 spaces).',
-      'Inspect any highlighted syntax errors or missing commas.',
-      'Copy the cleaned JSON to clipboard or switch to the interactive tree view.'
+      'Paste JSON, open a UTF-8 file, or fetch a public URL that allows cross-origin requests.',
+      'Choose Format for indented JSON, Minify for compact output, or Validate to check syntax.',
+      'If validation fails, use Go to error to find the issue. Choose Repair to review a possible correction.',
+      'Switch to Tree to inspect nested values, then copy or download the output.'
     ],
     features: [
-      'Instant JSON syntax validation with precise line and character error markers',
-      'Configurable indentation spacing: 2 spaces, 4 spaces, or compact minify mode',
-      'Collapsible interactive tree inspector for deeply nested objects and arrays',
-      '100% private in-browser parsing ensuring confidential API payloads stay safe'
+      'Line and column diagnostics with a shortcut to the error',
+      'Formatting with two, three, or four spaces, tabs, or compact output',
+      'Collapsible tree viewer for objects, arrays, and standalone JSON values',
+      'Exact number text and duplicate keys preserved when formatting, minifying, or sorting',
+      'Browser-based repair with a separate output for reviewing changes'
     ],
     faqs: [
-      { q: 'Can this tool fix trailing commas and unquoted keys in JSON?', a: 'The syntax linter highlights exact positions of trailing commas and missing quotes, helping you fix syntax errors quickly.' },
-      { q: 'Is there a payload size limit for formatting JSON?', a: 'Because parsing runs client-side in V8 JavaScript, large payloads up to 25MB format smoothly without browser freezing.' },
-      { q: 'What is the advantage of the tree view inspector?', a: 'The tree view lets you expand and collapse specific nested nodes, making complex API responses easy to explore.' },
-      { q: 'Are my private API keys or database tokens logged on any server?', a: 'Never. All JSON parsing and formatting executes 100% locally inside your web browser.' }
+      { q: 'Can I fix trailing commas or unquoted keys in JSON?', a: 'Choose Repair to generate a possible correction for common issues such as trailing commas, single quotes, and unquoted keys. Review the suggested output before using it.' },
+      { q: 'Does formatting JSON change large numbers or duplicate keys?', a: 'Format, Minify, and Sort keys preserve the exact digits, exponent notation, and duplicate entries in valid JSON. The editor flags duplicate keys because applications can interpret them differently.' },
+      { q: 'What is the maximum JSON file size?', a: 'The input limit is 2 MiB of UTF-8 text. The formatter also limits nesting to 100 levels and reports when a document exceeds its processing limits.' },
+      { q: 'Why is my JSON URL import failing?', a: 'The browser can only read a public URL when the source allows cross-origin access through CORS. If the source blocks access, save the JSON as a file and open it locally.' },
+      { q: 'Does the formatter upload my JSON?', a: 'Pasted text and local files are processed in your browser. URL import sends a request to the address you enter, and the response is formatted locally.' }
     ],
-    relatedToolPaths: ['/developer-tools/sql', '/typing-master', '/pdf-processing/pdf-to-text'],
-    privacyNote: 'Payloads are parsed locally in your browser and never transmitted to any server.'
+    relatedToolPaths: ['/developer-tools/sql', '/developer-tools/web-tutorials', '/pdf-processing/pdf-to-text'],
+    privacyNote: 'Pasted JSON and local files stay in your browser. URL import contacts the source you enter.'
   },
   {
     id: 'sql-masterclass',
@@ -114,41 +116,115 @@ export const devTools = [
     privacyNote: 'Your resume data is stored locally in your browser and never uploaded to any remote server.'
   },
   {
-    id: 'typing-master',
-    name: 'Typing Master Pro',
-    slug: '/typing-master',
-    categoryId: 'developer-tools',
-    shortDesc: 'Test and train your typing speed (WPM) and accuracy with interactive drills.',
-    fullDesc: 'Interactive touch-typing speed trainer and WPM test with real-time error tracking and speed metrics.',
-    icon: '⌨️',
-    badge: 'POPULAR',
-    isPopular: true,
-    isLatest: false,
-    isAI: false,
-    seoTitle: 'Test Typing Speed Online Free - WPM Test | ConverterAllAI',
-    seoDescription: 'Test and improve typing speed and accuracy online for free. Real-time words-per-minute (WPM) calculations, error diagnostics, and speed drills with no signup.',
-    keywords: 'typing master, typing test online free, wpm speed test, touch typing tutor, keyboard speed test',
-    h1: 'Online Touch Typing Speed Test & WPM Trainer',
-    intro: 'Measure and boost your keyboard typing speed and precision. Practice touch typing drills with live WPM (Words Per Minute) measurement, CPM accuracy percentages, and real-time error diagnostics.',
-    howToSteps: [
-      'Select a test duration (1 minute, 3 minutes, or 5 minutes) and text difficulty.',
-      'Begin typing the highlighted words as accurately as possible.',
-      'Watch your real-time WPM speed and accuracy graph update live.',
-      'Review your comprehensive post-test report detailing error keys and net WPM.'
+    "id": "typing-master",
+    "name": "Touch Typing Lessons",
+    "slug": "/typing-master",
+    "categoryId": "developer-tools",
+    "shortDesc": "Learn touch typing with guided finger placement, key drills, and progress saved in your browser.",
+    "fullDesc": "A seven-module touch typing course covering the home row, new letter pairs, capitalization, and punctuation with keyboard and finger guides.",
+    "icon": "⌨️",
+    "badge": "POPULAR",
+    "isPopular": true,
+    "isLatest": false,
+    "isAI": false,
+    "seoTitle": "Free Touch Typing Lessons Online | ConverterAllAI",
+    "seoDescription": "Learn touch typing with seven free modules. Practice the home row, finger placement, new keys, and punctuation, and save lesson progress in your browser.",
+    "keywords": "touch typing lessons, learn to type, home row practice, typing tutor, keyboard finger placement",
+    "h1": "Learn to Touch Type Step by Step",
+    "intro": "Start with the home row, learn which fingers reach each key, and practice short passages. The course groups new keys into seven modules so you can focus on one skill at a time.",
+    "howToSteps": [
+      "Choose a module. Start with The Home Row if you are learning to type by touch.",
+      "Open an activity and follow the on-screen finger placement or key prompts.",
+      "Type the practice passage and review your WPM, accuracy, and mistakes.",
+      "Return to the lesson list to see completed activities or take the separate timed typing test."
     ],
-    features: [
-      'Real-time calculation of Gross WPM, Net WPM, and accuracy percentage',
-      'Live color-coded visual feedback highlighting correct and incorrect keystrokes',
-      'Multiple practice modes ranging from standard prose to coding syntax drills',
-      'Detailed diagnostic report identifying your most frequent mistake keys'
+    "features": [
+      "Seven modules from home-row basics through capitalization and punctuation",
+      "Highlighted QWERTY keyboard and finger guides",
+      "Key drills and practice passages with WPM and accuracy feedback",
+      "Completed activities saved in your browser"
     ],
-    faqs: [
-      { q: 'How is Words Per Minute (WPM) calculated?', a: 'WPM is standardized as (Total Characters Typed / 5) divided by Elapsed Minutes, adjusted for uncorrected typographical errors.' },
-      { q: 'What is considered a good typing speed for professionals?', a: 'The average typist writes around 40 WPM; competitive professionals and software engineers often type between 65 and 90 WPM.' },
-      { q: 'Can daily practice with this tool improve touch typing?', a: 'Yes, practicing for 10-15 minutes daily builds muscle memory, allowing you to type swiftly without glancing at the physical keyboard.' },
-      { q: 'Does this typing trainer require an account to track speed?', a: 'No, you can take tests and track speed metrics freely without signing up.' }
+    "faqs": [
+      {
+        "q": "Which typing lesson should a beginner start with?",
+        "a": "Open The Home Row in Module 1. It introduces the starting position and includes exercises for A, S, D, F, J, K, L, and semicolon."
+      },
+      {
+        "q": "Can I practice touch typing on a phone?",
+        "a": "The lessons accept a phone keyboard. Use a physical QWERTY keyboard to practice the finger placement and reach shown in the course."
+      },
+      {
+        "q": "How is lesson progress saved?",
+        "a": "The course saves completed activity IDs in this browser. You can return on the same device and browser to see your progress."
+      },
+      {
+        "q": "How can I check my typing speed after practicing?",
+        "a": "Open the Typing Speed Test from the course and choose the one-minute option. Repeat with the same settings to compare your WPM and accuracy over time."
+      }
     ],
-    relatedToolPaths: ['/developer-tools/sql', '/developer-tools/json-formatter', '/resume-builder', '/games/spelling-bee'],
-    privacyNote: 'Typing keystrokes and metrics are calculated locally inside your browser.'
+    "relatedToolPaths": [
+      "/typing-speed-test",
+      "/games/spelling-bee",
+      "/developer-tools/web-tutorials"
+    ],
+    "privacyNote": "Exercises process text locally. The course stores completed activity IDs in your browser."
+  },
+  {
+    "id": "typing-speed-test",
+    "name": "Typing Speed Test (WPM)",
+    "slug": "/typing-speed-test",
+    "categoryId": "developer-tools",
+    "shortDesc": "Measure typing speed and accuracy with a 1-minute test, word-count challenges, or your own passage.",
+    "fullDesc": "Free browser-based WPM test with 15-second to 5-minute rounds, quote and custom text practice, accuracy results, and a downloadable PNG scorecard.",
+    "icon": "⚡",
+    "badge": "HOT",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "1-Minute Typing Speed Test & WPM | ConverterAllAI",
+    "seoDescription": "Take a free 1-minute typing speed test and check your WPM and accuracy. Choose timed rounds, word counts, quotes, or custom text and download a scorecard.",
+    "keywords": "typing speed test, 1 minute typing test, free WPM test, words per minute, typing accuracy",
+    "h1": "Measure WPM and Typing Accuracy",
+    "intro": "Choose a 60-second typing test to measure your speed, or practice with a word count, a quote, or your own text. Use the result to see your net WPM and how accurately you typed.",
+    "howToSteps": [
+      "Choose a timed round from 15 seconds to 5 minutes, or select a word count, quote, or custom text.",
+      "Focus the typing box and type the highlighted word. The clock starts with your first typed character.",
+      "Press Space between words and use Backspace to correct mistakes.",
+      "Review WPM, accuracy, and speed over time, then copy your result or download the PNG scorecard."
+    ],
+    "features": [
+      "15-second, 30-second, 1-minute, 2-minute, and 5-minute timed tests",
+      "Word-count challenges, quotes, custom passages, and untimed practice",
+      "English and Hinglish words plus code snippets",
+      "Net WPM, raw WPM, accuracy, and a downloadable PNG scorecard"
+    ],
+    "faqs": [
+      {
+        "q": "How do I take a one-minute typing test?",
+        "a": "Select Time and 60 seconds, then type the first highlighted word. The test ends after a minute and shows your WPM and accuracy."
+      },
+      {
+        "q": "How does the test calculate WPM?",
+        "a": "Five characters count as one standard word. The test divides the number of correctly typed characters by five and by the elapsed minutes. Raw WPM also counts incorrect and extra characters in the typed text."
+      },
+      {
+        "q": "Does Backspace remove a mistake from accuracy?",
+        "a": "Accuracy includes your original typing attempts, so Backspace does not count as a new keystroke or erase an earlier mistake from your accuracy. A correction can still improve your net WPM."
+      },
+      {
+        "q": "Can I use my own text or practice code?",
+        "a": "Yes. Select Custom to load your passage, or choose Code from the language options to practice with code snippets."
+      },
+      {
+        "q": "What does the PNG scorecard include?",
+        "a": "The downloadable scorecard includes your session WPM, raw WPM, accuracy, consistency, and test mode."
+      }
+    ],
+    "relatedToolPaths": [
+      "/typing-master",
+      "/games/spelling-bee",
+      "/developer-tools/json-formatter"
+    ],
+    "privacyNote": "Typing and scoring run in your browser. Your personal best is saved on this device."
   }
 ];

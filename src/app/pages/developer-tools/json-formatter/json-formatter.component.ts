@@ -1,416 +1,595 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Component, ElementRef, OnDestroy, ViewChild, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import type { Node } from 'jsonc-parser';
+import {
+  checkInputSize,
+  formatJsonDocument,
+  INPUT_LIMIT_MESSAGE,
+  jsonChildren,
+  type JsonDocument,
+  jsonPosition,
+  JsonSourceError,
+  MAX_INPUT_BYTES,
+  parseJsonDocument,
+} from './json-workspace';
+
+type View = 'code' | 'tree';
+type Operation = 'format' | 'minify' | 'sort';
+type UndoDirection = -1 | 1;
+type NoticeKind = 'success' | 'error' | 'warning';
+type Indent = '2' | '3' | '4' | 'tab' | 'compact';
+
+interface Notice {
+  kind: NoticeKind;
+  message: string;
+  offset?: number;
+}
+
+interface Result {
+  document: JsonDocument;
+  text: string;
+  sorted: boolean;
+}
+
+interface TreeRow {
+  id: number;
+  label: string;
+  type: Node['type'];
+  preview: string;
+  depth: number;
+  expandable: boolean;
+  expanded: boolean;
+}
+
+const SAMPLE = '{"orderId":9007199254740993,"items":[{"sku":"A12","quantity":2}],"paid":false}';
+const INDENTS: Record<Indent, string> = { '2': '  ', '3': '   ', '4': '    ', tab: '\t', compact: '' };
+const TREE_PAGE_SIZE = 200;
+const MAX_TREE_ROWS = 2_000;
+const HISTORY_LIMIT = 30;
+const HISTORY_CHARACTERS = 4 * 1024 * 1024;
+const LINE_HEIGHT = 22;
+const GUTTER_ROWS = Array.from({ length: 48 }, (_, index) => index);
 
 @Component({
   selector: 'app-json-formatter',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [RouterLink],
   templateUrl: './json-formatter.component.html',
-  styleUrls: ['./json-formatter.component.css']
+  styleUrl: './json-formatter.component.css',
 })
-export class JsonFormatterComponent implements OnInit {
-  @ViewChild('inputTextarea') inputTextareaRef!: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('outputTextarea') outputTextareaRef!: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('inputGutter') inputGutterRef!: ElementRef<HTMLDivElement>;
-  @ViewChild('outputGutter') outputGutterRef!: ElementRef<HTMLDivElement>;
+export class JsonFormatterComponent implements OnDestroy {
+  @ViewChild('inputEditor') private inputEditor?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('outputEditor') private outputEditor?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('urlToggle') private urlToggle?: ElementRef<HTMLButtonElement>;
+  @ViewChild('urlField') private urlField?: ElementRef<HTMLInputElement>;
 
-  rawJson = '';
-  formattedJson = '';
-  statusMessage = '';
-  isError = false;
-  indentation: string = '2';
-  viewMode: 'code' | 'tree' = 'code';
-  isFullscreen = false;
+  readonly rawJson = signal('');
+  readonly indentation = signal<Indent>('2');
+  readonly notice = signal<Notice | null>(null);
+  readonly result = signal<Result | null>(null);
+  readonly output = computed(() => this.result()?.text ?? '');
+  readonly pendingAction = signal('');
+  readonly view = signal<View>('code');
+  readonly urlOpen = signal(false);
+  readonly focusMode = signal(false);
+  readonly inputScroll = signal(0);
+  readonly outputScroll = signal(0);
+  readonly inputLineCount = computed(() => countLines(this.rawJson()));
+  readonly outputLineCount = computed(() => countLines(this.output()));
+  readonly gutterRows = GUTTER_ROWS;
+  readonly lineHeight = LINE_HEIGHT;
 
-  cursorLine = 1;
-  currentCol = 1;
+  private readonly expandedNodes = signal(new Set<number>());
+  private readonly treeLimit = signal(TREE_PAGE_SIZE);
+  private readonly history = signal<string[]>(['']);
+  private readonly historyIndex = signal(0);
+  private revision = 0;
+  private fetchController?: AbortController;
 
-  parsedObject: any = null;
-  collapsedKeys = new Set<string>();
+  readonly canUndo = computed(() => this.historyIndex() > 0);
+  readonly canRedo = computed(() => this.historyIndex() + 1 < this.history().length);
+  readonly treeRows = computed(() => this.buildTreeRows());
+  readonly hasMoreTreeRows = computed(() => this.treeRows().length > this.treeLimit());
+  readonly visibleTreeRows = computed(() => this.treeRows().slice(0, this.treeLimit()));
+  readonly canShowMoreTreeRows = computed(() => this.hasMoreTreeRows() && this.treeLimit() < MAX_TREE_ROWS);
 
-  // History stack for Undo / Redo
-  history: string[] = [];
-  historyIndex: number = -1;
-  private isPushingHistory = true;
-
-  get inputLength(): number {
-    return this.rawJson ? this.rawJson.length : 0;
+  ngOnDestroy(): void {
+    this.revision++;
+    this.fetchController?.abort();
   }
 
-  get outputLength(): number {
-    return this.formattedJson ? this.formattedJson.length : 0;
-  }
-
-  get lineCount(): number {
-    return this.formattedJson ? this.formattedJson.split('\n').length : 0;
-  }
-
-  get byteSize(): string {
-    if (!this.formattedJson) return '0 B';
-    const bytes = new Blob([this.formattedJson]).size;
-    if (bytes < 1024) return bytes + ' B';
-    return (bytes / 1024).toFixed(2) + ' KB';
-  }
-
-  get inputLines(): number[] {
-    const count = (this.rawJson || '').split('\n').length;
-    return Array.from({ length: Math.max(count, 22) }, (_, i) => i + 1);
-  }
-
-  get outputLines(): number[] {
-    const count = (this.formattedJson || '').split('\n').length;
-    return Array.from({ length: Math.max(count, 22) }, (_, i) => i + 1);
-  }
-
-  ngOnInit() {
-    this.loadSampleJson();
-  }
-
-  onRawJsonChange() {
-    this.statusMessage = '';
-    this.isError = false;
-    this.pushHistory(this.rawJson);
-  }
-
-  private pushHistory(val: string) {
-    if (!this.isPushingHistory) return;
-    if (this.history[this.historyIndex] === val) return;
-
-    // Truncate redo branches
-    this.history = this.history.slice(0, this.historyIndex + 1);
-    this.history.push(val);
-    if (this.history.length > 50) this.history.shift();
-    this.historyIndex = this.history.length - 1;
-  }
-
-  undo() {
-    if (this.historyIndex > 0) {
-      this.historyIndex--;
-      this.isPushingHistory = false;
-      this.rawJson = this.history[this.historyIndex] || '';
-      this.beautifyJson();
-      this.isPushingHistory = true;
-    }
-  }
-
-  redo() {
-    if (this.historyIndex < this.history.length - 1) {
-      this.historyIndex++;
-      this.isPushingHistory = false;
-      this.rawJson = this.history[this.historyIndex] || '';
-      this.beautifyJson();
-      this.isPushingHistory = true;
-    }
-  }
-
-  beautifyJson() {
-    if (!this.rawJson || !this.rawJson.trim()) {
-      this.formattedJson = '';
-      this.parsedObject = null;
+  onEditorInput(editor: HTMLTextAreaElement): void {
+    if (editor.value.length > MAX_INPUT_BYTES) {
+      editor.value = this.rawJson();
+      this.reportError(new JsonSourceError(INPUT_LIMIT_MESSAGE));
       return;
     }
+    this.changeInput(editor.value);
+  }
+
+  private changeInput(source: string): void {
+    source = source.replace(/\r\n?/g, '\n');
+    if (source === this.rawJson()) return;
+    const history = this.history().slice(0, this.historyIndex() + 1);
+    history.push(source);
+    let length = history.reduce((total, item) => total + item.length, 0);
+    while (history.length > HISTORY_LIMIT || length > HISTORY_CHARACTERS) {
+      length -= history.shift()!.length;
+    }
+    this.history.set(history);
+    this.historyIndex.set(history.length - 1);
+    this.replaceInput(source);
+  }
+
+  private replaceInput(source: string): void {
+    this.cancelPending();
+    this.rawJson.set(source);
+    this.clearResult();
+    this.notice.set(null);
+  }
+
+  moveHistory(direction: UndoDirection): void {
+    const next = this.historyIndex() + direction;
+    const source = this.history()[next];
+    if (source === undefined) return;
+    this.historyIndex.set(next);
+    this.replaceInput(source);
+    this.inputScroll.set(0);
+    this.inputEditor?.nativeElement.focus();
+  }
+
+  clearInput(): void {
+    if (this.rawJson()) this.changeInput('');
+    else this.replaceInput('');
+    this.inputScroll.set(0);
+    this.inputEditor?.nativeElement.focus();
+  }
+
+  loadSample(): void {
+    this.changeInput(SAMPLE);
+    this.inputScroll.set(0);
+    this.run('format');
+  }
+
+  setIndentation(value: string): void {
+    const indent = value as Indent;
+    this.indentation.set(indent);
+    const current = this.result();
+    if (!current) return;
 
     try {
-      const parsed = JSON.parse(this.rawJson);
-      this.parsedObject = parsed;
-
-      let indent: string | number = 2;
-      if (this.indentation === '3') indent = 3;
-      else if (this.indentation === '4') indent = 4;
-      else if (this.indentation === 'tab') indent = '\t';
-      else if (this.indentation === 'compact') indent = 0;
-
-      this.formattedJson = JSON.stringify(parsed, null, indent);
-      this.isError = false;
-      this.statusMessage = 'Valid JSON formatted successfully!';
-    } catch (e: any) {
-      this.isError = true;
-      this.statusMessage = `Syntax Error: ${e.message}`;
+      this.setResult(current.document, INDENTS[indent], current.sorted, 'Output indentation updated.');
+    } catch (error) {
+      this.reportError(error);
     }
   }
 
-  validateJson() {
-    if (!this.rawJson || !this.rawJson.trim()) {
-      this.isError = true;
-      this.statusMessage = 'Error: JSON input is empty. Please enter JSON to validate.';
-      return;
+  validate(): void {
+    this.cancelPending();
+    try {
+      this.reportSuccess('Valid JSON.', parseJsonDocument(this.rawJson()));
+    } catch (error) {
+      this.clearResult();
+      this.reportError(error);
     }
+  }
+
+  run(operation: Operation): void {
+    this.cancelPending();
+    const indent = operation === 'minify' ? '' : INDENTS[this.indentation()];
+    const message = {
+      format: 'JSON formatted.',
+      minify: 'JSON minified.',
+      sort: 'Object keys sorted. Use output as input to keep this order.',
+    }[operation];
 
     try {
-      JSON.parse(this.rawJson);
-      this.isError = false;
-      this.statusMessage = 'Valid JSON! No syntax errors detected.';
-    } catch (e: any) {
-      this.isError = true;
-      this.statusMessage = `Invalid JSON: ${e.message}`;
+      this.setResult(parseJsonDocument(this.rawJson()), indent, operation === 'sort', message);
+    } catch (error) {
+      this.clearResult();
+      this.reportError(error);
     }
   }
 
-  minifyJson() {
-    if (!this.rawJson || !this.rawJson.trim()) return;
-
+  async repair(): Promise<void> {
+    const operation = this.startPending('Repairing JSON…');
+    const source = this.rawJson();
     try {
-      const parsed = JSON.parse(this.rawJson);
-      this.parsedObject = parsed;
-      this.formattedJson = JSON.stringify(parsed);
-      this.indentation = 'compact';
-      this.isError = false;
-      this.statusMessage = 'JSON minified (compacted without whitespace)!';
-    } catch (e: any) {
-      this.isError = true;
-      this.statusMessage = `Syntax Error: ${e.message}`;
-    }
-  }
-
-  sortJsonKeys() {
-    if (!this.rawJson || !this.rawJson.trim()) return;
-
-    try {
-      const parsed = JSON.parse(this.rawJson);
-      const sorted = this.deepSortObject(parsed);
-      this.rawJson = JSON.stringify(sorted, null, 2);
-      this.beautifyJson();
-      this.statusMessage = 'JSON keys sorted alphabetically!';
-      this.isError = false;
-    } catch (e: any) {
-      this.isError = true;
-      this.statusMessage = `Cannot sort: ${e.message}`;
-    }
-  }
-
-  private deepSortObject(obj: any): any {
-    if (Array.isArray(obj)) {
-      return obj.map(item => this.deepSortObject(item));
-    } else if (obj !== null && typeof obj === 'object') {
-      return Object.keys(obj)
-        .sort()
-        .reduce((result: any, key) => {
-          result[key] = this.deepSortObject(obj[key]);
-          return result;
-        }, {});
-    }
-    return obj;
-  }
-
-  repairJson() {
-    if (!this.rawJson) return;
-    try {
-      // Fix single quotes to double quotes, trailing commas
-      const fixed = this.rawJson
-        .replace(/'/g, '"')
-        .replace(/,\s*([}\]])/g, '$1');
-      JSON.parse(fixed);
-      this.rawJson = fixed;
-      this.beautifyJson();
-      this.statusMessage = 'Repaired quotes & trailing commas!';
-      this.isError = false;
-    } catch {
-      this.beautifyJson();
-    }
-  }
-
-  loadSampleJson() {
-    const sample = {
-      product: 'ConverterAll AI Developer Suite',
-      version: '2.5.0',
-      active: true,
-      features: [
-        'Real-time JSON Beautifier & Minifier',
-        'Interactive Collapsible Tree Visualizer',
-        'Syntax Diagnostics & Line Highlights',
-        'In-Browser SQL Masterclass & Sandbox'
-      ],
-      author: {
-        name: 'ConverterAll Team',
-        skills: ['Angular', 'TypeScript', 'CSS3', 'Web APIs']
-      },
-      stats: {
-        totalTools: 25,
-        rating: 4.95,
-        clientSide: true
-      }
-    };
-    this.rawJson = JSON.stringify(sample, null, 2);
-    this.pushHistory(this.rawJson);
-    this.beautifyJson();
-    this.statusMessage = '';
-  }
-
-  clearAll() {
-    this.rawJson = '';
-    this.formattedJson = '';
-    this.parsedObject = null;
-    this.statusMessage = '';
-    this.isError = false;
-    this.cursorLine = 1;
-    this.currentCol = 1;
-  }
-
-  clearInput() {
-    this.rawJson = '';
-    this.statusMessage = '';
-  }
-
-  async pasteFromClipboard() {
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
       try {
-        const text = await navigator.clipboard.readText();
-        this.rawJson = text;
-        this.beautifyJson();
-        this.statusMessage = 'Pasted from clipboard!';
-        this.isError = false;
+        const document = parseJsonDocument(source);
+        this.setResult(document, INDENTS[this.indentation()], false, 'JSON is already valid.');
+        return;
+      } catch (error) {
+        if (!(error instanceof JsonSourceError) || error.offset === undefined) throw error;
+      }
+
+      const { jsonrepair } = await import('jsonrepair');
+      if (!this.isCurrent(operation)) return;
+      let repaired: JsonDocument;
+      try {
+        repaired = parseJsonDocument(jsonrepair(source));
       } catch {
-        this.statusMessage = 'Clipboard permission denied. Please paste directly into the box.';
-        this.isError = true;
+        // Give the user the location in the original editor rather than a position in the repair.
+        parseJsonDocument(source);
+        return;
+      }
+      this.setResult(repaired, INDENTS[this.indentation()], false, 'Suggested repair. Review the output before using it.');
+    } catch (error) {
+      if (this.isCurrent(operation)) {
+        this.clearResult();
+        this.reportError(error);
+      }
+    } finally {
+      if (this.isCurrent(operation)) this.pendingAction.set('');
+    }
+  }
+
+  useOutput(): void {
+    const result = this.result();
+    if (!result) return;
+    try {
+      checkInputSize(result.text);
+    } catch (error) {
+      this.reportError(error);
+      return;
+    }
+    this.changeInput(result.text);
+    this.result.set(result);
+    this.inputScroll.set(0);
+    this.reportSuccess('Output copied to the input editor.', result.document);
+    this.inputEditor?.nativeElement.focus();
+  }
+
+  async uploadFile(input: HTMLInputElement): Promise<void> {
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    const operation = this.startPending('Reading file…');
+    try {
+      if (file.size > MAX_INPUT_BYTES) throw new JsonSourceError(INPUT_LIMIT_MESSAGE);
+      const source = decodeUtf8(await file.arrayBuffer());
+      if (this.isCurrent(operation)) this.acceptImport(source);
+    } catch (error) {
+      if (this.isCurrent(operation)) {
+        this.reportError(error, 'Could not read this file. Choose a UTF-8 JSON file.');
+      }
+    } finally {
+      if (this.isCurrent(operation)) this.pendingAction.set('');
+    }
+  }
+
+  async paste(): Promise<void> {
+    const operation = this.startPending('Reading clipboard…');
+    try {
+      const source = await navigator.clipboard.readText();
+      if (!this.isCurrent(operation)) return;
+      if (!source.trim()) throw new JsonSourceError('The clipboard contains no JSON text.');
+      this.acceptImport(source);
+    } catch (error) {
+      if (this.isCurrent(operation)) {
+        this.reportError(error, 'Clipboard access is unavailable. Paste directly into the input editor.');
+      }
+    } finally {
+      if (this.isCurrent(operation)) this.pendingAction.set('');
+    }
+  }
+
+  toggleUrl(): void {
+    if (this.urlOpen()) {
+      this.closeUrl();
+    } else {
+      this.urlOpen.set(true);
+      setTimeout(() => {
+        if (this.urlOpen()) this.urlField?.nativeElement.focus();
+      });
+    }
+  }
+
+  private closeUrl(): void {
+    if (this.fetchController) this.cancelPending();
+    this.urlOpen.set(false);
+    this.urlToggle?.nativeElement.focus();
+  }
+
+  async importUrl(event: Event, value: string): Promise<void> {
+    event.preventDefault();
+    let url: URL;
+    try {
+      url = new URL(value.trim());
+      if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) throw new Error();
+    } catch {
+      this.cancelPending();
+      this.notice.set({ kind: 'error', message: 'Enter an HTTP or HTTPS URL without embedded credentials.' });
+      return;
+    }
+
+    const operation = this.startPending('Fetching JSON…');
+    const controller = new AbortController();
+    this.fetchController = controller;
+    const timeout = setTimeout(() => controller.abort(), 12_000);
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
+      });
+      if (!response.ok) {
+        void response.body?.cancel().catch(() => {});
+        throw new JsonSourceError(`The URL returned HTTP ${response.status}.`);
+      }
+      const source = await readResponse(response);
+      if (!this.isCurrent(operation)) return;
+      this.fetchController = undefined;
+      this.closeUrl();
+      this.acceptImport(source);
+    } catch (error) {
+      if (!this.isCurrent(operation)) return;
+      this.reportError(
+        error,
+        controller.signal.aborted ? 'The URL request timed out.' : 'Could not fetch this URL. The server must allow browser access (CORS).',
+      );
+    } finally {
+      clearTimeout(timeout);
+      if (this.isCurrent(operation)) {
+        this.fetchController = undefined;
+        this.pendingAction.set('');
       }
     }
   }
 
-  async copyFormattedJson() {
-    if (!this.formattedJson) return;
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      await navigator.clipboard.writeText(this.formattedJson);
-      this.statusMessage = 'Copied formatted JSON to clipboard! ✓';
-      this.isError = false;
+  private acceptImport(source: string): void {
+    checkInputSize(source);
+    this.changeInput(source.replace(/^\uFEFF/, ''));
+    this.inputScroll.set(0);
+    this.run('format');
+  }
+
+  async copy(): Promise<void> {
+    const result = this.result();
+    if (!result) return;
+    try {
+      await navigator.clipboard.writeText(result.text);
+      if (result === this.result()) this.reportSuccess('Output copied.', result.document);
+    } catch {
+      if (result !== this.result()) return;
+      this.view.set('code');
       setTimeout(() => {
-        if (this.statusMessage.includes('Copied')) this.statusMessage = '';
-      }, 2500);
-    }
-  }
-
-  downloadJsonFile() {
-    const content = this.formattedJson || this.rawJson;
-    if (!content || typeof document === 'undefined') return;
-
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'data.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    this.statusMessage = 'JSON file download started!';
-    this.isError = false;
-  }
-
-  onFileUpload(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.rawJson = reader.result as string;
-      this.beautifyJson();
-      this.statusMessage = `Loaded "${file.name}" successfully!`;
-      this.isError = false;
-      input.value = '';
-    };
-    reader.readAsText(file);
-  }
-
-  openUrlPrompt() {
-    if (typeof window === 'undefined') return;
-    const url = window.prompt('Enter JSON API or Raw URL to fetch:');
-    if (!url) return;
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        this.rawJson = JSON.stringify(data, null, 2);
-        this.beautifyJson();
-        this.statusMessage = 'Fetched data from URL successfully!';
-        this.isError = false;
-      })
-      .catch(err => {
-        this.isError = true;
-        this.statusMessage = `Failed to fetch URL: ${err.message}`;
+        if (result !== this.result()) return;
+        const editor = this.outputEditor?.nativeElement;
+        editor?.focus();
+        editor?.select();
       });
+      this.notice.set({ kind: 'error', message: 'Clipboard access is unavailable. Copy the selected output manually.' });
+    }
   }
 
-  printJson() {
-    if (typeof window === 'undefined') return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    printWindow.document.write(`<pre>${this.formattedJson || this.rawJson}</pre>`);
-    printWindow.document.close();
-    printWindow.print();
+  download(): void {
+    const source = this.output();
+    if (!source) return;
+    const url = URL.createObjectURL(new Blob([source], { type: 'application/json;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'formatted.json';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1_000);
   }
 
-  toggleFullscreen() {
-    this.isFullscreen = !this.isFullscreen;
+  print(): void {
+    const source = this.output();
+    if (!source) return;
+    const popup = window.open('', '_blank');
+    if (!popup) {
+      this.notice.set({ kind: 'error', message: 'Allow pop-ups for this page to print the output.' });
+      return;
+    }
+    popup.opener = null;
+    popup.document.title = 'Formatted JSON';
+    const pre = popup.document.createElement('pre');
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.overflowWrap = 'anywhere';
+    pre.textContent = source;
+    popup.document.body.replaceChildren(pre);
+    popup.focus();
+    popup.print();
   }
 
-  toggleViewMode() {
-    this.viewMode = this.viewMode === 'code' ? 'tree' : 'code';
-    if (this.viewMode === 'tree' && !this.parsedObject && this.rawJson) {
+  setView(view: View): void {
+    if (view === 'tree' && !this.result()) this.run('format');
+    if (view === 'code' || this.result()) this.view.set(view);
+  }
+
+  toggleNode(id: number): void {
+    this.expandedNodes.update((expanded) => {
+      const next = new Set(expanded);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  showMoreTree(): void {
+    this.treeLimit.update((limit) => Math.min(limit + TREE_PAGE_SIZE, MAX_TREE_ROWS));
+  }
+
+  goToError(): void {
+    const offset = this.notice()?.offset;
+    const editor = this.inputEditor?.nativeElement;
+    if (offset === undefined || !editor) return;
+    editor.focus();
+    editor.setSelectionRange(offset, offset);
+    const { line } = jsonPosition(this.rawJson(), offset);
+    editor.scrollTop = Math.max(0, (line - 3) * LINE_HEIGHT);
+    this.inputScroll.set(editor.scrollTop);
+  }
+
+  handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && (this.urlOpen() || this.focusMode())) {
+      if (this.urlOpen()) this.closeUrl();
+      else this.focusMode.set(false);
+      return;
+    }
+
+    if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+    if (event.key === 'Enter' && !this.urlOpen()) {
+      event.preventDefault();
+      this.validate();
+    } else if (event.shiftKey && event.key.toLowerCase() === 'f' && !this.urlOpen()) {
+      event.preventDefault();
+      this.run('format');
+    } else if (event.key.toLowerCase() === 'z' && event.target === this.inputEditor?.nativeElement) {
+      event.preventDefault();
+      this.moveHistory(event.shiftKey ? 1 : -1);
+    } else if (event.key.toLowerCase() === 'y' && event.target === this.inputEditor?.nativeElement) {
+      event.preventDefault();
+      this.moveHistory(1);
+    }
+  }
+
+  gutterStart(scroll: number): number {
+    return Math.floor(scroll / LINE_HEIGHT) + 1;
+  }
+
+  private buildTreeRows(): TreeRow[] {
+    const rows: TreeRow[] = [];
+    const result = this.result();
+    if (!result || this.view() !== 'tree') return rows;
+    const expanded = this.expandedNodes();
+    const limit = this.treeLimit();
+    const source = result.document.source;
+
+    function visit(node: Node, label: string, depth: number): void {
+      const size = node.children?.length ?? 0;
+      const container = node.type === 'object' || node.type === 'array';
+      const open = size > 0 && expanded.has(node.offset);
+      const start = node.offset;
+      const preview = container
+        ? (node.type === 'object' ? '{' + size + '}' : '[' + size + ']')
+        : source.slice(start, start + Math.min(node.length, 180)) + (node.length > 180 ? '…' : '');
+      rows.push({ id: start, label, type: node.type, preview, depth, expandable: size > 0, expanded: open });
+      if (!open) return;
+
+      const children = jsonChildren(node, result!.sorted);
+      for (let i = 0; i < children.length && rows.length <= limit; i++) {
+        const child = children[i];
+        if (child.type === 'property') {
+          const [key, value] = child.children!;
+          const name = source.slice(key.offset, key.offset + Math.min(key.length, 180));
+          visit(value, name + (key.length > 180 ? '…' : ''), depth + 1);
+        } else {
+          visit(child, String(i), depth + 1);
+        }
+      }
+    }
+
+    visit(result.document.root, 'Root', 0);
+    return rows;
+  }
+
+  private setResult(document: JsonDocument, indent: string, sorted: boolean, message: string): void {
+    const text = formatJsonDocument(document, indent, sorted);
+    this.result.set({ document, text, sorted });
+    this.expandedNodes.set(new Set([document.root.offset]));
+    this.treeLimit.set(TREE_PAGE_SIZE);
+    this.outputScroll.set(0);
+    if (this.outputEditor) this.outputEditor.nativeElement.scrollTop = 0;
+    this.reportSuccess(message, document);
+  }
+
+  private clearResult(): void {
+    this.result.set(null);
+    this.outputScroll.set(0);
+  }
+
+  private reportSuccess(message: string, document: JsonDocument): void {
+    const count = document.duplicateKeys;
+    this.notice.set(count ? {
+      kind: 'warning',
+      message: `${message} Found ${count} duplicate ${count === 1 ? 'key' : 'keys'}. All entries are preserved.`,
+    } : { kind: 'success', message });
+  }
+
+  private reportError(error: unknown, fallback = 'Could not process this JSON.'): void {
+    if (!(error instanceof JsonSourceError)) {
+      this.notice.set({ kind: 'error', message: fallback });
+      return;
+    }
+    const offset = error.offset;
+    if (offset === undefined) {
+      this.notice.set({ kind: 'error', message: error.message });
+      return;
+    }
+    const { line, column } = jsonPosition(this.rawJson(), offset);
+    this.notice.set({ kind: 'error', message: `Line ${line}, column ${column}. ${error.message}`, offset });
+  }
+
+  private startPending(label: string): number {
+    this.cancelPending();
+    this.notice.set(null);
+    this.pendingAction.set(label);
+    return this.revision;
+  }
+
+  private cancelPending(): void {
+    this.revision++;
+    this.fetchController?.abort();
+    this.fetchController = undefined;
+    this.pendingAction.set('');
+  }
+
+  private isCurrent(revision: number): boolean {
+    return this.revision === revision;
+  }
+}
+
+function countLines(text: string): number {
+  let lines = 1;
+  for (let end = text.indexOf('\n'); end !== -1; end = text.indexOf('\n', end + 1)) lines++;
+  return lines;
+}
+
+function decodeUtf8(buffer: ArrayBuffer): string {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+  } catch {
+    throw new JsonSourceError('The input could not be decoded as UTF-8.');
+  }
+}
+
+async function readResponse(response: Response): Promise<string> {
+  if (Number(response.headers.get('content-length')) > MAX_INPUT_BYTES) {
+    void response.body?.cancel().catch(() => {});
+    throw new JsonSourceError(INPUT_LIMIT_MESSAGE);
+  }
+  if (!response.body) return '';
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  const chunks: string[] = [];
+  let bytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > MAX_INPUT_BYTES) throw new JsonSourceError(INPUT_LIMIT_MESSAGE);
       try {
-        this.parsedObject = JSON.parse(this.rawJson);
-      } catch {}
+        chunks.push(decoder.decode(value, { stream: true }));
+      } catch {
+        throw new JsonSourceError('The response could not be decoded as UTF-8.');
+      }
     }
-  }
-
-  syncInputScroll() {
-    if (this.inputTextareaRef && this.inputGutterRef) {
-      this.inputGutterRef.nativeElement.scrollTop = this.inputTextareaRef.nativeElement.scrollTop;
+    try {
+      chunks.push(decoder.decode());
+    } catch {
+      throw new JsonSourceError('The response could not be decoded as UTF-8.');
     }
-  }
-
-  syncOutputScroll() {
-    if (this.outputTextareaRef && this.outputGutterRef) {
-      this.outputGutterRef.nativeElement.scrollTop = this.outputTextareaRef.nativeElement.scrollTop;
-    }
-  }
-
-  updateCursorPos(event: any) {
-    const textarea = event.target as HTMLTextAreaElement;
-    const selStart = textarea.selectionStart || 0;
-    const textBefore = textarea.value.substring(0, selStart);
-    const lines = textBefore.split('\n');
-    this.cursorLine = lines.length;
-    this.currentCol = lines[lines.length - 1].length + 1;
-  }
-
-  // Tree View Helper Functions
-  isObject(val: any): boolean {
-    return val !== null && typeof val === 'object';
-  }
-
-  isArray(val: any): boolean {
-    return Array.isArray(val);
-  }
-
-  getObjectKeys(val: any): string[] {
-    return val && typeof val === 'object' ? Object.keys(val) : [];
-  }
-
-  getKeysCount(val: any): number {
-    return val && typeof val === 'object' ? Object.keys(val).length : 0;
-  }
-
-  isCollapsed(key: string): boolean {
-    return this.collapsedKeys.has(key);
-  }
-
-  toggleNodeCollapse(key: string) {
-    if (this.collapsedKeys.has(key)) {
-      this.collapsedKeys.delete(key);
-    } else {
-      this.collapsedKeys.add(key);
-    }
-  }
-
-  getValClass(val: any): string {
-    if (typeof val === 'string') return 'val-string';
-    if (typeof val === 'number') return 'val-number';
-    if (typeof val === 'boolean') return 'val-boolean';
-    return 'val-null';
-  }
-
-  formatPrimitive(val: any): string {
-    if (typeof val === 'string') return `"${val}"`;
-    return String(val);
+    return chunks.join('');
+  } finally {
+    void reader.cancel().catch(() => {});
+    reader.releaseLock();
   }
 }

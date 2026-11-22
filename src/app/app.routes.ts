@@ -390,27 +390,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/games/tic-tac-toe/tic-tac-toe.component').then(m => m.TicTacToeComponent)
     },
     {
-        path: 'games/typing-test',
-        redirectTo: '/typing-speed-test',
-        pathMatch: 'full'
-    },
-    {
         path: 'typing-speed-test',
         loadComponent: () => import('./pages/typing-speed-test/typing-speed-test.component').then(m => m.TypingSpeedTestComponent)
     },
     {
-        path: 'typing-test',
-        redirectTo: 'typing-speed-test',
-        pathMatch: 'full'
-    },
-    {
         path: 'typing-master',
         loadComponent: () => import('./pages/typing-master/typing-master.component').then(m => m.TypingMasterComponent)
-    },
-    {
-        path: 'typing-tutor',
-        redirectTo: 'typing-master',
-        pathMatch: 'full'
     },
     {
         path: 'games/brick-breaker',
@@ -493,11 +478,6 @@ export const routes: Routes = [
             {
                 path: 'json-formatter',
                 loadComponent: () => import('./pages/developer-tools/json-formatter/json-formatter.component').then(m => m.JsonFormatterComponent)
-            },
-            {
-                path: 'json',
-                redirectTo: 'json-formatter',
-                pathMatch: 'full'
             },
             {
                 path: 'sql',
