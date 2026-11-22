@@ -8,9 +8,6 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn-room" (click)="showRoomModal = true">
-        👥 Live Room / Share Code
-      </button>
 
       <button class="btn-icon-sound" (click)="toggleMute()">
         <span>{{ isMuted ? '🔇' : '🔊' }}</span>
@@ -24,18 +21,7 @@
     </div>
   </header>
 
-  <!-- Active Room Info Bar -->
-  <div class="room-status-bar">
-    <div>
-      <span>MODE: </span>
-      <span class="room-id">{{ isMultiplayer ? 'LIVE MULTIPLAYER' : 'OFFLINE VS BOTS' }}</span>
-      <span *ngIf="roomId" style="margin-left: 1rem;">ROOM CODE: <strong class="room-id">{{ roomId }}</strong></span>
-    </div>
-
-    <button *ngIf="roomId" class="btn-copy-link" (click)="copyRoomLink()">
-      📋 Copy Share Link
-    </button>
-  </div>
+  <p class="room-status-bar">Play against two computer opponents.</p>
 
   <!-- ==================== OVAL GREEN FELT TABLE (MATCHING SCREENSHOT) ==================== -->
   <div class="table-wrapper">
@@ -154,34 +140,6 @@
         </button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- Room Modal Overlay -->
-  <div *ngIf="showRoomModal" class="modal-overlay">
-    <div class="modal-card">
-      <h2>LIVE MULTIPLAYER ROOM</h2>
-      <p>Create a room code to play live with friends or enter a 6-digit code to join!</p>
-
-      <div class="room-input-box">
-        <input 
-          type="text" 
-          [(ngModel)]="inputRoomCode" 
-          placeholder="ENTER ROOM CODE (E.G. TDP-8492)" 
-          maxlength="8" 
-        />
-        <button class="btn-action-primary" (click)="joinRoom(inputRoomCode)" style="width: 120px;">
-          JOIN
-        </button>
-      </div>
-
-      <button class="btn-action-primary" (click)="createRoom()" style="margin-bottom: 0.8rem;">
-        ➕ CREATE NEW ROOM CODE
-      </button>
-
-      <button class="btn-action-primary" (click)="playVsBots()" style="background: #334155; color: #fff;">
-        🤖 PLAY VS BOTS (OFFLINE)
-      </button>
     </div>
   </div>
 

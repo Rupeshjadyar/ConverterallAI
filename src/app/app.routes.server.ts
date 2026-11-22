@@ -77,6 +77,7 @@ export const STATIC_PRERENDER_ROUTES: string[] = [
   'pdf-processing/text-to-pdf',
   'games',
   'games/chess',
+  'games/stormline-rescue',
   'games/frontline-survivor',
   'games/warfare-3000',
   'games/teen-do-paanch',

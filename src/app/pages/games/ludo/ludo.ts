@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type TokenState = 'home' | 'active' | 'finished';
@@ -21,7 +21,9 @@ const SAFE_SQUARES = [1, 9, 14, 22, 27, 35, 40, 48];
   templateUrl: './ludo.html',
   styleUrl: './ludo.css',
 })
-export class Ludo implements OnInit {
+export class Ludo implements OnInit, OnDestroy {
+  private rollTimer?: ReturnType<typeof setInterval>;
+  private botTimer?: ReturnType<typeof setTimeout>;
   numPlayers = signal(2);
   tokens = signal<Token[]>([]);
   currentPlayer = signal(0);
@@ -41,7 +43,16 @@ export class Ludo implements OnInit {
     this.initGame();
   }
 
+  ngOnDestroy(): void { this.stopTurnTimers(); }
+
+  private stopTurnTimers(): void {
+    clearInterval(this.rollTimer);
+    clearTimeout(this.botTimer);
+  }
+
   initGame() {
+    this.stopTurnTimers();
+    this.isRolling.set(false);
     const tokens: Token[] = [];
     let id = 0;
     for (let p = 0; p < this.numPlayers(); p++) {
@@ -65,11 +76,11 @@ export class Ludo implements OnInit {
 
     this.isRolling.set(true);
     let count = 0;
-    const interval = setInterval(() => {
+    this.rollTimer = setInterval(() => {
       this.diceAnim.set(Math.ceil(Math.random() * 6));
       count++;
       if (count > 8) {
-        clearInterval(interval);
+        clearInterval(this.rollTimer);
         const roll = Math.ceil(Math.random() * 6);
         this.diceValue.set(roll);
         this.diceAnim.set(roll);
@@ -101,7 +112,7 @@ export class Ludo implements OnInit {
       this.endTurn(roll);
     } else if (player !== 0) {
       // Bot auto-picks
-      setTimeout(() => this.botMove(player, roll, movable), 600);
+      this.botTimer = setTimeout(() => this.botMove(player, roll, movable), 600);
     }
   }
 
@@ -163,7 +174,7 @@ export class Ludo implements OnInit {
     if (roll === 6) {
       this.addLog(`${PLAYER_NAMES[this.currentPlayer()]} gets another turn (rolled 6)!`);
       if (this.currentPlayer() !== 0) {
-        setTimeout(() => this.botTurn(this.currentPlayer()), 700);
+        this.botTimer = setTimeout(() => this.botTurn(this.currentPlayer()), 700);
       }
       return;
     }
@@ -172,7 +183,7 @@ export class Ludo implements OnInit {
     this.currentPlayer.set(next);
 
     if (next !== 0) {
-      setTimeout(() => this.botTurn(next), 700);
+      this.botTimer = setTimeout(() => this.botTurn(next), 700);
     } else {
       this.addLog("Your turn! Roll the dice.");
     }
@@ -182,11 +193,11 @@ export class Ludo implements OnInit {
     if (this.gameOver()) return;
     this.isRolling.set(true);
     let count = 0;
-    const interval = setInterval(() => {
+    this.rollTimer = setInterval(() => {
       this.diceAnim.set(Math.ceil(Math.random() * 6));
       count++;
       if (count > 6) {
-        clearInterval(interval);
+        clearInterval(this.rollTimer);
         const roll = Math.ceil(Math.random() * 6);
         this.diceValue.set(roll);
         this.diceAnim.set(roll);

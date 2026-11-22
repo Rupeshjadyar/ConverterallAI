@@ -338,6 +338,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/games/games-home/games-home.component').then(m => m.GamesHomeComponent)
     },
     {
+        path: 'games/stormline-rescue',
+        loadComponent: () => import('./pages/games/stormline-rescue/stormline-rescue.component').then(m => m.StormlineRescueComponent)
+    },
+    {
         path: 'games/chess',
         loadComponent: () => import('./pages/games/chess/chess.component').then(m => m.ChessComponent)
     },

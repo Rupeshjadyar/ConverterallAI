@@ -1,3 +1,4 @@
+import { FixedGameClock } from '../fixed-game-clock';
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener, signal, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -185,13 +186,20 @@ export class PongComponent implements AfterViewInit, OnDestroy {
     this.rallyCount.set(0);
   }
 
-  private gameLoop = () => {
+  private readonly clock = new FixedGameClock();
+
+  private gameLoop = (timestamp?: number): void => {
     if (this.gameState() !== 'playing') return;
-
-    this.update();
-    this.render();
-
-    this.animFrameId = requestAnimationFrame(this.gameLoop);
+    if (timestamp === undefined) {
+      if (this.animFrameId !== null) cancelAnimationFrame(this.animFrameId);
+      this.clock.reset();
+      this.render();
+    } else {
+      const ticks = this.clock.ticks(timestamp);
+      for (let tick = 0; tick < ticks && this.gameState() === 'playing'; tick++) this.update();
+      if (ticks) this.render();
+    }
+    if (this.gameState() === 'playing') this.animFrameId = requestAnimationFrame(this.gameLoop);
   };
 
   private update() {

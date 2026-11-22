@@ -1,40 +1,112 @@
 export const gameTools = [
   {
-    id: 'chess',
-    name: 'Chess vs AI',
-    slug: '/games/chess',
-    categoryId: 'games',
-    shortDesc: 'Challenge a Minimax AI at chess or play local 2-player with full legal rules.',
-    fullDesc: 'Full-featured browser chess engine with Minimax AI, legal moves, castling, en passant, checkmate, and move history.',
-    icon: '♟️',
-    badge: 'POPULAR',
-    isPopular: true,
-    isLatest: false,
-    isAI: true,
-    seoTitle: 'Play Chess Online Free - Smart AI Bot | ConverterAllAI',
-    seoDescription: 'Play chess online free against smart AI bots or challenge friends locally. Complete legal rules with castling, en passant, undo moves, and zero downloads.',
-    keywords: 'play chess online free, chess vs ai, online chess game, play chess against computer, 2 player chess free',
-    h1: 'Play Chess Online Against Smart AI or Local Friend',
-    intro: 'Sharpen your strategic intellect on the 64-square board. Test your opening repertoire and tactical endgames against our challenging Minimax AI engine, or enjoy a casual pass-and-play match with a friend directly in your browser.',
-    howToSteps: [
-      'Choose your preferred playing side (White or Black) and AI difficulty.',
-      'Click or drag any piece to view highlighted legal destination squares.',
-      'Execute your move and watch the AI engine counter-attack in real time.',
-      'Utilize Undo or Flip Board buttons to analyze tactical opportunities.'
+    "id": "stormline-rescue",
+    "name": "Stormline Rescue",
+    "slug": "/games/stormline-rescue",
+    "categoryId": "games",
+    "shortDesc": "Fly through a storm, retrieve escape capsules, and clear drifting debris before time runs out.",
+    "fullDesc": "A single-player arcade flight game with a timed rescue mission across three sectors, keyboard and touch controls, and a personal best saved in the browser.",
+    "icon": "✦",
+    "badge": "NEW",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "Stormline Rescue – Free Arcade Flight Game | ConverterAllAI",
+    "seoDescription": "Play Stormline Rescue, a free browser flight game. Fly through an electrical storm, recover nine escape capsules, dodge debris, and beat your best score.",
+    "keywords": "arcade flight game, stormline rescue, browser airplane game, rescue game, touch arcade game",
+    "h1": "How to Play Stormline Rescue",
+    "intro": "Fly an interceptor through three storm sectors and retrieve nine escape capsules in 75 seconds. Amber rings mark capsules. Avoid red debris and clear it with a short-range pulse.",
+    "howToSteps": [
+      "Select Launch rescue to start the 75-second mission.",
+      "Steer with WASD, the arrow keys, or a drag on the flight area.",
+      "Touch an amber capsule to recover it. Press Space or Clear debris when a hazard gets close.",
+      "Recover nine capsules before your time or hull runs out, then replay to beat your score."
     ],
-    features: [
-      'Configurable AI difficulty levels utilizing Minimax search algorithms',
-      'Full legal chess rules: castling, en passant, pawn promotion, checkmate',
-      'Interactive move log history displaying standard algebraic notation',
-      'Pass-and-play 2-player mode on the same desktop or mobile screen'
+    "features": [
+      "Three sectors that advance as you recover capsules",
+      "Keyboard and touch flight controls",
+      "Timed rescue mission with hull protection and a reusable pulse",
+      "Pause and replay with a best score kept on your device"
     ],
-    faqs: [
-      { q: 'How does the chess computer calculate its moves?', a: 'The computer evaluates board positions and calculates candidate moves ahead using the Minimax search algorithm with alpha-beta pruning.' },
-      { q: 'Can I undo accidental blunders during a game?', a: 'Yes, an Undo button allows you to take back moves when practicing tactics or learning openings.' },
-      { q: 'Does this chess game support standard tournament rules?', a: 'Yes, full FIDE rules including castling, en passant captures, pawn promotions to Queen/Rook/Bishop/Knight, and 50-move draws are implemented.' },
-      { q: 'Do I need to install any software or plugins to play?', a: 'No, the entire chess game is coded in lightweight modern JavaScript and runs instantly in any web browser.' }
+    "faqs": [
+      {
+        "q": "Can I play Stormline Rescue on a phone?",
+        "a": "Yes. Drag on the flight area to steer and use Clear debris to trigger the pulse on a touchscreen."
+      },
+      {
+        "q": "How many capsules do I need to recover?",
+        "a": "Recover nine capsules within 75 seconds. The next sector opens after every three rescues."
+      },
+      {
+        "q": "What happens when my ship hits debris?",
+        "a": "A collision removes one hull point. You briefly gain protection from another collision. Losing all three hull points ends the mission."
+      },
+      {
+        "q": "Where is my high score saved?",
+        "a": "The highest score is saved in the current browser. Each capsule earns points and a successful rescue earns a bonus for time left."
+      }
     ],
-    relatedToolPaths: ['/games/sudoku', '/games/tic-tac-toe', '/games/memory-match', '/games/ludo']
+    "relatedToolPaths": [
+      "/games/brick-breaker",
+      "/games/pong",
+      "/games/warfare-3000",
+      "/games/snake"
+    ],
+    "privacyNote": "The mission runs in your browser. Only your personal best is saved locally."
+  },
+  {
+    "id": "chess",
+    "name": "Chess vs AI",
+    "slug": "/games/chess",
+    "categoryId": "games",
+    "shortDesc": "Challenge a Minimax AI at chess or play local 2-player with full legal rules.",
+    "fullDesc": "Full-featured browser chess engine with Minimax AI, legal moves, castling, en passant, checkmate, and move history.",
+    "icon": "♟️",
+    "badge": "POPULAR",
+    "isPopular": true,
+    "isLatest": false,
+    "isAI": true,
+    "seoTitle": "Free Online Chess vs Computer | ConverterAllAI",
+    "seoDescription": "Play chess online free against smart AI bots or challenge friends locally. Complete legal rules with castling, en passant, undo moves, and zero downloads.",
+    "keywords": "play chess online free, chess vs ai, online chess game, play chess against computer, 2 player chess free",
+    "h1": "Play Chess Online Against Smart AI or Local Friend",
+    "intro": "Sharpen your strategic intellect on the 64-square board. Test your opening repertoire and tactical endgames against our challenging Minimax AI engine, or enjoy a casual pass-and-play match with a friend directly in your browser.",
+    "howToSteps": [
+      "Choose your preferred playing side (White or Black) and AI difficulty.",
+      "Click or drag any piece to view highlighted legal destination squares.",
+      "Execute your move and watch the AI engine counter-attack in real time.",
+      "Utilize Undo or Flip Board buttons to analyze tactical opportunities."
+    ],
+    "features": [
+      "Configurable AI difficulty levels utilizing Minimax search algorithms",
+      "Full legal chess rules: castling, en passant, pawn promotion, checkmate",
+      "Interactive move log history displaying standard algebraic notation",
+      "Pass-and-play 2-player mode on the same desktop or mobile screen"
+    ],
+    "faqs": [
+      {
+        "q": "How does the chess computer calculate its moves?",
+        "a": "The computer evaluates board positions and calculates candidate moves ahead using the Minimax search algorithm with alpha-beta pruning."
+      },
+      {
+        "q": "Can I undo accidental blunders during a game?",
+        "a": "Yes, an Undo button allows you to take back moves when practicing tactics or learning openings."
+      },
+      {
+        "q": "Does this chess game support standard tournament rules?",
+        "a": "Yes, full FIDE rules including castling, en passant captures, pawn promotions to Queen/Rook/Bishop/Knight, and 50-move draws are implemented."
+      },
+      {
+        "q": "Do I need to install any software or plugins to play?",
+        "a": "No, the entire chess game is coded in lightweight modern JavaScript and runs instantly in any web browser."
+      }
+    ],
+    "relatedToolPaths": [
+      "/games/sudoku",
+      "/games/tic-tac-toe",
+      "/games/memory-match",
+      "/games/ludo"
+    ]
   },
   {
     id: 'ludo',
@@ -259,78 +331,112 @@ export const gameTools = [
     relatedToolPaths: ['/games/chess', '/games/spelling-bee', '/games/memory-match', '/games/tic-tac-toe']
   },
   {
-    id: 'snake',
-    name: 'Classic Snake Game',
-    slug: '/games/snake',
-    categoryId: 'games',
-    shortDesc: 'Retro arcade snake game. Eat apples, grow longer, and beat your high score.',
-    fullDesc: 'Nostalgic Nokia-style snake game with smooth 60fps controls, wall wrap options, and high score tracking.',
-    icon: '🐍',
-    badge: 'POPULAR',
-    isPopular: true,
-    isLatest: false,
-    isAI: false,
-    seoTitle: 'Play Snake Online Free - Retro 60FPS Game | ConverterAllAI',
-    seoDescription: 'Play classic retro Snake game online free. Guide the hungry snake, gobble apples, grow longer, and beat high scores with smooth arrow or swipe controls.',
-    keywords: 'play snake online free, retro snake game, nokia snake classic, snake arcade 60fps, eat apple snake game',
-    h1: 'Retro Arcade Snake Game - Classic Nokia Nostalgia',
-    intro: 'Relive the golden era of arcade gaming. Slither across the screen, munch bright red apples to grow longer, and test your reflexes to see how long you can survive without colliding into walls or your own tail.',
-    howToSteps: [
-      'Use arrow keys (or W, A, S, D) or swipe gestures on touchscreens to steer.',
-      'Direct your snake toward apples to grow in length and boost your score.',
-      'Avoid running into screen boundaries or crashing into your own coiled tail.',
-      'Beat your personal best score and challenge your friends.'
+    "id": "snake",
+    "name": "Classic Snake Game",
+    "slug": "/games/snake",
+    "categoryId": "games",
+    "shortDesc": "Retro arcade snake game. Eat apples, grow longer, and beat your high score.",
+    "fullDesc": "Nostalgic Nokia-style snake game with smooth 60fps controls, wall wrap options, and high score tracking.",
+    "icon": "🐍",
+    "badge": "POPULAR",
+    "isPopular": true,
+    "isLatest": false,
+    "isAI": false,
+    "seoTitle": "Play Classic Snake Online | ConverterAllAI",
+    "seoDescription": "Play classic retro Snake game online free. Guide the hungry snake, gobble apples, grow longer, and beat high scores with smooth arrow or swipe controls.",
+    "keywords": "play snake online free, retro snake game, nokia snake classic, snake arcade 60fps, eat apple snake game",
+    "h1": "Retro Arcade Snake Game - Classic Nokia Nostalgia",
+    "intro": "Relive the golden era of arcade gaming. Slither across the screen, munch bright red apples to grow longer, and test your reflexes to see how long you can survive without colliding into walls or your own tail.",
+    "howToSteps": [
+      "Use arrow keys (or W, A, S, D) or swipe gestures on touchscreens to steer.",
+      "Direct your snake toward apples to grow in length and boost your score.",
+      "Avoid running into screen boundaries or crashing into your own coiled tail.",
+      "Beat your personal best score and challenge your friends."
     ],
-    features: [
-      'Crisp 60 FPS retro graphics with authentic arcade sound effects',
-      'Responsive keyboard controls and mobile touch swipe steering',
-      'Local high score persistence to track all-time personal records',
-      'Progressive speed acceleration as your snake grows longer'
+    "features": [
+      "Crisp 60 FPS retro graphics with authentic arcade sound effects",
+      "Responsive keyboard controls and mobile touch swipe steering",
+      "Local high score persistence to track all-time personal records",
+      "Progressive speed acceleration as your snake grows longer"
     ],
-    faqs: [
-      { q: 'How do I steer the snake on mobile devices?', a: 'Swipe your finger up, down, left, or right on the game canvas to change direction.' },
-      { q: 'Does the snake speed up as the score increases?', a: 'Yes, every time the snake consumes food, it slightly accelerates, raising the adrenaline and challenge.' },
-      { q: 'What happens when the snake crashes into itself?', a: 'Colliding with your own body ends the round and records your final score.' },
-      { q: 'Can I pause the game mid-session?', a: 'Yes, pressing the Spacebar pauses and resumes gameplay instantly.' }
+    "faqs": [
+      {
+        "q": "How do I steer the snake on mobile devices?",
+        "a": "Swipe your finger up, down, left, or right on the game canvas to change direction."
+      },
+      {
+        "q": "Does the snake speed up as the score increases?",
+        "a": "Yes, every time the snake consumes food, it slightly accelerates, raising the adrenaline and challenge."
+      },
+      {
+        "q": "What happens when the snake crashes into itself?",
+        "a": "Colliding with your own body ends the round and records your final score."
+      },
+      {
+        "q": "Can I pause the game mid-session?",
+        "a": "Yes, pressing the Spacebar pauses and resumes gameplay instantly."
+      }
     ],
-    relatedToolPaths: ['/games/brick-breaker', '/games/pong', '/games/frontline-survivor', '/games/warfare-3000']
+    "relatedToolPaths": [
+      "/games/brick-breaker",
+      "/games/pong",
+      "/games/frontline-survivor",
+      "/games/warfare-3000"
+    ]
   },
   {
-    id: 'memory-match',
-    name: 'Memory Card Match',
-    slug: '/games/memory-match',
-    categoryId: 'games',
-    shortDesc: 'Flip cards and match pairs to test and train your visual memory.',
-    fullDesc: 'Cognitive brain trainer with colorful emoji card pairs, move counters, and star rating evaluations.',
-    icon: '🃏',
-    badge: 'FREE',
-    isPopular: false,
-    isLatest: false,
-    isAI: false,
-    seoTitle: 'Play Memory Match Online Free - Brain Cards | ConverterAllAI',
-    seoDescription: 'Play Memory Match card game online free. Flip cards, find matching pairs, and sharpen visual memory with fun brain training puzzles for all ages.',
-    keywords: 'play memory match online free, memory card game, brain training game, matching pairs puzzle, concentration card game',
-    h1: 'Memory Card Match - Visual Brain Training Game',
-    intro: 'Give your brain a fun workout with our interactive Memory Card Match puzzle. Flip hidden cards, memorize their positions, and match identical pairs in the fewest moves possible to earn a 3-star rating.',
-    howToSteps: [
-      'Click or tap any face-down card to reveal its hidden illustration.',
-      'Tap a second card to see if it matches the first card.',
-      'If matching, the pair stays open; otherwise, both cards flip back down.',
-      'Clear the entire board in minimum moves to earn a high score.'
+    "id": "memory-match",
+    "name": "Memory Card Match",
+    "slug": "/games/memory-match",
+    "categoryId": "games",
+    "shortDesc": "Flip cards and match pairs to test and train your visual memory.",
+    "fullDesc": "Cognitive brain trainer with colorful emoji card pairs, move counters, and star rating evaluations.",
+    "icon": "🃏",
+    "badge": "FREE",
+    "isPopular": false,
+    "isLatest": false,
+    "isAI": false,
+    "seoTitle": "Memory Match Card Game Online | ConverterAllAI",
+    "seoDescription": "Play Memory Match card game online free. Flip cards, find matching pairs, and sharpen visual memory with fun brain training puzzles for all ages.",
+    "keywords": "play memory match online free, memory card game, brain training game, matching pairs puzzle, concentration card game",
+    "h1": "Memory Card Match - Visual Brain Training Game",
+    "intro": "Give your brain a fun workout with our interactive Memory Card Match puzzle. Flip hidden cards, memorize their positions, and match identical pairs in the fewest moves possible to earn a 3-star rating.",
+    "howToSteps": [
+      "Click or tap any face-down card to reveal its hidden illustration.",
+      "Tap a second card to see if it matches the first card.",
+      "If matching, the pair stays open; otherwise, both cards flip back down.",
+      "Clear the entire board in minimum moves to earn a high score."
     ],
-    features: [
-      'Engaging emoji and icon card decks that delight players of all ages',
-      'Move counter and timer tracking your cognitive efficiency',
-      '3-star performance grading based on speed and move economy',
-      'Clean interface running smoothly on phones, tablets, and computers'
+    "features": [
+      "Engaging emoji and icon card decks that delight players of all ages",
+      "Move counter and timer tracking your cognitive efficiency",
+      "3-star performance grading based on speed and move economy",
+      "Clean interface running smoothly on phones, tablets, and computers"
     ],
-    faqs: [
-      { q: 'How does playing memory card games benefit the brain?', a: 'Matching games enhance short-term visual memory, focus, pattern recognition, and cognitive concentration.' },
-      { q: 'Are cards reshuffled every time I play a new game?', a: 'Yes, board grids are randomized dynamically so every game presents a fresh challenge.' },
-      { q: 'Can children play this memory game easily?', a: 'Yes, the simple rules and vibrant card icons make it suitable and educational for young kids.' },
-      { q: 'Does this game require any software download?', a: 'No, it loads and plays instantly in any modern web browser.' }
+    "faqs": [
+      {
+        "q": "How does playing memory card games benefit the brain?",
+        "a": "Matching games enhance short-term visual memory, focus, pattern recognition, and cognitive concentration."
+      },
+      {
+        "q": "Are cards reshuffled every time I play a new game?",
+        "a": "Yes, board grids are randomized dynamically so every game presents a fresh challenge."
+      },
+      {
+        "q": "Can children play this memory game easily?",
+        "a": "Yes, the simple rules and vibrant card icons make it suitable and educational for young kids."
+      },
+      {
+        "q": "Does this game require any software download?",
+        "a": "No, it loads and plays instantly in any modern web browser."
+      }
     ],
-    relatedToolPaths: ['/games/spelling-bee', '/games/sudoku', '/games/tic-tac-toe', '/games/chess']
+    "relatedToolPaths": [
+      "/games/spelling-bee",
+      "/games/sudoku",
+      "/games/tic-tac-toe",
+      "/games/chess"
+    ]
   },
   {
     id: 'tic-tac-toe',
@@ -444,77 +550,111 @@ export const gameTools = [
     relatedToolPaths: ['/games/brick-breaker', '/games/snake', '/games/tic-tac-toe', '/games/chess']
   },
   {
-    id: 'frontline-survivor',
-    name: 'Frontline Survivor (3D FPS)',
-    slug: '/games/frontline-survivor',
-    categoryId: 'games',
-    shortDesc: '3D first-person survival shooter with pointer-lock aim and laser shooting.',
-    fullDesc: 'First-person 3D survival arena shooter powered by Three.js with pointer-lock mouse aim, WASD movement, and sentry bot waves.',
-    icon: '🪖',
-    badge: '3D FPS',
-    isPopular: true,
-    isLatest: true,
-    isAI: true,
-    seoTitle: 'Play 3D FPS Online Free - Survival Shooter | ConverterAllAI',
-    seoDescription: 'Play Frontline Survivor 3D FPS game online free in browser. Experience pointer-lock mouse aim, WASD movement, and intense robot wave survival with Three.js.',
-    keywords: 'play 3d fps online free, browser first person shooter, three js 3d game, survival shooter web, free 3d fps game',
-    h1: 'Frontline Survivor - 3D First-Person Survival Shooter',
-    intro: 'Immerse yourself in full 3D combat directly inside your web browser. Built on Three.js, Frontline Survivor gives you genuine first-person shooter controls with pointer-lock mouse aim, sprinting, jumping, and raycast shooting against waves of robotic sentries.',
-    howToSteps: [
-      'Click Play to engage Pointer-Lock mouse aim in your browser.',
-      'Use WASD keys to move, Shift to sprint, and Spacebar to jump.',
-      'Left-click to fire your plasma rifle at incoming enemy bot waves.',
-      'Collect dropped health packs and survive as many combat waves as possible.'
+    "id": "frontline-survivor",
+    "name": "Frontline Survivor (3D FPS)",
+    "slug": "/games/frontline-survivor",
+    "categoryId": "games",
+    "shortDesc": "3D first-person survival shooter with pointer-lock aim and laser shooting.",
+    "fullDesc": "First-person 3D survival arena shooter powered by Three.js with pointer-lock mouse aim, WASD movement, and sentry bot waves.",
+    "icon": "🪖",
+    "badge": "3D FPS",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": true,
+    "seoTitle": "Frontline Survivor – 3D Browser FPS | ConverterAllAI",
+    "seoDescription": "Play Frontline Survivor in your browser. Enter a 3D survival arena, choose a mode, and use desktop keyboard and mouse controls to survive waves of bots.",
+    "keywords": "play 3d fps online free, browser first person shooter, three js 3d game, survival shooter web, free 3d fps game",
+    "h1": "Frontline Survivor - 3D First-Person Survival Shooter",
+    "intro": "Frontline Survivor is a desktop 3D game with a solo wave-survival mission. It uses a keyboard, a mouse with browser pointer lock, and WebGL.",
+    "howToSteps": [
+      "Open game mode selection and pick a mode.",
+      "Start the match and click Resume to capture the mouse.",
+      "Use WASD to move, Shift to sprint, and Space to jump.",
+      "Press Escape to release the mouse and pause the match."
     ],
-    features: [
-      'Real 3D graphics and spatial audio powered by WebGL and Three.js',
-      'True first-person camera with smooth pointer-lock mouse aim',
-      'Dynamic wave-based enemy bot AI pathfinding and laser attacks',
-      'Runs completely in browser with no executable downloads required'
+    "features": [
+      "3D arena and computer-controlled opponents",
+      "Keyboard movement and pointer-lock mouse controls",
+      "Wave progression and in-game score tracking",
+      "Browser gameplay on a WebGL-capable desktop"
     ],
-    faqs: [
-      { q: 'What is Pointer Lock and why is it needed for 3D FPS games?', a: 'Pointer Lock locks your mouse cursor to the game window, enabling infinite 360-degree camera rotation just like desktop shooters.' },
-      { q: 'How do I release my mouse cursor from the game?', a: 'Press the Escape (Esc) key on your keyboard at any time to unlock your mouse.' },
-      { q: 'Does this 3D shooter require a dedicated graphics card?', a: 'Any modern laptop, desktop, or tablet with WebGL hardware acceleration can run it smoothly.' },
-      { q: 'Do I have to install Steam or any launcher to play?', a: 'No, it launches and plays directly inside your web browser.' }
+    "faqs": [
+      {
+        "q": "What does Frontline Survivor need to run?",
+        "a": "Use a desktop browser with WebGL, keyboard controls, and a mouse that supports pointer lock."
+      },
+      {
+        "q": "How do I unlock the mouse?",
+        "a": "Press Escape. Click Resume to capture the mouse again."
+      },
+      {
+        "q": "Why does the game start with a pause screen?",
+        "a": "The game waits for you to click Resume and give the browser permission to capture the mouse."
+      },
+      {
+        "q": "Can I play a faster game on a phone?",
+        "a": "Stormline Rescue runs on a touchscreen and uses a smaller 2D flight area."
+      }
     ],
-    relatedToolPaths: ['/games/warfare-3000', '/games/snake', '/games/brick-breaker', '/games/chess']
+    "relatedToolPaths": [
+      "/games/stormline-rescue",
+      "/games/warfare-3000",
+      "/games/brick-breaker",
+      "/games/chess"
+    ]
   },
   {
-    id: 'warfare-3000',
-    name: 'Warfare 3000 (Tank Arena)',
-    slug: '/games/warfare-3000',
-    categoryId: 'games',
-    shortDesc: '2D arena multiplayer tank battle. Drive, aim cannon & climb leaderboard.',
-    fullDesc: 'Real-time 2D tank battle arena with live multiplayer leaderboard, twin-stick controls, and explosive combat.',
-    icon: '⚔️',
-    badge: 'NEW',
-    isPopular: true,
-    isLatest: true,
-    isAI: true,
-    seoTitle: 'Play Tank Arena Online Free - 2D Combat | ConverterAllAI',
-    seoDescription: 'Play Warfare 3000 tank arena battle online free. Steer armored tanks, blast enemy cannons, and climb the live combat leaderboard with zero downloads.',
-    keywords: 'play tank game online free, tank arena battle, 2d multiplayer shooter, armored tank combat, war tank io game',
-    h1: 'Warfare 3000 - 2D Armored Tank Arena Shooter',
-    intro: 'Command an armored tank in an explosive 2D combat arena. Maneuver through obstacle mazes, bounce cannon shells off barriers, outflank rival tanks, and climb to the top of the live combat leaderboard.',
-    howToSteps: [
-      'Steer your tank using WASD keys or virtual on-screen joystick.',
-      'Aim your cannon turret with the mouse or secondary touch stick.',
-      'Fire explosive shells to obliterate enemy armor before they corner you.',
-      'Score combat kills to upgrade tank firepower and claim the #1 ranking.'
+    "id": "warfare-3000",
+    "name": "Warfare 3000 (Tank Arena)",
+    "slug": "/games/warfare-3000",
+    "categoryId": "games",
+    "shortDesc": "Drive a tank in local target practice or enter the online arena when multiplayer is available.",
+    "fullDesc": "A 2D browser tank game with offline target practice, keyboard and mouse controls, mobile twin-stick controls, and an online arena when connected.",
+    "icon": "⚔️",
+    "badge": "NEW",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "Warfare 3000 Tank Arena Online | ConverterAllAI",
+    "seoDescription": "Play Warfare 3000 in your browser. Drive and aim a tank with keyboard, mouse, or touch. Practice on targets locally or join the arena when the server is online.",
+    "keywords": "play tank game online free, tank arena battle, 2d multiplayer shooter, armored tank combat, war tank io game",
+    "h1": "How to Play Warfare 3000 Tank Arena",
+    "intro": "Practice steering and aiming against targets in the local arena. To play against other people, choose Enter online arena when the multiplayer server is available.",
+    "howToSteps": [
+      "Enter a callsign. Choose Practice locally or join the online arena when available.",
+      "Move with WASD, arrow keys, or the left touch stick.",
+      "Aim with your mouse or the right touch stick.",
+      "Use Leave arena to return to the lobby."
     ],
-    features: [
-      'Fast-paced 60 FPS 2D tank physics with turret rotation',
-      'Interactive arena walls that ricochet cannon projectiles',
-      'Live battle leaderboard displaying top tank commanders',
-      'Twin-stick virtual gamepad support on mobile touchscreen devices'
+    "features": [
+      "Local practice with moving, aiming, and hit scoring",
+      "Online arena and leaderboard when the game server is connected",
+      "Keyboard and mouse controls on desktop",
+      "Two touch sticks on supported touchscreens"
     ],
-    faqs: [
-      { q: 'Can cannon shells bounce off arena walls?', a: 'Yes, shells ricochet off solid bunker walls once, allowing clever trick-shot bank angles around corners.' },
-      { q: 'How do I aim and steer independently?', a: 'Your chassis moves with keyboard WASD while your turret independently tracks your mouse cursor position.' },
-      { q: 'Can I play Warfare 3000 on mobile devices?', a: 'Yes, twin-stick on-screen controls appear automatically on mobile touchscreens.' },
-      { q: 'Are there any registration fees or downloads?', a: 'No, it is completely free to play directly in your web browser.' }
+    "faqs": [
+      {
+        "q": "Can I play Warfare 3000 when the server is offline?",
+        "a": "Yes. Select Practice locally to drive around the arena and hit targets without a multiplayer connection."
+      },
+      {
+        "q": "How do I steer and aim at the same time?",
+        "a": "Use the movement keys and your mouse on desktop. On touchscreens, the left stick steers and the right stick aims."
+      },
+      {
+        "q": "What should I do if multiplayer is unavailable?",
+        "a": "Choose Retry multiplayer to check again, or start local practice from the same lobby."
+      },
+      {
+        "q": "Do I need to create an account?",
+        "a": "You can type a callsign and play from the browser without creating an account."
+      }
     ],
-    relatedToolPaths: ['/games/frontline-survivor', '/games/brick-breaker', '/games/snake', '/games/pong']
+    "relatedToolPaths": [
+      "/games/stormline-rescue",
+      "/games/frontline-survivor",
+      "/games/brick-breaker",
+      "/games/snake"
+    ]
   }
 ];

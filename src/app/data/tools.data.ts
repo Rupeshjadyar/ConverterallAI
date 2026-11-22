@@ -1714,6 +1714,61 @@ export const TOOLS_DATA: ToolItem[] = [
     "privacyNote": "Text-to-speech rendering is handled locally in your browser."
   },
   {
+    "id": "stormline-rescue",
+    "name": "Stormline Rescue",
+    "slug": "/games/stormline-rescue",
+    "categoryId": "games",
+    "shortDesc": "Fly through a storm, retrieve escape capsules, and clear drifting debris before time runs out.",
+    "fullDesc": "A single-player arcade flight game with a timed rescue mission across three sectors, keyboard and touch controls, and a personal best saved in the browser.",
+    "icon": "✦",
+    "badge": "NEW",
+    "isPopular": true,
+    "isLatest": true,
+    "isAI": false,
+    "seoTitle": "Stormline Rescue – Free Arcade Flight Game | ConverterAllAI",
+    "seoDescription": "Play Stormline Rescue, a free browser flight game. Fly through an electrical storm, recover nine escape capsules, dodge debris, and beat your best score.",
+    "keywords": "arcade flight game, stormline rescue, browser airplane game, rescue game, touch arcade game",
+    "h1": "How to Play Stormline Rescue",
+    "intro": "Fly an interceptor through three storm sectors and retrieve nine escape capsules in 75 seconds. Amber rings mark capsules. Avoid red debris and clear it with a short-range pulse.",
+    "howToSteps": [
+      "Select Launch rescue to start the 75-second mission.",
+      "Steer with WASD, the arrow keys, or a drag on the flight area.",
+      "Touch an amber capsule to recover it. Press Space or Clear debris when a hazard gets close.",
+      "Recover nine capsules before your time or hull runs out, then replay to beat your score."
+    ],
+    "features": [
+      "Three sectors that advance as you recover capsules",
+      "Keyboard and touch flight controls",
+      "Timed rescue mission with hull protection and a reusable pulse",
+      "Pause and replay with a best score kept on your device"
+    ],
+    "faqs": [
+      {
+        "q": "Can I play Stormline Rescue on a phone?",
+        "a": "Yes. Drag on the flight area to steer and use Clear debris to trigger the pulse on a touchscreen."
+      },
+      {
+        "q": "How many capsules do I need to recover?",
+        "a": "Recover nine capsules within 75 seconds. The next sector opens after every three rescues."
+      },
+      {
+        "q": "What happens when my ship hits debris?",
+        "a": "A collision removes one hull point. You briefly gain protection from another collision. Losing all three hull points ends the mission."
+      },
+      {
+        "q": "Where is my high score saved?",
+        "a": "The highest score is saved in the current browser. Each capsule earns points and a successful rescue earns a bonus for time left."
+      }
+    ],
+    "relatedToolPaths": [
+      "/games/brick-breaker",
+      "/games/pong",
+      "/games/warfare-3000",
+      "/games/snake"
+    ],
+    "privacyNote": "The mission runs in your browser. Only your personal best is saved locally."
+  },
+  {
     "id": "chess",
     "name": "Chess vs AI",
     "slug": "/games/chess",
@@ -1725,7 +1780,7 @@ export const TOOLS_DATA: ToolItem[] = [
     "isPopular": true,
     "isLatest": false,
     "isAI": true,
-    "seoTitle": "Play Chess Online Free - Smart AI Bot | ConverterAllAI",
+    "seoTitle": "Free Online Chess vs Computer | ConverterAllAI",
     "seoDescription": "Play chess online free against smart AI bots or challenge friends locally. Complete legal rules with castling, en passant, undo moves, and zero downloads.",
     "keywords": "play chess online free, chess vs ai, online chess game, play chess against computer, 2 player chess free",
     "h1": "Play Chess Online Against Smart AI or Local Friend",
@@ -2103,7 +2158,7 @@ export const TOOLS_DATA: ToolItem[] = [
     "isPopular": true,
     "isLatest": false,
     "isAI": false,
-    "seoTitle": "Play Snake Online Free - Retro 60FPS Game | ConverterAllAI",
+    "seoTitle": "Play Classic Snake Online | ConverterAllAI",
     "seoDescription": "Play classic retro Snake game online free. Guide the hungry snake, gobble apples, grow longer, and beat high scores with smooth arrow or swipe controls.",
     "keywords": "play snake online free, retro snake game, nokia snake classic, snake arcade 60fps, eat apple snake game",
     "h1": "Retro Arcade Snake Game - Classic Nokia Nostalgia",
@@ -2157,7 +2212,7 @@ export const TOOLS_DATA: ToolItem[] = [
     "isPopular": false,
     "isLatest": false,
     "isAI": false,
-    "seoTitle": "Play Memory Match Online Free - Brain Cards | ConverterAllAI",
+    "seoTitle": "Memory Match Card Game Online | ConverterAllAI",
     "seoDescription": "Play Memory Match card game online free. Flip cards, find matching pairs, and sharpen visual memory with fun brain training puzzles for all ages.",
     "keywords": "play memory match online free, memory card game, brain training game, matching pairs puzzle, concentration card game",
     "h1": "Memory Card Match - Visual Brain Training Game",
@@ -2373,44 +2428,44 @@ export const TOOLS_DATA: ToolItem[] = [
     "isPopular": true,
     "isLatest": true,
     "isAI": true,
-    "seoTitle": "Play 3D FPS Online Free - Survival Shooter | ConverterAllAI",
-    "seoDescription": "Play Frontline Survivor 3D FPS game online free in browser. Experience pointer-lock mouse aim, WASD movement, and intense robot wave survival with Three.js.",
+    "seoTitle": "Frontline Survivor – 3D Browser FPS | ConverterAllAI",
+    "seoDescription": "Play Frontline Survivor in your browser. Enter a 3D survival arena, choose a mode, and use desktop keyboard and mouse controls to survive waves of bots.",
     "keywords": "play 3d fps online free, browser first person shooter, three js 3d game, survival shooter web, free 3d fps game",
     "h1": "Frontline Survivor - 3D First-Person Survival Shooter",
-    "intro": "Immerse yourself in full 3D combat directly inside your web browser. Built on Three.js, Frontline Survivor gives you genuine first-person shooter controls with pointer-lock mouse aim, sprinting, jumping, and raycast shooting against waves of robotic sentries.",
+    "intro": "Frontline Survivor is a desktop 3D game with a solo wave-survival mission. It uses a keyboard, a mouse with browser pointer lock, and WebGL.",
     "howToSteps": [
-      "Click Play to engage Pointer-Lock mouse aim in your browser.",
-      "Use WASD keys to move, Shift to sprint, and Spacebar to jump.",
-      "Left-click to fire your plasma rifle at incoming enemy bot waves.",
-      "Collect dropped health packs and survive as many combat waves as possible."
+      "Open game mode selection and pick a mode.",
+      "Start the match and click Resume to capture the mouse.",
+      "Use WASD to move, Shift to sprint, and Space to jump.",
+      "Press Escape to release the mouse and pause the match."
     ],
     "features": [
-      "Real 3D graphics and spatial audio powered by WebGL and Three.js",
-      "True first-person camera with smooth pointer-lock mouse aim",
-      "Dynamic wave-based enemy bot AI pathfinding and laser attacks",
-      "Runs completely in browser with no executable downloads required"
+      "3D arena and computer-controlled opponents",
+      "Keyboard movement and pointer-lock mouse controls",
+      "Wave progression and in-game score tracking",
+      "Browser gameplay on a WebGL-capable desktop"
     ],
     "faqs": [
       {
-        "q": "What is Pointer Lock and why is it needed for 3D FPS games?",
-        "a": "Pointer Lock locks your mouse cursor to the game window, enabling infinite 360-degree camera rotation just like desktop shooters."
+        "q": "What does Frontline Survivor need to run?",
+        "a": "Use a desktop browser with WebGL, keyboard controls, and a mouse that supports pointer lock."
       },
       {
-        "q": "How do I release my mouse cursor from the game?",
-        "a": "Press the Escape (Esc) key on your keyboard at any time to unlock your mouse."
+        "q": "How do I unlock the mouse?",
+        "a": "Press Escape. Click Resume to capture the mouse again."
       },
       {
-        "q": "Does this 3D shooter require a dedicated graphics card?",
-        "a": "Any modern laptop, desktop, or tablet with WebGL hardware acceleration can run it smoothly."
+        "q": "Why does the game start with a pause screen?",
+        "a": "The game waits for you to click Resume and give the browser permission to capture the mouse."
       },
       {
-        "q": "Do I have to install Steam or any launcher to play?",
-        "a": "No, it launches and plays directly inside your web browser."
+        "q": "Can I play a faster game on a phone?",
+        "a": "Stormline Rescue runs on a touchscreen and uses a smaller 2D flight area."
       }
     ],
     "relatedToolPaths": [
+      "/games/stormline-rescue",
       "/games/warfare-3000",
-      "/games/snake",
       "/games/brick-breaker",
       "/games/chess"
     ]
@@ -2420,53 +2475,53 @@ export const TOOLS_DATA: ToolItem[] = [
     "name": "Warfare 3000 (Tank Arena)",
     "slug": "/games/warfare-3000",
     "categoryId": "games",
-    "shortDesc": "2D arena multiplayer tank battle. Drive, aim cannon & climb leaderboard.",
-    "fullDesc": "Real-time 2D tank battle arena with live multiplayer leaderboard, twin-stick controls, and explosive combat.",
+    "shortDesc": "Drive a tank in local target practice or enter the online arena when multiplayer is available.",
+    "fullDesc": "A 2D browser tank game with offline target practice, keyboard and mouse controls, mobile twin-stick controls, and an online arena when connected.",
     "icon": "⚔️",
     "badge": "NEW",
     "isPopular": true,
     "isLatest": true,
-    "isAI": true,
-    "seoTitle": "Play Tank Arena Online Free - 2D Combat | ConverterAllAI",
-    "seoDescription": "Play Warfare 3000 tank arena battle online free. Steer armored tanks, blast enemy cannons, and climb the live combat leaderboard with zero downloads.",
+    "isAI": false,
+    "seoTitle": "Warfare 3000 Tank Arena Online | ConverterAllAI",
+    "seoDescription": "Play Warfare 3000 in your browser. Drive and aim a tank with keyboard, mouse, or touch. Practice on targets locally or join the arena when the server is online.",
     "keywords": "play tank game online free, tank arena battle, 2d multiplayer shooter, armored tank combat, war tank io game",
-    "h1": "Warfare 3000 - 2D Armored Tank Arena Shooter",
-    "intro": "Command an armored tank in an explosive 2D combat arena. Maneuver through obstacle mazes, bounce cannon shells off barriers, outflank rival tanks, and climb to the top of the live combat leaderboard.",
+    "h1": "How to Play Warfare 3000 Tank Arena",
+    "intro": "Practice steering and aiming against targets in the local arena. To play against other people, choose Enter online arena when the multiplayer server is available.",
     "howToSteps": [
-      "Steer your tank using WASD keys or virtual on-screen joystick.",
-      "Aim your cannon turret with the mouse or secondary touch stick.",
-      "Fire explosive shells to obliterate enemy armor before they corner you.",
-      "Score combat kills to upgrade tank firepower and claim the #1 ranking."
+      "Enter a callsign. Choose Practice locally or join the online arena when available.",
+      "Move with WASD, arrow keys, or the left touch stick.",
+      "Aim with your mouse or the right touch stick.",
+      "Use Leave arena to return to the lobby."
     ],
     "features": [
-      "Fast-paced 60 FPS 2D tank physics with turret rotation",
-      "Interactive arena walls that ricochet cannon projectiles",
-      "Live battle leaderboard displaying top tank commanders",
-      "Twin-stick virtual gamepad support on mobile touchscreen devices"
+      "Local practice with moving, aiming, and hit scoring",
+      "Online arena and leaderboard when the game server is connected",
+      "Keyboard and mouse controls on desktop",
+      "Two touch sticks on supported touchscreens"
     ],
     "faqs": [
       {
-        "q": "Can cannon shells bounce off arena walls?",
-        "a": "Yes, shells ricochet off solid bunker walls once, allowing clever trick-shot bank angles around corners."
+        "q": "Can I play Warfare 3000 when the server is offline?",
+        "a": "Yes. Select Practice locally to drive around the arena and hit targets without a multiplayer connection."
       },
       {
-        "q": "How do I aim and steer independently?",
-        "a": "Your chassis moves with keyboard WASD while your turret independently tracks your mouse cursor position."
+        "q": "How do I steer and aim at the same time?",
+        "a": "Use the movement keys and your mouse on desktop. On touchscreens, the left stick steers and the right stick aims."
       },
       {
-        "q": "Can I play Warfare 3000 on mobile devices?",
-        "a": "Yes, twin-stick on-screen controls appear automatically on mobile touchscreens."
+        "q": "What should I do if multiplayer is unavailable?",
+        "a": "Choose Retry multiplayer to check again, or start local practice from the same lobby."
       },
       {
-        "q": "Are there any registration fees or downloads?",
-        "a": "No, it is completely free to play directly in your web browser."
+        "q": "Do I need to create an account?",
+        "a": "You can type a callsign and play from the browser without creating an account."
       }
     ],
     "relatedToolPaths": [
+      "/games/stormline-rescue",
       "/games/frontline-survivor",
       "/games/brick-breaker",
-      "/games/snake",
-      "/games/pong"
+      "/games/snake"
     ]
   },
   {

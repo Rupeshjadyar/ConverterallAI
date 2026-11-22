@@ -2,16 +2,11 @@
       
       <!-- HERO BANNER -->
       <section class="games-hero">
-        <div class="hero-badge">
-          <span class="pulse-dot"></span>
-          <span>100% Free • Zero Latency • Client-Side Angular Games</span>
-        </div>
-        
         <h1 class="hero-title">
-          The Ultimate <span class="gradient-text">Browser Games Arcade</span>
+          Free <span class="gradient-text">Browser Games</span>
         </h1>
         <p class="hero-desc">
-          Play classic strategy board games, Indian 3-Patti card tables with AI bots, arcade retro classics, and speed benchmarks. Play solo vs smart AI or 2-player pass & play!
+          Play arcade games, board games, puzzles, and Indian card games. Choose a solo challenge or play with a friend in supported games.
         </p>
 
         <!-- Search and Quick Category Filter -->
@@ -19,12 +14,14 @@
           <div class="search-bar">
             <span class="search-icon">🔍</span>
             <input 
-              type="text" 
-              [(ngModel)]="searchQuery" 
-              placeholder="Search games (e.g. Chess, 3 Patti, 2048, Sudoku, Snake...)" 
+              type="search"
+              aria-label="Search games"
+              [value]="searchQuery()"
+              (input)="searchQuery.set($any($event.target).value)"
+              placeholder="Search games"
               class="search-input"
             />
-            <button *ngIf="searchQuery" (click)="searchQuery = ''" class="clear-btn">✕</button>
+            <button type="button" *ngIf="searchQuery()" (click)="searchQuery.set('')" class="clear-btn" aria-label="Clear search">✕</button>
           </div>
 
           <div class="genre-pills">
@@ -32,6 +29,7 @@
               *ngFor="let g of genres" 
               class="genre-pill" 
               [class.active]="selectedGenre() === g.id"
+              [attr.aria-pressed]="selectedGenre() === g.id"
               (click)="selectedGenre.set(g.id)">
               <span>{{ g.icon }}</span>
               <span>{{ g.name }}</span>
@@ -41,18 +39,16 @@
       </section>
 
       <!-- FEATURED SPOTLIGHT -->
-      <section class="featured-spotlight" *ngIf="!searchQuery && selectedGenre() === 'all'">
-        <div class="spotlight-card chess-spotlight">
+      <section class="featured-spotlight" *ngIf="!searchQuery() && selectedGenre() === 'all'">
+        <div class="spotlight-card stormline-spotlight">
+          <img src="/assets/games/stormline-rescue.webp" alt="Stormline Rescue ship flying above a city" width="1440" height="810" />
           <div class="spotlight-content">
-            <span class="spotlight-badge">🏆 TRENDING STRATEGY</span>
-            <h2>Chess Master ♟️</h2>
-            <p>Challenge high-accuracy Minimax AI engines or battle a friend with legal move highlights, check indicators, and move history notation.</p>
+            <h2>Stormline Rescue</h2>
+            <p>Fly through an electrical storm and recover nine escape capsules before time runs out.</p>
             <div class="spotlight-actions">
-              <a routerLink="/games/chess" class="btn-play-primary">Play Chess Now →</a>
-              <span class="player-tag">👥 1P vs AI / 2-Player</span>
+              <a routerLink="/games/stormline-rescue" class="btn-play-primary">Play Stormline Rescue →</a>
             </div>
           </div>
-          <div class="spotlight-art">♟️</div>
         </div>
 
         <div class="spotlight-card patti-spotlight">
@@ -94,7 +90,7 @@
             </div>
 
             <div class="card-footer">
-              <a [routerLink]="game.slug" class="btn-launch-game">
+              <a [routerLink]="game.slug" class="btn-launch-game" [attr.aria-label]="'Play ' + game.name">
                 <span>Play Free</span>
                 <span class="arrow">→</span>
               </a>
@@ -104,9 +100,9 @@
 
         <div *ngIf="filteredGames().length === 0" class="empty-state glass">
           <div class="empty-icon">🎮</div>
-          <h3>No games found matching "{{ searchQuery }}"</h3>
+          <h3>{{ searchQuery() ? 'No games found matching “' + searchQuery() + '”' : 'No games found in this category' }}</h3>
           <p>Try clearing your search query or selecting "All Games".</p>
-          <button (click)="searchQuery = ''; selectedGenre.set('all')" class="btn-reset">View All Games</button>
+          <button (click)="searchQuery.set(''); selectedGenre.set('all')" class="btn-reset">View All Games</button>
         </div>
       </section>
 

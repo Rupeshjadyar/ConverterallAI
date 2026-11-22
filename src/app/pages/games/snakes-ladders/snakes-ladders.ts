@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Player {
@@ -22,7 +22,9 @@ interface SnakeLadder {
   templateUrl: './snakes-ladders.html',
   styleUrl: './snakes-ladders.css',
 })
-export class SnakesLadders implements OnInit {
+export class SnakesLadders implements OnInit, OnDestroy {
+  private rollTimer?: ReturnType<typeof setInterval>;
+  private botTimer?: ReturnType<typeof setTimeout>;
   players = signal<Player[]>([
     { id: 1, name: 'You', position: 0, color: '#ef4444', isBot: false },
     { id: 2, name: 'Bot', position: 0, color: '#3b82f6', isBot: true },
@@ -97,11 +99,11 @@ export class SnakesLadders implements OnInit {
   performRoll() {
     this.isRolling.set(true);
     let animCount = 0;
-    const animInterval = setInterval(() => {
+    this.rollTimer = setInterval(() => {
       this.diceAnimFrame.set(Math.ceil(Math.random() * 6));
       animCount++;
       if (animCount > 8) {
-        clearInterval(animInterval);
+        clearInterval(this.rollTimer);
         const roll = Math.ceil(Math.random() * 6);
         this.diceValue.set(roll);
         this.diceAnimFrame.set(roll);
@@ -156,7 +158,7 @@ export class SnakesLadders implements OnInit {
 
     // Bot turn
     if (this.players()[next].isBot && !this.gameOver()) {
-      setTimeout(() => this.performRoll(), 1000);
+      this.botTimer = setTimeout(() => this.performRoll(), 1000);
     }
   }
 
@@ -164,7 +166,16 @@ export class SnakesLadders implements OnInit {
     this.gameLog.update(log => [msg, ...log.slice(0, 9)]);
   }
 
+  ngOnDestroy(): void { this.stopTurnTimers(); }
+
+  private stopTurnTimers(): void {
+    clearInterval(this.rollTimer);
+    clearTimeout(this.botTimer);
+  }
+
   resetGame() {
+    this.stopTurnTimers();
+    this.isRolling.set(false);
     this.players.set([
       { id: 1, name: 'You', position: 0, color: '#ef4444', isBot: false },
       { id: 2, name: 'Bot', position: 0, color: '#3b82f6', isBot: true },

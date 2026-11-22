@@ -6,7 +6,7 @@
           <div class="military-header">
             <span class="crosshair-icon">🎯</span>
             <h1 class="title-text">WARFARE 3000</h1>
-            <p class="subtitle-text">REAL-TIME MULTIPLAYER TANK ARENA SHOOTER</p>
+            <p class="subtitle-text">Tank arena with local practice and online matches</p>
           </div>
 
           <form (ngSubmit)="joinGame()" class="join-form">
@@ -26,15 +26,18 @@
               <span class="char-counter">{{ playerName.length }}/12</span>
             </div>
 
-            <div class="server-status-pill">
+            <div class="server-status-pill" role="status">
               <span class="status-dot" [class.connected]="isConnected" [class.connecting]="isConnecting"></span>
-              <span>Server: {{ serverUrlDisplay }}</span>
+              <span>{{ serverStatus }}</span>
             </div>
 
-            <button type="submit" [disabled]="!playerName.trim() || isConnecting" class="btn-join-arena">
-              <span *ngIf="!isConnecting">ENTER ARENA ⚔️</span>
-              <span *ngIf="isConnecting">CONNECTING TO ARENA...</span>
+            <button type="submit" [disabled]="!playerName.trim() || !isConnected || joining" class="btn-join-arena">
+              {{ joining ? 'Joining arena…' : 'Enter online arena' }}
             </button>
+            <div class="connection-actions">
+              <button type="button" class="btn-practice" (click)="startPractice()">Practice locally</button>
+              <button *ngIf="!isConnecting && !isConnected" type="button" class="btn-practice" (click)="retryConnection()">Retry multiplayer</button>
+            </div>
           </form>
 
           <div class="controls-guide">
@@ -66,12 +69,13 @@
       </div>
 
       <!-- DISCONNECTED / RECONNECTING BANNER -->
-      <div *ngIf="gameState === 'PLAYING' && !isConnected" class="disconnection-banner">
-        ⚠️ Connection Lost! Reconnecting to Warfare 3000 Server...
+      <div *ngIf="gameState === 'PLAYING'" class="match-actions">
+        <span *ngIf="practice">Local practice</span>
+        <button type="button" class="btn-practice" (click)="leaveMatch()">Leave arena</button>
       </div>
 
       <!-- TOP-RIGHT LEADERBOARD HUD -->
-      <div *ngIf="gameState === 'PLAYING'" class="leaderboard-hud glass-panel">
+      <div *ngIf="gameState === 'PLAYING' && !practice" class="leaderboard-hud glass-panel">
         <div class="hud-header">
           <span class="hud-icon">🏆</span>
           <span class="hud-title">TOP TANKERS</span>
@@ -97,7 +101,7 @@
         <div class="hud-self-header">
           <span class="self-color-indicator" [style.background-color]="localPlayer.color"></span>
           <span class="self-name">{{ localPlayer.name }}</span>
-          <span class="self-kills">⚔️ {{ localPlayer.score }} Kills</span>
+          <span class="self-kills">{{ localPlayer.score }} {{ practice ? 'hits' : 'points' }}</span>
         </div>
         <div class="hp-bar-outer">
           <div 

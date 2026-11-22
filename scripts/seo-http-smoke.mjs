@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { TOOLS_DATA } from '../src/app/data/tools.data.ts';
 
 const base = process.env.SMOKE_ORIGIN ?? 'http://127.0.0.1:4000';
 const canonicalOrigin = 'https://converterallai.com';
@@ -8,14 +9,21 @@ const pdf = '/pdf-processing/compress-pdf';
 const json = '/developer-tools/json-formatter';
 const typing = '/typing-speed-test';
 const course = '/typing-master';
+const games = ['/games', ...TOOLS_DATA.filter((tool) => tool.categoryId === 'games').map((tool) => tool.slug)];
 
-for (const path of [pdf, english, hindi, json, typing, course]) {
+for (const path of [pdf, english, hindi, json, typing, course, ...games]) {
   const response = await fetch(base + path + '?utm_source=smoke');
   assert.equal(response.status, 200, path);
   assert.match(response.headers.get('cache-control') ?? '', /s-maxage=300/);
   const page = await response.text();
   assert.ok(page.includes('rel="canonical" href="' + canonicalOrigin + path + '"'), path);
   assert.match(page, /application\/ld\+json/);
+  if (games.includes(path)) {
+    assert.equal([...page.matchAll(/<h1\b/g)].length, 1, path);
+    assert.match(page, /<meta name="description" content="[^"]+"/, path);
+    if (path === '/games') assert.ok(page.includes('href="/games/stormline-rescue"'));
+    if (path === '/games/stormline-rescue') assert.match(page, /Launch rescue/);
+  }
   if (path === json) {
     assert.match(page, /<title>JSON Formatter &amp; Validator Online \| ConverterAllAI<\/title>/);
     assert.match(page, /<meta name="description" content="Beautify, minify, and validate JSON online\./);
@@ -95,6 +103,9 @@ for (const [, child] of children) {
     for (const path of ['/games/typing-test', '/typing-test', '/typing-tutor']) {
       assert.ok(!sitemap.includes('<loc>' + canonicalOrigin + path + '</loc>'));
     }
+  }
+  if (new URL(child).pathname === '/sitemap-games.xml') {
+    for (const path of games) assert.ok(sitemap.includes('<loc>' + canonicalOrigin + path + '</loc>'), path);
   }
 }
 console.log('HTTP smoke checks passed.');

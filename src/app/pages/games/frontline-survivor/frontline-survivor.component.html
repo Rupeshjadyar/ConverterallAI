@@ -1,5 +1,8 @@
 <div class="fragen-container">
   <h1 class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">Frontline Survivor 3D FPS Shooter</h1>
+  @if (renderError && currentScreen === 'lobby') {
+    <p class="renderer-notice" role="status">{{ renderError }}</p>
+  }
 
   <!-- ==================== SCREEN 1: MAIN LOBBY ==================== -->
   <div *ngIf="currentScreen === 'lobby'" class="lobby-viewport">
@@ -85,7 +88,7 @@
         </button>
 
         <button class="btn-multiplayer" (click)="openScreen('mode-select')">
-          MULTIPLAYER
+          PLAY SURVIVAL
         </button>
       </footer>
 
@@ -97,46 +100,14 @@
     <div class="mode-select-overlay">
       <header class="mode-header">
         <button class="btn-back" (click)="openScreen('lobby')">‹ BACK</button>
-        <h2>CHOOSE MATCH TYPE</h2>
+        <h2>SURVIVAL MISSION</h2>
         <div></div>
       </header>
 
-      <!-- Category Selector (Solo vs Team) -->
-      <div *ngIf="modeCategory === 'main'" class="category-cards-grid">
-        <div class="cat-card" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80');" (click)="selectCategory('solo')">
-          <div class="cat-title">SOLO BATTLE</div>
-        </div>
-
-        <div class="cat-card" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80');" (click)="selectCategory('team')">
-          <div class="cat-title">TEAM BATTLE</div>
-        </div>
-      </div>
-
-      <!-- Specific Sub-Modes (Free for All, Gun Race, Sniper Only, Secondary Only) -->
-      <div *ngIf="modeCategory !== 'main'" class="modes-cards-grid">
-        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Free For All')">
-          <div class="online-badge"><span class="dot"></span> Online</div>
-          <div class="mode-name">FREE FOR ALL</div>
-        </div>
-
-        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Gun Race')">
-          <div class="online-badge"><span class="dot"></span> Online</div>
-          <div class="mode-name">GUN RACE</div>
-        </div>
-
-        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Sniper Only')">
-          <div class="online-badge"><span class="dot"></span> Online</div>
-          <div class="mode-name">SNIPER ONLY</div>
-        </div>
-
-        <div class="sub-mode-card" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80');" (click)="startMatch('Secondary Only')">
-          <div class="online-badge"><span class="dot"></span> Online</div>
-          <div class="mode-name">SECONDARY ONLY</div>
-        </div>
-      </div>
-
-      <div style="text-align: center;">
-        <button *ngIf="modeCategory !== 'main'" class="btn-back" (click)="modeCategory = 'main'">‹ Mode Selection</button>
+      <div class="mode-briefing">
+        <h3>Wave survival</h3>
+        <p>Play a solo match against waves of computer-controlled opponents. Use a desktop keyboard and mouse.</p>
+        <button type="button" class="btn-action-primary" (click)="startMatch('Wave Survival')">Start match</button>
       </div>
     </div>
   </div>
@@ -258,7 +229,7 @@
       <div class="modal-card">
         <span class="modal-badge">TACTICAL PAUSE</span>
         <h2>POINTER UNLOCKED</h2>
-        <p class="premise">Click anywhere on the screen to lock mouse look and resume combat.</p>
+        <p class="premise" role="status">{{ renderError || 'Click Resume to capture the mouse. Press Escape to release it.' }}</p>
         <button class="btn-action-primary" (click)="requestPointerLock()" style="margin-bottom: 0.8rem;">
           RESUME COMBAT ▶
         </button>

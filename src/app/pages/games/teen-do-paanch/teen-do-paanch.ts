@@ -1,7 +1,6 @@
 import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 export type Suit = '♠' | '♥' | '♦' | '♣';
 export type Rank = '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K' | 'A';
@@ -15,7 +14,7 @@ export interface Card {
 @Component({
   selector: 'app-teen-do-paanch',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './teen-do-paanch.html',
   styleUrl: './teen-do-paanch.css',
 })
@@ -33,17 +32,13 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
   roundWinner = signal<string>('');
   message = signal<string>('Deal cards to start!');
 
-  // Room & Economy State
-  roomId = '';
-  inputRoomCode = '';
-  showRoomModal = false;
-  isMultiplayer = false;
+  // Local game state
   playerChips = 9500;
   currentPot = 1500;
   currentRound = 1;
   isMuted = false;
 
-  private broadcastChannel: BroadcastChannel | null = null;
+  private roundTimer?: ReturnType<typeof setTimeout>;
   private audioCtx: AudioContext | null = null;
 
   suits: Suit[] = ['♠', '♥', '♦', '♣'];
@@ -53,8 +48,6 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
     'J': 5, 'Q': 6, 'K': 7, 'A': 8
   };
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
-
   ngOnInit(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
       const savedChips = localStorage.getItem('tdp_chips');
@@ -63,19 +56,11 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
       }
     }
 
-    this.route.queryParams.subscribe(params => {
-      if (params['room']) {
-        this.joinRoom(params['room']);
-      }
-    });
-
-    this.initBroadcastSync();
   }
 
   ngOnDestroy(): void {
-    if (this.broadcastChannel) {
-      this.broadcastChannel.close();
-    }
+    clearTimeout(this.roundTimer);
+    if (this.audioCtx) void this.audioCtx.close().catch(() => {});
   }
 
   isRedSuit(suit: Suit): boolean {
@@ -94,58 +79,6 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.setItem('tdp_chips', this.playerChips.toString());
       }
-    }
-  }
-
-  // Room & Live P2P Sync
-  createRoom(): void {
-    const code = 'TDP-' + Math.floor(1000 + Math.random() * 9000);
-    this.roomId = code;
-    this.isMultiplayer = true;
-    this.showRoomModal = false;
-    this.router.navigate([], { queryParams: { room: code } });
-    this.broadcastState('ROOM_CREATED', { roomId: code });
-  }
-
-  joinRoom(code: string): void {
-    if (!code) return;
-    const cleanCode = code.trim().toUpperCase();
-    this.roomId = cleanCode;
-    this.isMultiplayer = true;
-    this.showRoomModal = false;
-    this.broadcastState('PLAYER_JOINED', { roomId: cleanCode, player: 'Friend Player' });
-  }
-
-  playVsBots(): void {
-    this.isMultiplayer = false;
-    this.roomId = '';
-    this.showRoomModal = false;
-  }
-
-  copyRoomLink(): void {
-    const link = window.location.origin + '/games/teen-do-paanch?room=' + this.roomId;
-    navigator.clipboard.writeText(link);
-    alert('Room link copied to clipboard: ' + link);
-  }
-
-  private initBroadcastSync(): void {
-    if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') return;
-    try {
-      this.broadcastChannel = new BroadcastChannel('tdp_game_sync');
-      this.broadcastChannel.onmessage = (event) => {
-        const { type, data } = event.data;
-        if (type === 'PLAY_CARD' && data.roomId === this.roomId) {
-          this.handleRemoteCardPlay(data);
-        }
-      };
-    } catch (e) {
-      // Fallback to window storage events if BroadcastChannel unsupported
-    }
-  }
-
-  private broadcastState(type: string, data: any): void {
-    if (this.broadcastChannel && this.isMultiplayer) {
-      this.broadcastChannel.postMessage({ type, data: { ...data, roomId: this.roomId } });
     }
   }
 
@@ -171,6 +104,7 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
   }
 
   deal(): void {
+    clearTimeout(this.roundTimer);
     this.initAudioContext();
     this.playSound('cardPlay');
     const deck = this.shuffle(this.buildDeck());
@@ -202,7 +136,6 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
     this.hands.set(newHands);
     this.currentTrick.set(newTrick);
 
-    this.broadcastState('PLAY_CARD', { card, player: 0 });
 
     // Bot Auto Play for Seat 1 & Seat 2
     this.botPlay(1, newTrick, newHands, (t2, h2) => {
@@ -213,17 +146,8 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
     });
   }
 
-  private handleRemoteCardPlay(data: any): void {
-    if (data.player !== 0 && this.gamePhase() === 'play') {
-      const trick = this.currentTrick();
-      if (!trick.some(t => t.player === data.player)) {
-        this.currentTrick.set([...trick, { card: data.card, player: data.player }]);
-      }
-    }
-  }
-
   private botPlay(playerIndex: number, currentTrick: { card: Card; player: number }[], currentHands: Card[][], callback: (t: any[], h: Card[][]) => void): void {
-    setTimeout(() => {
+    this.roundTimer = setTimeout(() => {
       const hand = currentHands[playerIndex];
       if (hand.length === 0) {
         callback(currentTrick, currentHands);
@@ -285,7 +209,7 @@ export class TeenDoPaanch implements OnInit, OnDestroy {
     this.tricks.set(newTricks);
     this.trickWinner.set(this.playerNames[winnerIndex]);
 
-    setTimeout(() => {
+    this.roundTimer = setTimeout(() => {
       this.currentTrick.set([]);
       this.trickWinner.set('');
 

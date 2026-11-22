@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild, NgZone, HostListener, PLATFORM_ID, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, NgZone, ChangeDetectorRef, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -60,7 +60,10 @@ export class Warfare3000Component implements OnInit, OnDestroy {
   gameState: 'LOBBY' | 'PLAYING' = 'LOBBY';
   playerName: string = '';
   isConnected: boolean = false;
-  isConnecting: boolean = false;
+  isConnecting = false;
+  joining = false;
+  practice = false;
+  serverStatus = 'Checking connection…';
   serverUrlDisplay: string = '';
 
   private socket: Socket | null = null;
@@ -92,6 +95,16 @@ export class Warfare3000Component implements OnInit, OnDestroy {
   private dpr: number = 1;
 
   private platformId = inject(PLATFORM_ID);
+  private view = inject(ChangeDetectorRef);
+  private lifetime?: AbortController;
+  private gameControls?: AbortController;
+  private joinTimer?: ReturnType<typeof setTimeout>;
+  private viewSize = { width: 1, height: 1 };
+  private practiceShots: (BulletState & { a: number; age: number })[] = [];
+  private nextPracticeShot = 0;
+  private shotId = 0;
+  private practiceHudAt = 0;
+  private matchGeneration = 0;
 
   constructor(private ngZone: NgZone) {}
 
@@ -99,31 +112,59 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    // Generate default random callsign if empty
-    let savedName = null;
-    if (typeof window !== 'undefined' && window.localStorage) {
-      savedName = localStorage.getItem('warfare3000_callsign');
-    }
-    this.playerName = savedName || 'Tanker_' + Math.floor(100 + Math.random() * 900);
-
+    this.lifetime = new AbortController();
+    try { this.playerName = localStorage.getItem('warfare3000_callsign') || ''; } catch { /* Optional storage. */ }
+    if (!this.playerName) this.playerName = 'Tanker_' + Math.floor(100 + Math.random() * 900);
     this.serverUrl = this.detectServerUrl();
     this.serverUrlDisplay = this.serverUrl.replace(/^https?:\/\//, '');
-
-    // Setup canvas
     this.initCanvas();
-    this.connectSocket();
+    if (this.ctx) this.retryConnection();
   }
 
   ngOnDestroy(): void {
-    if (this.animFrameId) {
-      cancelAnimationFrame(this.animFrameId);
-    }
-    if (this.inputIntervalId) {
-      clearInterval(this.inputIntervalId);
-    }
-    if (this.socket) {
-      this.socket.disconnect();
-    }
+    this.lifetime?.abort();
+    this.stopMatch();
+    this.disconnectSocket();
+  }
+
+  private disconnectSocket(): void {
+    clearTimeout(this.joinTimer);
+    this.socket?.removeAllListeners();
+    this.socket?.disconnect();
+    this.socket = null;
+  }
+
+  leaveMatch(): void {
+    this.stopMatch();
+    this.gameState = 'LOBBY';
+    this.practice = false;
+    this.retryConnection();
+  }
+
+  private stopMatch(): void {
+    this.matchGeneration++;
+    this.gameControls?.abort();
+    if (this.animFrameId !== null) cancelAnimationFrame(this.animFrameId);
+    clearInterval(this.inputIntervalId);
+    clearTimeout(this.joinTimer);
+    this.animFrameId = null;
+    this.inputIntervalId = null;
+    this.joining = false;
+    this.myPlayerId = null;
+    this.localPlayer = null;
+    this.players.clear();
+    this.leaderboard = [];
+    this.bullets = [];
+    this.practiceShots = [];
+    this.killFeed = [];
+    this.resetControls();
+  }
+
+  private resetControls(): void {
+    this.keysPressed = {};
+    this.isMouseDown = false;
+    this.moveJoystick.active = false;
+    this.aimJoystick.active = false;
   }
 
   private detectServerUrl(): string {
@@ -142,118 +183,162 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     return PRODUCTION_SERVER_URL;
   }
 
-  private connectSocket(): void {
+  retryConnection(): void {
+    this.disconnectSocket();
+    this.isConnected = false;
     this.isConnecting = true;
-    this.socket = io(this.serverUrl, {
-      transports: ['websocket', 'polling'],
-      reconnectionAttempts: 10,
-      timeout: 5000
+    this.serverStatus = 'Checking multiplayer connection…';
+    const socket = io(this.serverUrl, {
+      transports: ['polling', 'websocket'],
+      reconnection: false,
+      timeout: 4_500,
     });
+    this.socket = socket;
 
-    this.socket.on('connect', () => {
-      console.log('Socket.IO connected:', this.socket?.id);
+    socket.on('connect', () => {
       this.isConnected = true;
       this.isConnecting = false;
+      this.serverStatus = 'Multiplayer available';
+      this.view.markForCheck();
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('Socket.IO disconnected');
+    const unavailable = () => {
+      if (this.gameState === 'PLAYING' && !this.practice) {
+        this.stopMatch();
+        this.gameState = 'LOBBY';
+      }
+      this.joining = false;
       this.isConnected = false;
-    });
-
-    this.socket.on('init', (data: any) => {
+      this.isConnecting = false;
+      this.serverStatus = 'Multiplayer unavailable. Local practice is ready.';
+      this.view.markForCheck();
+    };
+    socket.on('connect_error', unavailable);
+    socket.on('disconnect', unavailable);
+    socket.on('init', (data: { id: string }) => {
+      if (!this.joining || !data?.id) return;
+      clearTimeout(this.joinTimer);
+      this.joining = false;
       this.myPlayerId = data.id;
-      console.log('Joined arena with player ID:', this.myPlayerId);
+      this.beginMatch();
     });
-
-    this.socket.on('gameState', (snapshot: any) => {
-      this.handleServerGameState(snapshot);
+    socket.on('gameState', (snapshot) => {
+      if (this.gameState === 'PLAYING' && !this.practice) this.handleServerGameState(snapshot);
     });
-
-    this.socket.on('playerKilled', (data: any) => {
-      this.addKillFeedItem(data);
+    socket.on('playerKilled', (data) => {
+      if (this.gameState === 'PLAYING' && !this.practice) this.addKillFeedItem(data);
     });
   }
 
   joinGame(): void {
-    if (!this.playerName.trim() || !this.socket) return;
-    
-    const trimmedName = this.playerName.trim().substring(0, 12);
-    localStorage.setItem('warfare3000_callsign', trimmedName);
+    const name = this.playerName.trim().slice(0, 12);
+    if (!name || !this.socket?.connected || this.joining || !this.ctx) return;
+    try { localStorage.setItem('warfare3000_callsign', name); } catch { /* Optional storage. */ }
+    this.joining = true;
+    this.socket.emit('join', { name });
+    this.joinTimer = setTimeout(() => {
+      this.joining = false;
+      this.serverStatus = 'The arena did not answer. Retry the connection or start local practice.';
+      this.isConnected = false;
+      this.disconnectSocket();
+      this.view.markForCheck();
+    }, 4_500);
+  }
 
-    this.socket.emit('join', { name: trimmedName });
+  startPractice(): void {
+    if (!this.ctx) return;
+    this.stopMatch();
+    this.disconnectSocket();
+    this.isConnecting = false;
+    this.isConnected = false;
+    this.practice = true;
+    this.myPlayerId = 'local';
+    this.localPlayer = { id: 'local', name: this.playerName.trim() || 'Player', color: '#57b88e',
+      x: ARENA_WIDTH / 2, y: ARENA_HEIGHT / 2, a: 0, hp: 100, score: 0 };
+    this.camera.x = this.localPlayer.x;
+    this.camera.y = this.localPlayer.y;
+    this.players.set(this.localPlayer.id, this.localPlayer);
+    [ { x: 1080, y: 440 }, { x: 645, y: 705 }, { x: 1200, y: 690 }, { x: 520, y: 330 } ].forEach((point, index) => {
+      const id = 'target-' + index;
+      this.players.set(id, { id, name: 'Practice target', color: '#c58a51', ...point, a: 0, hp: 100, score: 0 });
+    });
+    this.nextPracticeShot = 0;
+    this.beginMatch();
+  }
+
+  private beginMatch(): void {
     this.gameState = 'PLAYING';
-
-    // Start controls & render loop outside Angular zone for high performance
     this.setupControlListeners();
-    this.startInputLoop();
+    if (!this.practice) this.startInputLoop();
     this.startRenderLoop();
+    this.view.markForCheck();
   }
 
   private initCanvas(): void {
     const canvas = this.canvasRef.nativeElement;
-    this.ctx = canvas.getContext('2d')!;
+    const context = canvas.getContext('2d');
+    if (!context) {
+      this.serverStatus = 'A canvas could not be opened in this browser.';
+      return;
+    }
+    this.ctx = context;
     this.resizeCanvas();
-    window.addEventListener('resize', () => this.resizeCanvas());
+    window.addEventListener('resize', () => this.resizeCanvas(), { signal: this.lifetime?.signal });
   }
 
   private resizeCanvas(): void {
     const canvas = this.canvasRef.nativeElement;
-    this.dpr = window.devicePixelRatio || 1;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
+    const bounds = canvas.parentElement!.getBoundingClientRect();
+    const width = Math.max(1, bounds.width);
+    const height = Math.max(1, bounds.height);
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.viewSize = { width, height };
     canvas.width = width * this.dpr;
     canvas.height = height * this.dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-
-    // Scale canvas context for retina displays
-    this.ctx.scale(this.dpr, this.dpr);
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 
-  // LISTENERS FOR KEYBOARD, MOUSE, AND TOUCH
   private setupControlListeners(): void {
+    this.gameControls?.abort();
+    this.gameControls = new AbortController();
+    const options = { signal: this.gameControls.signal };
     const canvas = this.canvasRef.nativeElement;
 
-    // Keyboard
     window.addEventListener('keydown', (e) => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
-        e.preventDefault();
-      }
+      if (e.ctrlKey || e.altKey || e.metaKey || e.target instanceof HTMLButtonElement) return;
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
       this.keysPressed[e.key.toLowerCase()] = true;
       this.keysPressed[e.code] = true;
-    });
-
+    }, options);
     window.addEventListener('keyup', (e) => {
       this.keysPressed[e.key.toLowerCase()] = false;
       this.keysPressed[e.code] = false;
-    });
-
-    // Mouse
+    }, options);
+    window.addEventListener('blur', () => this.resetControls(), options);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) this.resetControls();
+    }, options);
     canvas.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
-      this.mouseScreenPos.x = e.clientX - rect.left;
-      this.mouseScreenPos.y = e.clientY - rect.top;
-    });
-
+      this.mouseScreenPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }, options);
     canvas.addEventListener('mousedown', (e) => {
-      if (e.button === 0) { // Left click
-        this.isMouseDown = true;
-      }
-    });
-
+      if (e.button === 0) this.isMouseDown = true;
+    }, options);
     window.addEventListener('mouseup', (e) => {
-      if (e.button === 0) {
-        this.isMouseDown = false;
-      }
-    });
-
-    // Pointer / Touch Events for Twin-Stick Joysticks
-    canvas.addEventListener('pointerdown', (e) => this.handlePointerDown(e));
-    canvas.addEventListener('pointermove', (e) => this.handlePointerMove(e));
-    canvas.addEventListener('pointerup', (e) => this.handlePointerUp(e));
-    canvas.addEventListener('pointercancel', (e) => this.handlePointerUp(e));
+      if (e.button === 0) this.isMouseDown = false;
+    }, options);
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      canvas.setPointerCapture(e.pointerId);
+      this.handlePointerDown(e);
+    }, options);
+    canvas.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') this.handlePointerMove(e);
+    }, options);
+    canvas.addEventListener('pointerup', (e) => this.handlePointerUp(e), options);
+    canvas.addEventListener('pointercancel', (e) => this.handlePointerUp(e), options);
+    canvas.addEventListener('lostpointercapture', (e) => this.handlePointerUp(e), options);
   }
 
   private handlePointerDown(e: PointerEvent): void {
@@ -261,7 +346,7 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     const rect = this.canvasRef.nativeElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const screenMidX = window.innerWidth / 2;
+    const screenMidX = this.viewSize.width / 2;
 
     if (x < screenMidX) {
       // Left half -> Movement Joystick
@@ -325,7 +410,7 @@ export class Warfare3000Component implements OnInit, OnDestroy {
         if (this.gameState !== 'PLAYING' || !this.socket || !this.isConnected) return;
 
         const input = this.computeCurrentInput();
-        this.socket.emit('playerInput', input);
+        this.socket.volatile.emit('playerInput', input);
       }, 1000 / 30);
     });
   }
@@ -379,8 +464,8 @@ export class Warfare3000Component implements OnInit, OnDestroy {
 
       // Calculate aim angle towards mouse world coordinates
       if (this.localPlayer) {
-        const viewportW = window.innerWidth;
-        const viewportH = window.innerHeight;
+        const viewportW = this.viewSize.width;
+        const viewportH = this.viewSize.height;
         
         // Convert screen mouse pos to world space
         const mouseWorldX = this.camera.x + (this.mouseScreenPos.x - viewportW / 2) / this.camera.scale;
@@ -451,6 +536,7 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     // Update Top 5 Leaderboard
     const sorted = Array.from(this.players.values()).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
     this.leaderboard = sorted.slice(0, 5);
+    this.refreshHud();
   }
 
   private addKillFeedItem(data: any): void {
@@ -464,21 +550,64 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     if (this.killFeed.length > 5) {
       this.killFeed.pop();
     }
+    const generation = this.matchGeneration;
+    this.view.markForCheck();
     setTimeout(() => {
-      this.killFeed = this.killFeed.filter(k => k.id !== item.id);
+      if (generation !== this.matchGeneration) return;
+      this.killFeed = this.killFeed.filter((hit) => hit.id !== item.id);
+      this.view.markForCheck();
     }, 4500);
   }
 
   // MAIN RENDER LOOP (60 FPS OUTSIDE ANGULAR ZONE)
   private startRenderLoop(): void {
     this.ngZone.runOutsideAngular(() => {
-      const render = () => {
+      let last = performance.now();
+      const render = (now: number) => {
+        if (this.practice) this.updatePractice(Math.min(.045, (now - last) / 1_000), now);
+        last = now;
         this.updateInterpolation();
         this.renderCanvas();
         this.animFrameId = requestAnimationFrame(render);
       };
       this.animFrameId = requestAnimationFrame(render);
     });
+  }
+
+  private refreshHud(): void {
+    const now = performance.now();
+    if (now < this.practiceHudAt) return;
+    this.practiceHudAt = now + 100;
+    this.view.markForCheck();
+  }
+
+  private updatePractice(dt: number, now: number): void {
+    const player = this.localPlayer;
+    if (!player || document.hidden) return;
+    const input = this.computeCurrentInput();
+    player.x = Math.max(30, Math.min(ARENA_WIDTH - 30, player.x + input.mx * dt * 250));
+    player.y = Math.max(30, Math.min(ARENA_HEIGHT - 30, player.y + input.my * dt * 250));
+    player.a = input.a;
+    if (input.f && now >= this.nextPracticeShot) {
+      this.practiceShots.push({ id: String(this.shotId++), ownerId: player.id, x: player.x, y: player.y, a: input.a, age: 0 });
+      this.nextPracticeShot = now + 250;
+    }
+    this.practiceShots = this.practiceShots.filter((shot) => {
+      shot.age += dt;
+      shot.x += Math.cos(shot.a) * dt * 580;
+      shot.y += Math.sin(shot.a) * dt * 580;
+      if (shot.age > 2 || shot.x < 0 || shot.x > ARENA_WIDTH || shot.y < 0 || shot.y > ARENA_HEIGHT) return false;
+      for (const target of this.players.values()) {
+        if (target === player || Math.hypot(shot.x - target.x, shot.y - target.y) > 25) continue;
+        player.score++;
+        target.x = 90 + Math.random() * (ARENA_WIDTH - 180);
+        target.y = 90 + Math.random() * (ARENA_HEIGHT - 180);
+        this.view.markForCheck();
+        return false;
+      }
+      return true;
+    });
+    this.bullets = this.practiceShots;
   }
 
   private updateInterpolation(): void {
@@ -507,16 +636,16 @@ export class Warfare3000Component implements OnInit, OnDestroy {
     }
 
     // Scale camera according to screen aspect ratio
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = this.viewSize.width;
+    const vh = this.viewSize.height;
     const baseDimension = Math.min(vw, vh);
     this.camera.scale = Math.max(0.65, Math.min(1.3, baseDimension / 650));
   }
 
   private renderCanvas(): void {
     const ctx = this.ctx;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = this.viewSize.width;
+    const height = this.viewSize.height;
 
     // Clear background
     ctx.fillStyle = '#121c12';

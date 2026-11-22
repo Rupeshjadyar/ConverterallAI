@@ -1,0 +1,55 @@
+<article class="stormline">
+  <header class="briefing">
+    <img class="cover" src="/assets/games/stormline-rescue.webp" alt="A rescue ship banking through lightning above floating islands" width="1440" height="810" fetchpriority="high" />
+    <div class="briefing-copy">
+      <a class="back-link" routerLink="/games">← All games</a>
+      <h1>Stormline<br />Rescue</h1>
+      <p>Pilot a rescue ship through an electrical storm. Recover {{ target }} escape capsules before the window closes.</p>
+      <button type="button" class="primary" (click)="launch()" [disabled]="unsupported() || phase() === 'flying' || phase() === 'paused'">
+        {{ phase() === 'finished' ? 'Launch again' : 'Launch rescue' }}
+      </button>
+    </div>
+  </header>
+
+  <section class="mission" aria-label="Rescue mission">
+    <div class="status-bar">
+      <dl class="stats">
+        <div><dt>Sector</dt><dd>{{ sector() }}/3</dd></div>
+        <div><dt>Rescued</dt><dd>{{ rescued() }}/{{ target }}</dd></div>
+        <div><dt>Hull</dt><dd>{{ hull() }}/3</dd></div>
+        <div><dt>Time</dt><dd>{{ timeLeft() }} s</dd></div>
+        <div><dt>Score</dt><dd>{{ score() }}</dd></div>
+      </dl>
+      <button type="button" (click)="pause()" [disabled]="phase() !== 'flying'">Pause</button>
+    </div>
+
+    <div class="field-wrap">
+      <canvas #field width="800" height="490" tabindex="0" aria-label="Rescue flight area" aria-describedby="flight-controls"
+        (keydown)="keyDown($event)" (keyup)="keyUp($event)" (blur)="clearKeys()"
+        (pointerdown)="pointDown($event)" (pointermove)="pointMove($event)" (pointerup)="pointUp($event)"
+        (pointercancel)="pointUp($event)" (lostpointercapture)="pointUp($event)"></canvas>
+
+      @if (unsupported()) {
+        <div class="flight-overlay"><p role="status">This browser could not open the flight area.</p><a routerLink="/games">Browse other games</a></div>
+      } @else if (phase() === 'briefing') {
+        <div class="flight-overlay"><p>Rescue window · 75 seconds</p><button type="button" (click)="launch()">Start mission</button></div>
+      } @else if (phase() === 'paused') {
+        <div class="flight-overlay"><p role="status">Mission paused</p><button type="button" (click)="resume()">Resume rescue</button></div>
+      } @else if (phase() === 'finished') {
+        <div class="flight-overlay">
+          <h2>{{ cleared() ? 'Rescue complete' : 'Mission ended' }}</h2>
+          <p role="status">{{ rescued() }} of {{ target }} capsules recovered · {{ score() }} points</p>
+          <button type="button" (click)="launch()">Retry mission</button>
+        </div>
+      }
+    </div>
+
+    <div class="flight-footer">
+      <p id="flight-controls">Move with <kbd>WASD</kbd>, arrow keys, or drag on the field. Press <kbd>Space</kbd> to clear nearby debris.</p>
+      <span>Best {{ best() }}</span>
+      <button type="button" class="pulse" (click)="pulse(true)" [disabled]="phase() !== 'flying' || pulseSeconds() > 0">
+        {{ pulseSeconds() ? 'Pulse in ' + pulseSeconds() + ' s' : 'Clear debris' }}
+      </button>
+    </div>
+  </section>
+</article>

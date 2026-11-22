@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, AfterViewInit, NgZone, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import * as THREE from 'three';
@@ -49,8 +49,7 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
 
   // Navigation Screens
   currentScreen: 'lobby' | 'mode-select' | 'arsenal' | 'in-game' = 'lobby';
-  modeCategory: 'main' | 'solo' | 'team' = 'main';
-  selectedMode = 'Free For All';
+  selectedMode = 'Wave Survival';
 
   // Economy & Local Persistence State
   playerCash = 500;
@@ -118,6 +117,11 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
   // Input states
   private keys: { [key: string]: boolean } = {};
   private isMouseDown = false;
+  private readonly view = inject(ChangeDetectorRef);
+  private screenTimer?: ReturnType<typeof setTimeout>;
+  private lastLobbyFrame = 0;
+  private lastHudFrame = 0;
+  renderError = '';
   private lastShotTime = 0;
   private nextBotId = 1;
   private enemies: EnemySoldier3D[] = [];
@@ -138,19 +142,18 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') return;
-    setTimeout(() => {
-      this.initLobby3D();
-    }, 100);
+    this.scheduleScene(() => this.initLobby3D());
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.screenTimer);
     if (typeof document !== 'undefined') {
       document.removeEventListener('pointerlockchange', this.onPointerLockChange);
     }
     this.stopGameLoop();
     this.stopLobbyLoop();
-    if (this.gameRenderer) this.gameRenderer.dispose();
-    if (this.lobbyRenderer) this.lobbyRenderer.dispose();
+    this.releaseScene(this.gameScene, this.gameRenderer);
+    this.releaseScene(this.lobbyScene, this.lobbyRenderer);
   }
 
   @HostListener('window:resize')
@@ -196,7 +199,7 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
   @HostListener('window:mousemove', ['$event'])
   onMouseMove(e: MouseEvent): void {
     if (this.currentScreen !== 'in-game' || this.isPaused || this.isGameOver) return;
-    if (document.pointerLockElement !== this.gameCanvasRef.nativeElement) return;
+    if (document.pointerLockElement !== this.gameCanvasRef?.nativeElement) return;
 
     const sensitivity = 0.0022;
     this.yaw -= e.movementX * sensitivity;
@@ -239,16 +242,46 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
   }
 
   openScreen(screen: 'lobby' | 'mode-select' | 'arsenal' | 'in-game'): void {
+    if (this.currentScreen === 'lobby') {
+      this.stopLobbyLoop();
+      this.releaseScene(this.lobbyScene, this.lobbyRenderer);
+    } else if (this.currentScreen === 'in-game') {
+      this.stopGameLoop();
+      this.releaseScene(this.gameScene, this.gameRenderer);
+      this.enemies = [];
+    }
+    clearTimeout(this.screenTimer);
     this.currentScreen = screen;
     if (screen === 'lobby') {
-      setTimeout(() => this.initLobby3D(), 50);
-    } else {
-      this.stopLobbyLoop();
+      this.scheduleScene(() => this.initLobby3D());
     }
   }
 
-  selectCategory(cat: 'solo' | 'team'): void {
-    this.modeCategory = cat;
+  private scheduleScene(setup: () => void): void {
+    clearTimeout(this.screenTimer);
+    this.screenTimer = setTimeout(() => {
+      try { setup(); }
+      catch {
+        this.renderError = '3D could not start. Check WebGL support or try another browser.';
+        if (this.currentScreen === 'in-game') this.openScreen('lobby');
+      }
+      this.view.markForCheck();
+    });
+  }
+
+  private releaseScene(scene?: THREE.Scene, renderer?: THREE.WebGLRenderer): void {
+    if (!scene || !renderer) return;
+    const geometries = new Set<THREE.BufferGeometry>();
+    const materials = new Set<THREE.Material>();
+    scene.traverse((object) => {
+      if (!(object instanceof THREE.Mesh || object instanceof THREE.Line)) return;
+      geometries.add(object.geometry);
+      for (const material of Array.isArray(object.material) ? object.material : [object.material]) materials.add(material);
+    });
+    geometries.forEach((geometry) => geometry.dispose());
+    materials.forEach((material) => material.dispose());
+    scene.clear();
+    renderer.dispose();
   }
 
   selectWeapon(w: WeaponItem): void {
@@ -258,6 +291,7 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
 
   startMatch(modeName: string): void {
     this.selectedMode = modeName;
+    this.renderError = '';
     this.openScreen('in-game');
     this.initAudioContext();
 
@@ -269,22 +303,16 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
     this.currentAmmo = this.selectedWeapon.clipSize;
     this.reserveAmmo = 120;
     this.isGameOver = false;
-    this.isPaused = false;
+    this.isPaused = true;
     this.isAdsActive = false;
     this.killFeed = [];
 
-    setTimeout(() => {
+    this.scheduleScene(() => {
       this.initGame3D();
-      this.requestPointerLock();
       this.triggerWaveBanner();
       this.spawnEnemies(this.wave);
-
-      this.lastTime = performance.now();
-      this.stopGameLoop();
-      this.ngZone.runOutsideAngular(() => {
-        this.gameLoop(performance.now());
-      });
-    }, 100);
+      this.gameRenderer.render(this.gameScene, this.gameCamera);
+    });
   }
 
   exitToLobby(): void {
@@ -300,19 +328,34 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
   }
 
   requestPointerLock(): void {
-    if (this.gameCanvasRef) {
-      this.gameCanvasRef.nativeElement.requestPointerLock();
-    }
+    const canvas = this.gameCanvasRef?.nativeElement;
+    if (!canvas || !this.gameRenderer || !canvas.requestPointerLock) return;
+    try {
+      Promise.resolve(canvas.requestPointerLock()).catch(() => this.showPointerLockMessage());
+    } catch { this.showPointerLockMessage(); }
+  }
+
+  private showPointerLockMessage(): void {
+    this.renderError = 'Mouse capture was blocked. Click Resume to try again.';
+    this.view.markForCheck();
   }
 
   private onPointerLockChange = (): void => {
     if (this.currentScreen !== 'in-game') return;
 
-    if (document.pointerLockElement === this.gameCanvasRef.nativeElement) {
-      this.ngZone.run(() => this.isPaused = false);
+    if (document.pointerLockElement === this.gameCanvasRef?.nativeElement) {
+      this.isPaused = false;
+      this.renderError = '';
+      this.stopGameLoop();
+      this.lastTime = performance.now();
+      this.ngZone.runOutsideAngular(() => this.gameLoop(this.lastTime));
     } else {
-      this.ngZone.run(() => this.isPaused = true);
+      this.isPaused = true;
+      this.isMouseDown = false;
+      this.keys = {};
+      this.stopGameLoop();
     }
+    this.view.markForCheck();
   };
 
   // ---------------- LOBBY THREE.JS SCENE ----------------
@@ -333,8 +376,6 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
 
     this.lobbyRenderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     this.lobbyRenderer.setSize(w, h);
-    this.lobbyRenderer.shadowMap.enabled = true;
-    this.lobbyRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Lights
     const amb = new THREE.AmbientLight(0xffffff, 0.7);
@@ -359,14 +400,15 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
     this.lobbyScene.add(this.lobbySoldier);
 
     this.stopLobbyLoop();
-    this.lobbyLoop();
+    this.lastLobbyFrame = 0;
+    this.lobbyAnimId = requestAnimationFrame(this.lobbyLoop);
   }
 
-  private lobbyLoop = (): void => {
-    if (this.lobbySoldier) {
-      this.lobbySoldier.rotation.y += 0.005; // Idle slow spin
-    }
-    if (this.lobbyRenderer && this.lobbyScene && this.lobbyCamera) {
+  private lobbyLoop = (now: number): void => {
+    if (this.currentScreen !== 'lobby') return;
+    if (!document.hidden && now - this.lastLobbyFrame >= 33) {
+      this.lastLobbyFrame = now;
+      this.lobbySoldier.rotation.y += 0.01;
       this.lobbyRenderer.render(this.lobbyScene, this.lobbyCamera);
     }
     this.lobbyAnimId = requestAnimationFrame(this.lobbyLoop);
@@ -397,11 +439,9 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
     this.pitch = 0;
     this.gameCamera.position.copy(this.playerPos);
 
-    this.gameRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    this.gameRenderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'default' });
+    this.gameRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     this.gameRenderer.setSize(w, h);
-    this.gameRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.gameRenderer.shadowMap.enabled = true;
-    this.gameRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Tactical Sun Directional Light with Shadows
     const amb = new THREE.AmbientLight(0xffffff, 0.65);
@@ -601,7 +641,7 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
   }
 
   private gameLoop(timestamp: number): void {
-    if (this.currentScreen !== 'in-game') return;
+    if (this.currentScreen !== 'in-game' || this.isPaused) return;
 
     const dt = Math.min((timestamp - this.lastTime) / 1000, 0.1);
     this.lastTime = timestamp;
@@ -611,7 +651,11 @@ export class FrontlineSurvivorComponent implements OnInit, AfterViewInit, OnDest
     }
 
     this.gameRenderer.render(this.gameScene, this.gameCamera);
-    this.animFrameId = requestAnimationFrame((ts) => this.gameLoop(ts));
+    if (this.isGameOver || timestamp - this.lastHudFrame >= 120) {
+      this.lastHudFrame = timestamp;
+      this.view.markForCheck();
+    }
+    if (!this.isGameOver) this.animFrameId = requestAnimationFrame((ts) => this.gameLoop(ts));
   }
 
   private stopGameLoop(): void {

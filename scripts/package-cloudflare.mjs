@@ -1,9 +1,13 @@
 import { copyFileSync, existsSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { TOOL_ALIASES } from '../src/app/data/tool-locales.data.ts';
+import { TOOLS_DATA } from '../src/app/data/tools.data.ts';
 
 const browser = process.argv[2] ?? 'dist/converterallai/browser';
-const canonicalPages = new Set(['/developer-tools/json-formatter', '/typing-speed-test', '/typing-master']);
+const canonicalPages = new Set([
+  '/developer-tools/json-formatter', '/typing-speed-test', '/typing-master', '/games',
+  ...TOOLS_DATA.filter((tool) => tool.categoryId === 'games').map((tool) => tool.slug),
+]);
 const redirects = [];
 
 // Pages serves a flat .html file at the extensionless canonical URL.

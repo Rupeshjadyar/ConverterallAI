@@ -722,3 +722,22 @@
     }
   }
 }
+.renderer-notice {
+  position: absolute;
+  z-index: 12;
+  bottom: 1rem;
+  inset-inline: 1rem;
+  padding: .6rem .9rem;
+  border-radius: .5rem;
+  background: #1e293b;
+  color: #f8fafc;
+  pointer-events: none;
+}
+
+.mode-briefing {
+  max-width: 520px;
+  margin: clamp(20px, 8vh, 90px) auto;
+  padding: 20px;
+  text-align: center;
+  color: #f8fafc;
+}

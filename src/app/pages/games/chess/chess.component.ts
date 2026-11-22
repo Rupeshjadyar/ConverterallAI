@@ -2,7 +2,6 @@ import { Component, signal, computed, OnInit, inject, PLATFORM_ID } from '@angul
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Title, Meta } from '@angular/platform-browser';
 
 type PieceType = 'p' | 'r' | 'n' | 'b' | 'q' | 'k';
 type PieceColor = 'w' | 'b';
@@ -22,8 +21,6 @@ interface Move {
   styleUrls: ['./chess.component.css']
 })
 export class ChessComponent implements OnInit {
-  private title = inject(Title);
-  private meta = inject(Meta);
   private pid = inject(PLATFORM_ID);
 
   board: (ChessPiece | null)[][] = [];
@@ -63,20 +60,6 @@ export class ChessComponent implements OnInit {
   evalText = computed(()=>{ const d=this.materialDiff(); return d===0?'Equal':d>0?`White +${d}`:`Black +${-d}`; });
 
   ngOnInit() {
-    this.title.setTitle('Play Chess Online Free vs Computer | Chess Master — No Signup');
-    this.meta.addTags([
-      {name:'description',content:'Play Chess online free vs Computer AI (Easy to Expert) or 2 Players. No signup, no download. Castling, En Passant, Promotion, Checkmate — full 【entity-FIDE¦canonical_name=FIDE】 rules.'},
-      {name:'keywords',content:'play chess online, free chess game, chess vs computer, chess master, chess 2 player, online chess'},
-      {property:'og:title',content:'Chess Master — Play Chess Online Free'},
-      {property:'og:description',content:'Full-rules chess vs AI or 2 Players. Instant play, no signup.'},
-      {property:'og:type',content:'website'},
-      {name:'robots',content:'index, follow'}
-    ]);
-    if(isPlatformBrowser(this.pid)){
-      const s=document.createElement('script'); s.type='application/ld+json';
-      s.text=JSON.stringify({"@context":"https://schema.org","@type":"VideoGame","name":"Chess Master","applicationCategory":"Game","operatingSystem":"Web","genre":"Board Game","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Play chess online free vs computer AI or 2 players with full 【entity-FIDE¦canonical_name=FIDE】 rules."});
-      document.head.appendChild(s);
-    }
     this.resetGame();
   }
 

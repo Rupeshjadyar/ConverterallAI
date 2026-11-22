@@ -467,3 +467,8 @@
     :host-context(body.light-theme) .game-icon-box { background: #f8fafc; border-color: #e2e8f0; }
     :host-context(body.light-theme) .perk-card { background: #fff; border-color: #e2e8f0; }
     :host-context(body.light-theme) .perk-card h3 { color: #111827; }
+.stormline-spotlight { position: relative; isolation: isolate; overflow: hidden; min-height: 215px; color: #f3fbfc; background: #10252e; }
+.stormline-spotlight img, .stormline-spotlight::before { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stormline-spotlight img { object-fit: cover; object-position: 66% center; z-index: -2; }
+.stormline-spotlight::before { content: ''; background: linear-gradient(90deg, #101c24 5%, #101c24d9 43%, #101c2438); z-index: -1; }
+.stormline-spotlight .spotlight-content p { color: #d9e6e7; }

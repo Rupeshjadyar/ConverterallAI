@@ -1,6 +1,6 @@
 {
   "totalVisitors": 1,
-  "totalPageViews": 25,
+  "totalPageViews": 56,
   "totalToolExecutions": 0,
   "totalDataSavedMB": 0,
   "visitorSet": {
@@ -11,253 +11,298 @@
       "code": "IN",
       "name": "India",
       "flag": "🇮🇳",
-      "count": 25
+      "count": 56
     }
   },
   "topTools": {},
   "weeklyTraffic": {
     "2026-11-22": {
-      "visitors": 25,
+      "visitors": 56,
       "toolRuns": 0,
       "day": "Sun",
       "date": "Nov 22"
     }
   },
   "devices": {
-    "desktop": 25,
+    "desktop": 56,
     "mobile": 0,
     "tablet": 0
   },
   "browsers": {
     "chrome": 0,
     "safari": 0,
-    "edge": 25,
+    "edge": 56,
     "firefox": 0,
     "other": 0
   },
   "recentActivities": [
     {
-      "id": "1795328189529",
+      "id": "1795347168543",
       "title": "Visited /games/chess",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:16:29.529Z",
+      "timestamp": "2026-11-22T11:32:48.543Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795328189163",
+      "id": "1795347160835",
       "title": "Visited /",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:16:29.163Z",
+      "timestamp": "2026-11-22T11:32:40.835Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795328175579",
-      "title": "Visited /games/chess",
+      "id": "1795347140270",
+      "title": "Visited /resume-builder",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:16:15.579Z",
+      "timestamp": "2026-11-22T11:32:20.270Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795328167996",
+      "id": "1795347130703",
+      "title": "Visited /typing-speed-test",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:32:10.703Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795347130242",
+      "title": "Visited /",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:32:10.242Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795347033767",
+      "title": "Visited /typing-speed-test",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:30:33.767Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346972890",
+      "title": "Visited /audio-processing/video-to-audio",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:29:32.890Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346963232",
+      "title": "Visited /games/sudoku",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:29:23.232Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346936690",
       "title": "Visited /games/warfare-3000",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:16:07.996Z",
+      "timestamp": "2026-11-22T11:28:56.690Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795328155637",
-      "title": "Visited /pdf-processing/ppt-to-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:55.637Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328154310",
-      "title": "Visited /pdf-processing/pdf-to-ppt",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:54.310Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328151879",
-      "title": "Visited /pdf-processing/excel-to-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:51.879Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328150079",
-      "title": "Visited /pdf-processing/pdf-to-ppt",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:50.079Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328148693",
-      "title": "Visited /pdf-processing/excel-to-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:48.693Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328148062",
-      "title": "Visited /pdf-processing/pdf-to-excel",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:48.062Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328144973",
-      "title": "Visited /pdf-processing/word-to-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:44.973Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328144553",
-      "title": "Visited /pdf-processing/pdf-to-word",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:44.553Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328140484",
-      "title": "Visited /pdf-processing/compress-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:40.484Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328138992",
-      "title": "Visited /pdf-processing/split-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:38.993Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328134935",
-      "title": "Visited /pdf-processing/merge-pdf",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:34.935Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328128161",
-      "title": "Visited /image-processing/compressor",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:28.162Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328107390",
-      "title": "Visited /games",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:07.390Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795328107122",
-      "title": "Visited /",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T06:15:07.122Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795315652033",
-      "title": "Visited /games",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:47:32.033Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795315314653",
-      "title": "Visited /games/chess",
-      "country": "India",
-      "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:41:54.653Z",
-      "category": "visit",
-      "details": "Direct Visitor Access"
-    },
-    {
-      "id": "1795315266299",
+      "id": "1795346900604",
       "title": "Visited /games/frontline-survivor",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:41:06.300Z",
+      "timestamp": "2026-11-22T11:28:20.604Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795315245091",
-      "title": "Visited /pdf-processing/compress-pdf",
+      "id": "1795346897414",
+      "title": "Visited /games/pong",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:40:45.091Z",
+      "timestamp": "2026-11-22T11:28:17.415Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795315242029",
-      "title": "Visited /pdf-processing/split-pdf",
+      "id": "1795346884964",
+      "title": "Visited /games/warfare-3000",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:40:42.029Z",
+      "timestamp": "2026-11-22T11:28:04.964Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795315238226",
-      "title": "Visited /pdf-processing/merge-pdf",
+      "id": "1795346881512",
+      "title": "Visited /games/tic-tac-toe",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:40:38.226Z",
+      "timestamp": "2026-11-22T11:28:01.512Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     },
     {
-      "id": "1795315075686",
-      "title": "Visited /",
+      "id": "1795346879761",
+      "title": "Visited /games/memory-match",
       "country": "India",
       "flag": "🇮🇳",
-      "timestamp": "2026-11-22T02:37:55.686Z",
+      "timestamp": "2026-11-22T11:27:59.761Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346877499",
+      "title": "Visited /games/snake",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:57.499Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346875609",
+      "title": "Visited /games/sudoku",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:55.609Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346872943",
+      "title": "Visited /games/spelling-bee",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:52.943Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346869584",
+      "title": "Visited /games/snakes-ladders",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:49.584Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346856481",
+      "title": "Visited /games/teen-do-paanch",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:36.481Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346837743",
+      "title": "Visited /games/teen-patti",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:17.743Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346834094",
+      "title": "Visited /games/ludo",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:27:14.094Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346811396",
+      "title": "Visited /games/chess",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:26:51.396Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346771610",
+      "title": "Visited /games/stormline-rescue",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:26:11.610Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346753218",
+      "title": "Visited /typing-speed-test",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:53.218Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346732091",
+      "title": "Visited /typing-master",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:32.091Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346728514",
+      "title": "Visited /developer-tools/sql",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:28.514Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346714007",
+      "title": "Visited /developer-tools/web-tutorials",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:14.007Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346710879",
+      "title": "Visited /typing-master",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:10.879Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346704620",
+      "title": "Visited /developer-tools/sql",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:04.620Z",
+      "category": "visit",
+      "details": "Direct Visitor Access"
+    },
+    {
+      "id": "1795346702042",
+      "title": "Visited /typing-master",
+      "country": "India",
+      "flag": "🇮🇳",
+      "timestamp": "2026-11-22T11:25:02.042Z",
       "category": "visit",
       "details": "Direct Visitor Access"
     }

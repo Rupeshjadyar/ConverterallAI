@@ -1,20 +1,18 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { ToolRegistryService } from '../../../services/tool-registry.service';
-import { ToolItem } from '../../../data/tools.data';
 
 @Component({
   selector: 'app-games-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './games-home.component.html',
   styleUrls: ['./games-home.component.css']
 })
 export class GamesHomeComponent {
   private registry = inject(ToolRegistryService);
-  searchQuery = '';
+  searchQuery = signal('');
   selectedGenre = signal('all');
 
   genres = [
@@ -30,7 +28,7 @@ export class GamesHomeComponent {
 
   filteredGames = computed(() => {
     let list = this.allGames();
-    const query = this.searchQuery.trim().toLowerCase();
+    const query = this.searchQuery().trim().toLowerCase();
     const genre = this.selectedGenre();
 
     if (query) {
@@ -38,11 +36,11 @@ export class GamesHomeComponent {
     }
 
     if (genre === 'action') {
-      list = list.filter(g => ['frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong'].includes(g.id));
+      list = list.filter(g => ['stormline-rescue', 'frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong'].includes(g.id));
     } else if (genre === 'board') {
       list = list.filter(g => ['chess', 'teen-patti', 'teen-do-paanch', 'snakes-ladders', 'ludo', 'tic-tac-toe'].includes(g.id));
     } else if (genre === 'arcade') {
-      list = list.filter(g => ['frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong', 'snakes-ladders'].includes(g.id));
+      list = list.filter(g => ['stormline-rescue', 'frontline-survivor', 'warfare-3000', 'snake', 'brick-breaker', 'pong'].includes(g.id));
     } else if (genre === 'puzzle') {
       list = list.filter(g => ['sudoku', 'memory-match', 'typing-test', 'spelling-bee'].includes(g.id));
     } else if (genre === 'multiplayer') {
