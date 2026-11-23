@@ -12,6 +12,29 @@ const MAX_DEPTH = 100;
 const MAX_TOKENS = 250_000;
 const MAX_OUTPUT_LENGTH = 8 * 1024 * 1024;
 
+export function highlightJson(source: string): { text: string; kind: string }[] | null {
+  // Keep native textarea rendering for large payloads.
+  if (!source || source.length > 40_000) return null;
+  const scanner = createScanner(source);
+  const tokens: { text: string; kind: string }[] = [];
+  for (scanner.scan(); scanner.getTokenLength() > 0; scanner.scan()) {
+    if (tokens.length >= 2400) return null;
+    const start = scanner.getTokenOffset();
+    const end = start + scanner.getTokenLength();
+    const text = source.slice(start, end);
+    let kind = '';
+    if (text[0] === '"') {
+      kind = text.endsWith('"') && /^\s*:/.test(source.slice(end)) ? 'json-key' : 'json-string';
+    } else if (/^-?\d/.test(text)) {
+      kind = 'json-number';
+    } else if (text === 'true' || text === 'false' || text === 'null') {
+      kind = 'json-literal';
+    }
+    tokens.push({ text, kind });
+  }
+  return tokens;
+}
+
 export interface JsonDocument {
   source: string;
   root: Node;

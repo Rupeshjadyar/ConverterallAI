@@ -1,4 +1,4 @@
-<div class="json-page" [class.focus-mode]="focusMode()" (keydown)="handleKeydown($event)">
+<div class="json-page" [class.focus-mode]="focusMode()" [class.light-background]="lightBackground()" [style.--workspace-background]="background()" (keydown)="handleKeydown($event)">
   <nav class="breadcrumbs" aria-label="JSON Formatter breadcrumb">
     <a routerLink="/">Home</a><span aria-hidden="true">/</span>
     <a routerLink="/developer-tools">Developer Tools</a><span aria-hidden="true">/</span>
@@ -6,30 +6,24 @@
   </nav>
 
   <header class="page-intro">
-    <h1>JSON Formatter &amp; Validator</h1>
-    <p>Beautify, minify, or repair JSON. Inspect nested data in a collapsible tree and find syntax errors by line and column.</p>
+    <div>
+      <h1>JSON Formatter &amp; Validator</h1>
+      <p>Format, validate, and explore JSON right in your browser.</p>
+    </div>
+    <div class="background-picker" role="group" aria-label="Formatter background">
+      @for (preset of backgrounds; track preset.name) {
+        <button type="button" [attr.aria-pressed]="background() === preset.color" (click)="chooseBackground(preset.color)">
+          <span class="color-swatch" [style.background]="preset.color" aria-hidden="true"></span>{{ preset.name }}
+        </button>
+      }
+      <label class="custom-color">
+        <input #colorInput type="color" [value]="background()" (input)="chooseBackground(colorInput.value)" aria-label="Choose background color" />
+        <span>Custom color</span>
+      </label>
+    </div>
   </header>
 
   <section class="workspace" aria-label="JSON formatter workspace">
-    <div class="toolbar primary-toolbar">
-      <button type="button" class="primary" (click)="run('format')" aria-keyshortcuts="Control+Shift+F Meta+Shift+F">Format</button>
-      <label for="json-indent">Indent</label>
-      <select id="json-indent" #indent (change)="setIndentation(indent.value)">
-        <option value="2">2 spaces</option>
-        <option value="3">3 spaces</option>
-        <option value="4">4 spaces</option>
-        <option value="tab">Tab</option>
-        <option value="compact">Compact</option>
-      </select>
-      <button type="button" (click)="validate()" aria-keyshortcuts="Control+Enter Meta+Enter">Validate</button>
-      <button type="button" (click)="run('minify')">Minify</button>
-      <button type="button" (click)="run('sort')">Sort keys</button>
-      <button type="button" (click)="repair()">Repair</button>
-      <button type="button" class="focus-toggle" (click)="focusMode.set(!focusMode())" [attr.aria-pressed]="focusMode()">
-        {{ focusMode() ? 'Exit focus mode' : 'Focus mode' }}
-      </button>
-    </div>
-
     <div class="status" role="status" aria-live="polite" aria-atomic="true" [class.error]="notice()?.kind === 'error'" [class.warning]="notice()?.kind === 'warning'" [class.success]="notice()?.kind === 'success'">
       <span>{{ pendingAction() || notice()?.message || 'Paste JSON, load a sample, or open a UTF-8 file up to 2 MiB.' }}</span>
       @if (notice()?.offset !== undefined) {
@@ -38,14 +32,14 @@
     </div>
 
     <div class="editors">
-      <section class="editor-panel" aria-labelledby="json-input-heading">
+      <section class="editor-panel input-panel" aria-labelledby="json-input-heading">
         <div class="panel-header">
           <h2 id="json-input-heading">JSON input</h2>
           <div class="toolbar" role="group" aria-label="Input actions">
             <button type="button" (click)="loadSample()">Load sample</button>
             <button type="button" (click)="fileInput.click()">Open file</button>
             <input #fileInput type="file" accept=".json,.txt,application/json,text/plain" hidden (change)="uploadFile(fileInput)" />
-            <button #urlToggle type="button" (click)="toggleUrl()" [attr.aria-expanded]="urlOpen()" aria-controls="json-import-form">Open URL</button>
+            <button #urlToggle type="button" (click)="toggleUrl()" [attr.aria-expanded]="urlOpen()" [attr.aria-controls]="urlOpen() ? 'json-import-form' : null">Open URL</button>
             <button type="button" (click)="paste()">Paste</button>
             <button type="button" (click)="clearInput()" [disabled]="!rawJson() && !pendingAction()">Clear</button>
           </div>
@@ -71,7 +65,14 @@
               }
             </div>
           </div>
-          <textarea #inputEditor aria-labelledby="json-input-heading" [value]="rawJson()" (input)="onEditorInput(inputEditor)" (scroll)="inputScroll.set(inputEditor.scrollTop)" [attr.aria-invalid]="notice()?.offset !== undefined ? 'true' : null" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste JSON here"></textarea>
+          <div class="editor-surface">
+            @if (inputTokens(); as tokens) {
+              <div class="syntax-layer" aria-hidden="true">
+                <pre [style.transform]="'translate(' + -inputScrollX() + 'px,' + -inputScroll() + 'px)'">@for (token of tokens; track $index) {<span [class]="token.kind">{{ token.text }}</span>}</pre>
+              </div>
+            }
+            <textarea #inputEditor [class.highlighted]="inputTokens() !== null" aria-labelledby="json-input-heading" [value]="rawJson()" (input)="onEditorInput(inputEditor)" (scroll)="inputScroll.set(inputEditor.scrollTop); inputScrollX.set(inputEditor.scrollLeft)" [attr.aria-invalid]="notice()?.offset !== undefined ? 'true' : null" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="Paste JSON here"></textarea>
+          </div>
         </div>
         <div class="panel-footer">
           <span>{{ inputLineCount() }} {{ inputLineCount() === 1 ? 'line' : 'lines' }}</span>
@@ -82,7 +83,28 @@
         </div>
       </section>
 
-      <section class="editor-panel" aria-labelledby="json-output-heading">
+      <div class="toolbar primary-toolbar" role="group" aria-label="JSON operations">
+        <button type="button" class="primary" (click)="run('format')" aria-keyshortcuts="Control+Shift+F Meta+Shift+F">Format</button>
+        <div class="indent-control">
+        <label for="json-indent">Indent</label>
+        <select id="json-indent" #indent (change)="setIndentation(indent.value)">
+          <option value="2">2 spaces</option>
+          <option value="3">3 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+          <option value="compact">Compact</option>
+        </select>
+        </div>
+        <button type="button" (click)="validate()" aria-keyshortcuts="Control+Enter Meta+Enter">Validate</button>
+        <button type="button" (click)="run('minify')">Minify</button>
+        <button type="button" (click)="run('sort')">Sort keys</button>
+        <button type="button" (click)="repair()">Repair</button>
+        <button type="button" class="focus-toggle" (click)="focusMode.set(!focusMode())" [attr.aria-pressed]="focusMode()">
+          {{ focusMode() ? 'Exit focus mode' : 'Focus mode' }}
+        </button>
+      </div>
+
+      <section class="editor-panel output-panel" aria-labelledby="json-output-heading">
         <div class="panel-header">
           <h2 id="json-output-heading">JSON output</h2>
           <div class="toolbar" role="group" aria-label="Output view">
@@ -123,7 +145,14 @@
                 }
               </div>
             </div>
-            <textarea #outputEditor aria-labelledby="json-output-heading" [value]="output()" (scroll)="outputScroll.set(outputEditor.scrollTop)" wrap="off" spellcheck="false" readonly placeholder="Formatted JSON will appear here"></textarea>
+            <div class="editor-surface">
+              @if (outputTokens(); as tokens) {
+                <div class="syntax-layer" aria-hidden="true">
+                  <pre [style.transform]="'translate(' + -outputScrollX() + 'px,' + -outputScroll() + 'px)'">@for (token of tokens; track $index) {<span [class]="token.kind">{{ token.text }}</span>}</pre>
+                </div>
+              }
+              <textarea #outputEditor [class.highlighted]="outputTokens() !== null" aria-labelledby="json-output-heading" [value]="output()" (scroll)="outputScroll.set(outputEditor.scrollTop); outputScrollX.set(outputEditor.scrollLeft)" wrap="off" spellcheck="false" readonly placeholder="Formatted JSON will appear here"></textarea>
+            </div>
           </div>
         }
         <div class="panel-footer output-footer">

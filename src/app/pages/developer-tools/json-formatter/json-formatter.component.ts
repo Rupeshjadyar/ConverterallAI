@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnDestroy, ViewChild, computed, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, afterNextRender, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import type { Node } from 'jsonc-parser';
 import {
   checkInputSize,
   formatJsonDocument,
+  highlightJson,
   INPUT_LIMIT_MESSAGE,
   jsonChildren,
   type JsonDocument,
@@ -49,6 +50,13 @@ const HISTORY_LIMIT = 30;
 const HISTORY_CHARACTERS = 4 * 1024 * 1024;
 const LINE_HEIGHT = 22;
 const GUTTER_ROWS = Array.from({ length: 48 }, (_, index) => index);
+const BACKGROUND_KEY = 'converterallai.jsonFormatter.background';
+const BACKGROUNDS = [
+  { name: 'Green', color: '#27b515' },
+  { name: 'Blue', color: '#16478f' },
+  { name: 'Black', color: '#131519' },
+  { name: 'White', color: '#ffffff' },
+] as const;
 
 @Component({
   selector: 'app-json-formatter',
@@ -72,8 +80,21 @@ export class JsonFormatterComponent implements OnDestroy {
   readonly view = signal<View>('code');
   readonly urlOpen = signal(false);
   readonly focusMode = signal(false);
+  readonly backgrounds = BACKGROUNDS;
+  readonly background = signal<string>(BACKGROUNDS[0].color);
+  readonly lightBackground = computed(() => {
+    const channels = this.background().slice(1).match(/../g)!.map((hex) => {
+      const channel = Number.parseInt(hex, 16) / 255;
+      return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    });
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722 > 0.179;
+  });
   readonly inputScroll = signal(0);
   readonly outputScroll = signal(0);
+  readonly inputScrollX = signal(0);
+  readonly outputScrollX = signal(0);
+  readonly inputTokens = computed(() => highlightJson(this.rawJson()));
+  readonly outputTokens = computed(() => highlightJson(this.output()));
   readonly inputLineCount = computed(() => countLines(this.rawJson()));
   readonly outputLineCount = computed(() => countLines(this.output()));
   readonly gutterRows = GUTTER_ROWS;
@@ -92,6 +113,22 @@ export class JsonFormatterComponent implements OnDestroy {
   readonly hasMoreTreeRows = computed(() => this.treeRows().length > this.treeLimit());
   readonly visibleTreeRows = computed(() => this.treeRows().slice(0, this.treeLimit()));
   readonly canShowMoreTreeRows = computed(() => this.hasMoreTreeRows() && this.treeLimit() < MAX_TREE_ROWS);
+
+  constructor() {
+    afterNextRender(() => {
+      try {
+        const stored = localStorage.getItem(BACKGROUND_KEY);
+        if (stored && /^#[\da-f]{6}$/i.test(stored)) this.background.set(stored.toLowerCase());
+      } catch { /* The picker still works without storage. */ }
+    });
+  }
+
+  chooseBackground(color: string): void {
+    if (!/^#[\da-f]{6}$/i.test(color)) return;
+    const selected = color.toLowerCase();
+    this.background.set(selected);
+    try { localStorage.setItem(BACKGROUND_KEY, selected); } catch { /* Keep it for the current visit. */ }
+  }
 
   ngOnDestroy(): void {
     this.revision++;
@@ -495,13 +532,18 @@ export class JsonFormatterComponent implements OnDestroy {
     this.expandedNodes.set(new Set([document.root.offset]));
     this.treeLimit.set(TREE_PAGE_SIZE);
     this.outputScroll.set(0);
-    if (this.outputEditor) this.outputEditor.nativeElement.scrollTop = 0;
+    this.outputScrollX.set(0);
+    if (this.outputEditor) {
+      this.outputEditor.nativeElement.scrollTop = 0;
+      this.outputEditor.nativeElement.scrollLeft = 0;
+    }
     this.reportSuccess(message, document);
   }
 
   private clearResult(): void {
     this.result.set(null);
     this.outputScroll.set(0);
+    this.outputScrollX.set(0);
   }
 
   private reportSuccess(message: string, document: JsonDocument): void {

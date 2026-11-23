@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { JsonFormatterComponent } from './json-formatter.component';
-import { formatJsonDocument, JsonSourceError, parseJsonDocument } from './json-workspace';
+import { formatJsonDocument, highlightJson, JsonSourceError, parseJsonDocument } from './json-workspace';
 
 describe('JsonFormatterComponent', () => {
   let component: JsonFormatterComponent;
@@ -79,6 +79,14 @@ describe('JsonFormatterComponent', () => {
 });
 
 describe('JSON document transformations', () => {
+  it('highlights raw tokens without changing the source text', () => {
+    const source = '{\n  "label": "<example>", "ready": true, "id": 9007199254740993\n}';
+    const tokens = highlightJson(source)!;
+    expect(tokens.map((token) => token.text).join('')).toBe(source);
+    expect(tokens.filter((token) => token.kind === 'json-key').map((token) => token.text)).toEqual(['"label"', '"ready"', '"id"']);
+    expect(tokens.find((token) => token.kind === 'json-number')?.text).toBe('9007199254740993');
+    expect(highlightJson(' '.repeat(40_001))).toBeNull();
+  });
   it('preserves exact numbers, literal strings, duplicate keys, and source order', () => {
     const source = '{"10": 1e400, "2": -0, "id": 9007199254740993, "id": 9007199254740995, "text": "x, } \\u0041"}';
     const document = parseJsonDocument(source);

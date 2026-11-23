@@ -25,7 +25,7 @@ export const devTools = [
     features: [
       'Line and column diagnostics with a shortcut to the error',
       'Formatting with two, three, or four spaces, tabs, or compact output',
-      'Collapsible tree viewer for objects, arrays, and standalone JSON values',
+      'Side-by-side editors with syntax highlighting and a collapsible JSON tree viewer',
       'Exact number text and duplicate keys preserved when formatting, minifying, or sorting',
       'Browser-based repair with a separate output for reviewing changes'
     ],
