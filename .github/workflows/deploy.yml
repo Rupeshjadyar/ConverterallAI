@@ -42,7 +42,11 @@ jobs:
         run: |
           docker build --tag "$IMAGE" .
           docker run --detach --name converterall --publish 127.0.0.1:4000:4000 "$IMAGE"
-          curl --fail --retry 10 --retry-connrefused --retry-delay 1 http://127.0.0.1:4000/healthz
+          if ! curl --fail --silent --show-error --retry 20 --retry-all-errors \
+            --retry-delay 1 --retry-max-time 30 --max-time 3 http://127.0.0.1:4000/healthz; then
+            docker logs converterall
+            exit 1
+          fi
           node scripts/seo-http-smoke.mjs
       - name: Publish the verified image
         env:
